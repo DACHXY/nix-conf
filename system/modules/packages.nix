@@ -2,6 +2,8 @@
 
 {
   environment.systemPackages = with pkgs; [
+    firefox
+    opera
     bat
     btop
     eza

@@ -11,22 +11,17 @@ let
 
       sudo /run/current-system/bin/switch-to-configuration boot
     '';
-    rebuild = "sudo nixos-rebuild switch --flake ~/.dotfiles/";
-    fullRebuild =
-      "sudo nixos-rebuild switch --flake ~/.dotfiles/ && home-manager switch --flake ~/.dotfiles/ -b backup";
-    homeRebuild = "home-manager switch --flake ~/.dotfiles/ -b backup";
+    rebuild = "sudo nixos-rebuild switch --flake /etc/nixos/#dn-nix";
   };
 in {
   programs = {
     zsh = {
       enable = true;
-      enableAutosuggestions = true;
+      autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
       initExtra = ''
         source ~/.p10k.zsh && 
         eval "$(zoxide init --cmd cd zsh)" && 
-
-        export PATH="$PATH:/home/gpskwlkr/.dotnet/tools"
       '';
       shellAliases = myAliases;
       oh-my-zsh = {
