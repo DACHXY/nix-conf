@@ -1,94 +1,88 @@
-{ config, pkgs, ... }: 
+{ config, pkgs, ... }:
 
 {
 
- xdg.portal = {
+  xdg.portal = {
     enable = true;
     wlr.enable = false;
     xdgOpenUsePortal = false;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-hyprland
-      pkgs.xdg-desktop-portal-gtk
-    ];
- };
+    extraPortals =
+      [ pkgs.xdg-desktop-portal-hyprland pkgs.xdg-desktop-portal-gtk ];
+  };
 
- programs = {
-	steam = { 
-		enable = true;
-		remotePlay.openFirewall = true;
-		dedicatedServer.openFirewall = true;
-	};
+  programs = {
+    # steam = {
+    #   enable = true;
+    #   remotePlay.openFirewall = true;
+    #   dedicatedServer.openFirewall = true;
+    # };
 
     hyprland = {
-        enable = true;
-
-        xwayland = {
-            enable = true;
-        };
-
-        portalPackage = pkgs.xdg-desktop-portal-hyprland;
+      enable = true;
+      withUWSM = true;
+      xwayland = { enable = true; };
+      portalPackage = pkgs.xdg-desktop-portal-hyprland;
     };
 
     gnupg = {
-		agent = {
-			enable = true;
-			enableSSHSupport = true;
-		};
-	};
+      agent = {
+        enable = true;
+        enableSSHSupport = true;
+      };
+    };
 
     tmux = {
-        enable = true;
-        escapeTime = 0;
-        
-        plugins = with pkgs; [
-            tmuxPlugins.vim-tmux-navigator
-            tmuxPlugins.resurrect
-            tmuxPlugins.continuum
-            tmuxPlugins.catppuccin
-        ];
+      enable = true;
+      escapeTime = 0;
 
-        extraConfig = ''
-            set -g default-terminal "xterm-256color"
-            set -ga terminal-overrides ",*256col*:Tc"
-            set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
-            set-environment -g COLORTERM "truecolor"
-            set -g prefix C-a
-            unbind C-b
-            bind-key C-a send-prefix
+      plugins = with pkgs; [
+        tmuxPlugins.vim-tmux-navigator
+        tmuxPlugins.resurrect
+        tmuxPlugins.continuum
+        tmuxPlugins.catppuccin
+      ];
 
-            unbind %
-            bind | split-window -h
+      extraConfig = ''
+        set -g default-terminal "xterm-256color"
+        set -ga terminal-overrides ",*256col*:Tc"
+        set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
+        set-environment -g COLORTERM "truecolor"
+        set -g prefix C-b
+        bind-key C-b send-prefix
 
-            unbind '"'
-            bind - split-window -v
+        unbind %
+        bind | split-window -h
 
-            unbind r
-            bind r source-file ~/.tmux.conf
+        unbind '"'
+        bind - split-window -v
 
-            bind -r j resize-pane -D 5
-            bind -r k resize-pane -U 5
-            bind -r l resize-pane -R 5
-            bind -r h resize-pane -L 5
+        unbind r
+        bind r source-file ~/.tmux.conf
 
-            bind -r m resize-pane -Z
+        bind -r j resize-pane -D 5
+        bind -r k resize-pane -U 5
+        bind -r l resize-pane -R 5
+        bind -r h resize-pane -L 5
 
-            set -g mouse on
+        bind -r m resize-pane -Z
 
-            set-window-option -g mode-keys vi
+        set -g mouse on
 
-            bind-key -T copy-mode-vi 'v' send -X begin-selection
-            bind-key -T copy-mode-vi 'y' send -X copy-selection
+        set-window-option -g mode-keys vi
 
-            unbind -T copy-mode-vi MouseDragEnd1Pane
+        bind-key -T copy-mode-vi 'v' send -X begin-selection
+        bind-key -T copy-mode-vi 'y' send -X copy-selection
 
-            set -g @resurrect-capture-pane-contents 'on'
-            set -g @continuum-restore 'on'
-            set -g @catppuccin-flavour 'macchiato'
-        '';
+        unbind -T copy-mode-vi MouseDragEnd1Pane
+
+        set -g @resurrect-capture-pane-contents 'on'
+        set -g @continuum-restore 'on'
+        set -g @catppuccin-flavour 'macchiato'
+      '';
     };
 
     zsh.enable = true;
-	mtr.enable = true;
- };
+    mtr.enable = true;
+  };
 
 }

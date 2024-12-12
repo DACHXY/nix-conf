@@ -1,4 +1,4 @@
-{ pkgs, ... }: 
+{ pkgs, ... }:
 
 {
   virtualisation = {
@@ -31,6 +31,6 @@
     virt-manager
     virt-viewer
     win-spice
-    win-virtio  
+    win-virtio
   ];
 }

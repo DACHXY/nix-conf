@@ -1,2 +1,2 @@
-require("gpskwlkr.core")
-require("gpskwlkr.lazy")
+-- bootstrap lazy.nvim, LazyVim and your plugins
+require("config.lazy")
