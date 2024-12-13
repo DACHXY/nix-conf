@@ -12,8 +12,8 @@
     { self, nixpkgs-unstable, nixpkgs, ... }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs { inherit system; };
-      pkgsUnstable = import nixpkgs-unstable { inherit system; };
+      pkgs = nixpkgs.legacyPackages.${system};
+      pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
     in {
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
       nixosConfigurations.dn-nix = nixpkgs.lib.nixosSystem {

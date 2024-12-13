@@ -3,8 +3,9 @@
 {
   home.packages = [
     pkgs.vscode
-    pkgs.opera
+    # pkgs.opera
     pkgs.discord
+    pkgs.firefox
   
     # Dev stuff
     pkgs.gcc
