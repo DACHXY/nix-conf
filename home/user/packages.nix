@@ -1,8 +1,8 @@
 { pkgs, ... }:
 
 {
-
   home.packages = [
+    pkgs.vscode
     pkgs.opera
     pkgs.discord
   
@@ -35,7 +35,6 @@
 
     # Utils
     pkgs.viewnior
-    pkgs.hyprshot
     pkgs.catppuccin-cursors.macchiatoBlue
     pkgs.catppuccin-gtk
     # pkgs.papirus-folders

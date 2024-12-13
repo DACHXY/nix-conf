@@ -4,8 +4,10 @@
   programs.hyprland = { enable = true; };
 
   environment.systemPackages = with pkgs; [
+    hyprsunset
     hyprshade
     hyprpaper
+    hyprshot
     kitty
     libnotify
     mako

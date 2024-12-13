@@ -13,5 +13,7 @@
     wireplumber.enable = true;
   };
 
-  environment.systemPackages = with pkgs; [ pamixer pavucontrol ];
+  services.playerctld.enable = true;
+
+  environment.systemPackages = with pkgs; [ pavucontrol playerctl ];
 }

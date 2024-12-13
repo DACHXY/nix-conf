@@ -2,7 +2,6 @@
 let
   myAliases = {
     cat = "bat";
-    ls = "eza --icons=always";
 
     fullClean = ''
       nix-collect-garbage --delete-old
@@ -12,24 +11,35 @@ let
       sudo /run/current-system/bin/switch-to-configuration boot
     '';
     rebuild = "sudo nixos-rebuild switch --flake /etc/nixos/#dn-nix";
+    windows = "sudo bootctl set-oneshot auto-windows";
+    toWindows = "sudo bootctl set-oneshot auto-windows && reboot";
   };
 in {
   programs = {
-    zsh = {
+    nushell = {
       enable = true;
-      autosuggestion.enable = true;
-      syntaxHighlighting.enable = true;
-      initExtra = ''
-        source ~/.p10k.zsh && 
-        eval "$(zoxide init --cmd cd zsh)" && 
-      '';
       shellAliases = myAliases;
-      oh-my-zsh = {
-        enable = true;
-        custom = "$HOME/.oh-my-custom";
-        theme = "powerlevel10k/powerlevel10k";
-        plugins = [ "git" "history" "wd" ];
-      };
+      # configFile.source = ../config/nushell/config.nu;
+      # envFile.source = ../config/nushell/env.nu;
     };
+
+    zsh = {
+       enable = true;
+       shellAliases = myAliases;
+    };
+
+    # carapace.enable = true;
+    # carapace.enableNushellIntegration = true;
+    # starship = { 
+    #    enable = true;
+    #    settings = {
+    #      add_newline = true;
+    #    };
+    # };
+    #
+    # zoxide = {
+    #    enable = true;
+    #    enableNushellIntegration = true;
+    # };
   };
 }

@@ -15,6 +15,7 @@
       pkgs = import nixpkgs { inherit system; };
       pkgsUnstable = import nixpkgs-unstable { inherit system; };
     in {
+      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
       nixosConfigurations.dn-nix = nixpkgs.lib.nixosSystem {
         modules =
           [ 
