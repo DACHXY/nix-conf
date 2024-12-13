@@ -15,9 +15,5 @@ in {
     ".config/mako".source = "${configDir}/mako";
     ".config/starship.toml".source = "${configDir}/starship/starship.toml";
     ".config/macchiato.toml".source = "${configDir}/starship/macchiato.toml";
-    ".config/nushell" = {
-      source = "${configDir}/nushell";
-      recursive = true;
-    };
   };
 }
