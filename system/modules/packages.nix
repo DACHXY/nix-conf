@@ -46,7 +46,6 @@
 
     # Shell 
     zoxide # Dir jumper
-    nushell # Shell
     starship # Shell theme
     carapace # Autocomplete
   ];

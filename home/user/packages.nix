@@ -39,5 +39,7 @@
     pkgs.catppuccin-cursors.macchiatoBlue
     pkgs.catppuccin-gtk
     # pkgs.papirus-folders
+
+    pkgs.nushell
   ];
 }

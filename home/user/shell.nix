@@ -20,8 +20,6 @@ in {
     nushell = {
       enable = true;
       shellAliases = myAliases;
-      # configFile.source = ../config/nushell/config.nu;
-      # envFile.source = ../config/nushell/env.nu;
     };
 
     zsh = {
@@ -29,18 +27,16 @@ in {
        shellAliases = myAliases;
     };
 
-    # carapace.enable = true;
-    # carapace.enableNushellIntegration = true;
-    # starship = { 
-    #    enable = true;
-    #    settings = {
-    #      add_newline = true;
-    #    };
-    # };
-    #
-    # zoxide = {
-    #    enable = true;
-    #    enableNushellIntegration = true;
-    # };
+    carapace.enable = true;
+    carapace.enableNushellIntegration = true;
+
+    starship = { 
+       enable = true;
+    };
+
+    zoxide = {
+       enable = true;
+       enableNushellIntegration = true;
+    };
   };
 }

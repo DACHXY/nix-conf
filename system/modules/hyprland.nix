@@ -5,7 +5,6 @@
 
   environment.systemPackages = with pkgs; [
     hyprsunset
-    hyprshade
     hyprpaper
     hyprshot
     kitty
