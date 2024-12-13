@@ -2,7 +2,10 @@
 
 {
   boot.loader.systemd-boot.enable = true;
-  # boot.initrd.verbose = true;
+  boot.extraModprobeConfig = ''
+    options hid_apple fnmode=2
+  '';
+
   boot.initrd.systemd.enable = true;
   boot.swraid.enable = true;
   boot.swraid.mdadmConf =
