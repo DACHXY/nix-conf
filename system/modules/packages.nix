@@ -4,7 +4,6 @@
   environment.systemPackages = with pkgs; [
     # Browser
     firefox
-    opera
 
     # Utils
     bat
@@ -25,6 +24,7 @@
 
     # Dev
     git
+    gh # Github cli tool
     gnumake
     lm_sensors
     libsForQt5.qt5.qtquickcontrols2

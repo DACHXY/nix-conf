@@ -3,7 +3,6 @@
 {
   home.packages = [
     pkgs.vscode
-    # pkgs.opera
     pkgs.discord
     pkgs.firefox
   
@@ -38,6 +37,7 @@
     pkgs.viewnior
     pkgs.catppuccin-cursors.macchiatoBlue
     pkgs.catppuccin-gtk
+    pkgs.cava
     # pkgs.papirus-folders
 
     pkgs.nushell

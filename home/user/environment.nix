@@ -27,5 +27,10 @@
     XDG_CONFIG_HOME = "\${HOME}/.config";
     #XDG_BIN_HOME = "\${HOME}/.local/bin";
     XDG_DATA_HOME = "\${HOME}/.local/share";
+    GTK_IM_MODULE = "";
+
+    # GPU
+    LIBVA_DRIVER_NAME  = "nvidia";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
   };
 }

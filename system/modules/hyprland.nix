@@ -8,8 +8,11 @@
     hyprpaper
     hyprshot
     kitty
+
+    # Notification
     libnotify
-    mako
+    swaynotificationcenter
+
     qt5.qtwayland
     qt6.qtwayland
     swayidle
