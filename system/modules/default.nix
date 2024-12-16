@@ -22,7 +22,6 @@
     ./users.nix
     ./wireguard.nix
     ./dn-ca.nix
-    ./git.nix
     # ./virtualisation.nix
   ];
 }
