@@ -1,8 +1,14 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   documentation.nixos.enable = false;
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+	"steam"
+	"steam-original"
+	"steam-unwrapped"
+	"steam-run"
+  ];
 
 
   nix = {

@@ -9,9 +9,11 @@
 
 
   hardware = {
+    steam-hardware.enable = true;
     bluetooth.enable = true;
     graphics = { 
       enable = true;
+      enable32Bit = true;
       extraPackages = with pkgs; [
         intel-media-driver # LIBVA_DRIVER_NAME=iHD
         libvdpau-va-gl
