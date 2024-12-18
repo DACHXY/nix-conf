@@ -24,6 +24,7 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.docker" },
     { import = "lazyvim.plugins.extras.lang.git" },
     { import = "lazyvim.plugins.extras.lang.json" },
+    { import = "lazyvim.plugins.extras.lang.nix" },
     { import = "lazyvim.plugins.extras.lang.markdown" },
     { import = "lazyvim.plugins.extras.lang.nushell" },
     { import = "lazyvim.plugins.extras.lang.omnisharp" },
@@ -46,14 +47,7 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.util.project" },
     { import = "lazyvim.plugins.extras.vscode" },
     -- import/override with your plugins
-    { import = "plugins", {
-      rocks = {enabled = false},
-      dev = {
-          path = "~/.local/share/nvim/nix",
-        fallback = false,
-        }
-      }
-    },
+    { import = "plugins" },
   },
   defaults = {
     -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.

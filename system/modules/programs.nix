@@ -1,7 +1,6 @@
-{ config, pkgs, ... }:
+{ inputs, config, pkgs, ... }:
 
 {
-
   xdg.portal = {
     enable = true;
     wlr.enable = false;
@@ -13,9 +12,12 @@
   programs = {
     steam = {
       enable = true;
+      extest.enable = true;
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
       localNetworkGameTransfers.openFirewall = true;
+      fontPackages = with pkgs; [ wqy_zenhei noto-fonts-cjk-sans noto-fonts-cjk-serif ];
+      extraPackages = with pkgs; [ wqy_zenhei noto-fonts-cjk-sans noto-fonts-cjk-serif ];
     };
 
     hyprland = {

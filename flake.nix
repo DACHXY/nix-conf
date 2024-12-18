@@ -14,6 +14,7 @@
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
       pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
+      nixvim.url = "github:azuwis/lazyvim-nixvim";
     in {
       formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
       nixosConfigurations.dn-nix = nixpkgs.lib.nixosSystem {

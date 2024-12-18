@@ -10,8 +10,10 @@
     btop
     eza
     fzf
+    ranger # Terminal file manager
     neofetch
     ripgrep
+    tree
     tldr # Alternative for man
     wget
     unzip
@@ -33,9 +35,19 @@
     openssl
     openssl.dev
     pkg-config # Include Lib
+    nodejs
+    yarn-berry
+    dotnetCorePackages.sdk_8_0_3xx
+    dotnetCorePackages.dotnet_9.sdk
+    dotnetCorePackages.dotnet_9.runtime
+    dotnetCorePackages.dotnet_9.aspnetcore
+    rustup
 
     # Editor
     neovim
+    lua51Packages.lua
+    luajitPackages.magick # neovim
+    vimPlugins.neomake
 
     # Misc
     xfce.thunar # File manager
@@ -48,6 +60,14 @@
     zoxide # Dir jumper
     starship # Shell theme
     carapace # Autocomplete
+
+    # USB auto mount
+    usbutils
+    udiskie
+    udisks
+
+    # Media
+    vlc
   ];
 }
 

@@ -5,17 +5,17 @@
     pkgs.vscode
     pkgs.discord
     pkgs.firefox
-  
+
     # Dev stuff
     pkgs.gcc
     pkgs.go
-    pkgs.lua
     pkgs.nodePackages.pnpm
     (pkgs.python3.withPackages
       (python-pkgs: [ python-pkgs.pip python-pkgs.requests ]))
     pkgs.rustup
     pkgs.pkgsCross.mingwW64.stdenv.cc
     pkgs.pkgsCross.mingwW64.windows.pthreads
+    pkgs.postman
 
     # Work stuff
     pkgs.libreoffice-qt
