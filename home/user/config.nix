@@ -5,9 +5,7 @@ in {
       source = "${configDir}/nvim";
       recursive = true;
     };
-    ".config/wallpapers".source = "${configDir}/wallpapers";
-    ".config/kitty".source = "${configDir}/kitty";
-    ".config/neofetch".source = "${configDir}/neofetch";
+    ".config/wallpapers".source = "${configDir}/wallpapers"; ".config/kitty".source = "${configDir}/kitty"; ".config/neofetch".source = "${configDir}/neofetch";
     ".config/hypr".source = "${configDir}/hypr";
     ".config/swayidle".source = "${configDir}/swayidle";
     ".config/swaylock".source = "${configDir}/swaylock";
@@ -18,6 +16,7 @@ in {
     };
     ".config/btop".source = "${configDir}/btop";
     ".config/wofi".source = "${configDir}/wofi";
+    ".config/rofi".source = "${configDir}/rofi";
     ".config/mako".source = "${configDir}/mako";
     ".config/scripts".source = "${configDir}/scripts";
     ".config/swaync".source = "${configDir}/swaync";
@@ -27,6 +26,14 @@ in {
     ".config/gh" = {
       recursive = true;
       source = "${configDir}/gh";
+    };
+    ".local/share/fcitx5/themes/fcitx5-dark-transparent" = {
+      recursive = true;
+      source = "${configDir}/fcitx5-dark-transparent";
+    };
+    ".config/fcitx5/conf" = {
+      recursive = true;
+      source = "${configDir}/fcitx5";
     };
   };
 }

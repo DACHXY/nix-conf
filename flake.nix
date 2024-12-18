@@ -21,7 +21,6 @@
         modules =
           [ 
 	    ./system/configuration.nix
-	    inputs.home-manager.nixosModules.default
 	  ];
         specialArgs = { inherit inputs; inherit pkgsUnstable; };
       };

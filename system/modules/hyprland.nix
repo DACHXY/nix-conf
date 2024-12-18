@@ -6,6 +6,7 @@
   environment.systemPackages = with pkgs; [
     hyprsunset
     hyprpaper
+    hyprpicker
     hyprshot
     kitty
 
@@ -21,6 +22,7 @@
     wlogout
     wl-clipboard
     wofi
+    rofi
     waybar
   ];
 }

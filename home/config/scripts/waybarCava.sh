@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #Taken from JaKoolit's dotfiles
 
@@ -8,7 +8,7 @@ dict="s/;//g"
 bar_length=${#bar}
 
 for ((i = 0; i < bar_length; i++)); do
-    dict+=";s/$i/${bar:$i:1}/g"
+  dict+=";s/$i/${bar:$i:1}/g"
 done
 
 config_file="/tmp/bar_cava_config"
@@ -24,6 +24,7 @@ source = auto
 method = raw
 raw_target = /dev/stdout
 data_format = ascii
+channels = mono
 ascii_max_range = 7
 EOF
 

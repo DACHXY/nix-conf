@@ -22,7 +22,8 @@
     glxinfo # OpenGL info
     pciutils # PCI info
     xdotool # Keyboard input simulation
-    ffmpeg # video encoding
+    ffmpeg # Video encoding
+    mpv # Media player
 
     # Dev
     git

@@ -7,16 +7,6 @@
 
   home.stateVersion = "24.11";
 
-  home.packages = [
-    pkgs.opera
-  ];
-
-  home.file = {
-  };
-
-  home.sessionVariables = {
-  };
-
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 }
