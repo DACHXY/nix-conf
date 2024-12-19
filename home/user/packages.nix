@@ -16,6 +16,7 @@
     pkgs.pkgsCross.mingwW64.stdenv.cc
     pkgs.pkgsCross.mingwW64.windows.pthreads
     pkgs.postman
+    pkgs.cz-cli
 
     # Work stuff
     pkgs.libreoffice-qt
