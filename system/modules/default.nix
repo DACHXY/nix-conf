@@ -3,6 +3,7 @@
 {
   imports = [
     ./boot.nix
+    ./plymouth.nix # Boot splash 
     ./fonts.nix
     ./gaming.nix
     ./hardware.nix
@@ -23,6 +24,6 @@
     ./wireguard.nix
     ./dn-ca.nix
     ./environment.nix
-    # ./virtualisation.nix
+    ./virtualisation.nix
   ];
 }

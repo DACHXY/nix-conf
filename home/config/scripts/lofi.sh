@@ -1,8 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #Taken from jakoolit's hyprland dots
-
-iDIR="$HOME/.config/swaync/icons"
 
 declare -A menu_options=(
   ["Lofi Girl ☕️🎶"]="https://play.streamafrica.net/lofiradio"
@@ -21,7 +19,7 @@ notification() {
 }
 
 main() {
-  choice=$(printf "%s\n" "${!menu_options[@]}" | rofi -i -dmenu -config ~/.config/dotfiles/rofi/config.rasi -p "")
+  choice=$(printf "%s\n" "${!menu_options[@]}" | rofi -i -dmenu -config ~/.config/rofi/config.rasi -p "")
 
   if [ -z "$choice" ]; then
     exit 1
@@ -30,7 +28,7 @@ main() {
   link="${menu_options[$choice]}"
 
   notification "$choice"
-  
+
   if [[ $link == *playlist* || $link == *watch* ]]; then
     mpv --shuffle --vid=no --volume=50 "$link"
   else

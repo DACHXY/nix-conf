@@ -2,35 +2,12 @@
 
 {
   virtualisation = {
-    spiceUSBRedirection.enable = true;
+    docker.enable = true;
 
-    libvirtd = {
-      enable = true;
-
-      qemu = {
-        swtpm.enable = true;
-        ovmf.enable = true;
-        ovmf.packages = [ pkgs.OVMFFull.fd ];
-      };
-    };
-
-    podman = {
-      enable = true;
-
-      dockerCompat = true;
-      defaultNetwork.settings.dns_enabled = true;
+    # Run container as systemd service
+    oci-containers = {
+      backend = "docker";
+      containers = {};
     };
   };
-
-  environment.systemPackages = with pkgs; [
-    podman-compose
-    qemu
-    spice
-    spice-gtk
-    spice-protocol
-    virt-manager
-    virt-viewer
-    win-spice
-    win-virtio
-  ];
-}
+ }

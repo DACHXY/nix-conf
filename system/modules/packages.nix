@@ -17,7 +17,8 @@
     tldr # Alternative for man
     wget
     unzip
-    p7zip 
+    p7zip
+    killall
     zip
     glxinfo # OpenGL info
     pciutils # PCI info
@@ -46,6 +47,8 @@
 
     # Editor
     neovim
+    stylua
+    lazygit
     lua51Packages.lua
     luajitPackages.magick # neovim
     vimPlugins.neomake
