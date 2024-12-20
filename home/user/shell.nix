@@ -1,6 +1,5 @@
-{ config, pkgs, ... }:
-let
-  in {
+{ ... }:
+{
   programs = {
     nushell = {
       enable = true;
@@ -11,13 +10,13 @@ let
     carapace.enable = true;
     carapace.enableNushellIntegration = true;
 
-    starship = { 
-       enable = true;
+    starship = {
+      enable = true;
     };
 
     zoxide = {
-       enable = true;
-       enableNushellIntegration = true;
+      enable = true;
+      enableNushellIntegration = true;
     };
   };
 }

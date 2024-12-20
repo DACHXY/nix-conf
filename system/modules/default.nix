@@ -24,6 +24,6 @@
     ./wireguard.nix
     ./dn-ca.nix
     ./environment.nix
-    ./virtualisation.nix
+    ./virtualization.nix
   ];
 }
