@@ -3,7 +3,7 @@
 {
   home.packages = [
     pkgs.vscode
-    pkgs.discord
+    pkgs.vesktop # discord
     pkgs.firefox
 
     # Dev stuff
@@ -25,22 +25,20 @@
     pkgs.blueberry
 
     # Gaming
-    pkgs.steam
+    # pkgs.steam
     pkgs.steam-run
-    (pkgs.lutris.override {
-      extraPkgs = pkgs: [ pkgs.wineWowPackages.stable pkgs.winetricks ];
-    })
+    # (pkgs.lutris.override {
+    #   extraPkgs = pkgs: [ pkgs.wineWowPackages.stable pkgs.winetricks ];
+    # })
 
     # Downloads
     pkgs.qbittorrent
 
     # Utils
     pkgs.viewnior
-    pkgs.catppuccin-cursors.macchiatoBlue
+    pkgs.catppuccin-cursors.macchiatoLavender
     pkgs.catppuccin-gtk
     pkgs.cava
-    # pkgs.papirus-folders
-
-    pkgs.nushell
+    pkgs.papirus-folders
   ];
 }

@@ -23,7 +23,6 @@ in
     ".config/mako".source = "${configDir}/mako";
     ".config/scripts".source = "${configDir}/scripts";
     ".config/swaync".source = "${configDir}/swaync";
-    # ".config/uwsm".source = "${configDir}/uwsm";
     ".config/starship.toml".source = "${configDir}/starship/starship.toml";
     ".config/macchiato.toml".source = "${configDir}/starship/macchiato.toml";
     ".config/gh" = {

@@ -3,12 +3,17 @@
 # Palettes must be defined _after_ this line
 palette = "catppuccin_macchiato"
 
+[shell]
+fish_indicator = "󰈺 "
+powershell_indicator = ">_"
+unknown_indicator = "+>"
+
 # Starship modules
 [character]
 # Note the use of Catppuccin color 'peach'
-success_symbol = "[(green) ❯](peach)"
-error_symbol = "[(red) ❯](peach)"
-vimcmd_symbol = "[ ❮](subtext1)"      # For use with zsh-vi-mode
+success_symbol = "[(green) ❯](peach)"
+error_symbol = "[(red) ❯](peach)"
+vimcmd_symbol = "[ ❮](subtext1)"      # For use with zsh-vi-mode
 
 [git_branch]
 style = "bold mauve"

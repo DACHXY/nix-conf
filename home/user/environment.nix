@@ -17,7 +17,7 @@
     CLUTTER_BACKEND = "wayland";
     WLR_RENDERER = "vulkan";
     XCURSOR_SIZE = "32";
-    GTK_THEME = "Catppuccin-Macchiato-Compact-Blue-Dark";
+    GTK_THEME = "Catppuccin-Macchiato-Compact-Lavender-Dark";
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
     XDG_SESSION_TYPE = "wayland";
@@ -31,7 +31,7 @@
     XDG_DATA_DIRS = "\${XDG_DATA_DIRS}:/usr/share:/var/lib/flatpak/exports/share:\${HOME}/.local/share/flatpak/exports/share";
 
     # GPU
-    LIBVA_DRIVER_NAME  = "nvidia";
+    LIBVA_DRIVER_NAME = "nvidia";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
   };
 }

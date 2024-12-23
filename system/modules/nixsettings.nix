@@ -4,11 +4,12 @@
   documentation.nixos.enable = false;
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-	"steam"
-	"steam-original"
-	"steam-unwrapped"
-	"steam-run"
+    "steam"
+    "steam-original"
+    "steam-unwrapped"
+    "steam-run"
   ];
+  nixpkgs.config.rcomSupport = true;
 
 
   nix = {

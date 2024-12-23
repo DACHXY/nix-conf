@@ -1,17 +1,30 @@
 { config, pkgs, nixpkgs, ... }:
 
 {
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   nixpkgs.config.packageOverrides = pkgs: {
-    intel-vaapi-driver = pkgs.intel-vaapi-driver.override { enableHybridCodec = true; } ;
+    intel-vaapi-driver = pkgs.intel-vaapi-driver.override { enableHybridCodec = true; };
   };
 
 
   hardware = {
     steam-hardware.enable = true;
-    bluetooth.enable = true;
-    graphics = { 
+
+    bluetooth = {
+      enable = true;
+      powerOnBoot = true;
+      settings.General = {
+        experimental = true;
+        Privacy = "device";
+        JustWorksRepairing = "always";
+        Class = "0x000100";
+        FastConnectable = true;
+      };
+    };
+    xpadneo.enable = true;
+
+    graphics = {
       enable = true;
       enable32Bit = true;
       extraPackages = with pkgs; [
@@ -39,5 +52,13 @@
       intelBusId = "PCI:0:2:0";
       nvidiaBusId = "PCI:1:0:0";
     };
+  };
+
+  # Enable bluetooth
+  boot = {
+    extraModulePackages = with config.boot.kernelPackages; [ xpadneo ];
+    extraModprobeConfig = ''
+      options bluetooth disable_ertm=Y
+    '';
   };
 }

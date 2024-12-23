@@ -61,6 +61,12 @@
     xdg-desktop-portal-wlr
 
     # Shell 
+    fishPlugins.done
+    fishPlugins.fzf-fish
+    fishPlugins.forgit
+    fishPlugins.hydro
+    fishPlugins.grc
+    grc # Colorize
     zoxide # Dir jumper
     starship # Shell theme
     carapace # Autocomplete

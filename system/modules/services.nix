@@ -12,14 +12,17 @@
   services = {
     dbus.enable = true;
     picom.enable = true;
-    openssh = { 
-      enable = true; 
+
+    blueman.enable = true;
+
+    openssh = {
+      enable = true;
       ports = [ 22 ];
       settings = {
         PasswordAuthentication = false;
-	AllowUsers = [ "danny" ];
-	UseDns = true;
-	PermitRootLogin =  "no";
+        AllowUsers = [ "danny" ];
+        UseDns = true;
+        PermitRootLogin = "no";
       };
     };
 

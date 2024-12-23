@@ -1,22 +1,36 @@
-{ ... }:
+{ pkgs, ... }:
 {
   programs = {
-    nushell = {
+    # nushell = {
+    #   enable = true;
+    #   configFile.source = ../config/nushell/config.nu;
+    #   envFile.source = ../config/nushell/env.nu;
+    # };
+
+    fish = {
       enable = true;
-      configFile.source = ../config/nushell/config.nu;
-      envFile.source = ../config/nushell/env.nu;
+      interactiveShellInit = ''
+        set fish_greeting # Disable greeting
+      '';
+      plugins = [
+        { name = "grc"; src = pkgs.fishPlugins.grc.src; }
+        # Other plugins can be located in config file
+      ];
     };
 
-    carapace.enable = true;
-    carapace.enableNushellIntegration = true;
+    carapace = {
+      enable = true;
+      enableFishIntegration = true;
+    };
 
     starship = {
       enable = true;
+      enableFishIntegration = true;
     };
 
     zoxide = {
       enable = true;
-      enableNushellIntegration = true;
+      enableFishIntegration = true;
     };
   };
 }
