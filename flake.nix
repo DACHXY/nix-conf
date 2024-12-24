@@ -8,33 +8,42 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs =
-    { self, nixpkgs-unstable, nixpkgs, ... }@inputs:
+  outputs = { self, nixpkgs-unstable, nixpkgs, ... }@inputs:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
       pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
       nixvim.url = "github:azuwis/lazyvim-nixvim";
     in {
-      formatter.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
-      nixosConfigurations.dn-nix = nixpkgs.lib.nixosSystem {
-        modules =
-          [ 
-	    ./system/configuration.nix
-	  ];
-        specialArgs = { inherit inputs; inherit pkgsUnstable; };
+      formatter.x86_64-linux =
+        nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
+
+      nixosConfigurations.dn-pre7780 = nixpkgs.lib.nixosSystem {
+        modules = [ ./system/dev/dn-pre7780 ];
+        specialArgs = {
+          inherit inputs;
+          inherit pkgsUnstable;
+        };
       };
-      
-	#      homeConfigurations = {
-	#        danny = home-manager.lib.homeManagerConfiguration {
-	#          inherit pkgs;
-	#          modules = [ ./home ];
-	#          extraSpecialArgs = {
-	#            inherit pkgs-unstable;
-	#            inherit inputs;
-	#          };
-	# };
-	#      };
-	#      programs.home-manager.enable = true;
+
+      nixosConfigurations.dn-lap = nixpkgs.lib.nixosSystem {
+        modules = [ ./system/dev/dn-lap ];
+        specialArgs = {
+          inherit inputs;
+          inherit pkgsUnstable;
+        };
+      };
+
+      #      homeConfigurations = {
+      #        danny = home-manager.lib.homeManagerConfiguration {
+      #          inherit pkgs;
+      #          modules = [ ./home ];
+      #          extraSpecialArgs = {
+      #            inherit pkgs-unstable;
+      #            inherit inputs;
+      #          };
+      # };
+      #      };
+      #      programs.home-manager.enable = true;
     };
 }

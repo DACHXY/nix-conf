@@ -2,8 +2,7 @@
 
 {
   imports = [
-    ./boot.nix
-    ./plymouth.nix # Boot splash 
+    ./plymouth.nix # Boot splash
     ./fonts.nix
     ./gaming.nix
     ./hardware.nix

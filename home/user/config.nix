@@ -1,6 +1,5 @@
 let configDir = ../config;
-in
-{
+in {
   home.file = {
     ".config/nvim" = {
       source = "${configDir}/nvim";

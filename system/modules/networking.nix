@@ -2,10 +2,9 @@
 
 {
   networking = {
-    hostName = "dn-nix";
     networkmanager.enable = true;
     enableIPv6 = false;
-    firewall = { 
+    firewall = {
       enable = true;
       allowedTCPPorts = [ 22 ];
       allowedUDPPorts = [ 51820 ];

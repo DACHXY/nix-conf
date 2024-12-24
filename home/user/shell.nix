@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{ pkgs, ... }: {
   programs = {
     # nushell = {
     #   enable = true;
@@ -12,10 +11,12 @@
       interactiveShellInit = ''
         set fish_greeting # Disable greeting
       '';
-      plugins = [
-        { name = "grc"; src = pkgs.fishPlugins.grc.src; }
-        # Other plugins can be located in config file
-      ];
+      plugins = [{
+        name = "grc";
+        src = pkgs.fishPlugins.grc.src;
+      }
+      # Other plugins can be located in config file
+        ];
     };
 
     carapace = {
