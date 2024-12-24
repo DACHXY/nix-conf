@@ -6,6 +6,7 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
+<<<<<<<< HEAD:system/dev/dn-lap/hardware-configuration.nix
   boot.initrd.availableKernelModules = [ "xhci_pci" "thunderbolt" "nvme" "uas" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
@@ -23,6 +24,34 @@
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
+========
+  boot.initrd.availableKernelModules = [
+    "vmd"
+    "dm-raid"
+    "xhci_pci"
+    "thunderbolt"
+    "nvme"
+    "usbhid"
+    "uas"
+    "sd_mod"
+    "rtsx_pci_sdmmc"
+  ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelParams = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
+  boot.extraModulePackages = [ ];
+
+  fileSystems."/" = {
+    device = "/dev/disk/by-label/nixos";
+    fsType = "ext4";
+  };
+
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-label/BOOT";
+    fsType = "vfat";
+    options = [ "fmask=0077" "dmask=0077" ];
+  };
+>>>>>>>> 34ba202 (test: dn-lap test build):system/dev/dn-pre7780/hardware-configuration.nix
 
   swapDevices =
     [{ device = "/dev/disk/by-uuid/57d3a2d7-37e1-4e4b-be64-efcb2e6d6391"; }];
