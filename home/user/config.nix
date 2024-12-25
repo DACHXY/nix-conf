@@ -36,5 +36,6 @@ in {
       recursive = true;
       source = "${configDir}/fcitx5";
     };
+    ".config/electron-flags.conf".source = "${configDir}/electron/electron-flags.conf";
   };
 }
