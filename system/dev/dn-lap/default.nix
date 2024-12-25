@@ -19,7 +19,6 @@
     ../../modules/plymouth.nix
     ../../modules/polkit.nix
     ../../modules/programs.nix
-    ../../modules/sddm-theme.nix
     ../../modules/security.nix
     ../../modules/services.nix
     ../../modules/sound.nix
@@ -31,14 +30,14 @@
   ];
 
   # Overrides
-  networking.hostName = "dn-lap";
-  programs.steam.enable = false;
+  networking.hostName = lib.mkForce "dn-lap";
+  programs.steam.enable = lib.mkForce false;
 
   system.stateVersion = "24.11";
   home-manager = {
     backupFileExtension = "backup";
     extraSpecialArgs = { inherit inputs; };
-    users = { "danny" = import ../home; };
+    users = { "danny" = import ../../../home; };
   };
 }
 

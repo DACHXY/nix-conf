@@ -1,6 +1,6 @@
 [
   {
-    "output": "!DP-3",
+    "output": "HDMI-A-2",
     "include": "~/.config/waybar/modules.json",
     "layer": "top",
     "exclusive": true,
@@ -25,6 +25,41 @@
 
     "modules-right": [
       "wlr/taskbar",
+      "custom/swaync",
+      "pulseaudio"
+    ]
+  },
+    {
+    "output": "eDP-1",
+    "include": "~/.config/waybar/modules.json",
+    "layer": "top",
+    "exclusive": true,
+    "passthrough": false,
+    "position": "top",
+    "spacing": 3,
+    "fixed-center": true,
+    "ipc": true,
+    "margin-top": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+    "margin-bottom": 0,
+
+    "modules-left": [
+      "hyprland/workspaces",
+      "clock",
+      "custom/cava",
+      "mpris"
+    ],
+
+    "modules-center": [
+      "hyprland/window"
+    ],
+
+    "modules-right": [
+      "wlr/taskbar",
+      "cpu", 
+      "temperature", 
+      "memory",
       "custom/swaync",
       "pulseaudio"
     ]
