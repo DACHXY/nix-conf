@@ -29,6 +29,7 @@
     XDG_DATA_HOME = "\${HOME}/.local/share";
     GTK_IM_MODULE = "";
     XDG_DATA_DIRS = "\${XDG_DATA_DIRS}:/usr/share:/var/lib/flatpak/exports/share:\${HOME}/.local/share/flatpak/exports/share";
+    ELECTRON_OZONE_PLATFORM_HINT = "auto";
 
     # GPU
     LIBVA_DRIVER_NAME = "nvidia";
