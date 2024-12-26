@@ -85,12 +85,13 @@
     zsh.enable = true;
     mtr.enable = true;
     fish.enable = true;
-    nix-index = {
-      enable = true;
-      enableFishIntegration = true;
-      enableBashIntegration = false;
-      enableZshIntegration = false;
-    };
+
+    # nix-index = {
+    #   enable = true;
+    #   enableFishIntegration = true;
+    #   enableBashIntegration = false;
+    #   enableZshIntegration = false;
+    # };
 
     # Set fish as default shell but not login shell
     bash = {
