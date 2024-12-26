@@ -2,15 +2,15 @@
 
 {
   imports = [
+    inputs.home-manager.nixosModules.default
     ./hardware-configuration.nix
     ../../modules
     ../../modules/nvidia.nix
     ./boot.nix
-    inputs.home-manager.nixosModules.default
   ];
 
   # Overrides
-  networking.hostName = "dn-pre7780";
+  networking.hostName = lib.mkForce "dn-pre7780";
 
   system.stateVersion = "24.11";
   home-manager = {
