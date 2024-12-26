@@ -1,18 +1,8 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
-let
-  vesktop = pkgs.vesktop.overrideAttrs (oldAttrs: {
-    desktopItems = lib.optional pkgs.stdenv.hostPlatform.isLinux (
-      (lib.head oldAttrs.desktopItems).override {
-        name = "discord";
-        desktopName = "Discord";
-      }
-    );
-  });
-in
 {
   home.packages = [
-    vesktop # discord
+    pkgs.vesktop # discord
     pkgs.firefox
 
     # Dev stuff
