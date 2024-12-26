@@ -61,7 +61,8 @@
       "temperature", 
       "memory",
       "custom/swaync",
-      "pulseaudio"
+      "pulseaudio",
+      "battery"
     ]
   },
   {
@@ -96,7 +97,7 @@
       "temperature", 
       "memory",
       "custom/swaync",
-      "pulseaudio"
+      "pulseaudio",
     ]
   }
 ]

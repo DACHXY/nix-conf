@@ -167,5 +167,19 @@
     "exec": "~/.config/scripts/waybarCava.sh",
     "format": "{}",
     "on-click": "kitty -c ~/.config/kitty/kitty.conf nvim -c cd ~/.config/"
+  },
+
+  "battery": {
+    "full-at": 96,
+    "states": {
+      "good": 95,
+      "warning": 30,
+      "critical": 15
+    },
+    "format": "<span color='#ebdbb2'>{capacity}%</span> {icon}",
+    "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+    "format-charging": "<span color='#ebdbb2'>{capacity}%</span> 󰂄",
+    "format-plugged": "<span color='#ebdbb2'>{capacity}%</span> 󰂄",
+    "format-alt": "<span color='#ebdbb2'>{time}</span> {icon}"
   }
 }

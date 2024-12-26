@@ -10,7 +10,7 @@
 window#waybar {
   background-color: rgba(0, 0, 0, 0);
   transition-property: background-color;
-  transition-duration: .5s;
+  transition-duration: 0.5s;
 }
 
 window#waybar.hidden {
@@ -56,6 +56,14 @@ tooltip label {
   padding-right: 6px;
 }
 
+#battery {
+  border-radius: 10px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
 #window {
   color: #ebdbb2;
   padding-top: 3px;
@@ -78,4 +86,21 @@ tooltip label {
 
 #temperature.critical {
   background-color: red;
+}
+
+#battery.good {
+  color: #a6da95;
+}
+
+#battery.warning {
+  color: #eed49f;
+}
+
+#battery.critical {
+  color: #ee99a0;
+}
+
+#battery.charging,
+#battery.plugged {
+  color: #a6da95;
 }
