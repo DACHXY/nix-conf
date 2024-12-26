@@ -17,7 +17,6 @@
     CLUTTER_BACKEND = "wayland";
     WLR_RENDERER = "vulkan";
     XCURSOR_SIZE = "32";
-    GTK_THEME = "Catppuccin-Macchiato-Compact-Lavender-Dark";
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
     XDG_SESSION_TYPE = "wayland";

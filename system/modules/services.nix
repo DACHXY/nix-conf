@@ -42,5 +42,8 @@
     devmon.enable = true;
 
     flatpak.enable = true;
+
+    # Thuner plugin
+    tumbler.enable = true; # Thumbnail
   };
 }

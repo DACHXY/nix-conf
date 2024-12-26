@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   gtk = {
     enable = true;
 
@@ -8,10 +9,10 @@
     };
 
     theme = {
-      name = "Catppuccin-Macchiato-Compact-Lavender-dark";
+      name = "catppuccin-macchiato-lavender-compact";
       package = pkgs.catppuccin-gtk.override {
-        size = "compact";
         accents = [ "lavender" ];
+        size = "compact";
         variant = "macchiato";
       };
     };
@@ -21,13 +22,24 @@
       package = pkgs.papirus-folders;
     };
 
-    gtk3.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
+    gtk3 = {
+      # extraCss = gtk-css;
+      extraConfig = {
+        gtk-application-prefer-dark-theme = 1;
+      };
     };
 
-    gtk4.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
+    gtk4 = {
+      # extraCss = gtk-css;
+      extraConfig = {
+        gtk-application-prefer-dark-theme = 1;
+      };
     };
+  };
 
+  qt = {
+    enable = true;
+    style.name = "adwaita-dark";
+    style.package = pkgs.adwaita-qt;
   };
 }

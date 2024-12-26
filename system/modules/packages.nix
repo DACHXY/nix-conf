@@ -55,6 +55,7 @@
 
     # Misc
     xfce.thunar # File manager
+    nwg-look
 
     # Portal
     xdg-desktop-portal-gtk

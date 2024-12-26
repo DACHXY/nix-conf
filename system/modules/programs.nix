@@ -86,12 +86,11 @@
     mtr.enable = true;
     fish.enable = true;
 
-    # nix-index = {
-    #   enable = true;
-    #   enableFishIntegration = true;
-    #   enableBashIntegration = false;
-    #   enableZshIntegration = false;
-    # };
+    thunar.plugins = with pkgs.xfce; [
+      thunar-archive-plugin
+      thunar-volman
+      thunar-media-tags-plugin
+    ];
 
     # Set fish as default shell but not login shell
     bash = {
