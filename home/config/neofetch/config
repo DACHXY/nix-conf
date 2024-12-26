@@ -134,7 +134,7 @@ image_backend="ascii"
 # Default:  'auto'
 # Values:   'auto', 'ascii', 'wallpaper', '/path/to/img', '/path/to/ascii', '/path/to/dir/'
 #           'command output (neofetch --ascii "$(fortune | cowsay -W 30)")'
-image_source="${HOME}/.config/neofetch/ascii.txt"
+# image_source="${HOME}/.config/neofetch/ascii.txt"
 
 # Ascii distro (Which distro's ascii art to display).
 # Default: 'auto'

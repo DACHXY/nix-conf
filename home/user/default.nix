@@ -8,6 +8,7 @@
     ./programs.nix
     ./environment.nix
     ./virtualization.nix
+    # ./hyprland.nix
   ];
 
   nixpkgs = {

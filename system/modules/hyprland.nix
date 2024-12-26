@@ -1,7 +1,12 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
-  programs.hyprland = { enable = true; };
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true;
+    xwayland = { enable = true; };
+    portalPackage = pkgs.xdg-desktop-portal-hyprland;
+  };
 
   environment.systemPackages = with pkgs; [
     hyprsunset

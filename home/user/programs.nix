@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, inputs, ... }: {
   programs = {
     neovim = {
       enable = true;
@@ -27,7 +27,6 @@
       "font.name.monospace.zh-TW" = "Noto Sans Mono CJK TC";
     };
 
-
     # firefox = {
     #   enable = true;
     #   languagePacks = [
@@ -42,4 +41,5 @@
     #   };
     # };
   };
+
 }

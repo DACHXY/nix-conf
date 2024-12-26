@@ -33,11 +33,7 @@ in
     pkgs.blueberry
 
     # Gaming
-    # pkgs.steam
     pkgs.steam-run
-    # (pkgs.lutris.override {
-    #   extraPkgs = pkgs: [ pkgs.wineWowPackages.stable pkgs.winetricks ];
-    # })
 
     # Downloads
     pkgs.qbittorrent

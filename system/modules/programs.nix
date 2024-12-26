@@ -5,8 +5,7 @@
     enable = true;
     wlr.enable = false;
     xdgOpenUsePortal = false;
-    extraPortals =
-      [ pkgs.xdg-desktop-portal-hyprland pkgs.xdg-desktop-portal-gtk ];
+    extraPortals = [ pkgs.xdg-desktop-portal-hyprland pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-wlr ];
   };
 
   programs = {
@@ -18,12 +17,6 @@
       localNetworkGameTransfers.openFirewall = true;
     };
 
-    hyprland = {
-      enable = true;
-      withUWSM = true;
-      xwayland = { enable = true; };
-      portalPackage = pkgs.xdg-desktop-portal-hyprland;
-    };
 
     gnupg = {
       agent = {

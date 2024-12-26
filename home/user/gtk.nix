@@ -23,14 +23,12 @@
     };
 
     gtk3 = {
-      # extraCss = gtk-css;
       extraConfig = {
         gtk-application-prefer-dark-theme = 1;
       };
     };
 
     gtk4 = {
-      # extraCss = gtk-css;
       extraConfig = {
         gtk-application-prefer-dark-theme = 1;
       };

@@ -27,11 +27,12 @@
     };
 
     xserver = {
-      enable = true;
+      enable = false;
       xkb.layout = "us";
     };
 
     displayManager = {
+      sddm.wayland.enable = true;
       sddm.enable = true;
       sddm.theme = "${import ./sddm-theme.nix { inherit pkgs; }}";
     };
