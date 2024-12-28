@@ -14,7 +14,6 @@
     btop
     eza
     fzf
-    ranger # Terminal file manager
     neofetch
     ripgrep
     tree
@@ -85,6 +84,7 @@
     vlc
   ]) ++ ([
     inputs.ghostty.packages.x86_64-linux.default
+    inputs.yazi.packages.x86_64-linux.default # Terminal file manager
   ]);
 }
 

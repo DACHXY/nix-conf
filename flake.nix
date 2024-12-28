@@ -4,8 +4,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+
     home-manager.url = "github:nix-community/home-manager/release-24.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -13,6 +15,11 @@
       url = "github:ghostty-org/ghostty";
     };
 
+    yazi = {
+      url = "github:sxyazi/yazi";
+    };
+
+    # Not used yet due to some skill issue
     hyprland.url = "github:hyprwm/Hyprland/main";
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
@@ -28,7 +35,7 @@
     { self, nixpkgs-unstable, nixpkgs, nix-index-database, ... }@inputs:
     let
       system = "x86_64-linux";
-      # pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = nixpkgs.legacyPackages.${system};
       pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
     in
     {
@@ -44,6 +51,8 @@
           inherit inputs;
           inherit pkgsUnstable;
           inherit system;
+          inherit pkgs;
+          inherit pkgsUnstable;
         };
       };
 
@@ -54,6 +63,9 @@
         ];
         specialArgs = {
           inherit inputs;
+          inherit pkgsUnstable;
+          inherit system;
+          inherit pkgs;
           inherit pkgsUnstable;
         };
       };
