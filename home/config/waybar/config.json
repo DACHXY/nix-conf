@@ -16,6 +16,7 @@
 
     "modules-left": [
       "hyprland/workspaces",
+      "clock",
       "mpris"
     ],
 
