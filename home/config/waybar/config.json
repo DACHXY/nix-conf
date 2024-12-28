@@ -14,23 +14,13 @@
     "margin-right": 0,
     "margin-bottom": 0,
 
-    "modules-left": [
-      "hyprland/workspaces",
-      "clock",
-      "mpris"
-    ],
+    "modules-left": ["hyprland/workspaces", "clock", "mpris"],
 
-    "modules-center": [
-      "hyprland/window"
-    ],
+    "modules-center": ["hyprland/window"],
 
-    "modules-right": [
-      "wlr/taskbar",
-      "custom/swaync",
-      "pulseaudio"
-    ]
+    "modules-right": ["wlr/taskbar", "custom/swaync", "pulseaudio"]
   },
-    {
+  {
     "output": "eDP-1",
     "include": "~/.config/waybar/modules.json",
     "layer": "top",
@@ -45,21 +35,14 @@
     "margin-right": 0,
     "margin-bottom": 0,
 
-    "modules-left": [
-      "hyprland/workspaces",
-      "clock",
-      "custom/cava",
-      "mpris"
-    ],
+    "modules-left": ["hyprland/workspaces", "clock", "custom/cava", "mpris"],
 
-    "modules-center": [
-      "hyprland/window"
-    ],
+    "modules-center": ["hyprland/window"],
 
     "modules-right": [
       "wlr/taskbar",
-      "cpu", 
-      "temperature", 
+      "cpu",
+      "temperature",
       "memory",
       "custom/swaync",
       "pulseaudio",
@@ -81,21 +64,14 @@
     "margin-right": 0,
     "margin-bottom": 0,
 
-    "modules-left": [
-      "hyprland/workspaces",
-      "clock",
-      "custom/cava",
-      "mpris"
-    ],
+    "modules-left": ["hyprland/workspaces", "clock", "custom/cava", "mpris"],
 
-    "modules-center": [
-      "hyprland/window"
-    ],
+    "modules-center": ["hyprland/window"],
 
     "modules-right": [
       "wlr/taskbar",
-      "cpu", 
-      "temperature", 
+      "cpu",
+      "temperature",
       "memory",
       "custom/swaync",
       "pulseaudio"
