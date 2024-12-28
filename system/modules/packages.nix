@@ -4,7 +4,7 @@
   environment.systemPackages = (with pkgs; [
     # gtk theme
     gtk3
-    gnome.adwaita-icon-theme
+    adwaita-icon-theme
 
     # Browser
     firefox
