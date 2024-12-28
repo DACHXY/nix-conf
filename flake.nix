@@ -51,8 +51,6 @@
           inherit inputs;
           inherit pkgsUnstable;
           inherit system;
-          inherit pkgs;
-          inherit pkgsUnstable;
         };
       };
 
@@ -65,8 +63,6 @@
           inherit inputs;
           inherit pkgsUnstable;
           inherit system;
-          inherit pkgs;
-          inherit pkgsUnstable;
         };
       };
 

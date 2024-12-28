@@ -5,6 +5,8 @@
   g = "git";
   cd = "z"; # Zoxide
   t = "tmux";
+  vim = "nvim";
+  vi = "nvim";
 
   # Nixos
   rebuild = "sudo nixos-rebuild switch --flake /etc/nixos";
