@@ -18,7 +18,6 @@ in
     #   envFile.source = ../config/nushell/env.nu;
     # };
 
-
     fish = {
       enable = true;
       interactiveShellInit = ''
@@ -28,6 +27,16 @@ in
         { name = "grc"; src = pkgs.fishPlugins.grc.src; }
       ];
       shellAliases = shellAlias;
+    };
+
+    bash = {
+      enable = true;
+      # Ghostty intergration in nix-shell
+      bashrcExtra = ''
+        if [ -n "''${GHOSTTY_RESOURCES_DIR}" ]; then
+             builtin source "''${GHOSTTY_RESOURCES_DIR}/shell-integration/bash/ghostty.bash"
+         fi
+      '';
     };
 
     carapace = {

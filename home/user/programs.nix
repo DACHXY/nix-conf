@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }: {
+{ pkgs, ... }: {
   programs = {
     neovim = {
       enable = true;
@@ -11,6 +11,14 @@
     vscode = {
       enable = true;
       package = pkgs.vscode.fhs;
+    };
+
+    obs-studio = {
+      enable = true;
+      plugins = with pkgs.obs-studio-plugins; [
+        obs-backgroundremoval
+        obs-pipewire-audio-capture
+      ];
     };
 
     firefox.profiles.danny.settings = {

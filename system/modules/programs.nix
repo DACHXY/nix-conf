@@ -17,7 +17,6 @@
       localNetworkGameTransfers.openFirewall = true;
     };
 
-
     gnupg = {
       agent = {
         enable = true;
@@ -75,6 +74,7 @@
       '';
     };
 
+    dconf.enable = true;
     zsh.enable = true;
     mtr.enable = true;
     fish.enable = true;

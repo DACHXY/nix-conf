@@ -58,7 +58,7 @@
     "offscreen-css": true,
     "offscreen-css-text": "(inactive)",
     "rewrite": {
-      "(.*)> nvim": "  $1",
+      "nvim . (.*)": "  $1",
       "(.*) - Discord": "  $1",
       "(.*) — Mozilla Firefox": "  $1"
     }
@@ -159,7 +159,8 @@
       "Brave-browser",
       "Spotify",
       "thunar",
-      "vlc"
+      "vlc",
+      "com.mitchellh.ghostty"
     ]
   },
 

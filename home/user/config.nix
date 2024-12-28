@@ -39,5 +39,9 @@ in
       source = "${configDir}/fcitx5";
     };
     ".config/electron-flags.conf".source = "${configDir}/electron/electron-flags.conf";
+    ".config/ghostty" = {
+      recursive = true;
+      source = "${configDir}/ghostty";
+    };
   };
 }

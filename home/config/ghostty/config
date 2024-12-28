@@ -1,0 +1,14 @@
+font-family = "CaskaydiaCove Nerd Font Mono"
+font-size = 16 
+theme = catppuccin-macchiato
+unfocused-split-opacity = 0.85
+
+wait-after-command = false
+shell-integration = detect
+window-theme = ghostty
+
+confirm-close-surface = false
+window-decoration = false
+
+keybind = ctrl+shift+zero=toggle_tab_overview
+

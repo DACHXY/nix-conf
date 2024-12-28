@@ -9,6 +9,10 @@
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
+    ghostty = {
+      url = "github:ghostty-org/ghostty";
+    };
+
     hyprland.url = "github:hyprwm/Hyprland/main";
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";

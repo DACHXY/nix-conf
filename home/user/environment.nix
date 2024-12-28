@@ -16,7 +16,8 @@
     WLR_NO_HARDWARE_CURSORS = "1";
     CLUTTER_BACKEND = "wayland";
     WLR_RENDERER = "vulkan";
-    XCURSOR_SIZE = "32";
+    XCURSOR_THEME = "catppuccin-macchiato-lavender-cursors";
+    XCURSOR_SIZE = "24";
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
     XDG_SESSION_TYPE = "wayland";

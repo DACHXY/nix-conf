@@ -4,7 +4,7 @@
     enable = true;
 
     cursorTheme = {
-      name = "Catppuccin-Macchiato-Lavender";
+      name = "catppuccin-macchiato-lavender-cursors";
       package = pkgs.catppuccin-cursors.macchiatoLavender;
     };
 

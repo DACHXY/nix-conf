@@ -1,7 +1,11 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = (with pkgs; [
+    # gtk theme
+    gtk3
+    gnome.adwaita-icon-theme
+
     # Browser
     firefox
 
@@ -79,6 +83,8 @@
 
     # Media
     vlc
-  ];
+  ]) ++ ([
+    inputs.ghostty.packages.x86_64-linux.default
+  ]);
 }
 
