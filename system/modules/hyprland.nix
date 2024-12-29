@@ -1,14 +1,24 @@
-{ pkgs, inputs, ... }:
+{ pkgs, inputs, system, ... }:
 
 {
   programs.hyprland = {
     enable = true;
+    package = inputs.hyprland.packages.${system}.hyprland;
     withUWSM = true;
-    xwayland = { enable = true; };
-    portalPackage = pkgs.xdg-desktop-portal-hyprland;
+    xwayland.enable = true;
+    portalPackage = inputs.hyprland.packages.${system}.xdg-desktop-portal-hyprland;
+    # portalPackage = pkgs.xdg-desktop-portal-hyprland;
+  };
+
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    WLR_NO_HARDWARE_CURSORS = "1";
   };
 
   environment.systemPackages = with pkgs; [
+    pyprland
+    # hyprlock
+    hyprcursor
     hyprsunset
     hyprpaper
     hyprpicker

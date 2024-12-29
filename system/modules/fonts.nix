@@ -8,6 +8,7 @@
     noto-fonts-cjk-serif
     noto-fonts-emoji
 
+    # nerd-fonts.caskaydia-cove
     (nerdfonts.override { fonts = [ "CascadiaCode" ]; })
   ];
 

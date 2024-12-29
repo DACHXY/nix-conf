@@ -6,7 +6,7 @@
     enable = true;
     package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     xwayland.enable = true;
-    systemd.enable = false;
+    systemd.enable = true;
 
     plugins = [
       inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
@@ -17,7 +17,7 @@
       "$mod" = "SUPER";
       bind = [
         "$mod, F, exec, firefox"
-        "$mod, enter, exec, kitty"
+        "$mod, enter, exec, ghostty"
       ]
       ++ (
         # workspaces

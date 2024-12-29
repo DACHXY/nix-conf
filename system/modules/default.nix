@@ -12,7 +12,6 @@
     ./networking.nix
     ./nixsettings.nix
     ./packages.nix
-    ./polkit.nix
     ./programs.nix
     ./security.nix
     ./services.nix
@@ -24,5 +23,9 @@
     ./dn-ca.nix
     ./environment.nix
     ./virtualization.nix
+    ./display-manager.nix
+    ./gc.nix
+    ./polkit.nix
+    # ./auto-upgrade.nix
   ];
 }

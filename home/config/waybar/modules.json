@@ -120,7 +120,7 @@
     "format-critical": "{temperatureC}°C {icon}",
     "format": " {temperatureC}°C {icon} ",
     "format-icons": ["🔥"],
-    "on-click-right": "kitty -c ~/.config/kitty/kitty.conf --title nvtop sh -c 'nvtop'"
+    "on-click-right": "kitty -c ~/.config/kitty/kitty.conf --title btop sh -c 'btop'"
   },
 
   "custom/swaync": {

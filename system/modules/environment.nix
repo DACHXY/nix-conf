@@ -14,9 +14,7 @@ in
 {
   environment.systemPackages = [ offload ];
   environment.variables = {
-    NIXOS_OZONE_WL = "1";
     ELECTRON_OZONE_PLATFORM_HINT = "auto";
     GSETTINGS_SCHEMA_DIR = "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}/glib-2.0/schemas";
-    XCURSOR_SIZE = "24";
   };
 }
