@@ -1,13 +1,6 @@
 { pkgs, ... }:
 
 {
-  xdg.portal = {
-    enable = true;
-    wlr.enable = false;
-    xdgOpenUsePortal = false;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-wlr ];
-  };
-
   programs = {
     steam = {
       enable = true;

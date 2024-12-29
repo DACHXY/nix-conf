@@ -1,3 +1,4 @@
+{ inputs, ... }:
 {
   imports = [
     ./git.nix
@@ -8,7 +9,8 @@
     ./programs.nix
     ./environment.nix
     ./virtualization.nix
-    # ./hyprland.nix
+    ./hyprland.nix
+    inputs.hyprland.homeManagerModules.default
   ];
 
   nixpkgs = {

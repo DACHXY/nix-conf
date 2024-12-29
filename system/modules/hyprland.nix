@@ -3,11 +3,13 @@
 {
   programs.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${system}.hyprland;
-    withUWSM = true;
-    xwayland.enable = true;
-    portalPackage = inputs.hyprland.packages.${system}.xdg-desktop-portal-hyprland;
-    # portalPackage = pkgs.xdg-desktop-portal-hyprland;
+  };
+
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    xdgOpenUsePortal = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-hyprland ];
   };
 
   environment.sessionVariables = {

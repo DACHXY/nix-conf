@@ -1,4 +1,4 @@
-{ lib, pkgs, inputs, ... }:
+{ lib, pkgs, inputs, system, nix-version, ... }:
 
 {
   imports = [
@@ -12,11 +12,14 @@
   # Overrides
   networking.hostName = lib.mkForce "dn-pre7780";
 
-  system.stateVersion = "24.11";
+  system.stateVersion = nix-version;
+
   home-manager = {
     backupFileExtension = "backup";
-    extraSpecialArgs = { inherit inputs; };
-    users = { "danny" = import ../../../home; };
+    useUserPackages = true;
+    useGlobalPkgs = true;
+    extraSpecialArgs = { inherit inputs system nix-version; };
+    users."danny" = { imports = [ ../../../home ]; };
   };
 }
 

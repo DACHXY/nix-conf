@@ -3,7 +3,7 @@
 {
   services = {
     greetd = {
-      enable = false;
+      enable = true;
       settings = {
         default_session = {
           command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
@@ -12,11 +12,11 @@
       };
     };
 
-    displayManager = {
-      sddm.wayland.enable = true;
-      sddm.enable = true;
-      sddm.theme = "${import ./sddm-theme.nix { inherit pkgs; }}";
-    };
+    # displayManager = {
+    #   sddm.wayland.enable = true;
+    #   sddm.enable = true;
+    #   sddm.theme = "${import ./sddm-theme.nix { inherit pkgs; }}";
+    # };
   };
 
   environment.systemPackages = with pkgs; [

@@ -1,12 +1,11 @@
-{ config, pkgs, pkgsUnstable, ... }:
+{ config, pkgs, pkgsUnstable, nix-version, ... }:
 
 {
   imports = [ ./user ];
   home.username = "danny";
   home.homeDirectory = "/home/danny";
 
-  home.stateVersion = "24.11";
-  # home.stateVersion = "25.05";
+  home.stateVersion = nix-version;
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

@@ -27,10 +27,13 @@
       enable32Bit = true;
       extraPackages = with pkgs; [
         intel-media-driver # LIBVA_DRIVER_NAME=iHD
+        vaapiVdpau
+        (vaapiIntel.override { enableHybridCodec = true; })
         libvdpau-va-gl
       ];
     };
 
+    enableRedistributableFirmware = true;
   };
 
   # Enable bluetooth

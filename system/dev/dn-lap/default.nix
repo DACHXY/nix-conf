@@ -1,4 +1,4 @@
-{ lib, pkgs, inputs, ... }:
+{ lib, pkgs, inputs, nix-version, ... }:
 
 {
   imports = [
@@ -33,10 +33,10 @@
   networking.hostName = lib.mkForce "dn-lap";
   programs.steam.enable = lib.mkForce false;
 
-  system.stateVersion = "24.11";
+  system.stateVersion = nix-version;
   home-manager = {
     backupFileExtension = "backup";
-    extraSpecialArgs = { inherit inputs; };
+    extraSpecialArgs = { inherit inputs system nix-version; };
     users = { "danny" = import ../../../home; };
   };
 }

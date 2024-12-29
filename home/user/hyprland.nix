@@ -1,16 +1,23 @@
-{ pkgs, lib, inputs, ... }:
+{ pkgs, lib, inputs, system, ... }:
 
 {
+  home.packages = with pkgs; [
+    # wayland
+  ];
+
+  systemd.user.targets.hyprland-session.Unit.Wants = [
+    "xdg-desktop-autostart.target"
+  ];
+
   # Have not figured out how to config throught homeManager yet
   wayland.windowManager.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     xwayland.enable = true;
     systemd.enable = true;
 
     plugins = [
-      inputs.hyprland-plugins.packages.${pkgs.stdenv.hostPlatform.system}.hyprbars
-      inputs.hyprgrass.packages.${pkgs.system}.default
+      inputs.hyprland-plugins.packages.${system}.hyprbars
+      inputs.hyprgrass.packages.${system}.default
     ];
 
     settings = {
