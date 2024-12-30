@@ -1,32 +1,11 @@
-{ lib, pkgs, inputs, nix-version, ... }:
+{ lib, system, inputs, nix-version, ... }:
 
 {
   imports = [
-    ./hardware-configuration.nix
     inputs.home-manager.nixosModules.default
-
-    # Modules
+    ./hardware-configuration.nix
     ./boot.nix
-    ../../modules/dn-ca.nix
-    ../../modules/fonts.nix
-    ../../modules/hardware.nix
-    ../../modules/hyprland.nix
-    ../../modules/internationalisation.nix
-    ../../modules/misc.nix
-    ../../modules/networking.nix
-    ../../modules/nixsettings.nix
-    ../../modules/packages.nix
-    ../../modules/plymouth.nix
-    ../../modules/polkit.nix
-    ../../modules/programs.nix
-    ../../modules/security.nix
-    ../../modules/services.nix
-    ../../modules/sound.nix
-    ../../modules/theme.nix
-    ../../modules/time.nix
-    ../../modules/users.nix
-    ../../modules/virtualization.nix
-    ../../modules/wireguard.nix
+    ../../modules
   ];
 
   # Overrides
@@ -35,7 +14,7 @@
 
   system.stateVersion = nix-version;
   home-manager = {
-    backupFileExtension = "backup";
+    backupFileExtension = "hm-backup";
     extraSpecialArgs = { inherit inputs system nix-version; };
     users = { "danny" = import ../../../home; };
   };

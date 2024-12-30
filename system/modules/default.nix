@@ -4,7 +4,6 @@
   imports = [
     ./plymouth.nix # Boot splash
     ./fonts.nix
-    ./gaming.nix
     ./hardware.nix
     ./hyprland.nix
     ./internationalisation.nix

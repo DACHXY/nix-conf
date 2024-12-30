@@ -4,9 +4,10 @@
   imports = [
     inputs.home-manager.nixosModules.default
     ./hardware-configuration.nix
+    ./boot.nix
     ../../modules
     ../../modules/nvidia.nix
-    ./boot.nix
+    ../../modules/gaming.nix
   ];
 
   # Overrides
