@@ -1,5 +1,6 @@
 { mainMod }:
 let
+  uwsm = "uwsm app --";
   browser = "firefox";
   terminal = "ghostty";
   filemanager = "thunar";
@@ -19,7 +20,7 @@ in
   ''${mainMod}, E, exec, ${filemanager}''
   ''${mainMod}, V, togglefloating, ''
   ''ALT, SPACE, exec, rofi -config ~/.config/rofi/apps.rasi -show drun''
-  ''${mainMod} ALT, W, exec, ${scripts}/waybarRestart.sh''
+  ''${mainMod} ALT, W, exec, ${uwsm} ${scripts}/waybarRestart.sh''
   ''${mainMod}, P, pseudo, # dwindle''
   ''${mainMod}, S, togglesplit, # dwindle''
   ''CTRL ${mainMod} SHIFT, L, exec, swaylock''
@@ -30,8 +31,7 @@ in
   ''${mainMod}, X, exec, sleep 0.1 && swaync-client -t -sw''
   ''${mainMod} SHIFT, C, centerwindow''
   '',F11, fullscreen''
-  ''${mainMod}, F, exec, ${browser}''
-  ''${mainMod}, C, exec, NIXOS_OZONE_WL=1 code''
+  ''${mainMod}, C, exec, code''
 
   # Cycle windows
   ''ALT, TAB, cyclenext''

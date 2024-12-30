@@ -15,7 +15,7 @@
   system.stateVersion = nix-version;
 
   home-manager = {
-    backupFileExtension = "backup";
+    backupFileExtension = "hm-backup";
     useUserPackages = true;
     useGlobalPkgs = true;
     extraSpecialArgs = { inherit inputs system nix-version; };

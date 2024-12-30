@@ -10,6 +10,7 @@
     ./environment.nix
     ./virtualization.nix
     ./hyprland.nix
+    ./swaync.nix
     inputs.hyprland.homeManagerModules.default
   ];
 

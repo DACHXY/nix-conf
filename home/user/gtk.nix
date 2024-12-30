@@ -1,15 +1,33 @@
 { pkgs, ... }:
+let
+  cursorName = "catppuccin-macchiato-lavender-cursors";
+  themeName = "catppuccin-macchiato-lavender-compact";
+  cursorSize = "24";
+in
 {
+  home.sessionVariables = {
+    XCURSOR_THEME = cursorName;
+    XCURSOR_SIZE = cursorSize;
+    HYPERCURSOR_SIZE = cursorSize;
+  };
+
+  home.pointerCursor = {
+    gtk.enable = true;
+    package = pkgs.catppuccin-cursors.macchiatoLavender;
+    name = cursorName;
+    size = 24;
+  };
+
   gtk = {
     enable = true;
 
     cursorTheme = {
-      name = "catppuccin-macchiato-lavender-cursors";
+      name = cursorName;
       package = pkgs.catppuccin-cursors.macchiatoLavender;
     };
 
     theme = {
-      name = "catppuccin-macchiato-lavender-compact";
+      name = themeName;
       package = pkgs.catppuccin-gtk.override {
         accents = [ "lavender" ];
         size = "compact";
@@ -24,13 +42,13 @@
 
     gtk3 = {
       extraConfig = {
-        gtk-application-prefer-dark-theme = 1;
+        gtk-application-prefer-dark-theme = true;
       };
     };
 
     gtk4 = {
       extraConfig = {
-        gtk-application-prefer-dark-theme = 1;
+        gtk-application-prefer-dark-theme = true;
       };
     };
   };

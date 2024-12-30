@@ -3,7 +3,6 @@
   cat = "bat";
   y = "yazi";
   g = "git";
-  cd = "z"; # Zoxide
   t = "tmux";
   vim = "nvim";
   vi = "nvim";

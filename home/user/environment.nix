@@ -2,7 +2,7 @@
   home.sessionVariables = {
     BROWSER = "firefox";
     EDITOR = "nvim";
-    TERMINAL = "kitty";
+    TERMINAL = "ghostty";
     NIXOS_OZONE_WL = "1";
     QT_QPA_PLATFORMTHEME = "gtk3";
     QT_SCALE_FACTOR = "1";
@@ -16,8 +16,6 @@
     WLR_NO_HARDWARE_CURSORS = "1";
     CLUTTER_BACKEND = "wayland";
     WLR_RENDERER = "vulkan";
-    XCURSOR_THEME = "catppuccin-macchiato-lavender-cursors";
-    XCURSOR_SIZE = "24";
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
     XDG_SESSION_TYPE = "wayland";
@@ -30,7 +28,7 @@
     GTK_IM_MODULE = "";
     XDG_DATA_DIRS = "\${XDG_DATA_DIRS}:/usr/share:/var/lib/flatpak/exports/share:\${HOME}/.local/share/flatpak/exports/share";
     ELECTRON_OZONE_PLATFORM_HINT = "auto";
-    # GDK_BACKEND = "wayland";
+    GDK_BACKEND = "wayland";
 
     # GPU
     LIBVA_DRIVER_NAME = "nvidia";

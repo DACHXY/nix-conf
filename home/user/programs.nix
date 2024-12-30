@@ -10,7 +10,7 @@
 
     vscode = {
       enable = true;
-      package = pkgs.vscode.fhs;
+      package = pkgs.vscode;
     };
 
     obs-studio = {

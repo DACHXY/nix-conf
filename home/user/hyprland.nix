@@ -9,6 +9,11 @@ let
   plugins = import ./hypr/plugin.nix;
 in
 {
+
+  home.packages = with pkgs; [
+    hyprpaper
+  ];
+
   systemd.user.targets.hyprland-session.Unit.Wants = [
     "xdg-desktop-autostart.target"
   ];
@@ -16,6 +21,7 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
+    systemd.enable = false;
     package = inputs.hyprland.packages.${system}.hyprland;
 
     plugins = (with inputs.hyprland-plugins.packages.${system}; [
@@ -40,7 +46,7 @@ in
     settings = {
       preload = [ "~/.config/wallpapers/wall.png" ];
       wallpaper = [ ", ~/.config/wallpapers/wall.png" ];
-      splash = true;
+      splash = false;
       ipc = "on";
     };
   };

@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 let configDir = ../config;
 in
 {
@@ -10,7 +10,6 @@ in
     ".config/wallpapers".source = "${configDir}/wallpapers";
     ".config/kitty".source = "${configDir}/kitty";
     ".config/neofetch".source = "${configDir}/neofetch";
-    # ".config/hypr".source = "${configDir}/hypr";
     ".config/swayidle".source = "${configDir}/swayidle";
     ".config/swaylock".source = "${configDir}/swaylock";
     ".config/wlogout".source = "${configDir}/wlogout";
@@ -19,11 +18,9 @@ in
       source = "${configDir}/waybar";
     };
     ".config/btop".source = "${configDir}/btop";
-    ".config/wofi".source = "${configDir}/wofi";
     ".config/rofi".source = "${configDir}/rofi";
     ".config/mako".source = "${configDir}/mako";
     ".config/scripts".source = "${configDir}/scripts";
-    ".config/swaync".source = "${configDir}/swaync";
     ".config/starship.toml".source = "${configDir}/starship/starship.toml";
     ".config/macchiato.toml".source = "${configDir}/starship/macchiato.toml";
     ".config/gh" = {
