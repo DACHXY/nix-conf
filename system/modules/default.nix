@@ -26,6 +26,5 @@
     ./display-manager.nix
     ./gc.nix
     ./polkit.nix
-    # ./auto-upgrade.nix
   ];
 }

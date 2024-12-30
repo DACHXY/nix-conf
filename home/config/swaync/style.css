@@ -7,13 +7,13 @@
   font-weight: bold;
   font-size: 15px;
   border-width: 3px;
-  border-color: #ebdbb2
+  border-color: #ebdbb2;
 }
 
 .control-center .notification-row:focus,
 .control-center .notification-row:hover {
   opacity: 1;
-  background: @bgc
+  background: @bgc;
 }
 
 .notification-row {
@@ -50,8 +50,8 @@
   box-shadow: none;
   background: @borderc;
   color: @textc;
-  transition: all .15s ease-in-out;
-  border: none
+  transition: all 0.15s ease-in-out;
+  border: none;
 }
 
 .notification-action {
@@ -68,7 +68,7 @@
 .time {
   font-size: 11px;
   color: @borderc;
-  margin-right: 40px
+  margin-right: 40px;
 }
 
 .body {
@@ -86,15 +86,15 @@
 }
 
 .control-center-list-placeholder {
-  opacity: .5
+  opacity: 0.5;
 }
 
 .floating-notifications {
-  background: transparent
+  background: transparent;
 }
 
 .blank-window {
-  background: alpha(black, 0.1)
+  background: alpha(black, 0.1);
 }
 
 .widget-title {
@@ -104,7 +104,7 @@
   font-size: 1.5rem;
 }
 
-.widget-title>button {
+.widget-title > button {
   font-size: 1rem;
   color: @borderc;
   padding: 10px;
@@ -114,7 +114,7 @@
   border-radius: 5px;
 }
 
-.widget-title>button:hover {
+.widget-title > button:hover {
   background: @borderc;
   color: #282828;
 }
@@ -123,7 +123,7 @@
   margin: 10px 10px 10px 10px;
 }
 
-.widget-label>label {
+.widget-label > label {
   font-size: 1rem;
   color: @textc;
 }
@@ -135,11 +135,11 @@
   border-radius: 20px;
 }
 
-.widget-mpris>box>button {
+.widget-mpris > box > button {
   border-radius: 20px;
 }
 
 .widget-mpris-player {
   padding: 5px 5px;
-  margin: 10px
+  margin: 10px;
 }

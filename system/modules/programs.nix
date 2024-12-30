@@ -33,8 +33,8 @@
         set -ga terminal-overrides ",*256col*:Tc"
         set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
         set-environment -g COLORTERM "truecolor"
-        set -g prefix C-b
-        bind-key C-b send-prefix
+        set -g prefix C-a
+        bind-key C-a send-prefix
 
         unbind %
         bind | split-window -h

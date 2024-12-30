@@ -5,4 +5,4 @@
 killall .waybar-wrapped
 killall .swaync-wrapped
 waybar -c ~/.config/waybar/config.json -s ~/.config/waybar/style.css &
-swaync -s ~/.config/swaync/style.css -c ~/.config/swaync/config.json &
+swaync -c ~/.config/swaync/config.json -s ~/.config/swaync/style.css &

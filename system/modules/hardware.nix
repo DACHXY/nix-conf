@@ -1,5 +1,8 @@
-{ config, pkgs, nixpkgs, ... }:
+{ config, pkgs, nixpkgs, inputs, system, ... }:
 
+let
+  pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${system};
+in
 {
   nixpkgs.config.packageOverrides = pkgs: {
     intel-vaapi-driver =
@@ -25,12 +28,17 @@
     graphics = {
       enable = true;
       enable32Bit = true;
-      extraPackages = with pkgs; [
-        intel-media-driver # LIBVA_DRIVER_NAME=iHD
-        vaapiVdpau
-        (vaapiIntel.override { enableHybridCodec = true; })
-        libvdpau-va-gl
-      ];
+      package32 = pkgs-unstable.pkgsi686Linux.mesa.drivers;
+      package = pkgs-unstable.mesa.drivers;
+      extraPackages = with pkgs;
+        [
+          intel-media-driver # LIBVA_DRIVER_NAME=iHD
+          vaapiVdpau
+          (vaapiIntel.override {
+            enableHybridCodec = true;
+          })
+          libvdpau-va-gl
+        ];
     };
 
     enableRedistributableFirmware = true;

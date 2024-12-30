@@ -27,7 +27,7 @@
     };
 
     xserver = {
-      enable = false;
+      enable = true;
       xkb.layout = "us";
     };
 

@@ -1,45 +1,47 @@
 { pkgs, lib, inputs, system, ... }:
 
+let
+  startScript = import ./hypr/exec.nix { inherit pkgs lib inputs system; };
+  mainMod = "SUPER";
+  window = import ./hypr/window.nix;
+  windowrule = import ./hypr/windowrule.nix;
+  input = import ./hypr/input.nix;
+  plugins = import ./hypr/plugin.nix;
+in
 {
-  home.packages = with pkgs; [
-    # wayland
-  ];
-
   systemd.user.targets.hyprland-session.Unit.Wants = [
     "xdg-desktop-autostart.target"
   ];
 
-  # Have not figured out how to config throught homeManager yet
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
-    systemd.enable = true;
+    package = inputs.hyprland.packages.${system}.hyprland;
 
-    plugins = [
-      inputs.hyprland-plugins.packages.${system}.hyprbars
+    plugins = (with inputs.hyprland-plugins.packages.${system}; [
+      xtra-dispatchers
+      hyprexpo
+      hyprwinwrap
+    ]) ++ ([
       inputs.hyprgrass.packages.${system}.default
-    ];
+    ]);
 
     settings = {
-      "$mod" = "SUPER";
-      bind = [
-        "$mod, F, exec, firefox"
-        "$mod, enter, exec, ghostty"
-      ]
-      ++ (
-        # workspaces
-        # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
-        builtins.concatLists (builtins.genList
-          (i:
-            let ws = i + 1;
-            in
-            [
-              "$mod, code:1${toString i}, workspace, ${toString ws}"
-              "$mod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
-            ]
-          )
-          9)
-      );
+      bind = import ./hypr/bind.nix { inherit mainMod; };
+      bindm = import ./hypr/bindm.nix { inherit mainMod; };
+      monitor = import ./hypr/monitor.nix;
+      plugin = plugins;
+      exec-once = ''${startScript}'';
+    } // window // windowrule // input;
+  };
+
+  services.hyprpaper = {
+    enable = true;
+    settings = {
+      preload = [ "~/.config/wallpapers/wall.png" ];
+      wallpaper = [ ", ~/.config/wallpapers/wall.png" ];
+      splash = true;
+      ipc = "on";
     };
   };
 }
