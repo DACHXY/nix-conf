@@ -1,7 +1,8 @@
 { pkgs, lib, inputs, system, cursor-size, ... }:
 
 let
-  startScript = import ./hypr/exec.nix { inherit pkgs lib inputs system; };
+  terminal = "ghostty";
+  startScript = import ./hypr/exec.nix { inherit pkgs lib inputs system terminal; };
   mainMod = "SUPER";
   window = import ./hypr/window.nix;
   windowrule = import ./hypr/windowrule.nix;

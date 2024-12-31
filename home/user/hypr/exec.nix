@@ -1,4 +1,4 @@
-{ pkgs, lib, inputs, system, ... }:
+{ pkgs, lib, inputs, system, terminal }:
 let
   swayncScript = pkgs.pkgs.writeShellScriptBin "swaync-start" ''
     XDG_CONFIG_HOME="$HOME/.dummy" # Prevent swaync use default gtk theme
@@ -6,6 +6,10 @@ let
   '';
 
   startupScript = pkgs.pkgs.writeShellScriptBin "start" ''
+    # Fix nemo open in terminal
+    dconf write /org/cinnamon/desktop/applications/terminal/exec "''\'${terminal}''\'" &
+    dconf write /org/cinnamon/desktop/applications/terminal/exec-arg "''\'''\'" &
+
     uwsm app -- ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
     uwsm app -- ${swayncScript}/bin/swaync-start &
     dbus-update-activation-environment --systemd --all &
@@ -20,3 +24,4 @@ let
   '';
 in
 ''${startupScript}/bin/start''
+
