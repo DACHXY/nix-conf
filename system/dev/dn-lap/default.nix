@@ -9,6 +9,7 @@ in
     ./hardware-configuration.nix
     ./boot.nix
     ../../modules
+    ../../modules/wireguard.nix
   ];
 
   # Overrides

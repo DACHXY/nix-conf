@@ -18,7 +18,6 @@
     ./time.nix
     ./theme.nix
     ./users.nix
-    ./wireguard.nix
     ./dn-ca.nix
     ./environment.nix
     ./virtualization.nix

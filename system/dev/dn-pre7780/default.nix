@@ -11,6 +11,7 @@ in
     ../../modules
     ../../modules/nvidia.nix
     ../../modules/gaming.nix
+    ../../modules/wireguard.nix
   ];
 
   # Overrides

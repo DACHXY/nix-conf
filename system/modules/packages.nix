@@ -60,10 +60,6 @@
     xfce.thunar # File manager
     nwg-look
 
-    # Portal
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-wlr
-
     # Shell 
     fishPlugins.done
     fishPlugins.fzf-fish
@@ -82,6 +78,9 @@
 
     # Media
     vlc
+
+    # Thumbnail
+    ffmpegthumbnailer
   ]) ++ ([
     inputs.ghostty.packages.${system}.default
     inputs.yazi.packages.x86_64-linux.default # Terminal file manager
