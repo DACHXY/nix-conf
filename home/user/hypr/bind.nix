@@ -3,7 +3,7 @@ let
   uwsm = "uwsm app --";
   browser = "firefox";
   terminal = "ghostty";
-  filemanager = "thunar";
+  filemanager = "nemo";
   scripts = "~/.config/scripts";
 
   resizeStep = builtins.toString 20;

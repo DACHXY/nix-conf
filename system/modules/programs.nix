@@ -64,12 +64,6 @@
     mtr.enable = true;
     fish.enable = true;
 
-    thunar.plugins = with pkgs.xfce; [
-      thunar-archive-plugin
-      thunar-volman
-      thunar-media-tags-plugin
-    ];
-
     # Set fish as default shell but not login shell
     bash = {
       interactiveShellInit = ''

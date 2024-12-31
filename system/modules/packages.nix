@@ -9,6 +9,9 @@
     # Browser
     firefox
 
+    # File manager
+    nemo
+
     # Utils
     bat
     btop
@@ -28,6 +31,8 @@
     xdotool # Keyboard input simulation
     ffmpeg # Video encoding
     mpv # Media player
+    brightnessctl
+    gedit
 
     # Dev
     git
@@ -55,10 +60,6 @@
     lua51Packages.lua
     luajitPackages.magick # neovim
     vimPlugins.neomake
-
-    # Misc
-    xfce.thunar # File manager
-    nwg-look
 
     # Shell 
     fishPlugins.done
