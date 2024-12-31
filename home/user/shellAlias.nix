@@ -17,5 +17,5 @@
   # Systemd Boot
   setWin = "sudo bootctl set-oneshot auto-windows";
   goWin = "sudo bootctl set-oneshot auto-windows && reboot";
-  goBios = "sudo bootctl set-onshot auto-reboot-to-firmware-setup && reboot";
+  goBios = "sudo bootctl set-oneshot auto-reboot-to-firmware-setup && reboot";
 }

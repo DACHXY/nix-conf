@@ -19,7 +19,7 @@ in
   home-manager = {
     backupFileExtension = "hm-backup";
     extraSpecialArgs = { inherit inputs system nix-version cursor-size; };
-    users = { "danny" = import ../../../home; };
+    users."danny" = { imports = [ ../../../home ]; };
   };
 }
 
