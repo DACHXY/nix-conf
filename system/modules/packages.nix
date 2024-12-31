@@ -1,5 +1,28 @@
 { pkgs, inputs, system, ... }:
 
+let
+  terminalContent = ''
+    [Nemo Action]
+    Name=Open in Ghostty 
+    Comment=Open folder in Ghostty 
+    Exec=ghostty -e \"cd %F && exec bash\"
+    Icon-Name=ghostty
+    Selection=any
+    Extensions=dir;
+    Quote=double
+    EscapeSpaces=true
+    Dependencies=ghostty;
+  '';
+
+  nemo-unwrapped = pkgs.nemo.overrideAttrs (oldAttrs: {
+    postInstall = ''
+      ${oldAttrs.postInstall}
+
+      # Open in Terminal Patch
+      echo "${terminalContent}" > $out/share/nemo/actions/open_in_terminal.nemo_action
+    '';
+  });
+in
 {
   environment.systemPackages = (with pkgs; [
     # gtk theme
@@ -8,9 +31,6 @@
 
     # Browser
     firefox
-
-    # File manager
-    nemo
 
     # Utils
     bat
@@ -32,7 +52,6 @@
     ffmpeg # Video encoding
     mpv # Media player
     brightnessctl
-    gedit
 
     # Dev
     git
@@ -85,6 +104,7 @@
   ]) ++ ([
     inputs.ghostty.packages.${system}.default
     inputs.yazi.packages.x86_64-linux.default # Terminal file manager
+    nemo-unwrapped
   ]);
 }
 
