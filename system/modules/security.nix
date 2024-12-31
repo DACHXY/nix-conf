@@ -10,9 +10,7 @@
   };
 
   security.pam.services = {
-    greetd.u2fAuth = true;
     sudo.u2fAuth = true;
-    # hyprlock.u2fAuth = true;
   };
 
   environment.systemPackages = with pkgs; [

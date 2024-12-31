@@ -6,6 +6,7 @@ let
   '';
 
   startupScript = pkgs.pkgs.writeShellScriptBin "start" ''
+    uwsm app -- ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
     uwsm app -- ${swayncScript}/bin/swaync-start &
     dbus-update-activation-environment --systemd --all &
     systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
@@ -13,7 +14,7 @@ let
     uwsm app -- waybar -c ~/.config/waybar/config.json -s ~/.config/waybar/style.css &
     uwsm app -- swayidle -w &
     uwsm app -- sway-audio-idle-inhibit &
-    fcitx5 -rd &
+    uwsm fcitx5 -rd &
     uwsm app -- fcitx5-remote -r &
     uwsm app -- hyprsunset -t 3000k
   '';
