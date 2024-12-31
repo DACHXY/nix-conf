@@ -28,6 +28,17 @@ in
     firefox = {
       enable = true;
 
+      languagePacks = [
+        "en-US"
+        "zh-TW"
+        "ja"
+      ];
+
+      policies = {
+        DontCheckDefaultBrowser = true;
+        DisplayBookmarksToolbar = "never";
+      };
+
       profiles.default = {
         id = 0;
         name = "default";
@@ -49,16 +60,6 @@ in
           "font.name.monospace.zh-TW" = "Noto Sans Mono CJK TC";
         };
 
-        languagePacks = [
-          "en-US"
-          "zh-TW"
-          "ja"
-        ];
-
-        policies = {
-          DontCheckDefaultBrowser = true;
-          DisplayBookmarksToolbar = "never";
-        };
       };
     };
   };

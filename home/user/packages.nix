@@ -10,39 +10,38 @@ let
   });
 in
 {
-  home.packages = [
-    vesktop # discord
-    pkgs.firefox
-
+  home.packages = (with pkgs; [
     # Dev stuff
-    pkgs.gcc
-    pkgs.go
-    pkgs.nodePackages.pnpm
-    (pkgs.python3.withPackages
+    gcc
+    go
+    nodePackages.pnpm
+    (python3.withPackages
       (python-pkgs: [ python-pkgs.pip python-pkgs.requests ]))
-    pkgs.rustup
-    pkgs.pkgsCross.mingwW64.stdenv.cc
-    pkgs.pkgsCross.mingwW64.windows.pthreads
-    pkgs.postman
-    pkgs.cz-cli
+    rustup
+    pkgsCross.mingwW64.stdenv.cc
+    pkgsCross.mingwW64.windows.pthreads
+    postman
+    cz-cli
 
     # Work stuff
-    pkgs.libreoffice-qt
+    libreoffice-qt
 
     # Bluetooth
-    pkgs.blueberry
+    blueberry
 
     # Gaming
-    pkgs.steam-run
+    steam-run
 
     # Downloads
-    pkgs.qbittorrent
+    qbittorrent
 
     # Utils
-    pkgs.viewnior
-    pkgs.catppuccin-cursors.macchiatoLavender
-    pkgs.catppuccin-gtk
-    pkgs.cava
-    pkgs.papirus-folders
-  ];
+    viewnior
+    catppuccin-cursors.macchiatoLavender
+    catppuccin-gtk
+    cava
+    papirus-folders
+  ]) ++ ([
+    vesktop # discord
+  ]);
 }
