@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, system, ... }:
 
 {
   environment.systemPackages = (with pkgs; [
@@ -83,7 +83,7 @@
     # Media
     vlc
   ]) ++ ([
-    inputs.ghostty.packages.x86_64-linux.default
+    inputs.ghostty.packages.${system}.default
     inputs.yazi.packages.x86_64-linux.default # Terminal file manager
   ]);
 }

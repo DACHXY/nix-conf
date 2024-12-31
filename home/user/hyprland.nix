@@ -1,4 +1,4 @@
-{ pkgs, lib, inputs, system, ... }:
+{ pkgs, lib, inputs, system, cursor-size, ... }:
 
 let
   startScript = import ./hypr/exec.nix { inherit pkgs lib inputs system; };
@@ -7,11 +7,13 @@ let
   windowrule = import ./hypr/windowrule.nix;
   input = import ./hypr/input.nix;
   plugins = import ./hypr/plugin.nix;
+  cursorSize = cursor-size;
+  cursorName = "catppuccin-macchiato-lavender-cursors";
 in
 {
-
   home.packages = with pkgs; [
     hyprpaper
+    hyprcursor
   ];
 
   systemd.user.targets.hyprland-session.Unit.Wants = [
@@ -38,6 +40,12 @@ in
       monitor = import ./hypr/monitor.nix;
       plugin = plugins;
       exec-once = ''${startScript}'';
+      env = [
+        ''HYPRCURSOR_THEME, ${cursorName}''
+        ''HYPRCURSOR_SIZE, ${cursorSize}''
+        ''XCURSOR_THEME, ${cursorName}''
+        ''XCURSOR_SIZE, ${cursorSize}''
+      ];
     } // window // windowrule // input;
   };
 

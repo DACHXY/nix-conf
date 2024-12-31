@@ -1,5 +1,8 @@
 { lib, system, inputs, nix-version, ... }:
 
+let
+  cursor-size = "24";
+in
 {
   imports = [
     inputs.home-manager.nixosModules.default
@@ -15,7 +18,7 @@
   system.stateVersion = nix-version;
   home-manager = {
     backupFileExtension = "hm-backup";
-    extraSpecialArgs = { inherit inputs system nix-version; };
+    extraSpecialArgs = { inherit inputs system nix-version cursor-size; };
     users = { "danny" = import ../../../home; };
   };
 }

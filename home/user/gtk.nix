@@ -1,29 +1,17 @@
-{ pkgs, ... }:
+{ pkgs, cursor-size, ... }:
 let
   cursorName = "catppuccin-macchiato-lavender-cursors";
   themeName = "catppuccin-macchiato-lavender-compact";
-  cursorSize = "24";
+  cursorSize = pkgs.lib.strings.toInt cursor-size;
 in
 {
-  home.sessionVariables = {
-    XCURSOR_THEME = cursorName;
-    XCURSOR_SIZE = cursorSize;
-    HYPERCURSOR_SIZE = cursorSize;
-  };
-
-  home.pointerCursor = {
-    gtk.enable = true;
-    package = pkgs.catppuccin-cursors.macchiatoLavender;
-    name = cursorName;
-    size = 24;
-  };
-
   gtk = {
     enable = true;
 
     cursorTheme = {
       name = cursorName;
       package = pkgs.catppuccin-cursors.macchiatoLavender;
+      size = cursorSize;
     };
 
     theme = {

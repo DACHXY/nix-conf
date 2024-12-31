@@ -1,5 +1,8 @@
-{ lib, pkgs, inputs, system, nix-version, ... }:
+{ lib, inputs, system, nix-version, ... }:
 
+let
+  cursor-size = "32";
+in
 {
   imports = [
     inputs.home-manager.nixosModules.default
@@ -19,7 +22,7 @@
     backupFileExtension = "hm-backup";
     useUserPackages = true;
     useGlobalPkgs = true;
-    extraSpecialArgs = { inherit inputs system nix-version; };
+    extraSpecialArgs = { inherit inputs system nix-version cursor-size; };
     users."danny" = { imports = [ ../../../home ]; };
   };
 }

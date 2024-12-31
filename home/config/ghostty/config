@@ -10,5 +10,6 @@ window-theme = ghostty
 confirm-close-surface = false
 window-decoration = false
 
-keybind = ctrl+shift+zero=toggle_tab_overview
+mouse-hide-while-typing = true
 
+keybind = ctrl+shift+zero=toggle_tab_overview
