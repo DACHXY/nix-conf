@@ -1,0 +1,125 @@
+<!--
+This is a windows 11 kvm installation template
+Note the os section, the loader (secure firmware) is defined in system/modules/virtualization.nix
+You may want to change the address in the network section
+(May Fail in Virt Manager, but work with virsh. You can define the vm by virsh and use it in VirtManager later)
+
+Step to run in kvm:
+> virsh define win11_kvm.xml
+> virsh start win11
+
+Delete vm:
+> virsh destroy win11
+> virsh undefine win11
+-->
+<domain type="kvm">
+    <name>win11</name>
+    <uuid>ca98654b-f29d-46be-8dfd-49e0b0a4e598</uuid>
+    <metadata>
+        <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
+            <libosinfo:os id="http://microsoft.com/win/11"/>
+        </libosinfo:libosinfo>
+    </metadata>
+    <memory>8388608</memory>
+    <currentMemory>8388608</currentMemory>
+    <vcpu current="4">4</vcpu>
+    <os>
+        <type arch="x86_64" machine="q35">hvm</type>
+        <loader readonly="yes" secure="yes" type="pflash">/etc/ovmf/edk2-x86_64-secure-code.fd</loader>
+        <nvram template="/etc/ovmf/edk2-i386-vars.fd"/>
+    </os>
+    <features>
+        <smm state="on"/>
+        <acpi/>
+        <apic/>
+        <hyperv>
+            <relaxed state="on"/>
+            <vapic state="on"/>
+            <spinlocks state="on" retries="8191"/>
+            <vpindex state="on"/>
+            <runtime state="on"/>
+            <synic state="on"/>
+            <stimer state="on"/>
+            <frequencies state="on"/>
+            <tlbflush state="on"/>
+            <ipi state="on"/>
+            <evmcs state="on"/>
+            <avic state="on"/>
+        </hyperv>
+        <vmport state="off"/>
+    </features>
+    <cpu mode="host-passthrough">
+        <topology sockets="1" cores="4" threads="1"/>
+    </cpu>
+    <clock offset="localtime">
+        <timer name="rtc" tickpolicy="catchup"/>
+        <timer name="pit" tickpolicy="delay"/>
+        <timer name="hpet" present="no"/>
+        <timer name="hypervclock" present="yes"/>
+    </clock>
+    <pm>
+        <suspend-to-mem enabled="no"/>
+        <suspend-to-disk enabled="no"/>
+    </pm>
+    <devices>
+        <emulator>/run/libvirt/nix-emulators/qemu-system-x86_64</emulator>
+        <disk type="file" device="disk">
+            <driver name="qemu" type="qcow2"/>
+            <source file="/run/media/danny/DN-SSD/VM/win11.qcow2"/>
+            <target dev="vda" bus="virtio"/>
+            <boot order="2"/>
+        </disk>
+        <controller type="usb" model="qemu-xhci" ports="15"/>
+        <controller type="pci" model="pcie-root"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <controller type="pci" model="pcie-root-port"/>
+        <interface type="network">
+            <source network="default"/>
+            <mac address="52:54:00:9d:b9:3b"/>
+            <model type="e1000e"/>
+        </interface>
+        <console type="pty"/>
+        <channel type="spicevmc">
+            <target type="virtio" name="com.redhat.spice.0"/>
+        </channel>
+        <input type="tablet" bus="usb"/>
+        <tpm model="tpm-tis">
+            <backend type="emulator" version="2.0"/>
+        </tpm>
+        <graphics type="spice" port="-1" tlsPort="-1" autoport="yes">
+            <image compression="off"/>
+        </graphics>
+        <sound model="ich9"/>
+        <video>
+            <model type="qxl"/>
+        </video>
+        <redirdev bus="usb" type="spicevmc"/>
+        <redirdev bus="usb" type="spicevmc"/>
+        <disk type="file" device="cdrom">
+            <driver name="qemu" type="raw"/>
+            <source file="/run/media/danny/DN-SSD/ISO/Win11_24H2_English_x64.iso"/>
+            <target dev="sda" bus="sata"/>
+            <readonly/>
+            <boot order="1"/>
+        </disk>
+        <disk type="file" device="cdrom">
+            <driver name="qemu" type="raw"/>
+            <source file="/run/media/danny/DN-SSD/ISO/virtio-win-0.1.266.iso"/>
+            <target dev="sdb" bus="sata"/>
+            <readonly/>
+            <boot order="3"/>
+        </disk>
+    </devices>
+</domain>

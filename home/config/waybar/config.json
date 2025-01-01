@@ -14,11 +14,11 @@
     "margin-right": 0,
     "margin-bottom": 0,
 
-    "modules-left": ["hyprland/workspaces", "clock", "mpris"],
+    "modules-left": ["clock", "mpris"],
 
     "modules-center": ["hyprland/window"],
 
-    "modules-right": ["wlr/taskbar", "custom/swaync", "pulseaudio"]
+    "modules-right": ["cpu", "temperature", "wlr/taskbar", "pulseaudio"]
   },
   {
     "output": "eDP-1",

@@ -4,6 +4,6 @@
   users.users.danny = {
     isNormalUser = true;
     shell = pkgs.bash; # Actually fish
-    extraGroups = [ "wheel" "input" "networkmanager" "docker" "libvirtd" ];
+    extraGroups = [ "wheel" "input" "networkmanager" "docker" "libvirtd" "kvm" ];
   };
 }
