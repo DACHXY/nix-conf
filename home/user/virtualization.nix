@@ -5,4 +5,9 @@
       uris = [ "qemu:///system" ];
     };
   };
+
+  # default network can be start with:
+  # > virsh net-start default
+  # or autostart:
+  # > virsh net-autostart default
 }
