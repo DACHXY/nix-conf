@@ -24,5 +24,6 @@
     ./display-manager.nix
     ./gc.nix
     ./polkit.nix
+    ./lsp.nix
   ];
 }

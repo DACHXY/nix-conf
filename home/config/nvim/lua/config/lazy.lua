@@ -36,7 +36,7 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.markdown" },
     { import = "lazyvim.plugins.extras.lang.nushell" },
     { import = "lazyvim.plugins.extras.lang.omnisharp" },
-    { import = "lazyvim.plugins.extras.lang.python" },
+    -- { import = "lazyvim.plugins.extras.lang.python" },
     { import = "lazyvim.plugins.extras.lang.rust" },
     { import = "lazyvim.plugins.extras.lang.tailwind" },
     { import = "lazyvim.plugins.extras.lang.toml" },

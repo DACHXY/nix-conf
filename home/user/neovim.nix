@@ -1,33 +1,35 @@
 { pkgs, ... }:
 
 let
-  treesitterWithGrammars = (pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
-    p.bash
-    p.comment
-    p.css
-    p.dockerfile
-    p.fish
-    p.gitattributes
-    p.gitignore
-    p.go
-    p.gomod
-    p.gowork
-    p.hcl
-    p.javascript
-    p.jq
-    p.json5
-    p.json
-    p.lua
-    p.make
-    p.markdown
-    p.nix
-    p.python
-    p.rust
-    p.toml
-    p.typescript
-    p.vue
-    p.yaml
-  ]));
+  treesitterWithGrammars = (
+    pkgs.vimPlugins.nvim-treesitter.withPlugins (p: [
+      p.bash
+      p.comment
+      p.css
+      p.dockerfile
+      p.fish
+      p.gitattributes
+      p.gitignore
+      p.go
+      p.gomod
+      p.gowork
+      p.hcl
+      p.javascript
+      p.jq
+      p.json5
+      p.json
+      p.lua
+      p.make
+      p.markdown
+      p.nix
+      p.python
+      p.rust
+      p.toml
+      p.typescript
+      p.vue
+      p.yaml
+    ])
+  );
 
   treesitter-parsers = pkgs.symlinkJoin {
     name = "treesitter-parsers";
@@ -36,13 +38,20 @@ let
   configDir = ../config;
 in
 {
+  # Other Lsp servers are defined in system/module/lsp.nix
   home.packages = with pkgs; [
-    ripgrep
-    fd
-    lua-language-server
-    black
-    nodejs_22
     gh
+    vue-language-server
+    dockerfile-language-server-nodejs
+    black
+    prettierd
+    javascript-typescript-langserver
+    marksman
+    tailwindcss-language-server
+    ruff
+    ruff-lsp
+    pyright
+    hadolint
   ];
 
   programs.neovim = {
@@ -51,9 +60,13 @@ in
     coc.enable = false;
     withNodeJs = true;
 
-    plugins = [
-      treesitterWithGrammars
-    ];
+    plugins =
+      [
+        treesitterWithGrammars
+      ]
+      ++ (with pkgs.vimPlugins; [
+        markdown-preview-nvim
+      ]);
     extraPackages = [ pkgs.imagemagick ];
     extraLuaPackages = ps: with ps; [ magick ];
   };

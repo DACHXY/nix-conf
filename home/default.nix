@@ -1,4 +1,4 @@
-{ config, pkgs, pkgsUnstable, nix-version, ... }:
+{ nix-version, ... }:
 
 {
   imports = [ ./user ];

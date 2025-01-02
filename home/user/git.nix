@@ -1,10 +1,14 @@
 let
   userName = "dachxy";
   email = "Danny10132024@gmail.com";
-in {
+in
+{
   programs.git = {
     enable = true;
     userName = userName;
     userEmail = email;
+    extraConfig = {
+      safe.directory = [ "/etc/nixos" ];
+    };
   };
 }

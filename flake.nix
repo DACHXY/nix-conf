@@ -45,9 +45,6 @@
       nix-version = "25.05";
     in
     {
-      formatter.x86_64-linux =
-        nixpkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style;
-
       nixosConfigurations = {
         dn-pre7780 = nixpkgs.lib.nixosSystem {
           modules = [

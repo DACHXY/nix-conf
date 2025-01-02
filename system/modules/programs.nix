@@ -33,8 +33,8 @@ in
         set -g status-left "#[fg=#84977f,bg=default,bold] █ session: #S"
         set -g status-right "  #[fg=#828bb8,bg=default,bold]${config.networking.hostName}    "
 
-        setw -g window-status-format "#[bg=default]  #[fg=#495361,bg=default]#(${getIconScript}/get-icon #I) #W"
-        setw -g window-status-current-format "#[bg=default]  #[fg=#7e93a9,bg=default,bold]#(${getIconScript}/get-icon #I) #W"
+        setw -g window-status-format "#[bg=#171616,bg=default]  #[fg=#495361,bg=default]#(${getIconScript}/get-icon #I) #W"
+        setw -g window-status-current-format "#[fg=#7e93a9,bg=default]  #[fg=#7e93a9,bg=default,bold]#(${getIconScript}/get-icon #I) #W"
 
 
         set -g default-terminal "xterm-256color"
