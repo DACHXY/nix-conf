@@ -57,7 +57,8 @@
     stylua
     lazygit
     lua51Packages.lua
-    luajitPackages.magick # neovim
+    lua51Packages.luarocks
+    luajitPackages.magick
     vimPlugins.neomake
 
     # Shell 

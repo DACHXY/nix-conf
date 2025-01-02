@@ -1,5 +1,8 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
+let
+  getIconScript = pkgs.writeShellScriptBin "get-icon" (builtins.readFile ../../home/config/scripts/getIcons.sh);
+in
 {
   programs = {
     gnupg = {
@@ -21,12 +24,25 @@
       ];
 
       extraConfig = ''
+        set -gq allow-passthrough on
+        set -g status "on"
+        set -g status-style fg=default,bg=default
+        set -g status-position top
+        set -g status-justify "left"
+
+        set -g status-left "#[fg=#84977f,bg=default,bold] █ session: #S"
+        set -g status-right "  #[fg=#828bb8,bg=default,bold]${config.networking.hostName}    "
+
+        setw -g window-status-format "#[bg=default]  #[fg=#495361,bg=default]#(${getIconScript}/get-icon #I) #W"
+        setw -g window-status-current-format "#[bg=default]  #[fg=#7e93a9,bg=default,bold]#(${getIconScript}/get-icon #I) #W"
+
+
         set -g default-terminal "xterm-256color"
         set -ga terminal-overrides ",*256col*:Tc"
         set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
         set-environment -g COLORTERM "truecolor"
-        set -g prefix C-a
-        bind-key C-a send-prefix
+        set -g prefix C-b
+        bind-key C-b send-prefix
 
         unbind %
         bind | split-window -h
