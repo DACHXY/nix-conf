@@ -11,6 +11,7 @@
     ./virtualization.nix
     ./hyprland.nix
     ./swaync.nix
+    ./neovim.nix
     inputs.hyprland.homeManagerModules.default
   ];
 

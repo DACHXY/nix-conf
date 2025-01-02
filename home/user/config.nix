@@ -3,10 +3,10 @@ let configDir = ../config;
 in
 {
   home.file = {
-    ".config/nvim" = {
-      source = "${configDir}/nvim";
-      recursive = true;
-    };
+    # ".config/nvim" = {
+    #   source = "${configDir}/nvim";
+    #   recursive = true;
+    # };
     ".config/wallpapers".source = "${configDir}/wallpapers";
     ".config/kitty".source = "${configDir}/kitty";
     ".config/neofetch".source = "${configDir}/neofetch";

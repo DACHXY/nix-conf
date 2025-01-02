@@ -1,5 +1,4 @@
 { pkgs, inputs, system, ... }:
-
 {
   environment.systemPackages = (with pkgs; [
     # gtk theme
@@ -59,7 +58,7 @@
     lua51Packages.lua
     lua51Packages.luarocks
     luajitPackages.magick
-    vimPlugins.neomake
+    imagemagick
 
     # Shell 
     fishPlugins.done
