@@ -16,7 +16,7 @@
 - [X] Ghostty (Terminal)
 - [X] SDDM (Display Manager)
 - [X] Fish (shell)
-- [X] Lofi (Application Launcher)
+- [X] Rofi (Application Launcher)
 
 ## 🎈 Theme
 
