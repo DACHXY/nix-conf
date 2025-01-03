@@ -10,7 +10,8 @@
   - ✅ [treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
   - ❌ mason (not support on NixOS)
 - [X] Waybar
-- [X] Swayidle
+- [X] Hyprlock
+- [X] Hypridle
 - [X] Swaync (Notification Center)
 - [X] Hyprpaper (Wallpaper)
 - [X] Ghostty (Terminal)

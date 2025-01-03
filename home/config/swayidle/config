@@ -1,4 +1,0 @@
-timeout 300 'if pgrep swaylock; then hyprctl dispatch dpms off; fi'
-resume 'hyprctl dispatch dpms on'
-timeout 420 'systemctl suspend'
-before-sleep 'swaylock'

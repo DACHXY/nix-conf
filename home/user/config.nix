@@ -7,8 +7,6 @@ in
     ".config/wallpapers".source = "${configDir}/wallpapers";
     ".config/kitty".source = "${configDir}/kitty";
     ".config/neofetch".source = "${configDir}/neofetch";
-    ".config/swayidle".source = "${configDir}/swayidle";
-    ".config/swaylock".source = "${configDir}/swaylock";
     ".config/wlogout".source = "${configDir}/wlogout";
     ".config/waybar" = {
       recursive = true;
@@ -36,5 +34,7 @@ in
       recursive = true;
       source = "${configDir}/ghostty";
     };
+    ".face".source = "${configDir}/.face";
+    ".hyprlock_bg.svg".source = "${configDir}/hyprlock_bg.vsg";
   };
 }

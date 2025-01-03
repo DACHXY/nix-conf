@@ -23,8 +23,7 @@ let
     systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
     uwsm app -- hyprpaper &
     uwsm app -- waybar -c ~/.config/waybar/config.json -s ~/.config/waybar/style.css &
-    uwsm app -- swayidle -w &
-    uwsm app -- sway-audio-idle-inhibit &
+    systemctl --user enable --now hypridle.service &
     uwsm fcitx5 -rd &
     uwsm app -- fcitx5-remote -r &
     uwsm app -- hyprsunset -t 3000k

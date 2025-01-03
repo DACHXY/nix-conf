@@ -1,10 +1,17 @@
-{ pkgs, nix-version, ... }:
+{
+  pkgs,
+  lib,
+  nix-version,
+  ...
+}:
 let
   nerdfont-pkg =
     if nix-version == "25.05" then
       pkgs.nerd-fonts.caskaydia-cove
     else
       (pkgs.nerdfonts.override { fonts = [ "CascadiaCode" ]; });
+
+  sf-pro-display-bold = pkgs.callPackage ../../pkgs/fonts/sf-pro-display-bold { };
 in
 {
   fonts.packages =
@@ -14,10 +21,11 @@ in
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
       noto-fonts-emoji
+      sf-pro-display-bold
     ])
-    ++ ([
+    ++ [
       nerdfont-pkg
-    ]);
+    ];
 
   fonts.fontDir.enable = true;
 

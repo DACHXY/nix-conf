@@ -36,9 +36,6 @@
 
     qt5.qtwayland
     qt6.qtwayland
-    swayidle
-    sway-audio-idle-inhibit # Prevent idle when playing audio
-    swaylock-effects
     wlogout
     wl-clipboard
     rofi-wayland-unwrapped
