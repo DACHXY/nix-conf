@@ -16,7 +16,6 @@ in
     };
     ".config/btop".source = "${configDir}/btop";
     ".config/rofi".source = "${configDir}/rofi";
-    ".config/mako".source = "${configDir}/mako";
     ".config/scripts".source = "${configDir}/scripts";
     ".config/starship.toml".source = "${configDir}/starship/starship.toml";
     ".config/macchiato.toml".source = "${configDir}/starship/macchiato.toml";

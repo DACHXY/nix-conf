@@ -1,4 +1,6 @@
+# config from https://github.com/shub39/dotfiles
 { ... }:
+
 {
   services.swaync = {
     enable = true;
@@ -39,9 +41,12 @@
       @define-color borderc #ebdbb2;
       @define-color textc #282828;
 
-      .SwayNotificationCenterNotificationWindow {
-        background: @bgc;
-        background-color: @bgc;
+      * {
+        font-family: JetBrainsMonoNerdFontMono;
+        font-weight: bold;
+        font-size: 15px;
+        border-width: 3px;
+        border-color: #ebdbb2;
       }
 
       .control-center .notification-row:focus,
@@ -59,7 +64,7 @@
       .notification {
         background: @textc;
         margin: 0px;
-        border-radius: 0px;
+        border-radius: 6px;
         border-width: 3px;
         border-color: #ebdbb2;
       }
@@ -84,7 +89,7 @@
         box-shadow: none;
         background: @borderc;
         color: @textc;
-        transition: all 0.15s ease-in-out;
+        transition: all .15s ease-in-out;
         border: none;
       }
 
@@ -120,7 +125,7 @@
       }
 
       .control-center-list-placeholder {
-        opacity: 0.5;
+        opacity: .5;
       }
 
       .floating-notifications {
@@ -138,7 +143,7 @@
         font-size: 1.5rem;
       }
 
-      .widget-title > button {
+      .widget-title>button {
         font-size: 1rem;
         color: @borderc;
         padding: 10px;
@@ -148,7 +153,7 @@
         border-radius: 5px;
       }
 
-      .widget-title > button:hover {
+      .widget-title>button:hover {
         background: @borderc;
         color: #282828;
       }
@@ -157,7 +162,7 @@
         margin: 10px 10px 10px 10px;
       }
 
-      .widget-label > label {
+      .widget-label>label {
         font-size: 1rem;
         color: @textc;
       }
@@ -169,14 +174,14 @@
         border-radius: 20px;
       }
 
-      .widget-mpris > box > button {
+      .widget-mpris>box>button {
         border-radius: 20px;
       }
 
       .widget-mpris-player {
         padding: 5px 5px;
         margin: 10px;
-      }
+      }    
     '';
   };
 }
