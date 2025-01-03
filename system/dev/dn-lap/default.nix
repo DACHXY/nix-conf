@@ -1,7 +1,18 @@
-{ lib, system, inputs, nix-version, ... }:
+{
+  lib,
+  system,
+  inputs,
+  nix-version,
+  ...
+}:
 
 let
   cursor-size = "24";
+  username = "danny";
+  git-config = {
+    username = "DACHXY";
+    email = "danny10132024@gmail.com";
+  };
 in
 {
   imports = [
@@ -19,8 +30,18 @@ in
   system.stateVersion = nix-version;
   home-manager = {
     backupFileExtension = "hm-backup";
-    extraSpecialArgs = { inherit inputs system nix-version cursor-size; };
-    users."danny" = { imports = [ ../../../home ]; };
+    extraSpecialArgs = {
+      inherit
+        inputs
+        system
+        nix-version
+        cursor-size
+        git-config
+        username
+        ;
+    };
+    users."${username}" = {
+      imports = [ ../../../home ];
+    };
   };
 }
-

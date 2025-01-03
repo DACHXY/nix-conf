@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ username, pkgs, ... }:
 
 {
   systemd.services.flatpak-repo = {
@@ -20,7 +20,7 @@
       ports = [ 22 ];
       settings = {
         PasswordAuthentication = false;
-        AllowUsers = [ "danny" ];
+        AllowUsers = [ username ];
         UseDns = true;
         PermitRootLogin = "no";
       };
@@ -30,7 +30,6 @@
       enable = true;
       xkb.layout = "us";
     };
-
 
     # USB auto mount
     gvfs.enable = true;

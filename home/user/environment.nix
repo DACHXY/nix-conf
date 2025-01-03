@@ -23,7 +23,6 @@
     NIXOS_XDG_OPEN_USE_PORTAL = "1";
     XDG_CACHE_HOME = "\${HOME}/.cache";
     XDG_CONFIG_HOME = "\${HOME}/.config";
-    #XDG_BIN_HOME = "\${HOME}/.local/bin";
     XDG_DATA_HOME = "\${HOME}/.local/share";
     GTK_IM_MODULE = "";
     XDG_DATA_DIRS = "\${XDG_DATA_DIRS}:/usr/share:/var/lib/flatpak/exports/share:\${HOME}/.local/share/flatpak/exports/share";

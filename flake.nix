@@ -1,5 +1,5 @@
 {
-  description = "danny NixOS";
+  description = "DACHXY NixOS with hyprland";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -39,7 +39,12 @@
   };
 
   outputs =
-    { self, nixpkgs, nix-index-database, ... }@inputs:
+    {
+      self,
+      nixpkgs,
+      nix-index-database,
+      ...
+    }@inputs:
     let
       system = "x86_64-linux";
       nix-version = "25.05";

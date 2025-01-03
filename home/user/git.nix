@@ -1,6 +1,7 @@
+{ git-config }:
 let
-  userName = "dachxy";
-  email = "Danny10132024@gmail.com";
+  userName = git-config.username;
+  email = git-config.email;
 in
 {
   programs.git = {

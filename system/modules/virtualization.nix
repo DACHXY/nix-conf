@@ -1,8 +1,13 @@
-{ pkgs, config, ... }:
+{
+  username,
+  pkgs,
+  config,
+  ...
+}:
 
 {
   programs.virt-manager.enable = true;
-  users.groups.libvirtd.members = [ "danny" ];
+  users.groups.libvirtd.members = [ username ];
 
   virtualisation = {
     docker.enable = true;

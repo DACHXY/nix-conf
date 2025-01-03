@@ -4,19 +4,16 @@ let
 in
 {
   programs = {
-    # nushell = {
-    #   enable = true;
-    #   configFile.source = ../config/nushell/config.nu;
-    #   envFile.source = ../config/nushell/env.nu;
-    # };
-
     fish = {
       enable = true;
       interactiveShellInit = ''
         set fish_greeting # Disable greeting
       '';
       plugins = [
-        { name = "grc"; src = pkgs.fishPlugins.grc.src; }
+        {
+          name = "grc";
+          src = pkgs.fishPlugins.grc.src;
+        }
       ];
       shellAliases = shellAlias;
     };

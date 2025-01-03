@@ -1,9 +1,9 @@
-{ nix-version, ... }:
+{ nix-version, username, ... }:
 
 {
   imports = [ ./user ];
-  home.username = "danny";
-  home.homeDirectory = "/home/danny";
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
 
   home.stateVersion = nix-version;
 

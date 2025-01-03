@@ -1,9 +1,16 @@
-{ config, pkgs, ... }:
+{ username, pkgs, ... }:
 
 {
-  users.users.danny = {
+  users.users.${username} = {
     isNormalUser = true;
     shell = pkgs.bash; # Actually fish
-    extraGroups = [ "wheel" "input" "networkmanager" "docker" "libvirtd" "kvm" ];
+    extraGroups = [
+      "wheel"
+      "input"
+      "networkmanager"
+      "docker"
+      "libvirtd"
+      "kvm"
+    ];
   };
 }

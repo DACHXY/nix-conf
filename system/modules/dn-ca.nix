@@ -1,6 +1,7 @@
 { ... }:
 
 {
+  # This is my CA root cerificate, you shall delete it
   security.pki.certificates = [
     ''
       -----BEGIN CERTIFICATE-----
