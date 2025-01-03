@@ -6,6 +6,7 @@
     "exclusive": true,
     "passthrough": false,
     "position": "top",
+    "height": 40,
     "spacing": 3,
     "fixed-center": true,
     "ipc": true,

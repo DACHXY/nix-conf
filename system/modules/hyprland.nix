@@ -12,7 +12,10 @@
     enable = true;
     wlr.enable = true;
     xdgOpenUsePortal = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk pkgs.xdg-desktop-portal-wlr ];
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+      pkgs.xdg-desktop-portal-wlr
+    ];
   };
 
   environment.sessionVariables = {
@@ -22,7 +25,6 @@
 
   environment.systemPackages = with pkgs; [
     pyprland
-    hyprcursor
     hyprsunset
     hyprpicker
     hyprshot
@@ -46,7 +48,10 @@
   nix = {
     settings = {
       warn-dirty = false;
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       auto-optimise-store = true;
       substituters = [ "https://hyprland.cachix.org" ];
 

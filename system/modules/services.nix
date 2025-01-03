@@ -11,7 +11,6 @@
 
   services = {
     dbus.enable = true;
-    picom.enable = true;
 
     blueman.enable = true;
 
@@ -27,7 +26,7 @@
     };
 
     xserver = {
-      enable = true;
+      enable = false;
       xkb.layout = "us";
     };
 
