@@ -23,7 +23,7 @@ in
   ''${mainMod} ALT, W, exec, ${uwsm} ${scripts}/waybarRestart.sh''
   ''${mainMod}, P, pseudo, # dwindle''
   ''${mainMod}, S, togglesplit, # dwindle''
-  ''CTRL ${mainMod} SHIFT, L, exec, swaylock''
+  ''CTRL ${mainMod} SHIFT, L, exec, hyprlock''
   ''${mainMod} SHIFT, s, exec, hyprshot -m region --clipboard-only --freeze''
   ''CTRL SHIFT, s, exec, hyprshot -m window --clipboard-only --freeze''
   ''CTRL SHIFT ${mainMod}, s, exec, hyprshot -m output --clipboard-only --freeze''
@@ -32,6 +32,9 @@ in
   ''${mainMod} SHIFT, C, centerwindow''
   '',F11, fullscreen''
   ''${mainMod}, C, exec, code''
+
+  # Color Picker
+  ''${mainMod} SHIFT, P, exec, hyprpicker -f hex -a -z -r''
 
   # Cycle windows
   ''ALT, TAB, cyclenext''
@@ -55,7 +58,6 @@ in
   ''${mainMod} SHIFT, k, movewindow, u''
   ''${mainMod} SHIFT, j, movewindow, d''
 
-
   # Media
   '',XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%+''
   '',XF86AudioLowerVolume, exec, wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%-''
@@ -70,18 +72,20 @@ in
   # ==== Plugins ==== #
   # Overview
   ''${mainMod}, o, hyprexpo:expo, toggle''
-] ++ (
+]
+++ (
   # workspaces
   # binds $mainMod + [shift +] {1..9} to [move to] workspace {1..9}
-  builtins.concatLists (builtins.genList
-    (i:
-      let ws = i + 1;
+  builtins.concatLists (
+    builtins.genList (
+      i:
+      let
+        ws = i + 1;
       in
       [
         "${mainMod}, code:1${toString i}, workspace, ${toString ws}"
         "${mainMod} SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
       ]
-    )
-    9)
+    ) 9
+  )
 )
-

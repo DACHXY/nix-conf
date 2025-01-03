@@ -2,7 +2,7 @@
 
 {
   services.udev.packages = [ pkgs.yubikey-personalization ];
-
+  security.pam.services.hyprlock = { };
   security.pam.u2f = {
     enable = true;
     settings.cue = true;
