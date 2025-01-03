@@ -49,7 +49,7 @@
 
 ## 💿️ Installation
 
-> Your need to add your own device [flake.nix](./flake.nix), and create configuration in [system/dev](./system/dev/) (don't forget the `hardware-configuration.nix` generated with `nixos-generate-config`)
+> Your need to add your own device in [flake.nix](./flake.nix), and create configuration in [system/dev](./system/dev/) (don't forget the `hardware-configuration.nix` generated with `nixos-generate-config`)
 
 ### Example
 
