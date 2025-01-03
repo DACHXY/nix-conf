@@ -1,4 +1,4 @@
-{ git-config }:
+{ git-config, ... }:
 let
   userName = git-config.username;
   email = git-config.email;

@@ -40,7 +40,6 @@
 
   outputs =
     {
-      self,
       nixpkgs,
       nix-index-database,
       ...
@@ -48,6 +47,11 @@
     let
       system = "x86_64-linux";
       nix-version = "25.05";
+      username = "danny";
+      git-config = {
+        username = "DACHXY";
+        email = "danny10132024@gmail.com";
+      };
     in
     {
       nixosConfigurations = {
@@ -57,7 +61,13 @@
             ./system/dev/dn-pre7780
           ];
           specialArgs = {
-            inherit inputs system nix-version;
+            inherit
+              inputs
+              system
+              nix-version
+              username
+              git-config
+              ;
           };
         };
 
@@ -67,7 +77,13 @@
             ./system/dev/dn-lap
           ];
           specialArgs = {
-            inherit inputs system nix-version;
+            inherit
+              inputs
+              system
+              nix-version
+              username
+              git-config
+              ;
           };
         };
       };

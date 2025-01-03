@@ -41,6 +41,9 @@
 ## 🌐 VPN
 
 - Wireguard (You need put your own `wg0.conf` file)
+.
+
+> NOTE: If import `wireguard.nix` without config file, the Build will fail.
 
 ---
 

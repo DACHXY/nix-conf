@@ -3,16 +3,13 @@
   system,
   inputs,
   nix-version,
+  git-config,
+  username,
   ...
 }:
 
 let
   cursor-size = "24";
-  username = "danny";
-  git-config = {
-    username = "DACHXY";
-    email = "danny10132024@gmail.com";
-  };
 in
 {
   imports = [
