@@ -1,14 +1,30 @@
-{ pkgs, lib, inputs, system, cursor-size, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  system,
+  hyprcursor-size,
+  xcursor-size,
+  ...
+}:
 
 let
   terminal = "ghostty";
-  startScript = import ./hypr/exec.nix { inherit pkgs lib inputs system terminal; };
+  startScript = import ./hypr/exec.nix {
+    inherit
+      pkgs
+      lib
+      inputs
+      system
+      terminal
+      xcursor-size
+      ;
+  };
   mainMod = "SUPER";
   window = import ./hypr/window.nix;
   windowrule = import ./hypr/windowrule.nix;
   input = import ./hypr/input.nix;
   plugins = import ./hypr/plugin.nix;
-  cursorSize = cursor-size;
   cursorName = "catppuccin-macchiato-lavender-cursors";
 in
 {
@@ -27,27 +43,33 @@ in
     systemd.enable = false;
     package = inputs.hyprland.packages.${system}.hyprland;
 
-    plugins = (with inputs.hyprland-plugins.packages.${system}; [
-      xtra-dispatchers
-      hyprexpo
-      hyprwinwrap
-    ]) ++ ([
-      inputs.hyprgrass.packages.${system}.default
-    ]);
+    plugins =
+      (with inputs.hyprland-plugins.packages.${system}; [
+        xtra-dispatchers
+        hyprexpo
+        hyprwinwrap
+      ])
+      ++ ([
+        inputs.hyprgrass.packages.${system}.default
+      ]);
 
-    settings = {
-      bind = import ./hypr/bind.nix { inherit mainMod; };
-      bindm = import ./hypr/bindm.nix { inherit mainMod; };
-      monitor = import ./hypr/monitor.nix;
-      plugin = plugins;
-      exec-once = ''${startScript}'';
-      env = [
-        ''HYPRCURSOR_THEME, ${cursorName}''
-        ''HYPRCURSOR_SIZE, ${cursorSize}''
-        ''XCURSOR_THEME, ${cursorName}''
-        ''XCURSOR_SIZE, ${cursorSize}''
-      ];
-    } // window // windowrule // input;
+    settings =
+      {
+        bind = import ./hypr/bind.nix { inherit mainMod; };
+        bindm = import ./hypr/bindm.nix { inherit mainMod; };
+        monitor = import ./hypr/monitor.nix;
+        plugin = plugins;
+        exec-once = ''${startScript}'';
+        env = [
+          ''HYPRCURSOR_THEME, ${cursorName}''
+          ''HYPRCURSOR_SIZE, ${hyprcursor-size}''
+          ''XCURSOR_THEME, ${cursorName}''
+          ''XCURSOR_SIZE, ${xcursor-size}''
+        ];
+      }
+      // window
+      // windowrule
+      // input;
   };
 
   services.hyprpaper = {

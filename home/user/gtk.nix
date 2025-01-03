@@ -1,8 +1,8 @@
-{ pkgs, cursor-size, ... }:
+{ pkgs, xcursor-size, ... }:
 let
   cursorName = "catppuccin-macchiato-lavender-cursors";
   themeName = "catppuccin-macchiato-lavender-compact";
-  cursorSize = pkgs.lib.strings.toInt cursor-size;
+  cursorSize = pkgs.lib.strings.toInt xcursor-size;
 in
 {
   gtk = {

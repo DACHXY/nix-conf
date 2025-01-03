@@ -1,8 +1,10 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   console = {
-    font = "Lat2-Terminus16";
+    earlySetup = true;
+    font = "ter-124b";
     useXkbConfig = true;
+    packages = with pkgs; [ terminus_font ];
   };
 }

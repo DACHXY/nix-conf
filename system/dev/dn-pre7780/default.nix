@@ -9,7 +9,8 @@
 }:
 
 let
-  cursor-size = "32";
+  hyprcursor-size = "32";
+  xcursor-size = "24";
 in
 {
   imports = [
@@ -36,7 +37,8 @@ in
         inputs
         system
         nix-version
-        cursor-size
+        xcursor-size
+        hyprcursor-size
         git-config
         username
         ;
