@@ -29,23 +29,6 @@ let
     export __VK_LAYER_NV_optimus=NVIDIA_only
     exec "$@"
   '';
-
-  mk_uwsm_desktop_entry =
-    opts:
-    (pkgs.writeTextFile {
-      name = "${opts.name}-uwsm";
-      text = ''
-        [Desktop Entry]
-        Name=${opts.prettyName} (Offload UWSM)
-        Comment=${opts.comment}
-        Exec=${offload}/bin/offload ${lib.getExe config.programs.uwsm.package} start -S -F ${opts.binPath}
-        Type=Application
-      '';
-      destination = "/share/wayland-sessions/${opts.name}-uwsm.desktop";
-      derivationArgs = {
-        passthru.providedSessions = [ "${opts.name}-uwsm" ];
-      };
-    });
 in
 lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
   environment.systemPackages = [ offload ];
