@@ -107,13 +107,14 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
     MOZ_DISABLE_RDD_SANDBOX = 1;
     OGL_DEDICATED_HW_STATE_PER_CONTEXT = "ENABLE_ROBUST";
     INTEL_GPU_MIN_FREQ_ON_AC = "500";
-    # If multiple monitors are connected to eGPU & iGPU,
+    # If multiple monitors are connected to dGPU & iGPU,
     # make sure to put the iGPU first
     AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
   };
 
   # NOTE: You need set "env XDG_CURRENT_DESKTOP, Hyprland" in hyprland config
   # Otherwise you got XDG_CURRENT_DESKTOP="offload:Hyprland" which may cause problems
+  # Change display manager session file
   programs.uwsm.waylandCompositors = lib.mkForce {
     hyprland = {
       prettyName = "Hyprland";
