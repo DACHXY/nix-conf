@@ -11,7 +11,7 @@
 let
   hyprcursor-size = "32";
   xcursor-size = "24";
-  nvidia-mode = "rsync";
+  nvidia-mode = "offload";
   # Get bus id with `lshw`
   intel-bus-id = "PCI:0:2:0";
   nvidia-bus-id = "PCI:1:0:0";

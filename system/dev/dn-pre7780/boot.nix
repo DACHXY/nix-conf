@@ -12,6 +12,19 @@
     ];
   };
 
+  fileSystems."/mnt/windows" = {
+    device = "/dev/disk/by-uuid/460237D00237C429";
+    fsType = "ntfs-3g";
+    options = [
+      "nofail"
+      "uid=1000"
+      "gid=1000"
+      "dmask=077"
+      "fmask=077"
+    ];
+  };
+
+  boot.supportedFilesystems = [ "ntfs" ];
   boot.loader.systemd-boot.enable = true;
 
   # Enable F keys in some wireless keyboard (Ex. neo65)

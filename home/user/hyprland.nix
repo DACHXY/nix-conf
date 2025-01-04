@@ -72,6 +72,8 @@ in
           ''HYPRCURSOR_SIZE, ${hyprcursor-size}''
           ''XCURSOR_THEME, ${cursorName}''
           ''XCURSOR_SIZE, ${xcursor-size}''
+          ''XDG_CURRENT_DESKTOP, Hyprland''
+          ''XDG_SESSION_DESKTOP, Hyprland''
         ];
       }
       // window

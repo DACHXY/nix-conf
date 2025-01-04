@@ -35,14 +35,14 @@
     "pin, class:^(vesktop)$,title:^(Discord Popout)$"
     "float, class:^(steam)$,title:^(Friends List)$"
 
-    # Workspace assign
-    "workspace: 5, class: ^(steam)$"
+    # Steam
+    "workspace: 5 silent, class: ^(steam)$"
 
     # Line
     "workspace: 2, initialTitle: ^(LINE)$"
     "float, initialTitle: ^(LINE)$"
 
-    # VLC 
+    # VLC
     "workspace: 3, initialClass: ^(vlc)"
   ];
 
@@ -62,4 +62,3 @@
     "ignorealpha 0.1, swaync-notification-window"
   ];
 }
-

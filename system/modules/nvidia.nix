@@ -10,6 +10,7 @@ let
     "sync"
     "rsync"
   ];
+
 in
 {
   config,
@@ -20,8 +21,6 @@ in
 
 # Nvidia offload mode
 let
-  validString = lib.concatStringsSep ", " validModes;
-
   offload = pkgs.writeShellScriptBin "offload" ''
     #!/bin/bash
     export __NV_PRIME_RENDER_OFFLOAD=1
@@ -30,6 +29,23 @@ let
     export __VK_LAYER_NV_optimus=NVIDIA_only
     exec "$@"
   '';
+
+  mk_uwsm_desktop_entry =
+    opts:
+    (pkgs.writeTextFile {
+      name = "${opts.name}-uwsm";
+      text = ''
+        [Desktop Entry]
+        Name=${opts.prettyName} (Offload UWSM)
+        Comment=${opts.comment}
+        Exec=${offload}/bin/offload ${lib.getExe config.programs.uwsm.package} start -S -F ${opts.binPath}
+        Type=Application
+      '';
+      destination = "/share/wayland-sessions/${opts.name}-uwsm.desktop";
+      derivationArgs = {
+        passthru.providedSessions = [ "${opts.name}-uwsm" ];
+      };
+    });
 in
 lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
   environment.systemPackages = [ offload ];
@@ -58,7 +74,7 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
     nvidia.modesetting.enable = true;
 
     nvidia.powerManagement.enable = true;
-    nvidia.powerManagement.finegrained = true;
+    nvidia.powerManagement.finegrained = if nvidia-mode == "sync" then false else true;
 
     nvidia.nvidiaSettings = true;
     nvidia.dynamicBoost.enable = true;
@@ -106,5 +122,20 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     NVD_BACKEND = "direct";
     MOZ_DISABLE_RDD_SANDBOX = 1;
+    OGL_DEDICATED_HW_STATE_PER_CONTEXT = "ENABLE_ROBUST";
+    INTEL_GPU_MIN_FREQ_ON_AC = "500";
+    # If multiple monitors are connected to eGPU & iGPU,
+    # make sure to put the iGPU first
+    AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
+  };
+
+  # NOTE: You need set "env XDG_CURRENT_DESKTOP, Hyprland" in hyprland config
+  # Otherwise you got XDG_CURRENT_DESKTOP="offload:Hyprland" which may cause problems
+  programs.uwsm.waylandCompositors = lib.mkForce {
+    hyprland = {
+      prettyName = "Hyprland";
+      comment = "Hyprland compositor managed by UWSM";
+      binPath = "${offload}/bin/offload /run/current-system/sw/bin/Hyprland";
+    };
   };
 }
