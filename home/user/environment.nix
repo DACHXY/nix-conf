@@ -12,7 +12,7 @@
     QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
     QT_AUTO_SCREEN_SCALE_FACTOR = "1";
     GTK_CSD = "0";
-    WLR_DRM_DEVICES = "/dev/dri/card0";
+    WLR_DRM_DEVICES = "/dev/dri/card1";
     WLR_NO_HARDWARE_CURSORS = "1";
     CLUTTER_BACKEND = "wayland";
     WLR_RENDERER = "vulkan";
@@ -29,8 +29,5 @@
     ELECTRON_OZONE_PLATFORM_HINT = "auto";
     GDK_BACKEND = "wayland";
 
-    # GPU
-    LIBVA_DRIVER_NAME = "nvidia";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
   };
 }

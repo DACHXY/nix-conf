@@ -18,7 +18,6 @@
     ./time.nix
     ./theme.nix
     ./users.nix
-    ./dn-ca.nix
     ./environment.nix
     ./virtualization.nix
     ./display-manager.nix

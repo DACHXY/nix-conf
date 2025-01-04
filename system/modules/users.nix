@@ -9,7 +9,6 @@
       "input"
       "networkmanager"
       "docker"
-      "libvirtd"
       "kvm"
     ];
   };

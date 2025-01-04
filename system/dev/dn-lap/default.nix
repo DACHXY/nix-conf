@@ -19,6 +19,7 @@ in
     ./boot.nix
     ../../modules
     ../../modules/wireguard.nix
+    ../../modules/dn-ca.nix
   ];
 
   # Overrides
