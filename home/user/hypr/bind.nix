@@ -1,8 +1,9 @@
-{ mainMod }:
+{ mainMod, nvidia-offload-enabled }:
 let
+  prefix = if nvidia-offload-enabled then "offload " else "";
   uwsm = "uwsm app --";
-  browser = "offload firefox";
-  terminal = "offload ghostty";
+  browser = "${prefix}firefox";
+  terminal = "${prefix}ghostty";
   filemanager = "nemo";
   scripts = "~/.config/scripts";
 
