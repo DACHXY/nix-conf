@@ -46,6 +46,10 @@
     }@inputs:
     let
       system = "x86_64-linux";
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+        config.allowUnfree = true;
+      };
       nix-version = "25.05";
       username = "danny";
       git-config = {
@@ -67,6 +71,7 @@
               nix-version
               username
               git-config
+              pkgs
               ;
           };
         };
@@ -83,6 +88,7 @@
               nix-version
               username
               git-config
+              pkgs
               ;
           };
         };

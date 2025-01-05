@@ -24,6 +24,7 @@ in
     ./hardware-configuration.nix
     ./boot.nix
     ../../modules
+    ../../modules/cuda.nix
     (import ../../modules/nvidia.nix {
       nvidia-mode = nvidia-mode;
       intel-bus-id = intel-bus-id;

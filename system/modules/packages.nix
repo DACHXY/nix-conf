@@ -7,6 +7,9 @@
 {
   environment.systemPackages =
     (with pkgs; [
+      # Binary cache platform
+      cachix
+
       # gtk theme
       gtk3
       adwaita-icon-theme
@@ -90,7 +93,7 @@
       # Thumbnail
       ffmpegthumbnailer
     ])
-    ++ ([
+    ++ [
       inputs.ghostty.packages.${system}.default
-    ]);
+    ];
 }
