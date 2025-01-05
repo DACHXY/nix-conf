@@ -5,6 +5,7 @@
   system,
   hyprcursor-size,
   xcursor-size,
+  nvidia-offload-enabled,
   ...
 }:
 
@@ -31,8 +32,6 @@ let
     song_info=$(playerctl metadata --format '{{title}}  󰎆    {{artist}}')
     echo "$song_info"
   '';
-
-  hyprlockAccent = "lavender";
 in
 {
   home.packages = with pkgs; [
@@ -62,7 +61,7 @@ in
 
     settings =
       {
-        bind = import ./hypr/bind.nix { inherit mainMod; };
+        bind = import ./hypr/bind.nix { inherit mainMod nvidia-offload-enabled; };
         bindm = import ./hypr/bindm.nix { inherit mainMod; };
         monitor = import ./hypr/monitor.nix;
         plugin = plugins;

@@ -5,6 +5,7 @@
   nix-version,
   git-config,
   username,
+  config,
   ...
 }:
 
@@ -15,6 +16,7 @@ let
   # Get bus id with `lshw`
   intel-bus-id = "PCI:0:2:0";
   nvidia-bus-id = "PCI:1:0:0";
+  nvidia-offload-enabled = config.hardware.nvidia.prime.offload.enable;
 in
 {
   imports = [
@@ -50,6 +52,7 @@ in
         hyprcursor-size
         git-config
         username
+        nvidia-offload-enabled
         ;
     };
     users."${username}" = {
