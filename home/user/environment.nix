@@ -15,6 +15,7 @@
     WLR_DRM_DEVICES = "/dev/dri/card1";
     WLR_NO_HARDWARE_CURSORS = "1";
     CLUTTER_BACKEND = "wayland";
+    EGL_PLATFORM = "wayland";
     WLR_RENDERER = "vulkan";
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
