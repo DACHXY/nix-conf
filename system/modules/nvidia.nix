@@ -111,15 +111,4 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
     # make sure to put the iGPU first
     AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
   };
-
-  # NOTE: You need set "env XDG_CURRENT_DESKTOP, Hyprland" in hyprland config
-  # Otherwise you got XDG_CURRENT_DESKTOP="offload:Hyprland" which may cause problems
-  # Change display manager session file
-  programs.uwsm.waylandCompositors = lib.mkForce {
-    hyprland = {
-      prettyName = "Hyprland";
-      comment = "Hyprland compositor managed by UWSM";
-      binPath = "${offload}/bin/offload /run/current-system/sw/bin/Hyprland";
-    };
-  };
 }

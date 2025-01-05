@@ -1,8 +1,8 @@
 { mainMod }:
 let
   uwsm = "uwsm app --";
-  browser = "firefox";
-  terminal = "ghostty";
+  browser = "offload firefox";
+  terminal = "offload ghostty";
   filemanager = "nemo";
   scripts = "~/.config/scripts";
 
