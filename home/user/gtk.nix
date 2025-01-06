@@ -41,9 +41,27 @@ in
     };
   };
 
+  home.packages = with pkgs; [
+    libsForQt5.qtstyleplugin-kvantum
+    libsForQt5.lightly
+    libsForQt5.qt5ct
+    (catppuccin-kvantum.override {
+      accent = "lavender";
+      variant = "macchiato";
+    })
+  ];
+
   qt = {
     enable = true;
-    style.name = "adwaita";
-    style.package = pkgs.adwaita-qt6;
+    style.name = "kvantum-dark";
+    style.package = pkgs.catppuccin-kvantum;
+    platformTheme.name = "qtct";
+  };
+
+  xdg.configFile = {
+    "Kvantum/Catppuccin-Macchiato-Lavender/Catppuccin-Macchiato-Blue/Catppuccin-Macchiato-Blue.kvconfig".source =
+      "${pkgs.catppuccin-kvantum}/share/Kvantum/Catppuccin-Macchiato-Lavender/Cattpuccin-Macchiato-Blue.kvconfig";
+    "Kvantum/Catppuccin-Macchiato-Lavender/Catppuccin-Macchiato-Blue/Catppuccin-Macchiato-Blue.svg".source =
+      "${pkgs.catppuccin-kvantum}/share/Kvantum/Catppuccin-Macchiato-Lavender/Cattpuccin-Macchiato-Blue.svg";
   };
 }
