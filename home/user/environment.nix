@@ -4,7 +4,6 @@
     EDITOR = "nvim";
     TERMINAL = "ghostty";
     NIXOS_OZONE_WL = "1";
-    QT_QPA_PLATFORMTHEME = "gtk3";
     QT_SCALE_FACTOR = "1";
     MOZ_ENABLE_WAYLAND = "1";
     SDL_VIDEODRIVER = "wayland";
@@ -29,6 +28,5 @@
     XDG_DATA_DIRS = "\${XDG_DATA_DIRS}:/usr/share:/var/lib/flatpak/exports/share:\${HOME}/.local/share/flatpak/exports/share";
     ELECTRON_OZONE_PLATFORM_HINT = "auto";
     GDK_BACKEND = "wayland";
-
   };
 }
