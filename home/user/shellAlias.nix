@@ -1,11 +1,13 @@
 {
-  ls = "exa";
+  ls = "exa --icons";
+  lp = "exa"; # Pure output
   cat = "bat";
   y = "yazi";
   g = "git";
   t = "tmux";
   vim = "nvim";
   vi = "nvim";
+  v = "nvim";
 
   # Nixos
   rebuild = "sudo nixos-rebuild switch --flake /etc/nixos";
