@@ -46,10 +46,15 @@
 
 > NOTE: If import `wireguard.nix` without config file, the Build will fail.
 
----
-
 ## 🧊 CUDA
-see [Python Cuda Flake](https://github.com/DACHXY/python-cuda-flake)
+
+See [Python Cuda Flake](https://github.com/DACHXY/python-cuda-flake)
+
+## 🧱 Wallpaper Engine
+
+- [Linux Wallpaper Engine](https://github.com/Almamu/linux-wallpaperengine)
+
+---
 
 ## 💿️ Installation
 
