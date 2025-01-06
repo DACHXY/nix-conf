@@ -1,3 +1,5 @@
+local util = require("lspconfig.util")
+
 require("lspconfig").lua_ls.setup({
   on_init = function(client)
     local path = client.workspace_folders[1].name
@@ -46,6 +48,12 @@ return {
         nil_ls = false,
         nixd = {
           cmd = { "nixd" },
+          filetypes = { "nix" },
+          single_file_support = true,
+          root_dir = function(fname)
+            return util.root_pattern("flake.nix")(fname)
+              or vim.fs.dirname(vim.fs.find(".git", { path = fname, upward = true })[1])
+          end,
           settings = {
             nixd = {
               nixpkgs = {
@@ -69,6 +77,10 @@ return {
           cmd = { "nginx-language-server" },
           filetypes = { "nginx" },
           rootPatterns = { "nginx.conf", ".git" },
+        },
+        jsonls = {
+          cmd = { "vscode-json-languageserver", "--stdio" },
+          filetypes = { "json" },
         },
       },
     },

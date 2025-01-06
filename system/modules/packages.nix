@@ -21,6 +21,7 @@
       nemo
 
       # Utils
+      jq
       bat
       btop
       eza

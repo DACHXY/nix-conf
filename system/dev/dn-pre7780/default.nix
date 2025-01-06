@@ -42,6 +42,7 @@ in
   networking.hostName = lib.mkForce "dn-pre7780";
 
   system.stateVersion = nix-version;
+  services.wallpaperEngine.enable = lib.mkForce false;
 
   home-manager = {
     backupFileExtension = "hm-backup";
