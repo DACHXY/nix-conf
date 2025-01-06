@@ -33,6 +33,9 @@ in
     ../../modules/gaming.nix
     ../../modules/wireguard.nix
     ../../modules/dn-ca.nix
+    (import ../../modules/wallpaper-engine.nix {
+      offload = nvidia-offload-enabled;
+    })
   ];
 
   # Overrides

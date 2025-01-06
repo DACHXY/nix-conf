@@ -95,5 +95,6 @@
     ])
     ++ [
       inputs.ghostty.packages.${system}.default
+      inputs.yazi.packages.${system}.default
     ];
 }

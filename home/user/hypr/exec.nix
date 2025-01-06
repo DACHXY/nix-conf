@@ -6,6 +6,7 @@
 }:
 let
   swayncScript = pkgs.pkgs.writeShellScriptBin "swaync-start" ''
+    #!/usr/bin/env bash
     XDG_CONFIG_HOME="$HOME/.dummy" # Prevent swaync use default gtk theme
     swaync -c "$HOME/.config/swaync/config.json" -s "$HOME/.config/swaync/style.css"
   '';

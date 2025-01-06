@@ -52,6 +52,7 @@ in
     ruff-lsp
     pyright
     hadolint
+    yaml-language-server
   ];
 
   programs.neovim = {
