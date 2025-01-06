@@ -24,5 +24,6 @@
     ./gc.nix
     ./polkit.nix
     ./lsp.nix
+    ./tmux.nix
   ];
 }

@@ -61,7 +61,7 @@
       "nvim . (.*)": "  $1",
       "\\(\\d+\\) Discord (.*)": "  $1",
       "(.*) - YouTube — Mozilla Firefox": "  $1",
-      "(.*)\\pdf — Mozilla Firefox": "  $1",
+      "(.*)\\.pdf — Mozilla Firefox": "  $1",
       "(.*) — Mozilla Firefox": "  $1",
       "(.*) - VLC media player": "  $1",
       "(.*) - YouTube Music — Mozilla Firefox": "󰎆  $1",
