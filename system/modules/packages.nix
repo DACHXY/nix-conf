@@ -47,9 +47,6 @@
       gh # Github cli tool
       gnumake
       lm_sensors
-      libsForQt5.qt5.qtquickcontrols2
-      libsForQt5.qt5.qtgraphicaleffects
-      libsForQt5.qt5.qtsvg
       openssl
       openssl.dev
       pkg-config # Include Lib
@@ -93,6 +90,15 @@
 
       # Thumbnail
       ffmpegthumbnailer
+
+      # SDDM
+      libsForQt5.qt5.qtmultimedia
+      libsForQt5.qt5.qtquickcontrols2
+      libsForQt5.qt5.qtgraphicaleffects
+      libsForQt5.qt5.qtsvg
+      pkgs.gst_all_1.gst-libav
+      pkgs.gst_all_1.gstreamer
+      pkgs.gst_all_1.gst-plugins-good
     ])
     ++ [
       inputs.ghostty.packages.${system}.default

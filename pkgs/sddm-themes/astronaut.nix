@@ -1,7 +1,7 @@
 { pkgs }:
 
 pkgs.stdenv.mkDerivation {
-  name = "sddm-theme";
+  name = "astronaut-sddm-theme";
   src = pkgs.fetchFromGitHub {
     owner = "gpskwlkr";
     repo = "sddm-astronaut-theme";
