@@ -13,5 +13,6 @@
     marksman
     nginx-language-server
     nodePackages_latest.vscode-json-languageserver
+    bash-language-server
   ];
 }

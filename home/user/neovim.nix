@@ -53,6 +53,7 @@ in
     pyright
     hadolint
     yaml-language-server
+    nodePackages_latest.typescript
   ];
 
   programs.neovim = {
