@@ -82,6 +82,14 @@ return {
           cmd = { "vscode-json-languageserver", "--stdio" },
           filetypes = { "json" },
         },
+        vuels = {
+          cmd = { "vue-language-server", "--stdio" },
+          filetypes = { "vue" },
+        },
+        ts_ls = {
+          cmd = { "typescript-language-server", "--stdio" },
+          filetypes = { "vue", "ts", "tsx" },
+        },
       },
     },
     setup = {},
