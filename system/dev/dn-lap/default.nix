@@ -5,12 +5,14 @@
   nix-version,
   git-config,
   username,
+  config,
   ...
 }:
 
 let
   hyprcursor-size = "32";
   xcursor-size = "24";
+  nvidia-offload-enabled = config.hardware.nvidia.prime.offload.enable;
 in
 {
   imports = [
@@ -39,6 +41,7 @@ in
         hyprcursor-size
         git-config
         username
+        nvidia-offload-enabled
         ;
     };
     users."${username}" = {

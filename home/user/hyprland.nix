@@ -5,7 +5,7 @@
   system,
   hyprcursor-size,
   xcursor-size,
-  nvidia-offload-enabled,
+  nvidia-offload-enabled ? false,
   ...
 }: let
   terminal = "ghostty";
