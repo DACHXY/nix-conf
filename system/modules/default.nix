@@ -1,6 +1,4 @@
-{ ... }:
-
-{
+{...}: {
   imports = [
     ./plymouth.nix # Boot splash
     ./fonts.nix

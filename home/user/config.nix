@@ -1,8 +1,6 @@
-{ ... }:
 let
   configDir = ../config;
-in
-{
+in {
   home.file = {
     ".config/wallpapers".source = "${configDir}/wallpapers";
     ".config/kitty".source = "${configDir}/kitty";

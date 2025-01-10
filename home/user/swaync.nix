@@ -1,7 +1,5 @@
 # config from https://github.com/shub39/dotfiles
-{ ... }:
-
-{
+{...}: {
   services.swaync = {
     enable = true;
 
@@ -181,7 +179,7 @@
       .widget-mpris-player {
         padding: 5px 5px;
         margin: 10px;
-      }    
+      }
     '';
   };
 }

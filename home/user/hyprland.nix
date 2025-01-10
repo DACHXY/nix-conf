@@ -7,9 +7,7 @@
   xcursor-size,
   nvidia-offload-enabled,
   ...
-}:
-
-let
+}: let
   terminal = "ghostty";
   startScript = import ./hypr/exec.nix {
     inherit
@@ -32,8 +30,7 @@ let
     song_info=$(playerctl metadata --format '{{title}}  󰎆    {{artist}}')
     echo "$song_info"
   '';
-in
-{
+in {
   home.packages = with pkgs; [
     hyprpaper
     hyprcursor
@@ -55,14 +52,14 @@ in
         hyprexpo
         hyprwinwrap
       ])
-      ++ ([
+      ++ [
         inputs.hyprgrass.packages.${system}.default
-      ]);
+      ];
 
     settings =
       {
-        bind = import ./hypr/bind.nix { inherit mainMod nvidia-offload-enabled; };
-        bindm = import ./hypr/bindm.nix { inherit mainMod; };
+        bind = import ./hypr/bind.nix {inherit mainMod nvidia-offload-enabled;};
+        bindm = import ./hypr/bindm.nix {inherit mainMod;};
         monitor = import ./hypr/monitor.nix;
         plugin = plugins;
         exec-once = ''${startScript}'';
@@ -83,8 +80,8 @@ in
   services.hyprpaper = {
     enable = true;
     settings = {
-      preload = [ "~/.config/wallpapers/wall.png" ];
-      wallpaper = [ ", ~/.config/wallpapers/wall.png" ];
+      preload = ["~/.config/wallpapers/wall.png"];
+      wallpaper = [", ~/.config/wallpapers/wall.png"];
       splash = false;
       ipc = "on";
     };
@@ -105,7 +102,7 @@ in
         # CURRENT SONG
         label {
             monitor =
-            text = cmd[update:1000] echo "$(${getCurrentSong}/bin/getSong)" 
+            text = cmd[update:1000] echo "$(${getCurrentSong}/bin/getSong)"
             color = rgba(235, 219, 178, .75)
             font_size = 16
             font_family = $font, $font2
