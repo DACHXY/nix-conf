@@ -1,5 +1,4 @@
-{ inputs, ... }:
-{
+{inputs, ...}: {
   imports = [
     ./git.nix
     ./gtk.nix
@@ -11,15 +10,15 @@
     ./virtualization.nix
     ./hyprland.nix
     ./swaync.nix
-    ./neovim.nix
     ./desktop.nix
+    ./neovim.nix
     inputs.hyprland.homeManagerModules.default
   ];
 
   nixpkgs = {
     config = {
       allowUnfree = true;
-      allowUnfreePredicate = (_: true);
+      allowUnfreePredicate = _: true;
 
       permittedInsecurePackages = [
         "electron-25.9.0" # Obsidian

@@ -20,6 +20,7 @@ in
     ../../modules
     ../../modules/wireguard.nix
     ../../modules/dn-ca.nix
+    ../../modules/gaming.nix
   ];
 
   # Overrides

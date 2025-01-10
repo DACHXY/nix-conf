@@ -1,10 +1,12 @@
-{ pkgs, xcursor-size, ... }:
-let
+{
+  pkgs,
+  xcursor-size,
+  ...
+}: let
   cursorName = "catppuccin-macchiato-lavender-cursors";
   themeName = "catppuccin-macchiato-lavender-compact";
   cursorSize = pkgs.lib.strings.toInt xcursor-size;
-in
-{
+in {
   gtk = {
     enable = true;
 
@@ -17,7 +19,7 @@ in
     theme = {
       name = themeName;
       package = pkgs.catppuccin-gtk.override {
-        accents = [ "lavender" ];
+        accents = ["lavender"];
         size = "compact";
         variant = "macchiato";
       };
@@ -59,9 +61,7 @@ in
   };
 
   xdg.configFile = {
-    "Kvantum/Catppuccin-Macchiato-Lavender/Catppuccin-Macchiato-Blue/Catppuccin-Macchiato-Blue.kvconfig".source =
-      "${pkgs.catppuccin-kvantum}/share/Kvantum/Catppuccin-Macchiato-Lavender/Cattpuccin-Macchiato-Blue.kvconfig";
-    "Kvantum/Catppuccin-Macchiato-Lavender/Catppuccin-Macchiato-Blue/Catppuccin-Macchiato-Blue.svg".source =
-      "${pkgs.catppuccin-kvantum}/share/Kvantum/Catppuccin-Macchiato-Lavender/Cattpuccin-Macchiato-Blue.svg";
+    "Kvantum/Catppuccin-Macchiato-Lavender/Catppuccin-Macchiato-Blue/Catppuccin-Macchiato-Blue.kvconfig".source = "${pkgs.catppuccin-kvantum}/share/Kvantum/Catppuccin-Macchiato-Lavender/Cattpuccin-Macchiato-Blue.kvconfig";
+    "Kvantum/Catppuccin-Macchiato-Lavender/Catppuccin-Macchiato-Blue/Catppuccin-Macchiato-Blue.svg".source = "${pkgs.catppuccin-kvantum}/share/Kvantum/Catppuccin-Macchiato-Lavender/Cattpuccin-Macchiato-Blue.svg";
   };
 }

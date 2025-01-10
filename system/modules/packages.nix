@@ -7,6 +7,8 @@
 {
   environment.systemPackages =
     (with pkgs; [
+      neovim
+
       # Binary cache platform
       cachix
 
@@ -60,7 +62,7 @@
       gcc
 
       # Editor
-      neovim
+      vim
       stylua
       lazygit
       luajitPackages.lua

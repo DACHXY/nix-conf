@@ -37,6 +37,7 @@
 
     # Steam
     "workspace: 5 silent, class: ^(steam)$"
+    "workspace: unset, class: ^(steam)$, floating: 1"
 
     # Line
     "workspace: 2, initialTitle: ^(LINE)$"

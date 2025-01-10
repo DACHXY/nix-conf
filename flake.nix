@@ -36,12 +36,18 @@
       url = "github:KZDKM/Hyprspace";
       inputs.hyprland.follows = "hyprland";
     };
+
+    nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     {
       nixpkgs,
       nix-index-database,
+      nvf,
       ...
     }@inputs:
     let
@@ -61,6 +67,7 @@
       nixosConfigurations = {
         dn-pre7780 = nixpkgs.lib.nixosSystem {
           modules = [
+	    nvf.nixosModules.default
             nix-index-database.nixosModules.nix-index
             ./system/dev/dn-pre7780
           ];
