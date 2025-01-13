@@ -19,7 +19,7 @@ in
 
     firefox = {
       enable = true;
-
+      package = (pkgs.wrapFirefox (pkgs.firefox-unwrapped.override { pipewireSupport = true; }) { });
       languagePacks = [
         "en-US"
         "zh-TW"
@@ -50,6 +50,8 @@ in
           "font.name.monospace.ja" = "Noto Sans Mono CJK JP";
           "font.name.monospace.x-western" = "CaskaydiaCove Nerd Font Mono";
           "font.name.monospace.zh-TW" = "Noto Sans Mono CJK TC";
+          # Disable Ctrl+Q
+          "browser.quitShortcut.disabled" = true;
         };
 
       };

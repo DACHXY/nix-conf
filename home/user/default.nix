@@ -1,4 +1,5 @@
-{inputs, ...}: {
+{ inputs, ... }:
+{
   imports = [
     ./git.nix
     ./gtk.nix
@@ -10,8 +11,8 @@
     ./virtualization.nix
     ./hyprland.nix
     ./swaync.nix
-    ./desktop.nix
     ./neovim.nix
+    ./bin.nix
     inputs.hyprland.homeManagerModules.default
   ];
 

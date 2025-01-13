@@ -15,5 +15,8 @@
 
   services.playerctld.enable = true;
 
-  environment.systemPackages = with pkgs; [ pavucontrol playerctl ];
+  environment.systemPackages = with pkgs; [
+    pavucontrol
+    playerctl
+  ];
 }

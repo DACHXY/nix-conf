@@ -10,10 +10,6 @@ let
   pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${system};
 in
 {
-  nixpkgs.config.packageOverrides = pkgs: {
-    intel-vaapi-driver = pkgs.intel-vaapi-driver.override { enableHybridCodec = true; };
-  };
-
   hardware = {
     bluetooth = {
       enable = true;

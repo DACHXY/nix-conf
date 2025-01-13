@@ -1,5 +1,5 @@
 {
-  nvidia-mode ? "sync",
+  nvidia-mode ? "offload",
   nvidia-bus-id,
   intel-bus-id,
   ...
@@ -10,7 +10,6 @@ let
     "sync"
     "rsync"
   ];
-
 in
 {
   config,
@@ -54,7 +53,7 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
 
     nvidia.nvidiaSettings = true;
     nvidia.dynamicBoost.enable = true;
-    nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
+    nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
 
     nvidia.prime =
       (
@@ -95,7 +94,7 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
   environment.variables = {
     # GPU
     LIBVA_DRIVER_NAME = "nvidia";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    # __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     NVD_BACKEND = "direct";
     MOZ_DISABLE_RDD_SANDBOX = 1;
     OGL_DEDICATED_HW_STATE_PER_CONTEXT = "ENABLE_ROBUST";
