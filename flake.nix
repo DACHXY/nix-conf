@@ -2,7 +2,11 @@
   description = "DACHXY NixOS with hyprland";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs = {
+      url = "github:nixos/nixpkgs/nixos-unstable";
+    };
+
+    pipewire-screenaudio.url = "github:IceDBorn/pipewire-screenaudio";
 
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -67,7 +71,7 @@
       nixosConfigurations = {
         dn-pre7780 = nixpkgs.lib.nixosSystem {
           modules = [
-	    nvf.nixosModules.default
+            nvf.nixosModules.default
             nix-index-database.nixosModules.nix-index
             ./system/dev/dn-pre7780
           ];

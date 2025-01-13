@@ -11,7 +11,6 @@ in
   environment.variables = {
     TMUXINATOR_CONFIG = "/etc/tmuxinator";
   };
-
   environment.etc = {
     "tmuxinator/tmux.yaml" = {
       source = ../../home/config/tmux.yaml;
@@ -91,6 +90,9 @@ in
         bind-key -T copy-mode-vi 'y' send -X copy-selection
 
         unbind -T copy-mode-vi MouseDragEnd1Pane
+
+        unbind f 
+        bind-key -r f run-shell "tmux neww tmux-sessionizer"
 
         set -g @resurrect-capture-pane-contents 'on'
         set -g @continuum-restore 'on'

@@ -7,7 +7,8 @@
   username,
   config,
   ...
-}: let
+}:
+let
   hyprcursor-size = "32";
   xcursor-size = "24";
   nvidia-mode = "offload";
@@ -15,7 +16,8 @@
   intel-bus-id = "PCI:0:2:0";
   nvidia-bus-id = "PCI:1:0:0";
   nvidia-offload-enabled = config.hardware.nvidia.prime.offload.enable;
-in {
+in
+{
   imports = [
     inputs.home-manager.nixosModules.default
     ./hardware-configuration.nix

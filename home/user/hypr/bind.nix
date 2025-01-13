@@ -6,6 +6,10 @@ let
   terminal = "${prefix}ghostty";
   filemanager = "nemo";
   scripts = "~/.config/scripts";
+  flatEmoji = "it.mijorus.smile";
+
+  # freezeShot = "--freeze";
+  freezeShot = "";
 
   resizeStep = builtins.toString 20;
   brightnessStep = builtins.toString 10;
@@ -25,17 +29,17 @@ in
   ''${mainMod}, P, pseudo, # dwindle''
   ''${mainMod}, S, togglesplit, # dwindle''
   ''CTRL ${mainMod} SHIFT, L, exec, hyprlock''
-  ''${mainMod} SHIFT, s, exec, hyprshot -m region --clipboard-only --freeze''
-  ''CTRL SHIFT, s, exec, hyprshot -m window --clipboard-only --freeze''
-  ''CTRL SHIFT ${mainMod}, s, exec, hyprshot -m output --clipboard-only --freeze''
-  ''${mainMod}, PERIOD, exec, flatpak run it.mijorus.smile ''
+  ''${mainMod} SHIFT, s, exec, hyprshot -m region --clipboard-only ${freezeShot}''
+  ''CTRL SHIFT, s, exec, hyprshot -m window --clipboard-only ${freezeShot}''
+  ''CTRL SHIFT ${mainMod}, s, exec, hyprshot -m output --clipboard-only ${freezeShot}''
+  ''${mainMod}, PERIOD, exec, flatpak run ${flatEmoji}''
   ''${mainMod}, X, exec, sleep 0.1 && swaync-client -t -sw''
   ''${mainMod} SHIFT, C, centerwindow''
   '',F11, fullscreen''
   ''${mainMod}, C, exec, code''
 
   # Color Picker
-  ''${mainMod} SHIFT, P, exec, hyprpicker -f hex -a -z -r''
+  ''${mainMod} SHIFT, P, exec, hyprpicker -f hex -a -z''
 
   # Cycle windows
   ''ALT, TAB, cyclenext''
@@ -73,6 +77,7 @@ in
   # ==== Plugins ==== #
   # Overview
   ''${mainMod}, o, hyprexpo:expo, toggle''
+  ''${mainMod}, TAB, hyprexpo:expo, toggle''
 ]
 ++ (
   # workspaces

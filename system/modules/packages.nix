@@ -16,13 +16,11 @@
       gtk3
       adwaita-icon-theme
 
-      # Browser
-      firefox
-
       # File Manager
       nemo
 
       # Utils
+      upower
       jq
       bat
       btop

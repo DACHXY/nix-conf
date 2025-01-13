@@ -2,7 +2,8 @@
   pkgs,
   inputs,
   ...
-}: {
+}:
+{
   programs.hyprland = {
     enable = true;
     withUWSM = true;
@@ -12,11 +13,9 @@
 
   xdg.portal = {
     enable = true;
-    wlr.enable = true;
     xdgOpenUsePortal = true;
     extraPortals = [
       pkgs.xdg-desktop-portal-gtk
-      pkgs.xdg-desktop-portal-wlr
     ];
   };
 
@@ -52,7 +51,7 @@
         "flakes"
       ];
       auto-optimise-store = true;
-      substituters = ["https://hyprland.cachix.org"];
+      substituters = [ "https://hyprland.cachix.org" ];
 
       trusted-public-keys = [
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="

@@ -2,8 +2,9 @@
   nix-version,
   username,
   ...
-}: {
-  imports = [./user];
+}:
+{
+  imports = [ ./user ];
   home = {
     inherit username;
     homeDirectory = "/home/${username}";
