@@ -50,6 +50,7 @@ tooltip label {
 #temperature,
 #workspaces,
 #custom-os,
+#battery,
 #custom-swaync {
   background: alpha(#fff, 0.05);
   border-radius: 6px;
@@ -74,7 +75,8 @@ tooltip label {
 #cpu,
 #memory
 #temperature,
-#network {
+#network,
+#battery {
   margin-left: 4px;
 }
 

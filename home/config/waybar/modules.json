@@ -175,11 +175,11 @@
       "warning": 30,
       "critical": 15
     },
-    "format": "<span color='#ebdbb2'>{capacity}%</span> {icon}",
+    "format": "{icon} {capacity}%",
     "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
-    "format-charging": "<span color='#ebdbb2'>{capacity}%</span> 󰂄",
-    "format-plugged": "<span color='#ebdbb2'>{capacity}%</span> 󰂄",
-    "format-alt": "<span color='#ebdbb2'>{time}</span> {icon}"
+    "format-charging": "󰂄 {capacity}%",
+    "format-plugged": "󰂄 {capacity}%",
+    "format-alt": "{icon} {time}"
   },
 
   "network" : {
