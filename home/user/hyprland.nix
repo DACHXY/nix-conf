@@ -31,11 +31,22 @@ let
     song_info=$(playerctl metadata --format '{{title}}  󰎆    {{artist}}')
     echo "$song_info"
   '';
+
+  ewwWayland = pkgs.eww.overrideAttrs (oldAttrs: {
+    cargoBuildFlags = [
+      "--no-default-features"
+      "--features=wayland"
+      "--bin"
+      "eww"
+    ];
+  });
+
 in
 {
   home.packages = with pkgs; [
     hyprpaper
     hyprcursor
+    ewwWayland
   ];
 
   systemd.user.targets.hyprland-session.Unit.Wants = [

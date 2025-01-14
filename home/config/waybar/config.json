@@ -6,8 +6,6 @@
     "exclusive": true,
     "passthrough": false,
     "position": "top",
-    "height": 40,
-    "spacing": 3,
     "fixed-center": true,
     "ipc": true,
     "margin-top": 0,
@@ -19,7 +17,13 @@
 
     "modules-center": ["hyprland/window"],
 
-    "modules-right": ["cpu", "temperature", "wlr/taskbar", "pulseaudio"]
+    "modules-right": [
+      "wlr/taskbar", 
+      "temperature",
+      "cpu",
+      "memory",
+      "pulseaudio"
+    ]
   },
   {
     "output": "eDP-1",
@@ -28,7 +32,6 @@
     "exclusive": true,
     "passthrough": false,
     "position": "top",
-    "spacing": 3,
     "fixed-center": true,
     "ipc": true,
     "margin-top": 0,
@@ -36,18 +39,18 @@
     "margin-right": 0,
     "margin-bottom": 0,
 
-    "modules-left": ["hyprland/workspaces", "clock", "custom/cava", "mpris"],
+    "modules-left": ["custom/os", "hyprland/workspaces", "clock", "custom/cava", "mpris"],
 
     "modules-center": ["hyprland/window"],
 
     "modules-right": [
       "wlr/taskbar",
-      "cpu",
       "temperature",
+      "cpu",
       "memory",
-      "custom/swaync",
       "pulseaudio",
-      "battery"
+      "battery",
+      "custom/swaync"
     ]
   },
   {
@@ -57,7 +60,6 @@
     "exclusive": true,
     "passthrough": false,
     "position": "top",
-    "spacing": 3,
     "fixed-center": true,
     "ipc": true,
     "margin-top": 0,
@@ -65,17 +67,17 @@
     "margin-right": 0,
     "margin-bottom": 0,
 
-    "modules-left": ["hyprland/workspaces", "clock", "custom/cava", "mpris"],
+    "modules-left": ["custom/os", "hyprland/workspaces", "clock", "custom/cava", "mpris"],
 
     "modules-center": ["hyprland/window"],
 
     "modules-right": [
       "wlr/taskbar",
+      "network",
       "cpu",
-      "temperature",
       "memory",
-      "custom/swaync",
-      "pulseaudio"
+      "pulseaudio",
+      "custom/swaync"
     ]
   }
 ]

@@ -2,7 +2,8 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   vesktop = pkgs.vesktop.overrideAttrs (oldAttrs: {
     desktopItems = lib.optional pkgs.stdenv.hostPlatform.isLinux (
       (lib.head oldAttrs.desktopItems).override {
@@ -11,15 +12,18 @@
       }
     );
   });
-in {
+in
+{
   home.packages =
     (with pkgs; [
       # Dev stuff
       gcc
       go
       nodePackages.pnpm
-      (python3.withPackages
-        (python-pkgs: [python-pkgs.pip python-pkgs.requests]))
+      (python3.withPackages (python-pkgs: [
+        python-pkgs.pip
+        python-pkgs.requests
+      ]))
       rustup
       pkgsCross.mingwW64.stdenv.cc
       pkgsCross.mingwW64.windows.pthreads
@@ -44,6 +48,7 @@ in {
       catppuccin-gtk
       cava
       papirus-folders
+      inkscape
     ])
     ++ [
       vesktop # discord

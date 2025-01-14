@@ -14,6 +14,7 @@
     nginx-language-server
     nodePackages_latest.vscode-json-languageserver
     bash-language-server
+    tailwindcss-language-server
     gopls
   ];
 }

@@ -14,6 +14,7 @@
     ./neovim.nix
     ./bin.nix
     ./desktops.nix
+    ./direnv.nix
     inputs.hyprland.homeManagerModules.default
   ];
 

@@ -47,7 +47,6 @@ in
     prettierd
     javascript-typescript-langserver
     marksman
-    tailwindcss-language-server
     ruff
     ruff-lsp
     pyright
