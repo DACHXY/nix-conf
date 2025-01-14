@@ -104,14 +104,6 @@ tooltip label {
   padding-right: 18px;
 }
 
-#battery {
-  border-radius: 10px;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  padding-left: 6px;
-  padding-right: 6px;
-}
-
 #window {
   color: @main;
   padding-top: 3px;
