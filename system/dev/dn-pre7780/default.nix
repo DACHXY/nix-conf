@@ -62,6 +62,7 @@ in
     users."${username}" = {
       imports = [
         ../../../home
+        ../../../home/user/davinci.nix
       ];
     };
   };
