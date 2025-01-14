@@ -18,16 +18,16 @@ let
 
     dconf write /org/gnome/desktop/interface/cursor-size ${xcursor-size} &
 
-    uwsm app -- ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
-    uwsm app -- ${swayncScript}/bin/swaync-start &
+    ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
+    ${swayncScript}/bin/swaync-start &
     dbus-update-activation-environment --systemd --all &
     systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
-    uwsm app -- hyprpaper &
-    uwsm app -- waybar -c ~/.config/waybar/config.json -s ~/.config/waybar/style.css &
+    hyprpaper &
+    waybar -c ~/.config/waybar/config.json -s ~/.config/waybar/style.css &
     systemctl --user enable --now hypridle.service &
-    uwsm fcitx5 -rd &
-    uwsm app -- fcitx5-remote -r &
-    uwsm app -- hyprsunset -t 3000k
+    fcitx5 -rd &
+    fcitx5-remote -r &
+    hyprsunset -t 3000k
   '';
 in
 ''${startupScript}/bin/start''

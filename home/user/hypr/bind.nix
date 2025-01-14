@@ -1,7 +1,6 @@
 { mainMod, nvidia-offload-enabled }:
 let
   prefix = if nvidia-offload-enabled then "offload " else "";
-  uwsm = "uwsm app --";
   browser = "${prefix}firefox";
   terminal = "${prefix}ghostty";
   filemanager = "nemo";
@@ -25,7 +24,7 @@ in
   ''${mainMod}, E, exec, ${filemanager}''
   ''${mainMod}, V, togglefloating, ''
   ''ALT, SPACE, exec, rofi -config ~/.config/rofi/apps.rasi -show drun''
-  ''${mainMod} ALT, W, exec, ${uwsm} ${scripts}/waybarRestart.sh''
+  ''${mainMod} ALT, W, exec, ${scripts}/waybarRestart.sh''
   ''${mainMod}, P, pseudo, # dwindle''
   ''${mainMod}, S, togglesplit, # dwindle''
   ''CTRL ${mainMod} SHIFT, L, exec, hyprlock''

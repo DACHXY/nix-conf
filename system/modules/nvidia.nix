@@ -101,6 +101,6 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
     INTEL_GPU_MIN_FREQ_ON_AC = "500";
     # If multiple monitors are connected to dGPU & iGPU,
     # make sure to put the iGPU first
-    AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
+    # AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
   };
 }
