@@ -13,6 +13,7 @@
     ./swaync.nix
     ./neovim.nix
     ./bin.nix
+    ./desktops.nix
     inputs.hyprland.homeManagerModules.default
   ];
 
