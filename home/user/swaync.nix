@@ -1,5 +1,6 @@
 # config from https://github.com/shub39/dotfiles
-{...}: {
+{ ... }:
+{
   services.swaync = {
     enable = true;
 

@@ -14,29 +14,16 @@
       "4": []
     },
     "format-icons": {
-      "active": "👁️‍🗨️",
-      "default": "🗨️"
+      "active": "",
+      "default": ""
     }
   },
 
   "clock": {
-    "interval": 1,
-    "format": " 🕑  {:%H:%M} ",
-    "format-alt": " 🕑  {:%H:%M  🗓️   %Y, %d %B, %A} ",
-    "tooltip-format": "<tt><small>{calendar}</small></tt>",
-    "calendar": {
-      "mode": "year",
-      "mode-mon-col": 3,
-      "weeks-pos": "right",
-      "on-scroll": 1,
-      "format": {
-        "days": "<span color='#ebdbb2'><b>{}</b></span>",
-        "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
-        "weekdays": "<span color='#ebdbb2'><b>{}</b></span>",
-        "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
-      }
-    }
+    "format": "<b>󰥔 {:%H:%M 󰃭 %d/%m}</b>",
+    "tooltip-format": "{:%A %d %B %Y}"
   },
+
   "actions": {
     "on-click-right": "mode",
     "on-click-forward": "tz_up",
@@ -45,66 +32,72 @@
     "on-scroll-down": "shift_down"
   },
 
+  "custom/os": {
+    "format": "󱄅",
+    "on-click": "wlogout --protocol layer-shell"
+  },
+
   "cpu": {
-    "format": " {usage}% 🧠 ",
-    "interval": 1,
-    "on-click-right": "kitty -c ~/.config/kitty/kitty.conf --title btop sh -c 'btop'"
+    "format": " {usage}%",
+    "max-length": 20,
+    "interval": 5,
+    "on-click-right": "ghostty -e btop"
   },
 
   "hyprland/window": {
     "format": "{}",
-    "max-length": 60,
+    "max-length": 40,
     "separate-outputs": true,
     "offscreen-css": true,
     "offscreen-css-text": "(inactive)",
     "rewrite": {
       "nvim . (.*)": "  $1",
+      "(.*) - Visual Studio Code": "  $1",
       "\\(\\d+\\) Discord (.*)": "  $1",
       "(.*) - YouTube — Mozilla Firefox": "  $1",
-      "(.*)\\.pdf — Mozilla Firefox": "  $1",
+      "  (.*)\\.pdf": "  $1",
       "(.*) — Mozilla Firefox": "  $1",
       "(.*) - VLC media player": "  $1",
-      "(.*) - YouTube Music — Mozilla Firefox": "󰎆  $1",
+      "(.*) - YouTube Music — Mozilla Firefox": "󰎆  $1"
     }
   },
 
   "memory": {
-    "interval": 10,
-    "format": " {percentage}% 📊 ",
+    "interval": 30,
+    "format": " {used:0.1f}GB/{total:0.1f}G",
     "format-alt-click": "click",
     "tooltip": true,
     "tooltip-format": "{used:0.1f}GB/{total:0.1f}G",
-    "on-click-right": "kitty -c ~/.config/kitty/kitty.conf --title btop sh -c 'btop'"
+    "on-click-right": "ghostty -e btop"
   },
 
   "mpris": {
     "interval": 10,
-    "format": " {title} ",
-    "format-paused": " {title} {status_icon} ",
+    "format": " {status_icon} <i>{title} | {artist} </i>",
+    "format-paused": " {status_icon} <i>{title} | {artist} </i>",
     "on-click": "playerctl play-pause",
     "on-click-right": "playerctl next",
     "scroll-step": 5.0,
     "smooth-scrolling-threshold": 1,
     "status-icons": {
       "paused": "󰐎",
-      "playing": "🎶",
+      "playing": "󰎇",
       "stopped": ""
     },
     "max-length": 30
   },
 
   "pulseaudio": {
-    "format": " {volume}% {icon} ",
-    "format-bluetooth": " 󰂰 {volume}% {icon} ",
-    "format-muted": "🔇",
+    "format": "{icon} {volume}%",
+    "format-bluetooth": "󰂰 {volume}%",
+    "format-muted": " Muted",
     "format-icons": {
-      "headphone": "🔈",
-      "hands-free": "🔈",
-      "headset": "🔈",
-      "phone": "🔈",
-      "portable": "🔈",
-      "car": "🔈",
-      "default": ["🔈", "🔈", "🔈", "🔈"],
+      "default": [
+        "",
+        "",
+        " ",
+        " "
+      ],
       "ignored-sinks": ["Easy Effects Sink"]
     },
     "scroll-step": 5.0,
@@ -121,24 +114,24 @@
       "/sys/class/thermal/thermal_zone0/temp"
     ],
     "critical-threshold": 82,
-    "format-critical": "{temperatureC}°C {icon}",
-    "format": " {temperatureC}°C {icon} ",
-    "format-icons": ["🔥"],
+    "format-critical": " {temperatureC}°C",
+    "format": "{icon} {temperatureC}°C",
+    "format-icons": ["", "", "", ""],
     "on-click-right": "kitty -c ~/.config/kitty/kitty.conf --title btop sh -c 'btop'"
   },
 
   "custom/swaync": {
     "tooltip": true,
-    "format": " {} {icon} ",
+    "format": "{icon}",
     "format-icons": {
-      "notification": "🔔<span foreground='red'><sup></sup></span>",
-      "none": "🔔",
-      "dnd-notification": "🔕<span foreground='red'><sup></sup></span>",
-      "dnd-none": "🔕",
-      "inhibited-notification": "🔔<span foreground='red'><sup></sup></span>",
-      "inhibited-none": "🔔",
-      "dnd-inhibited-notification": "🔕<span foreground='red'><sup></sup></span>",
-      "dnd-inhibited-none": "🔕"
+      "notification": "󱅫",
+      "none": "󰂚",
+      "dnd-notification": "󱏧<span foreground='red'><sup></sup></span>",
+      "dnd-none": "󱏧",
+      "inhibited-notification": "󰂚<span foreground='red'><sup></sup></span>",
+      "inhibited-none": "󰂚",
+      "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+      "dnd-inhibited-none": "󱏧"
     },
     "return-type": "json",
     "exec-if": "which swaync-client",
@@ -164,14 +157,15 @@
       "Spotify",
       "nemo",
       "vlc",
-      "com.mitchellh.ghostty"
+      "com.mitchellh.ghostty",
+      "code"
     ]
   },
 
   "custom/cava": {
     "exec": "~/.config/scripts/waybarCava.sh",
     "format": "{}",
-    "on-click": "kitty -c ~/.config/kitty/kitty.conf nvim -c cd ~/.config/"
+    "on-click": "ghostty -e cava"
   },
 
   "battery": {
@@ -186,5 +180,19 @@
     "format-charging": "<span color='#ebdbb2'>{capacity}%</span> 󰂄",
     "format-plugged": "<span color='#ebdbb2'>{capacity}%</span> 󰂄",
     "format-alt": "<span color='#ebdbb2'>{time}</span> {icon}"
+  },
+
+  "network" : {
+    "format": "{ifname}",
+    "format-wifi": "󰤨   {essid} {bandwidthTotalBytes}",
+    "format-ethernet": "󱓞 Ethernet {bandwidthTotalBytes}",
+    "format-disconnected": "󰤭 ",
+    "tooltip-format": "{ifname} via {gwaddr} 󰊗",
+    "tooltip-format-wifi": "󰤢   Signal Strength:  {signalStrength}%",
+    "tooltip-format-ethernet": "󰊗   Signal Strength:  {signalStrength}%",
+    "tooltip-format-disconnected": "Disconnected",
+    "max-length": 50,
+    "interval": 5,
+    "on-click": "~/.config/scripts/rofiWifi.sh"
   }
 }

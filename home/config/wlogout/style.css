@@ -1,15 +1,18 @@
+@define-color main #ebdbb2;
+
 * {
   background-image: none;
+  transition-property: all;
+  transition-duration: 0.3s;
 }
 
 window {
-  background-color: rgba(36, 39, 58, 0.9);
+  background-color: rgba(0, 0, 0, 0);
 }
 
 button {
   margin: 8px;
-  color: #cad3f5;
-  background-color: #363a4f;
+  color: @main;
   border-style: solid;
   border-width: 2px;
   background-repeat: no-repeat;
@@ -20,31 +23,44 @@ button {
 button:active,
 button:focus,
 button:hover {
-  color: #8bd5ca;
-  background-color: #24273a;
+  color: @main;
+  background-color: alpha(@main, 0.4);
   outline-style: none;
+  transition-property: all;
+  transition-duration: 0.3s;
+}
+
+#lock,
+#logout,
+#suspend,
+#hibernate,
+#shutdown,
+#reboot {
+  background-position: center center;
+  background-size: 250px;
+  background-repeat: no-repeat;
 }
 
 #lock {
-  background-image: image(url("icons/lock.png"));
+  background-image: url("icons/lock.svg");
 }
 
 #logout {
-  background-image: image(url("icons/logout.png"));
+  background-image: url("icons/logout.svg");
 }
 
 #suspend {
-  background-image: image(url("icons/suspend.png"));
+  background-image: url("icons/suspend.svg");
 }
 
 #hibernate {
-  background-image: image(url("icons/hibernate.png"));
+  background-image: url("icons/hibernate.svg");
 }
 
 #shutdown {
-  background-image: image(url("icons/shutdown.png"));
+  background-image: url("icons/shutdown.svg");
 }
 
 #reboot {
-  background-image: image(url("icons/reboot.png"));
+  background-image: url("icons/reboot.svg");
 }

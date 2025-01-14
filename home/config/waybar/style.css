@@ -1,10 +1,13 @@
+@define-color main #ebdbb2;
+
 * {
   font-family: "JetBrainsMonoNerdFontMono";
   font-weight: bold;
   min-height: 0;
   font-size: 102%;
   font-feature-settings: '"zero", "ss01", "ss02", "ss03", "ss04", "ss05", "cv31"';
-  padding: 1px;
+  transition-property: all;
+  transition-duration: 0.3s;
 }
 
 window#waybar {
@@ -28,13 +31,13 @@ window#waybar.empty #window {
 }
 
 tooltip {
-  opacity: 1;
+  background: alpha(#fff, 0.05);
   border-radius: 10px;
 }
 
 tooltip label {
   padding: 10px;
-  color: #ebdbb2;
+  color: @main;
 }
 
 #custom-cava,
@@ -46,14 +49,57 @@ tooltip label {
 #pulseaudio,
 #temperature,
 #workspaces,
-#custom-menu,
+#custom-os,
 #custom-swaync {
-  border-radius: 10px;
-  color: #ebdbb2;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  padding-left: 6px;
-  padding-right: 6px;
+  background: alpha(#fff, 0.05);
+  border-radius: 6px;
+  color: @main;
+  font-weight: 600;
+  padding: 2.5px 12px;
+  margin: 4px 0 4px 0;
+  border: 1px solid alpha(#fff, 0.05);
+}
+
+
+#custom-os,
+#workspaces, 
+#clock,
+#custom-cava,
+#mpris {
+  margin-right: 4px;
+}
+
+#custom-swaync,
+#pulseaudio,
+#cpu,
+#memory
+#temperature,
+#network {
+  margin-left: 4px;
+}
+
+#cpu {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  padding-right: 0;
+  border-right: none;
+}
+
+#memory {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-left: 0;
+  border-left: none;
+}
+
+#clock {
+  font-weight: 600;
+}
+
+#custom-swaync {
+  margin-right: 10px;
+  margin-right: 10px;
+  padding-right: 18px;
 }
 
 #battery {
@@ -65,7 +111,7 @@ tooltip label {
 }
 
 #window {
-  color: #ebdbb2;
+  color: @main;
   padding-top: 3px;
   padding-bottom: 3px;
   padding-right: 6px;
@@ -73,15 +119,34 @@ tooltip label {
   border-radius: 12px;
 }
 
+#workspaces {
+  font-weight: Bold;
+  padding-left: 3.5px;
+  padding-right: 3.5px;
+}
+
+#custom-os {
+  margin-left: 10px;
+  padding-left: 10px;
+  padding-right: 14px;
+}
+
 #workspaces button {
   margin: 1px;
   box-shadow: none;
   text-shadow: none;
   border-radius: 12px;
-  padding-left: 6px;
-  padding-right: 6px;
-  background-color: #ebdbb2;
-  color: #282828;
+  padding-left: 4px;
+  padding-right: 9px;
+  color: @main;
+  transition-property: all;
+  transition-duration: 0.3s;
+}
+
+#workspaces button.focused {
+  background-color: alpha(@main, 0.3);
+  transition-property: all;
+  transition-duration: 0.3s;
 }
 
 #temperature.critical {
