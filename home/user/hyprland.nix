@@ -7,7 +7,8 @@
   xcursor-size,
   nvidia-offload-enabled ? false,
   ...
-}: let
+}:
+let
   terminal = "ghostty";
   startScript = import ./hypr/exec.nix {
     inherit
@@ -30,7 +31,8 @@
     song_info=$(playerctl metadata --format '{{title}}  󰎆    {{artist}}')
     echo "$song_info"
   '';
-in {
+in
+{
   home.packages = with pkgs; [
     hyprpaper
     hyprcursor
@@ -58,8 +60,8 @@ in {
 
     settings =
       {
-        bind = import ./hypr/bind.nix {inherit mainMod nvidia-offload-enabled;};
-        bindm = import ./hypr/bindm.nix {inherit mainMod;};
+        bind = import ./hypr/bind.nix { inherit mainMod nvidia-offload-enabled; };
+        bindm = import ./hypr/bindm.nix { inherit mainMod; };
         monitor = import ./hypr/monitor.nix;
         plugin = plugins;
         exec-once = ''${startScript}'';
@@ -70,6 +72,7 @@ in {
           ''XCURSOR_SIZE, ${xcursor-size}''
           ''XDG_CURRENT_DESKTOP, Hyprland''
           ''XDG_SESSION_DESKTOP, Hyprland''
+          ''GDK_PIXBUF_MODULE_FILE, ${pkgs.librsvg}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache'' # Make rofi load svg
         ];
       }
       // window
@@ -80,8 +83,8 @@ in {
   services.hyprpaper = {
     enable = true;
     settings = {
-      preload = ["~/.config/wallpapers/wall.png"];
-      wallpaper = [", ~/.config/wallpapers/wall.png"];
+      preload = [ "~/.config/wallpapers/wall.png" ];
+      wallpaper = [ ", ~/.config/wallpapers/wall.png" ];
       splash = false;
       ipc = "on";
     };
