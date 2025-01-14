@@ -27,7 +27,6 @@ in
 
   # Overrides
   networking.hostName = lib.mkForce "dn-lap";
-  programs.steam.enable = lib.mkForce false;
 
   system.stateVersion = nix-version;
   home-manager = {
