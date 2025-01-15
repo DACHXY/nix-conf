@@ -4,6 +4,8 @@
   ...
 }:
 let
+  discordIcon = lib.readFile ../../pkgs/assets/discord.svg;
+  discordSplash = lib.readFile ../../pkgs/assets/peepoLeave.gif.base64;
   vesktop = pkgs.vesktop.overrideAttrs (oldAttrs: {
     desktopItems = lib.optional pkgs.stdenv.hostPlatform.isLinux (
       (lib.head oldAttrs.desktopItems).override {
@@ -11,6 +13,22 @@ let
         desktopName = "Discord";
       }
     );
+
+    patches = oldAttrs.patches ++ [
+      ../../pkgs/patches/splash.patch
+    ];
+
+    # Change Splash
+    preConfigure = ''
+      echo "${discordSplash}" | base64 -d > static/peepo.gif
+    '';
+
+    # Change Icon
+    postInstall = ''
+      rm -rf $out/share/icons/hicolor/*
+      mkdir -p $out/share/icons/hicolor/scalable/apps
+      echo '${discordIcon}' > $out/share/icons/hicolor/scalable/apps/vesktop.svg
+    '';
   });
 in
 {
