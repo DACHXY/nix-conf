@@ -47,8 +47,7 @@
     "modules-right": [
       "wlr/taskbar",
       "temperature",
-      "cpu",
-      "memory",
+      "network",
       "pulseaudio",
       "battery",
       "custom/swaync"
