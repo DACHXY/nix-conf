@@ -35,6 +35,7 @@ in
     (import ../../modules/wallpaper-engine.nix {
       offload = nvidia-offload-enabled;
     })
+    ../../modules/wine.nix
   ];
 
   # Overrides

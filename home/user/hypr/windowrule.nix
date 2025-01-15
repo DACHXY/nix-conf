@@ -44,7 +44,7 @@
     "float, initialTitle: ^(LINE)$"
 
     # VLC
-    "workspace: 3, initialClass: ^(vlc)"
+    "workspace: 3, initialClass: ^(vlc), floating: 0"
   ];
 
   layerrule = [
