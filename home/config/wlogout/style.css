@@ -15,9 +15,9 @@ button {
   color: @main;
   border-style: solid;
   border-width: 2px;
+  background-position: center center;
+  background-size: 15%;
   background-repeat: no-repeat;
-  background-position: center;
-  background-size: 25%;
 }
 
 button:active,
@@ -28,17 +28,6 @@ button:hover {
   outline-style: none;
   transition-property: all;
   transition-duration: 0.3s;
-}
-
-#lock,
-#logout,
-#suspend,
-#hibernate,
-#shutdown,
-#reboot {
-  background-position: center center;
-  background-size: 250px;
-  background-repeat: no-repeat;
 }
 
 #lock {

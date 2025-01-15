@@ -4,6 +4,7 @@
     "include": "~/.config/waybar/modules.json",
     "layer": "top",
     "exclusive": true,
+    "height": 54,
     "passthrough": false,
     "position": "top",
     "fixed-center": true,
