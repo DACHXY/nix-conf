@@ -1,0 +1,11 @@
+--- ./static/views/splash.html	2025-01-15 20:11:12.826658667 +0800
++++ ./static/views/splash.html	2025-01-15 20:48:43.222988653 +0800
+@@ -36,7 +36,7 @@
+     <div class="wrapper">
+         <img
+             draggable="false"
+-            src="../shiggy.gif"
++            src="../peepo.gif"
+             alt="shiggy"
+             role="presentation"
+         />
