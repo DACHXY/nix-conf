@@ -6,7 +6,7 @@
 let
   discordIcon = lib.readFile ../../pkgs/assets/discord.svg;
   discordSplash = lib.readFile ../../pkgs/assets/peepoLeave.gif.base64;
-  vesktop = pkgs.vesktop.overrideAttrs (oldAttrs: {
+  vesktopOverride = pkgs.vesktop.overrideAttrs (oldAttrs: {
     desktopItems = lib.optional pkgs.stdenv.hostPlatform.isLinux (
       (lib.head oldAttrs.desktopItems).override {
         name = "discord";
@@ -69,6 +69,6 @@ in
       inkscape
     ])
     ++ [
-      vesktop # discord
+      vesktopOverride # discord
     ];
 }

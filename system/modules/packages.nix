@@ -96,6 +96,7 @@
       libsForQt5.qt5.qtquickcontrols2
       libsForQt5.qt5.qtgraphicaleffects
       libsForQt5.qt5.qtsvg
+      libsForQt5.qt5.qtwayland
       pkgs.gst_all_1.gst-libav
       pkgs.gst_all_1.gstreamer
       pkgs.gst_all_1.gst-plugins-good
