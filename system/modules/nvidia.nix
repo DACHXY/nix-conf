@@ -23,7 +23,10 @@ let
   offload = import ./offload.nix { inherit pkgs; };
 in
 lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
-  environment.systemPackages = [ offload ];
+  environment.systemPackages = [
+    offload
+    pkgs.nvtopPackages.nvidia
+  ];
 
   # Enable nvidia on wayland or xserver
   services.xserver.videoDrivers = [ "nvidia" ];
