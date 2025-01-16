@@ -39,7 +39,6 @@
     qt6.qtwayland
     wlogout
     wl-clipboard
-    rofi-wayland-unwrapped
     waybar
   ];
 

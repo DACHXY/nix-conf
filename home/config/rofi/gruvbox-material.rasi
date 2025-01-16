@@ -29,6 +29,7 @@
 
   transparent: rgba(0,0,0,0.1);
 
+  text-color: @gruv4;
 }
 
 window {
@@ -51,8 +52,8 @@ mainbox {
 
 message {
     padding: 10px;
-    border:  0px 2px 2px 2px;
-    border-color: @gruv0;
+    border:  0px 4px 4px 4px;
+    border-color: @gruv6;
     background-color: @transparent;
 }
 

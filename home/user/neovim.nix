@@ -38,20 +38,15 @@ let
   configDir = ../config;
 in
 {
-  # Other Lsp servers are defined in system/module/lsp.nix
+  # Other Lsp servers & formatter are defined in system/module/lsp.nix
   home.packages = with pkgs; [
     gh
     vue-language-server
     dockerfile-language-server-nodejs
-    black
-    prettierd
     javascript-typescript-langserver
-    marksman
     ruff
     ruff-lsp
-    pyright
     hadolint
-    yaml-language-server
     nodePackages_latest.typescript
   ];
 

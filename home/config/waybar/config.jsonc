@@ -1,7 +1,42 @@
 [
+  // Primary
+  {
+    "output": "DP-3",
+    "include": "~/.config/waybar/modules.jsonc",
+    "layer": "top",
+    "exclusive": true,
+    "passthrough": false,
+    "position": "top",
+    "fixed-center": true,
+    "ipc": true,
+    "margin-top": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+    "margin-bottom": 0,
+
+    "modules-left": [
+      "custom/os",
+      "hyprland/workspaces",
+      "clock",
+      "custom/cava",
+      "mpris"
+    ],
+
+    "modules-center": ["hyprland/window"],
+
+    "modules-right": [
+      "wlr/taskbar",
+      "network",
+      "cpu",
+      "memory",
+      "pulseaudio",
+      "custom/swaync"
+    ]
+  },
+  // Secondary
   {
     "output": "HDMI-A-2",
-    "include": "~/.config/waybar/modules.json",
+    "include": "~/.config/waybar/modules.jsonc",
     "layer": "top",
     "exclusive": true,
     "height": 54,
@@ -19,16 +54,17 @@
     "modules-center": ["hyprland/window"],
 
     "modules-right": [
-      "wlr/taskbar", 
+      "wlr/taskbar",
       "temperature",
       "cpu",
       "memory",
       "pulseaudio"
     ]
   },
+  // Laptop
   {
     "output": "eDP-1",
-    "include": "~/.config/waybar/modules.json",
+    "include": "~/.config/waybar/modules.jsonc",
     "layer": "top",
     "exclusive": true,
     "passthrough": false,
@@ -40,7 +76,13 @@
     "margin-right": 0,
     "margin-bottom": 0,
 
-    "modules-left": ["custom/os", "hyprland/workspaces", "clock", "custom/cava", "mpris"],
+    "modules-left": [
+      "custom/os",
+      "hyprland/workspaces",
+      "clock",
+      "custom/cava",
+      "mpris"
+    ],
 
     "modules-center": ["hyprland/window"],
 
@@ -50,33 +92,6 @@
       "network",
       "pulseaudio",
       "battery",
-      "custom/swaync"
-    ]
-  },
-  {
-    "output": "DP-3",
-    "include": "~/.config/waybar/modules.json",
-    "layer": "top",
-    "exclusive": true,
-    "passthrough": false,
-    "position": "top",
-    "fixed-center": true,
-    "ipc": true,
-    "margin-top": 0,
-    "margin-left": 0,
-    "margin-right": 0,
-    "margin-bottom": 0,
-
-    "modules-left": ["custom/os", "hyprland/workspaces", "clock", "custom/cava", "mpris"],
-
-    "modules-center": ["hyprland/window"],
-
-    "modules-right": [
-      "wlr/taskbar",
-      "network",
-      "cpu",
-      "memory",
-      "pulseaudio",
       "custom/swaync"
     ]
   }

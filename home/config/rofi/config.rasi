@@ -8,6 +8,8 @@ configuration {
     display-drun:   "󰣖 drun:";
     display-window: "󱂬 window:";
     display-combi:  "󰕘 combi:";
+    display-emoji:  "󰞅 emoji:";
+    display-calc:   "󰪚 calc:";
     display-filebrowser: "󰉋 filebrowser:";
 
     dpi: 110;

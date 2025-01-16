@@ -17,5 +17,12 @@
     tailwindcss-language-server
     vscode-langservers-extracted
     gopls
+    pyright
+    yaml-language-server
+    marksman
+
+    # formatter
+    prettierd
+    black
   ];
 }
