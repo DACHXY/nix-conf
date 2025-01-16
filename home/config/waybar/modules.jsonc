@@ -92,12 +92,7 @@
     "format-bluetooth": "󰂰 {volume}%",
     "format-muted": " Muted",
     "format-icons": {
-      "default": [
-        "",
-        "",
-        " ",
-        " "
-      ],
+      "default": ["", "", " ", " "],
       "ignored-sinks": ["Easy Effects Sink"]
     },
     "scroll-step": 5.0,
@@ -182,7 +177,7 @@
     "format-alt": "{icon} {time}"
   },
 
-  "network" : {
+  "network": {
     "format": "{ifname}",
     "format-wifi": "󰤨   {essid} {bandwidthTotalBytes}",
     "format-ethernet": "󱓞 Ethernet {bandwidthTotalBytes}",

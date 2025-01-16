@@ -23,7 +23,7 @@ let
     dbus-update-activation-environment --systemd --all &
     systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
     hyprpaper &
-    waybar -c ~/.config/waybar/config.json -s ~/.config/waybar/style.css &
+    waybar -c ~/.config/waybar/config.jsonc -s ~/.config/waybar/style.css &
     systemctl --user enable --now hypridle.service &
     fcitx5 -rd &
     fcitx5-remote -r &

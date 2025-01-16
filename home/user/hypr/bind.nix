@@ -5,7 +5,6 @@ let
   terminal = "${prefix}ghostty";
   filemanager = "nemo";
   scripts = "~/.config/scripts";
-  flatEmoji = "it.mijorus.smile";
 
   # freezeShot = "--freeze";
   freezeShot = "";
@@ -31,7 +30,8 @@ in
   ''${mainMod} SHIFT, s, exec, hyprshot -m region --clipboard-only ${freezeShot}''
   ''CTRL SHIFT, s, exec, hyprshot -m window --clipboard-only ${freezeShot}''
   ''CTRL SHIFT ${mainMod}, s, exec, hyprshot -m output --clipboard-only ${freezeShot}''
-  ''${mainMod}, PERIOD, exec, flatpak run ${flatEmoji}''
+  ''${mainMod}, PERIOD, exec, rofi -modi emoji -show emoji''
+  ''CTRL ${mainMod}, c, exec, rofi -show calc -modi calc -no-show-match -no-sort''
   ''${mainMod}, X, exec, sleep 0.1 && swaync-client -t -sw''
   ''${mainMod} SHIFT, C, centerwindow''
   '',F11, fullscreen''
