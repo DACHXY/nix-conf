@@ -1,6 +1,7 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   fileSystems."/mnt/storage" = {
     device = "router.dn:/mnt/storage";

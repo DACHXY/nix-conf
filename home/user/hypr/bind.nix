@@ -2,6 +2,7 @@
 let
   prefix = if nvidia-offload-enabled then "offload " else "";
   browser = "${prefix}firefox";
+  noOffloadBrowser = "firefox -P noOffload";
   terminal = "${prefix}ghostty";
   filemanager = "nemo";
   scripts = "~/.config/scripts";
@@ -15,6 +16,7 @@ let
 in
 [
   ''${mainMod}, F, exec, ${browser}''
+  ''CTRL ${mainMod}, F, exec, ${noOffloadBrowser} -no-remote''
   ''${mainMod}, RETURN, exec, ${terminal}''
   ''CTRL ALT, T, exec, ${terminal}''
   ''${mainMod}, Q, killactive, ''

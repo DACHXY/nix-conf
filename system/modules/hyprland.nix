@@ -40,6 +40,10 @@
     wlogout
     wl-clipboard
     waybar
+
+    # Util
+    grim
+    slurp
   ];
 
   nix = {

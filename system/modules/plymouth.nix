@@ -1,10 +1,11 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   boot = {
     plymouth = {
       enable = true;
-      theme = "catppuccin-frappe";
+      theme = "hexagon_dots";
       themePackages = with pkgs; [
-        (adi1090x-plymouth-themes.override { selected_themes = [ "motion" ]; })
+        (adi1090x-plymouth-themes.override { selected_themes = [ "hexagon_dots" ]; })
         (catppuccin-plymouth.override { variant = "frappe"; })
       ];
     };

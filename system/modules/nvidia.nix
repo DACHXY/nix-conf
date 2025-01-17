@@ -56,7 +56,7 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
 
     nvidia.nvidiaSettings = true;
     nvidia.dynamicBoost.enable = true;
-    nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
+    nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
 
     nvidia.prime =
       (
