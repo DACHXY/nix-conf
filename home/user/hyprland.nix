@@ -71,6 +71,9 @@ in
 
     settings =
       {
+        debug = {
+          disable_logs = false;
+        };
         bind = import ./hypr/bind.nix { inherit mainMod nvidia-offload-enabled; };
         bindm = import ./hypr/bindm.nix { inherit mainMod; };
         monitor = import ./hypr/monitor.nix;

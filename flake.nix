@@ -68,6 +68,8 @@
       };
     in
     {
+      nixpkgs.pkgs = pkgs;
+
       nixosConfigurations = {
         dn-pre7780 = nixpkgs.lib.nixosSystem {
           modules = [
@@ -82,7 +84,6 @@
               nix-version
               username
               git-config
-              pkgs
               ;
           };
         };
