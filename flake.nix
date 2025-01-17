@@ -100,7 +100,6 @@
               nix-version
               username
               git-config
-              pkgs
               ;
           };
         };
