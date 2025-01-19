@@ -121,10 +121,16 @@ tooltip label {
   padding-right: 3.5px;
 }
 
+/* Center Icon */
+#custom-os,
+#network,
+#idle_inhibitor {
+  padding-left: 10px; padding-right: 14px;
+}
+
+/* Most left Item */
 #custom-os {
   margin-left: 10px;
-  padding-left: 10px;
-  padding-right: 14px;
 }
 
 #workspaces button {
