@@ -40,6 +40,7 @@ tooltip label {
   color: @main;
 }
 
+#idle_inhibitor,
 #custom-cava,
 #clock,
 #cpu,
@@ -70,6 +71,7 @@ tooltip label {
   margin-right: 4px;
 }
 
+#idle_inhibitor,
 #custom-swaync,
 #pulseaudio,
 #cpu,

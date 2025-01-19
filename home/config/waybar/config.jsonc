@@ -26,6 +26,7 @@
 
     "modules-right": [
       "wlr/taskbar",
+      "idle_inhibitor",
       "network",
       "cpu",
       "memory",
@@ -89,6 +90,7 @@
     "modules-right": [
       "wlr/taskbar",
       "temperature",
+      "idle_inhibitor",
       "network",
       "pulseaudio",
       "battery",

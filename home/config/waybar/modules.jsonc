@@ -189,5 +189,13 @@
     "max-length": 50,
     "interval": 5,
     "on-click": "~/.config/scripts/rofiWifi.sh"
+  },
+
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "󰅶",
+      "deactivated": "󰾫"
+    }
   }
 }
