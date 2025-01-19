@@ -30,22 +30,9 @@ let
 
     tmux switch-client -t $selected_name
   '';
-
-  # ffmpeg
-  toMov = pkgs.writeShellScriptBin "toMov" ''
-    if [ -z "$1" ]; then
-      echo "Please provide an input file."
-      exit 1
-    fi
-    input_file="$1"
-    output_file="''\${input_file%.*}.mov"
-    ffmpeg -i "$input_file" -c:v dnxhd -profile:v dnxhr_hq -c:a pcm_s16le -pix_fmt yuv422p "$output_file"
-    echo "Conversion complete: $output_file"
-  '';
 in
 {
   home.packages = [
     tmuxSessionizer
-    toMov
   ];
 }
