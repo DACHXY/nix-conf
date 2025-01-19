@@ -179,12 +179,12 @@
 
   "network": {
     "format": "{ifname}",
-    "format-wifi": "󰤨   {essid} {bandwidthTotalBytes}",
-    "format-ethernet": "󱓞 Ethernet {bandwidthTotalBytes}",
-    "format-disconnected": "󰤭 ",
+    "format-wifi": "󰤨",
+    "format-ethernet": "󰈀",
+    "format-disconnected": "󰤭",
     "tooltip-format": "{ifname} via {gwaddr} 󰊗",
-    "tooltip-format-wifi": "󰤢   Signal Strength:  {signalStrength}%",
-    "tooltip-format-ethernet": "󰊗   Signal Strength:  {signalStrength}%",
+    "tooltip-format-wifi": "󰤢   {essid}:  {signalStrength}%",
+    "tooltip-format-ethernet": "{ifname} via {gwaddr} 󰊗",
     "tooltip-format-disconnected": "Disconnected",
     "max-length": 50,
     "interval": 5,
