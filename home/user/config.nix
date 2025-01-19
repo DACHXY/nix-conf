@@ -8,7 +8,6 @@ in
     ".config/neofetch".source = "${configDir}/neofetch";
     ".config/wlogout".source = "${configDir}/wlogout";
     ".config/waybar" = {
-      recursive = true;
       source = "${configDir}/waybar";
     };
     ".config/btop".source = "${configDir}/btop";
