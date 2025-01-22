@@ -49,7 +49,6 @@
     {
       nixpkgs,
       nix-index-database,
-      nvf,
       ...
     }@inputs:
     let
