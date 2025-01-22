@@ -6,7 +6,10 @@
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
-    pipewire-screenaudio.url = "github:IceDBorn/pipewire-screenaudio";
+    firefox = {
+      url = "github:nix-community/flake-firefox-nightly";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -40,11 +43,6 @@
       url = "github:KZDKM/Hyprspace";
       inputs.hyprland.follows = "hyprland";
     };
-
-    nvf = {
-      url = "github:notashelf/nvf";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -69,11 +67,9 @@
     in
     {
       nixpkgs.pkgs = pkgs;
-
       nixosConfigurations = {
         dn-pre7780 = nixpkgs.lib.nixosSystem {
           modules = [
-            nvf.nixosModules.default
             nix-index-database.nixosModules.nix-index
             ./system/dev/dn-pre7780
           ];

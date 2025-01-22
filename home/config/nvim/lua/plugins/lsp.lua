@@ -1,6 +1,4 @@
 local util = require("lspconfig.util")
-local async = require("lspconfig.async")
-local mod_cache = nil
 
 return {
   {
@@ -72,55 +70,51 @@ return {
         nginx_language_server = {
           cmd = { "nginx-language-server" },
           filetypes = { "nginx" },
-          rootPatterns = { "nginx.conf", ".git" },
+          rootPatterns = { "biome.json", "biome.jsonc" },
         },
-        -- jsonls = {
-        --   cmd = { "vscode-json-languageserver", "--stdio" },
-        --   filetypes = { "json", "jsonc" },
-        -- },
-        vuels = {
-          cmd = { "vue-language-server", "--stdio" },
-          filetypes = { "vue" },
-        },
-        ts_ls = {
-          cmd = { "typescript-language-server", "--stdio" },
-          filetypes = { "vue", "ts", "tsx" },
-        },
-        clangd = {
-          cmd = { "clangd" },
-          root_markers = { ".git", ".clangd", "compile_commands.json" },
-          filetypes = { "cpp", "c" },
-          capabilities = {
-            textDocument = {
-              semanticTokens = {
-                multilineTokenSupport = true,
+        volar = {
+          init_options = {
+            vue = {
+              hybridMode = true,
+            },
+          },
+          settings = {
+            typescript = {
+              inlayHints = {
+                enumMemberValues = {
+                  enabled = true,
+                },
+                functionLikeReturnTypes = {
+                  enabled = true,
+                },
+                propertyDeclarationTypes = {
+                  enabled = true,
+                },
+                parameterTypes = {
+                  enabled = true,
+                  suppressWhenArgumentMatchesName = true,
+                },
+                variableTypes = {
+                  enabled = true,
+                },
               },
             },
           },
         },
-        gopls = {
-          cmd = { "gopls" },
-          filetypes = { "go", "gomod", "gowork", "gotmpl" },
-          root_dir = function(fname)
-            -- see: https://github.com/neovim/nvim-lspconfig/issues/804
-            if not mod_cache then
-              local result = async.run_command({ "go", "env", "GOMODCACHE" })
-
-              if result and result[1] then
-                mod_cache = vim.trim(result[1])
-              else
-                mod_cache = vim.fn.system("go env GOMODCACHE")
-              end
-            end
-            if mod_cache and fname:sub(1, #mod_cache) == mod_cache then
-              local clients = util.get_lsp_clients({ name = "gopls" })
-              if #clients > 0 then
-                return clients[#clients].config.root_dir
-              end
-            end
-            return util.root_pattern("go.work", "go.mod", ".git")(fname)
+        vtsls = {},
+        stylelint_lsp = {
+          filetypes = { "css", "scss", "vue" },
+          root_dir = util.root_pattern("packages.json", ".git"),
+          debounce = 100,
+          settings = {
+            stylelintplus = {
+              autoFixOnFormat = true,
+              autoFixOnSave = true,
+            },
+          },
+          on_attach = function(client)
+            client.server_capabilities.document_formatting = false
           end,
-          single_file_support = true,
         },
       },
       setup = {},
