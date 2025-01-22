@@ -11,7 +11,7 @@
     ./virtualization.nix
     ./hyprland.nix
     ./swaync.nix
-    ./neovim.nix
+    ./nvim.nix
     ./bin.nix
     ./desktops.nix
     ./direnv.nix

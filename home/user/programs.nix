@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 let
   userChrome = builtins.readFile ../config/firefox/autohide_toolbox.css;
   profileSettings = {
@@ -35,7 +35,8 @@ in
 
     firefox = {
       enable = true;
-      package = (pkgs.wrapFirefox (pkgs.firefox-unwrapped.override { pipewireSupport = true; }) { });
+      # package = (pkgs.wrapFirefox (pkgs.firefox-unwrapped.override { pipewireSupport = true; }) { });
+      package = inputs.firefox.packages.${pkgs.system}.firefox-nightly-bin;
       languagePacks = [
         "en-US"
         "zh-TW"

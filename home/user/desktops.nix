@@ -5,7 +5,7 @@
   ...
 }:
 let
-  browser = "firefox";
+  browser = "firefox-nightly";
   noOffloadBrowser = "${browser} -P noOffload -no-remote";
   iconPrefix = ".local/share/icons/hicolor/scalable/apps";
   newWindow = "${browser} --new-window";
