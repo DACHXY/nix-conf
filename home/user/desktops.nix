@@ -6,15 +6,9 @@
 }:
 let
   browser = "firefox-nightly";
-  noOffloadBrowser = "${browser} -P noOffload -no-remote";
   iconPrefix = ".local/share/icons/hicolor/scalable/apps";
   newWindow = "${browser} --new-window";
   mkIconPkg = pkgs.callPackage ../../utils/make-icon.nix { };
-  googleMeetIcon = mkIconPkg {
-    name = "googleMeet";
-    url = "https://fonts.gstatic.com/s/i/productlogos/meet_2020q4/v1/web-512dp/logo_meet_2020q4_color_1x_web_512dp.png";
-    sha256 = "sha256-LL33KhQTv4VVdPRBm7nzsHtPoQ2ArHwjwVxq2p8VdM4=";
-  };
 in
 {
   # Update icon cache
@@ -50,10 +44,6 @@ in
     '';
   };
 
-  home.packages = [
-    googleMeetIcon
-  ];
-
   xdg.desktopEntries = {
     notion = {
       name = "Notion";
@@ -65,18 +55,6 @@ in
       categories = [
         "Office"
         "Utility"
-      ];
-    };
-
-    googleMeet = {
-      name = "Google Meet";
-      genericName = "Community";
-      exec = "${noOffloadBrowser} https://meet.google.com";
-      comment = "Google Meet";
-      icon = "googleMeet";
-      terminal = false;
-      categories = [
-        "Network"
       ];
     };
   };
