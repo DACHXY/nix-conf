@@ -40,33 +40,6 @@ return {
         --   end,
         -- },
         nil_ls = false,
-        nixd = {
-          cmd = { "nixd" },
-          filetypes = { "nix" },
-          single_file_support = true,
-          root_dir = function(fname)
-            return util.root_pattern("flake.nix")(fname)
-              or vim.fs.dirname(vim.fs.find(".git", { path = fname, upward = true })[1])
-          end,
-          settings = {
-            nixd = {
-              nixpkgs = {
-                expr = "import <nixpkgs> { }",
-              },
-              formatting = {
-                command = { "nixfmt" },
-              },
-              -- options = {
-              --   nixos = {
-              --     expr = '(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations.k-on.options',
-              --   },
-              --   home_manager = {
-              --     expr = '(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."ruixi@k-on".options',
-              --   },
-              -- },
-            },
-          },
-        },
         nginx_language_server = {
           cmd = { "nginx-language-server" },
           filetypes = { "nginx" },

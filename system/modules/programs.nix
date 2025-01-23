@@ -13,13 +13,13 @@
       enable = true;
       configure = {
         customRC = ''
-	  set number
-	  set relativenumber
-	  set tabstop=2
-	  set shiftwidth=2
-	  set expandtab
-	  nnoremap <C-s> :w<CR>
-	'';
+          set number
+          set relativenumber
+          set tabstop=2
+          set shiftwidth=2
+          set expandtab
+          nnoremap <C-s> :w<CR>
+        '';
       };
     };
 

@@ -13,6 +13,7 @@ let
   hyprcursor-size = "32";
   xcursor-size = "24";
   nvidia-offload-enabled = config.hardware.nvidia.prime.offload.enable;
+  device-name = "dn-lap";
 in
 {
   imports = [
@@ -26,7 +27,7 @@ in
   ];
 
   # Overrides
-  networking.hostName = lib.mkForce "dn-lap";
+  networking.hostName = lib.mkForce device-name;
 
   system.stateVersion = nix-version;
   home-manager = {
@@ -41,6 +42,7 @@ in
         git-config
         username
         nvidia-offload-enabled
+        device-name
         ;
     };
     users."${username}" = {
