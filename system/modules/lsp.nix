@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   environment.systemPackages = with pkgs; [
@@ -24,4 +24,6 @@
     prettierd
     black
   ];
+
+  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 }
