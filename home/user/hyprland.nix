@@ -44,6 +44,8 @@ let
 in
 {
   home.packages = with pkgs; [
+    mpvpaper # Video Wallpaper
+    yt-dlp
     hyprpaper
     hyprcursor
     ewwWayland

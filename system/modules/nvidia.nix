@@ -23,9 +23,12 @@ let
   offload = import ./offload.nix { inherit pkgs; };
 in
 lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
-  environment.systemPackages = [
+  environment.systemPackages = with pkgs; [
     offload
-    pkgs.nvtopPackages.nvidia
+    nvtopPackages.nvidia
+    vulkan-loader
+    vulkan-validation-layers
+    vulkan-tools
   ];
 
   # Enable nvidia on wayland or xserver
@@ -56,7 +59,7 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
 
     nvidia.nvidiaSettings = true;
     nvidia.dynamicBoost.enable = true;
-    nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
+    nvidia.package = config.boot.kernelPackages.nvidiaPackages.stable;
 
     nvidia.prime =
       (
@@ -90,6 +93,8 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
       enable32Bit = true;
       extraPackages = with pkgs; [
         nvidia-vaapi-driver
+        vaapiVdpau
+        libvdpau-va-gl
       ];
     };
   };
@@ -97,8 +102,9 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
   environment.variables = {
     # GPU
     LIBVA_DRIVER_NAME = "nvidia";
-    # __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     NVD_BACKEND = "direct";
+    GBM_BACKEND = "nvidia-drm";
     MOZ_DISABLE_RDD_SANDBOX = 1;
     OGL_DEDICATED_HW_STATE_PER_CONTEXT = "ENABLE_ROBUST";
     INTEL_GPU_MIN_FREQ_ON_AC = "500";
