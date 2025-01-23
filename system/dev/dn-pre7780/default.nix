@@ -16,6 +16,7 @@ let
   intel-bus-id = "PCI:0:2:0";
   nvidia-bus-id = "PCI:1:0:0";
   nvidia-offload-enabled = config.hardware.nvidia.prime.offload.enable;
+  device-name = "dn-pre7780";
 in
 {
   imports = [
@@ -39,7 +40,7 @@ in
   ];
 
   # Overrides
-  networking.hostName = lib.mkForce "dn-pre7780";
+  networking.hostName = lib.mkForce device-name;
 
   system.stateVersion = nix-version;
   services.wallpaperEngine.enable = lib.mkForce false;
@@ -58,6 +59,7 @@ in
         git-config
         username
         nvidia-offload-enabled
+        device-name
         ;
     };
     users."${username}" = {

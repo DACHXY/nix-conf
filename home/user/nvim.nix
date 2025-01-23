@@ -1,6 +1,8 @@
 {
   lib,
   pkgs,
+  device-name,
+  username,
   ...
 }:
 {
@@ -242,6 +244,42 @@
                   },
                 })
               end
+            },
+
+            -- Nix
+            {
+              "neovim/nvim-lspconfig",
+              opts = {
+                servers = {
+                  nixd = {
+                    cmd = { "nixd" },
+                    filetypes = { "nix" },
+                    single_file_support = true,
+                    root_dir = function(fname)
+                      return require("lspconfig.util").root_pattern("flake.nix")(fname)
+                        or vim.fs.dirname(vim.fs.find(".git", { path = fname, upward = true })[1])
+                    end,
+                    settings = {
+                      nixd = {
+                        nixpkgs = {
+                          expr = "import <nixpkgs> { }",
+                        },
+                        formatting = {
+                          command = { "nixfmt" },
+                        },
+                        -- options = {
+                        --  nixos = {
+                        --    expr = '(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations.${device-name}.options',
+                        --  },
+                        --  home_manager = {
+                        --    expr = '(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."${username}@${device-name}".options',
+                        --  }
+                        -- }
+                      }
+                    }
+                  }
+                }
+              }
             },
 
             -- disable DAP
