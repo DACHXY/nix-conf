@@ -78,8 +78,8 @@ in
 
   # ==== Plugins ==== #
   # Overview
-  ''${mainMod}, o, hyprexpo:expo, toggle''
-  ''${mainMod}, TAB, hyprexpo:expo, toggle''
+  # ''${mainMod}, o, hyprexpo:expo, toggle''
+  # ''${mainMod}, TAB, hyprexpo:expo, toggle''
 ]
 ++ (
   # workspaces
