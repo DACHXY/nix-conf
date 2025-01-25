@@ -33,6 +33,10 @@ in
       source = "${configDir}/ghostty";
     };
     ".face".source = "${configDir}/.face";
-    ".hyprlock_bg.svg".source = "${configDir}/hyprlock_bg.vsg";
+    ".config/fish/functions".source = "${configDir}/fish/functions";
+    ".config/yazi" = {
+      recursive = true;
+      source = "${configDir}/yazi";
+    };
   };
 }

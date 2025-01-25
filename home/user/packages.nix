@@ -66,6 +66,9 @@ in
       cava
       papirus-folders
       inkscape
+
+      # PDF Preview
+      poppler
     ])
     ++ [
       vesktopOverride # discord

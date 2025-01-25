@@ -47,6 +47,7 @@
       stylelint-lsp
       stylelint
       clang-tools
+      taplo
     ];
 
     plugins = with pkgs.vimPlugins; [
@@ -110,6 +111,7 @@
           markdown-preview-nvim
           render-markdown-nvim
           image-nvim
+          hover-nvim
 
           # Python
           neotest-python
@@ -225,6 +227,7 @@
             { import = "lazyvim.plugins.extras.util.dot" },
             { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
             { import = "lazyvim.plugins.extras.editor.telescope" },
+            { import = "lazyvim.plugins.extras.editor.refactoring" },
 
             -- uncomment to import/override with your plugins
             { import = "plugins" },
