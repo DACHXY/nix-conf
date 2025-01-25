@@ -1,4 +1,9 @@
-{ pkgs, inputs, ... }:
+{
+  pkgs,
+  inputs,
+  system,
+  ...
+}:
 let
   userChrome = builtins.readFile ../config/firefox/autohide_toolbox.css;
   profileSettings = {
@@ -23,6 +28,12 @@ in
     vscode = {
       enable = true;
       package = pkgs.vscode;
+    };
+
+    yazi = {
+      enable = true;
+      package = inputs.yazi.packages.${system}.default;
+      enableFishIntegration = true;
     };
 
     obs-studio = {

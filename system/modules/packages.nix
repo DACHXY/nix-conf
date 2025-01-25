@@ -47,6 +47,7 @@
       gh # Github cli tool
       gnumake
       lm_sensors
+      temurin-jre-bin
       openssl
       openssl.dev
       pkg-config # Include Lib
@@ -103,6 +104,5 @@
     ])
     ++ [
       inputs.ghostty.packages.${system}.default
-      inputs.yazi.packages.${system}.default
     ];
 }

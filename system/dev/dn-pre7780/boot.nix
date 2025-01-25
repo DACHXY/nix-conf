@@ -3,6 +3,23 @@
 {
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
+  fileSystems."/mnt/ssd" = {
+    device = "/dev/disk/by-uuid/4E21-0000";
+    fsType = "exfat";
+    options = [
+      "x-systemd.automount"
+      "noauto"
+      "x-systemd.idle-timeout=600"
+      "nofail"
+      "user"
+      "x-gvfs-show"
+      "gid=1000"
+      "uid=1000"
+      "dmask=000"
+      "fmask=000"
+    ];
+  };
+
   fileSystems."/mnt/storage" = {
     device = "router.dn:/mnt/storage";
     fsType = "nfs";
