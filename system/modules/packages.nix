@@ -59,6 +59,7 @@
       dotnetCorePackages.dotnet_9.aspnetcore
       rustup
       gcc
+      zig
 
       # Editor
       vim

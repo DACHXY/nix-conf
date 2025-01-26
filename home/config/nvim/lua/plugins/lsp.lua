@@ -29,6 +29,13 @@ return {
           },
         })
       end,
+      ui = {
+        windows = {
+          default_options = {
+            border = "rounded",
+          },
+        },
+      },
       servers = {
         -- biome = {
         --   root_dir = function(fname)
@@ -90,7 +97,6 @@ return {
           end,
         },
       },
-      setup = {},
     },
   },
 }
