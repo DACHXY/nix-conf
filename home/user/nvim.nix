@@ -3,6 +3,7 @@
   pkgs,
   device-name,
   username,
+  inputs,
   ...
 }:
 {
@@ -12,6 +13,7 @@
 
   programs.neovim = {
     enable = true;
+    package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
     withPython3 = true;
     extraPython3Packages = (
       plugins: with plugins; [
@@ -48,6 +50,7 @@
       stylelint
       clang-tools
       taplo
+      zls
     ];
 
     plugins = with pkgs.vimPlugins; [
@@ -193,6 +196,7 @@
             { import = "lazyvim.plugins.extras.coding.luasnip" },
             { import = "lazyvim.plugins.extras.coding.mini-surround" },
             { import = "lazyvim.plugins.extras.coding.yanky" },
+            { import = "lazyvim.plugins.extras.coding.neogen" },
             { import = "lazyvim.plugins.extras.dap.core" },
             { import = "lazyvim.plugins.extras.dap.nlua" },
             { import = "lazyvim.plugins.extras.editor.dial" },
@@ -226,8 +230,11 @@
             { import = "lazyvim.plugins.extras.ui.treesitter-context" },
             { import = "lazyvim.plugins.extras.util.dot" },
             { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
+            { import = "lazyvim.plugins.extras.util.project" },
+            { import = "lazyvim.plugins.extras.util.rest" },
             { import = "lazyvim.plugins.extras.editor.telescope" },
             { import = "lazyvim.plugins.extras.editor.refactoring" },
+            { import = "lazyvim.plugins.extras.editor.harpoon2" },
 
             -- uncomment to import/override with your plugins
             { import = "plugins" },
@@ -271,9 +278,9 @@
                           command = { "nixfmt" },
                         },
                         options = {
-                        --  nixos = {
-                        --    expr = '(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations.${device-name}.options',
-                        --  },
+                          nixos = {
+                            expr = '(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations.${device-name}.options',
+                          },
                           home_manager = {
                             expr = '(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."${username}@${device-name}".options',
                           }
