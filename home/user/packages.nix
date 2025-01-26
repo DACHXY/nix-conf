@@ -37,7 +37,6 @@ in
       # Dev stuff
       gcc
       go
-      nodePackages.pnpm
       (python3.withPackages (python-pkgs: [
         python-pkgs.pip
         python-pkgs.requests
@@ -46,6 +45,7 @@ in
       pkgsCross.mingwW64.stdenv.cc
       pkgsCross.mingwW64.windows.pthreads
       postman
+      ripdrag
 
       # Work stuff
       libreoffice-qt
