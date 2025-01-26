@@ -5,7 +5,8 @@ let
   browser = "${prefix} ${firefox}";
   noOffloadBrowser = "${firefox} -P noOffload";
   terminal = "${prefix} ghostty";
-  filemanager = "nemo";
+  # filemanager = "nemo";
+  filemanager = "${terminal} -e yazi";
   scripts = "~/.config/scripts";
 
   # freezeShot = "--freeze";

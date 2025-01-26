@@ -219,7 +219,7 @@
             { import = "lazyvim.plugins.extras.lang.yaml" },
             { import = "lazyvim.plugins.extras.linting.eslint" },
             { import = "lazyvim.plugins.extras.ui.alpha" },
-            { import = "lazyvim.plugins.extras.ui.edgy" },
+            -- { import = "lazyvim.plugins.extras.ui.edgy" },
             { import = "lazyvim.plugins.extras.ui.mini-animate" },
             { import = "lazyvim.plugins.extras.ui.mini-indentscope" },
             { import = "lazyvim.plugins.extras.ui.smear-cursor" },
@@ -270,14 +270,14 @@
                         formatting = {
                           command = { "nixfmt" },
                         },
-                        -- options = {
+                        options = {
                         --  nixos = {
                         --    expr = '(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations.${device-name}.options',
                         --  },
-                        --  home_manager = {
-                        --    expr = '(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."${username}@${device-name}".options',
-                        --  }
-                        -- }
+                          home_manager = {
+                            expr = '(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."${username}@${device-name}".options',
+                          }
+                        }
                       }
                     }
                   }

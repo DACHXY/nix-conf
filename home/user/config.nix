@@ -1,5 +1,6 @@
 let
   configDir = ../config;
+  browser = "firefox-nightly.desktop";
 in
 {
   home.file = {
@@ -37,6 +38,14 @@ in
     ".config/yazi" = {
       recursive = true;
       source = "${configDir}/yazi";
+    };
+  };
+
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "text/html" = browser;
+      "application/pdf" = browser;
     };
   };
 }

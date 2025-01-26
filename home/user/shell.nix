@@ -6,9 +6,7 @@ in
   programs = {
     fish = {
       enable = true;
-      interactiveShellInit = ''
-        set fish_greeting # Disable greeting
-
+      shellInit = ''
         # Yazi
         function y
           set tmp (mktemp -t "yazi-cwd.XXXXXX")
@@ -18,6 +16,9 @@ in
           end
           rm -f -- "$tmp"
         end
+      '';
+      interactiveShellInit = ''
+        set fish_greeting # Disable greeting
       '';
       plugins = [
         {
