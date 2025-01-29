@@ -1,5 +1,5 @@
 font-family = "CaskaydiaCove Nerd Font Mono"
-font-size = 16
+font-size = 15 
 theme = catppuccin-macchiato
 unfocused-split-opacity = 0.85
 
@@ -14,5 +14,5 @@ mouse-hide-while-typing = true
 
 keybind = ctrl+shift+zero=toggle_tab_overview
 
-custom-shader = ./shader/mnoise.glsl
-custom-shader-animation = always
+# custom-shader = ./shader/mnoise.glsl
+# custom-shader-animation = always

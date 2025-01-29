@@ -16,7 +16,7 @@
     package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
     withPython3 = true;
     extraPython3Packages = (
-      plugins: with plugins; [
+      ps: with ps; [
         debugpy
       ]
     );
@@ -51,6 +51,7 @@
       clang-tools
       taplo
       zls
+      vscode-js-debug
     ];
 
     plugins = with pkgs.vimPlugins; [
@@ -215,7 +216,7 @@
             { import = "lazyvim.plugins.extras.lang.omnisharp" },
             { import = "lazyvim.plugins.extras.lang.clangd" },
             -- { import = "lazyvim.plugins.extras.lang.vue" },
-            { import = "lazyvim.plugins.extras.lang.typescript" },
+            -- { import = "lazyvim.plugins.extras.lang.typescript" },
             { import = "lazyvim.plugins.extras.lang.python" },
             { import = "lazyvim.plugins.extras.lang.rust" },
             { import = "lazyvim.plugins.extras.lang.tailwind" },
@@ -236,7 +237,7 @@
             { import = "lazyvim.plugins.extras.editor.refactoring" },
             { import = "lazyvim.plugins.extras.editor.harpoon2" },
 
-            -- uncomment to import/override with your plugins
+            -- import/override your plugins
             { import = "plugins" },
 
             -- Vue & Typescript
@@ -254,6 +255,16 @@
                   },
                 })
               end
+            },
+
+            -- Python debugpy
+            {
+              {
+                "mfussenegger/nvim-dap-python",
+                config = function ()
+                  require("dap-python").setup("python3")
+                end
+              },
             },
 
             -- Nix
@@ -291,10 +302,6 @@
                 }
               }
             },
-
-            -- disable DAP
-            { "mfussenegger/nvim-dap-python", enabled = false },
-            { "mfussenegger/nvim-dap", enabled = false },
 
             -- disable mason.nvim, use config.extraPackages
             { "williamboman/mason-lspconfig.nvim", enabled = false },

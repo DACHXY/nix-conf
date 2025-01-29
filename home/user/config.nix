@@ -43,9 +43,12 @@ in
 
   xdg.mimeApps = {
     enable = true;
+    associations.added = {
+      "application/pdf" = [ browser ];
+    };
     defaultApplications = {
       "text/html" = browser;
-      "application/pdf" = browser;
+      "application/pdf" = [ browser ];
     };
   };
 }
