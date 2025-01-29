@@ -69,6 +69,7 @@ in
       ])
       ++ [
         inputs.hyprgrass.packages.${system}.default
+        # inputs.hyprtasking.packages.${system}.hyprtasking
       ];
 
     settings =

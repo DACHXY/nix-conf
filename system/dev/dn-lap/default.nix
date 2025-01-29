@@ -46,7 +46,10 @@ in
         ;
     };
     users."${username}" = {
-      imports = [ ../../../home ];
+      imports = [
+        ../../../home
+        ../../../home/user/music-production.nix
+      ];
     };
   };
 }

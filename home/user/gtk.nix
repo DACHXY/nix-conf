@@ -63,9 +63,9 @@ in
   };
 
   xdg.configFile = {
-    "Kvantum/Catppuccin-Macchiato-Lavender/Catppuccin-Macchiato-Blue/Catppuccin-Macchiato-Blue.kvconfig".source =
-      "${pkgs.catppuccin-kvantum}/share/Kvantum/Catppuccin-Macchiato-Lavender/Cattpuccin-Macchiato-Blue.kvconfig";
-    "Kvantum/Catppuccin-Macchiato-Lavender/Catppuccin-Macchiato-Blue/Catppuccin-Macchiato-Blue.svg".source =
-      "${pkgs.catppuccin-kvantum}/share/Kvantum/Catppuccin-Macchiato-Lavender/Cattpuccin-Macchiato-Blue.svg";
+    "Kvantum/catppuccin-macchiato-Lavender/catppuccin-macchiato-lavender/catppuccin-macchiato-lavender.kvconfig".source =
+      "${pkgs.catppuccin-kvantum}/share/Kvantum/catppuccin-macchiato-lavender/cattpuccin-macchiato-lavender.kvconfig";
+    "Kvantum/catppuccin-macchiato-Lavender/catppuccin-macchiato-lavender/catppuccin-macchiato-lavender.svg".source =
+      "${pkgs.catppuccin-kvantum}/share/Kvantum/catppuccin-macchiato-lavender/cattpuccin-macchiato-lavender.svg";
   };
 }

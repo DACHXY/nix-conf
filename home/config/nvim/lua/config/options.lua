@@ -20,5 +20,6 @@ if package.config:sub(1, 1) == "\\" then
   vim.o.shell = GetAvailableWindowsShell()
 end
 
+vim.g.lazyvim_python_lsp = "pyright"
 vim.g.lazyvim_python_ruff = "ruff"
 vim.g.lazyvim_eslint_auto_format = true

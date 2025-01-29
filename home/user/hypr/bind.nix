@@ -73,6 +73,8 @@ in
   '',XF86MonBrightnessUp, exec, brightnessctl set ${brightnessStep}%+''
   '',XF86AudioPrev, exec, playerctl previous''
   '',XF86AudioNext, exec, playerctl next''
+  ''${mainMod} CTRL, COMMA, exec, playerctl previous''
+  ''${mainMod} CTRL, PERIOD, exec, playerctl next''
   '',XF86AudioPlay, exec, playerctl play-pause''
   '',XF86AudioStop, exec, playerctl stop''
   '',XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle''
