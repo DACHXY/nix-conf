@@ -191,7 +191,7 @@
             { "LazyVim/LazyVim", import = "lazyvim.plugins" },
             -- The following configs are needed for fixing lazyvim on nix
             -- force enable telescope-fzf-native.nvim
-            { "nvim-telescope/telescope-fzf-native.nvim", enabled = true },
+            -- { "nvim-telescope/telescope-fzf-native.nvim", enabled = true },
 
             { import = "lazyvim.plugins.extras.coding.blink" },
             { import = "lazyvim.plugins.extras.coding.luasnip" },
@@ -215,8 +215,6 @@
             { import = "lazyvim.plugins.extras.lang.nushell" },
             { import = "lazyvim.plugins.extras.lang.omnisharp" },
             { import = "lazyvim.plugins.extras.lang.clangd" },
-            -- { import = "lazyvim.plugins.extras.lang.vue" },
-            -- { import = "lazyvim.plugins.extras.lang.typescript" },
             { import = "lazyvim.plugins.extras.lang.python" },
             { import = "lazyvim.plugins.extras.lang.rust" },
             { import = "lazyvim.plugins.extras.lang.tailwind" },
@@ -224,7 +222,6 @@
             { import = "lazyvim.plugins.extras.lang.yaml" },
             { import = "lazyvim.plugins.extras.linting.eslint" },
             { import = "lazyvim.plugins.extras.ui.alpha" },
-            -- { import = "lazyvim.plugins.extras.ui.edgy" },
             { import = "lazyvim.plugins.extras.ui.mini-animate" },
             { import = "lazyvim.plugins.extras.ui.mini-indentscope" },
             { import = "lazyvim.plugins.extras.ui.smear-cursor" },
@@ -233,7 +230,6 @@
             { import = "lazyvim.plugins.extras.util.mini-hipatterns" },
             { import = "lazyvim.plugins.extras.util.project" },
             { import = "lazyvim.plugins.extras.util.rest" },
-            { import = "lazyvim.plugins.extras.editor.telescope" },
             { import = "lazyvim.plugins.extras.editor.refactoring" },
             { import = "lazyvim.plugins.extras.editor.harpoon2" },
 
