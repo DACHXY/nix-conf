@@ -77,13 +77,7 @@
     "margin-right": 0,
     "margin-bottom": 0,
 
-    "modules-left": [
-      "custom/os",
-      "hyprland/workspaces",
-      "clock",
-      "custom/cava",
-      "mpris"
-    ],
+    "modules-left": ["custom/os", "hyprland/workspaces", "clock", "mpris"],
 
     "modules-center": ["hyprland/window"],
 

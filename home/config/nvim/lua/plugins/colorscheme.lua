@@ -49,18 +49,32 @@ return {
   },
   {
     "folke/tokyonight.nvim",
+    name = "tokyonight",
+  },
+  {
+    "embark-theme/vim",
+    name = "embark",
     opts = {
-      transparent = true,
-      styles = {
-        sidebars = "transparent",
-        floats = "transparent",
-      },
+      transparent_background = true,
     },
+  },
+  {
+    "ellisonleao/gruvbox.nvim",
+    name = "gruvbox",
+    priority = 1000,
+  },
+  {
+    "luisiacc/gruvbox-baby",
+    name = "gruvbox-baby",
+  },
+  {
+    "sainnhe/gruvbox-material",
+    name = "gruvbox-material",
   },
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "catppuccin",
+      colorscheme = "gruvbox-material",
     },
   },
 }

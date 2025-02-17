@@ -1,11 +1,11 @@
 font-family = "CaskaydiaCove Nerd Font Mono"
-font-size = 15 
-theme = catppuccin-macchiato
+font-size = 15
+theme = Espresso
 unfocused-split-opacity = 0.85
 
 wait-after-command = false
 shell-integration = detect
-window-theme = ghostty
+window-theme = dark
 
 confirm-close-surface = false
 window-decoration = false
