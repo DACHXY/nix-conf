@@ -50,12 +50,18 @@
     };
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     {
       nixpkgs,
       nix-index-database,
+      lanzaboote,
       ...
     }@inputs:
     let
@@ -77,6 +83,7 @@
         dn-pre7780 = nixpkgs.lib.nixosSystem {
           modules = [
             nix-index-database.nixosModules.nix-index
+            lanzaboote.nixosModules.lanzaboote
             ./system/dev/dn-pre7780
           ];
           specialArgs = {
@@ -93,6 +100,7 @@
         dn-lap = nixpkgs.lib.nixosSystem {
           modules = [
             nix-index-database.nixosModules.nix-index
+            lanzaboote.nixosModules.lanzaboote
             ./system/dev/dn-lap
           ];
           specialArgs = {
