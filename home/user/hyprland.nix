@@ -6,6 +6,7 @@
   hyprcursor-size,
   xcursor-size,
   nvidia-offload-enabled ? false,
+  monitors ? [ ],
   ...
 }:
 let
@@ -91,6 +92,7 @@ in
           ''XDG_SESSION_DESKTOP, Hyprland''
           ''GDK_PIXBUF_MODULE_FILE, ${pkgs.librsvg}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache'' # Make rofi load svg
         ];
+        workspace = import ./hypr/workspace.nix { inherit monitors; };
       }
       // window
       // windowrule

@@ -17,6 +17,10 @@ let
   nvidia-bus-id = "PCI:1:0:0";
   nvidia-offload-enabled = config.hardware.nvidia.prime.offload.enable;
   device-name = "dn-pre7780";
+  monitors = [
+    "DP-3"
+    "HDMI-A-2"
+  ];
 in
 {
   imports = [
@@ -61,6 +65,7 @@ in
         username
         nvidia-offload-enabled
         device-name
+        monitors
         ;
     };
     users."${username}" = {
