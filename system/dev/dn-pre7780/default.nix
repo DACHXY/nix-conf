@@ -37,6 +37,7 @@ in
       offload = nvidia-offload-enabled;
     })
     ../../modules/wine.nix
+    # ../../modules/secure-boot.nix
   ];
 
   # Overrides

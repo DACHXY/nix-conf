@@ -34,6 +34,8 @@ in
 {
   home.packages =
     (with pkgs; [
+      opera
+
       # Dev stuff
       gcc
       go
