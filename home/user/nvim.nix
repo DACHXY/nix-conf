@@ -81,7 +81,6 @@
           lazydev-nvim
           lualine-nvim
           luvit-meta
-          neo-tree-nvim
           neotest
           noice-nvim
           nui-nvim
