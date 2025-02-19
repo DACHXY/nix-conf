@@ -1,5 +1,6 @@
 {
   lib,
+  unstable,
   system,
   inputs,
   nix-version,
@@ -34,6 +35,7 @@ in
     backupFileExtension = "hm-backup";
     extraSpecialArgs = {
       inherit
+        unstable
         inputs
         system
         nix-version

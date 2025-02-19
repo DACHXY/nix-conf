@@ -30,7 +30,7 @@ let
 
   getCurrentSong = pkgs.writeShellScriptBin "getSong" ''
     song_info=$(playerctl metadata --format '{{title}}  󰎆    {{artist}}')
-    echo "$song_info"
+       echo "$song_info"
   '';
 
   ewwWayland = pkgs.eww.overrideAttrs (oldAttrs: {
@@ -65,12 +65,11 @@ in
     plugins =
       (with inputs.hyprland-plugins.packages.${system}; [
         xtra-dispatchers
-        hyprexpo
         hyprwinwrap
       ])
       ++ [
         inputs.hyprgrass.packages.${system}.default
-        # inputs.hyprtasking.packages.${system}.hyprtasking
+        inputs.hyprtasking.packages.${system}.hyprtasking
       ];
 
     settings =
@@ -80,6 +79,7 @@ in
         };
         bind = import ./hypr/bind.nix { inherit mainMod nvidia-offload-enabled; };
         bindm = import ./hypr/bindm.nix { inherit mainMod; };
+        binde = import ./hypr/binde.nix { inherit mainMod; };
         monitor = import ./hypr/monitor.nix;
         plugin = plugins;
         exec-once = ''${startScript}'';

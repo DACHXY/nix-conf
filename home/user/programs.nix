@@ -33,7 +33,7 @@ in
     yazi = {
       enable = true;
       package = inputs.yazi.packages.${system}.default;
-      enableFishIntegration = true;
+      enableFishIntegration = false;
     };
 
     obs-studio = {

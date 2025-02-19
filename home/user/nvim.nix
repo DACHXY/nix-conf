@@ -1,11 +1,25 @@
 {
   lib,
   pkgs,
+  unstable,
   device-name,
   username,
   inputs,
   ...
 }:
+let
+  lazyVim = (
+    unstable.vimPlugins.LazyVim.overrideAttrs (previous: {
+      version = "2025-02-15";
+      src = pkgs.fetchFromGitHub {
+        owner = "LazyVim";
+        repo = "LazyVim";
+        rev = "main";
+        sha256 = "sha256-dF2clJlNkaGoQ15TaZBswuuUJmSf0OK2vgV4XCsYwv4=";
+      };
+    })
+  );
+in
 {
   home.packages = with pkgs; [
     gh
@@ -62,7 +76,8 @@
       let
         plugins = with pkgs.vimPlugins; [
           # LazyVim
-          LazyVim
+          lazyVim
+
           bufferline-nvim
           cmp-buffer
           cmp-nvim-lsp
@@ -174,6 +189,7 @@
 
         lazyPath = pkgs.linkFarm "lazy-plugins" (builtins.map mkEntryFromDrv plugins);
       in
+      # lua
       ''
         require("lazy").setup({
           defaults = {

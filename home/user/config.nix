@@ -34,7 +34,6 @@ in
       source = "${configDir}/ghostty";
     };
     ".face".source = "${configDir}/.face";
-    ".config/fish/functions".source = "${configDir}/fish/functions";
     ".config/yazi" = {
       recursive = true;
       source = "${configDir}/yazi";

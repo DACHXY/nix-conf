@@ -11,10 +11,6 @@ let
 
   # freezeShot = "--freeze";
   freezeShot = "";
-
-  resizeStep = builtins.toString 20;
-  brightnessStep = builtins.toString 10;
-  volumeStep = builtins.toString 2;
 in
 [
   ''${mainMod}, F, exec, ${browser}''
@@ -56,21 +52,12 @@ in
   ''${mainMod}, mouse_down, workspace, e-1''
   ''${mainMod}, mouse_up, workspace, e+1''
 
-  ''${mainMod} CTRL, l, resizeactive, ${resizeStep} 0''
-  ''${mainMod} CTRL, h, resizeactive, -${resizeStep} 0''
-  ''${mainMod} CTRL, k, resizeactive, 0 -${resizeStep}''
-  ''${mainMod} CTRL, j, resizeactive, 0 ${resizeStep}''
-
   ''${mainMod} SHIFT, l, movewindow, r''
   ''${mainMod} SHIFT, h, movewindow, l''
   ''${mainMod} SHIFT, k, movewindow, u''
   ''${mainMod} SHIFT, j, movewindow, d''
 
   # Media
-  '',XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%+''
-  '',XF86AudioLowerVolume, exec, wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%-''
-  '',XF86MonBrightnessDown, exec, brightnessctl set ${brightnessStep}%-''
-  '',XF86MonBrightnessUp, exec, brightnessctl set ${brightnessStep}%+''
   '',XF86AudioPrev, exec, playerctl previous''
   '',XF86AudioNext, exec, playerctl next''
   ''${mainMod} CTRL, COMMA, exec, playerctl previous''
@@ -81,8 +68,8 @@ in
 
   # ==== Plugins ==== #
   # Overview
-  # ''${mainMod}, o, hyprexpo:expo, toggle''
-  # ''${mainMod}, TAB, hyprexpo:expo, toggle''
+  ''${mainMod}, o, hyprtasking:toggle, cursor''
+  ''${mainMod}, TAB, hyprtasking:toggle, all''
 ]
 ++ (
   # workspaces

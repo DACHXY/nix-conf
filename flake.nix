@@ -6,6 +6,10 @@
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
+    nixpkgs-unstable = {
+      url = "github:nixos/nixpkgs/nixos-unstable";
+    };
+
     firefox = {
       url = "github:nix-community/flake-firefox-nightly";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -60,25 +64,26 @@
   outputs =
     {
       nixpkgs,
+      nixpkgs-unstable,
       nix-index-database,
       lanzaboote,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
-      pkgs = import nixpkgs {
-        system = "x86_64-linux";
-        config.allowUnfree = true;
-      };
+      # pkgs = import nixpkgs {
+      #   system = "x86_64-linux";
+      #   config.allowUnfree = true;
+      # };
       nix-version = "25.05";
       username = "danny";
       git-config = {
         username = "DACHXY";
         email = "danny10132024@gmail.com";
       };
+      unstable = import nixpkgs-unstable { inherit system; };
     in
     {
-      nixpkgs.pkgs = pkgs;
       nixosConfigurations = {
         dn-pre7780 = nixpkgs.lib.nixosSystem {
           modules = [
@@ -88,6 +93,7 @@
           ];
           specialArgs = {
             inherit
+              unstable
               inputs
               system
               nix-version
@@ -105,6 +111,7 @@
           ];
           specialArgs = {
             inherit
+              unstable
               inputs
               system
               nix-version
