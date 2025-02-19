@@ -1,5 +1,6 @@
 {
   lib,
+  unstable,
   inputs,
   system,
   nix-version,
@@ -53,9 +54,9 @@ in
   home-manager = {
     backupFileExtension = "hm-backup";
     useUserPackages = true;
-    useGlobalPkgs = true;
     extraSpecialArgs = {
       inherit
+        unstable
         inputs
         system
         nix-version
