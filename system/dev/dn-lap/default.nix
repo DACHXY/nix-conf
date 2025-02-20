@@ -15,6 +15,7 @@ let
   xcursor-size = "24";
   nvidia-offload-enabled = config.hardware.nvidia.prime.offload.enable;
   device-name = "dn-lap";
+  monitors = [ ];
 in
 {
   imports = [
@@ -35,6 +36,7 @@ in
     backupFileExtension = "hm-backup";
     extraSpecialArgs = {
       inherit
+        monitors
         unstable
         inputs
         system
