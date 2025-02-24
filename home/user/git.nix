@@ -10,6 +10,7 @@ in
     userEmail = email;
     extraConfig = {
       safe.directory = [ "/etc/nixos" ];
+      init.defaultBranch = "main";
     };
   };
 }
