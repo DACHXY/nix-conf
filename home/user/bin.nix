@@ -4,6 +4,7 @@ let
   findDirs = [
     "~/practice"
     "~/projects"
+    "~/notes"
   ];
   tmuxSessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" ''
     if [[ $# -eq 1 ]]; then
