@@ -11,6 +11,9 @@ let
 
   # freezeShot = "--freeze";
   freezeShot = "";
+  # clipboard-only = "${clipboardOnly}";
+  screenshotFolder = "--output-folder ~/Pictures/Screenshots";
+  clipboardOnly = "${screenshotFolder}";
 in
 [
   ''${mainMod}, F, exec, ${browser}''
@@ -27,9 +30,13 @@ in
   ''${mainMod}, P, pseudo, # dwindle''
   ''${mainMod}, S, togglesplit, # dwindle''
   ''CTRL ${mainMod} SHIFT, L, exec, hyprlock''
-  ''${mainMod} SHIFT, s, exec, hyprshot -m region --clipboard-only ${freezeShot}''
-  ''CTRL SHIFT, s, exec, hyprshot -m window --clipboard-only ${freezeShot}''
-  ''CTRL SHIFT ${mainMod}, s, exec, hyprshot -m output --clipboard-only ${freezeShot}''
+
+  # Screenshot
+  ''${mainMod} SHIFT, s, exec, hyprshot -m region ${clipboardOnly} ${freezeShot}''
+  ''CTRL SHIFT, s, exec, hyprshot -m window ${clipboardOnly} ${freezeShot}''
+  ''CTRL SHIFT ${mainMod}, s, exec, hyprshot -m output ${clipboardOnly} ${freezeShot}''
+  ''CTRL ALT, s, exec, hyprshot -m active -m window ${clipboardOnly} ${freezeShot}''
+
   ''${mainMod}, PERIOD, exec, rofi -modi emoji -show emoji''
   ''CTRL ${mainMod}, c, exec, rofi -show calc -modi calc -no-show-match -no-sort''
   ''${mainMod}, X, exec, sleep 0.1 && swaync-client -t -sw''

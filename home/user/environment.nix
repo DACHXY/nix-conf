@@ -1,6 +1,6 @@
 {
   home.sessionVariables = {
-    BROWSER = "firefox";
+    BROWSER = "firefox-nightly";
     EDITOR = "nvim";
     TERMINAL = "ghostty";
     NIXOS_OZONE_WL = "1";
