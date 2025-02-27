@@ -4,7 +4,7 @@
 
 ## ✨ Main Applications
 
-- [X] Hyprland (uwsm support)
+- [X] Hyprland
 - [X] Neovim
   - ✅ [lazyvim](https://github.com/LazyVim/LazyVim)
   - ✅ [treesitter](https://github.com/nvim-treesitter/nvim-treesitter)

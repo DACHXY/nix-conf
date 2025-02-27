@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  nvidia-offload-enabled,
   ...
 }:
 let
@@ -11,6 +12,7 @@ let
       (lib.head oldAttrs.desktopItems).override {
         name = "discord";
         desktopName = "Discord";
+        exec = if nvidia-offload-enabled == true then "offload vesktop %U" else "vesktop %U";
       }
     );
 

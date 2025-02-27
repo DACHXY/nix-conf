@@ -60,7 +60,8 @@ in
     enable = true;
     xwayland.enable = true;
     systemd.enable = false;
-    package = inputs.hyprland.packages.${system}.hyprland;
+    package = null;
+    portalPackage = null;
 
     plugins =
       (with inputs.hyprland-plugins.packages.${system}; [

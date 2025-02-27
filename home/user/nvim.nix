@@ -126,8 +126,9 @@ in
           nvim-nio
           one-small-step-for-vimkind
           none-ls-nvim
-          markdown-preview-nvim
           render-markdown-nvim
+          markdown-preview-nvim
+          markdown-nvim
           image-nvim
           hover-nvim
 

@@ -24,3 +24,7 @@ vim.g.lazyvim_python_lsp = "pyright"
 vim.g.lazyvim_python_ruff = "ruff"
 vim.g.lazyvim_eslint_auto_format = true
 vim.o.background = "dark"
+
+-- Markdown preview
+vim.g.mkdp_auto_close = 0
+vim.g.mkdp_combine_preview = 0
