@@ -12,6 +12,7 @@
 
   # Hyprland
   hyprlog = "grep -v \"arranged\" $XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/hyprland.log | cat";
+  saveEye = "pkill -f hyprsunset && hyprctl dispatch exec 'hyprsunset -t 3300'";
 
   # Systemd Boot
   setWin = "sudo bootctl set-oneshot auto-windows";

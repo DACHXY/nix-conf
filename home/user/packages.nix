@@ -42,6 +42,7 @@ in
       (python3.withPackages (python-pkgs: [
         python-pkgs.pip
         python-pkgs.requests
+        python-pkgs.weasyprint
       ]))
       rustup
       pkgsCross.mingwW64.stdenv.cc
@@ -51,6 +52,8 @@ in
 
       # Work stuff
       libreoffice-qt
+      pandoc
+      texliveSmall
 
       # Bluetooth
       blueberry

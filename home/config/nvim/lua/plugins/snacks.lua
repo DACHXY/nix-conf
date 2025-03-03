@@ -5,7 +5,12 @@ return {
       explorer = {
         enabled = true,
       },
-      image = { enabled = true },
+      image = {
+        enabled = true,
+        math = {
+          enabled = true,
+        },
+      },
       picker = {
         enabled = true,
         sources = {
