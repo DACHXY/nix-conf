@@ -32,6 +32,8 @@ let
       echo '${discordIcon}' > $out/share/icons/hicolor/scalable/apps/vesktop.svg
     '';
   });
+
+  zen-browser = pkgs.callPackage ../../pkgs/zen-browser.nix { };
 in
 {
   home.packages =
@@ -77,5 +79,6 @@ in
     ])
     ++ [
       vesktopOverride # discord
+      zen-browser
     ];
 }
