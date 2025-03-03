@@ -67,6 +67,11 @@
       "(.*) — Firefox Nightly": "  $1",
       "(.*) - YouTube Music — Firefox Nightly": "󰎆  $1",
 
+      // Zen
+      "(.*) - YouTube — Zen Browser": "  $1",
+      "(.*) - YouTube Music — Zen Browser": "󰎆  $1",
+      "(.*) — Zen Browser": " $1",
+
       "(.*) - VLC media player": "  $1"
     }
   },
@@ -156,6 +161,7 @@
       "rofi",
       "firefox",
       "firefox-nightly",
+      "zen",
       "kitty",
       "jetbrains-studio",
       "Brave-browser",
