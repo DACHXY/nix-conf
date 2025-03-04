@@ -6,8 +6,14 @@
     enableIPv6 = false;
     firewall = {
       enable = true;
-      allowedTCPPorts = [ 22 ];
-      allowedUDPPorts = [ 51820 ];
+      allowedTCPPorts = [
+        22
+        20088
+      ];
+      allowedUDPPorts = [
+        51820
+        20088
+      ];
     };
   };
 }
