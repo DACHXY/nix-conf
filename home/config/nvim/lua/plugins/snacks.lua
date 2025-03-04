@@ -17,6 +17,12 @@ return {
           explorer = {
             layout = { layout = { position = "right" } },
           },
+          files = {
+            ignored = true,
+          },
+          git_files = {
+            untracked = true,
+          },
         },
       },
       notifier = { enabled = true },

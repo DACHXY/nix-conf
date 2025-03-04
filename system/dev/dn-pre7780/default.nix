@@ -52,7 +52,7 @@ in
   services.wallpaperEngine.enable = lib.mkForce false;
 
   home-manager = {
-    backupFileExtension = "hm-backup";
+    backupFileExtension = "backup";
     useUserPackages = true;
     extraSpecialArgs = {
       inherit
