@@ -27,4 +27,7 @@ vim.o.background = "dark"
 
 -- Markdown preview
 vim.g.mkdp_auto_close = 0
-vim.g.mkdp_combine_preview = 0
+vim.g.mkdp_combine_preview = 1
+vim.g.mkdp_echo_preview_url = 1
+vim.g.mkdp_open_to_the_world = 1
+vim.g.mkdp_port = "20088"
