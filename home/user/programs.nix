@@ -8,6 +8,7 @@ let
   userChrome = builtins.readFile ../config/firefox/autohide_toolbox.css;
   profileSettings = {
     # about:config
+    "middlemouse.paste" = false;
     "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
     "extensions.activeThemeID" = "firefox-compact-dark@mozilla.org";
     "font.language.group" = "zh-TW";
