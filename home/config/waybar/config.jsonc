@@ -26,6 +26,7 @@
 
     "modules-right": [
       "wlr/taskbar",
+      "custom/wireguard",
       "idle_inhibitor",
       "network",
       "cpu",
@@ -83,6 +84,7 @@
 
     "modules-right": [
       "wlr/taskbar",
+      "custom/wireguard",
       "temperature",
       "idle_inhibitor",
       "network",

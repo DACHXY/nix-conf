@@ -1,4 +1,6 @@
-{ lib, ... }:
+{
+  ...
+}:
 let
   configPath = "/etc/wireguard/wg0.conf";
 in
