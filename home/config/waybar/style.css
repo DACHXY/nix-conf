@@ -42,6 +42,7 @@ tooltip label {
 
 #idle_inhibitor,
 #custom-cava,
+#custom-wireguard,
 #clock,
 #cpu,
 #memory,
@@ -78,6 +79,7 @@ tooltip label {
 #memory
 #temperature,
 #network,
+#custom-wireguard,
 #battery {
   margin-left: 4px;
 }
@@ -123,6 +125,7 @@ tooltip label {
 
 /* Center Icon */
 #custom-os,
+#custom-wireguard,
 #network,
 #idle_inhibitor {
   padding-left: 10px; padding-right: 14px;

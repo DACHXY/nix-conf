@@ -2,6 +2,10 @@
 
 ---
 
+## 📷 Preview
+
+![preview](./preview.png)
+
 ## ✨ Main Applications
 
 - [X] Hyprland

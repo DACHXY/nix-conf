@@ -215,5 +215,20 @@
       "activated": "󰅶",
       "deactivated": "󰾫"
     }
+  },
+
+  "custom/wireguard": {
+    "format": "{icon}",
+    "format-icons": {
+      "connected": "󰒘",
+      "disconnected": ""
+    },
+    "exec": "~/.config/scripts/wgStatus.sh",
+    "exec-if": "which wg-quick",
+    "on-click": "~/.config/scripts/wgStatus.sh toggle",
+    "tooltip": true,
+    "interval": 3,
+    "return-type": "json",
+    "escape": true
   }
 }
