@@ -16,7 +16,6 @@
     ./users.nix
     ./environment.nix
     ./virtualization.nix
-    ./display-manager.nix
     ./gc.nix
     ./polkit.nix
     ./lsp.nix
