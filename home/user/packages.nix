@@ -33,8 +33,8 @@ let
     '';
   });
 
-  zen-browser = pkgs.callPackage ../../pkgs/zen-browser.nix { };
 in
+# zen-browser = pkgs.callPackage ../../pkgs/zen-browser.nix { };
 {
   home.packages =
     (with pkgs; [
@@ -81,6 +81,6 @@ in
     ])
     ++ [
       vesktopOverride # discord
-      zen-browser
+      # zen-browser
     ];
 }
