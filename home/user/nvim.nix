@@ -15,7 +15,7 @@ let
         owner = "LazyVim";
         repo = "LazyVim";
         rev = "main";
-        sha256 = "sha256-dF2clJlNkaGoQ15TaZBswuuUJmSf0OK2vgV4XCsYwv4=";
+        sha256 = "sha256-lwT39h97ZyF/SFJhkOqZ2vU5f3QpCpe7L1MVDPEXN28=";
       };
     })
   );

@@ -107,3 +107,4 @@
     ++ [
       inputs.ghostty.packages.${system}.default
     ];
+}
