@@ -8,6 +8,7 @@
   environment.systemPackages =
     (with pkgs; [
       neovim
+      file
 
       # Binary cache platform
       cachix
@@ -106,4 +107,3 @@
     ++ [
       inputs.ghostty.packages.${system}.default
     ];
-}

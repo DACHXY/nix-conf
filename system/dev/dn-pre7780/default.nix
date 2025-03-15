@@ -36,7 +36,7 @@ in
       nvidia-bus-id = nvidia-bus-id;
     })
     ../../modules/gaming.nix
-    ../../modules/wireguard.nix
+    # ../../modules/wireguard.nix
     ../../modules/dn-ca.nix
     (import ../../modules/wallpaper-engine.nix {
       offload = nvidia-offload-enabled;

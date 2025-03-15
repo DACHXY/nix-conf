@@ -59,6 +59,11 @@
       url = "github:nix-community/lanzaboote/v0.4.2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -67,6 +72,7 @@
       nixpkgs-unstable,
       nix-index-database,
       lanzaboote,
+      disko,
       ...
     }@inputs:
     let
@@ -118,6 +124,40 @@
               username
               git-config
               ;
+          };
+        };
+
+        dn-server = nixpkgs.lib.nixosSystem {
+          modules = [
+            disko.nixosModules.disko
+            nix-index-database.nixosModules.nix-index
+            lanzaboote.nixosModules.lanzaboote
+            ./system/dev/dn-server
+          ];
+          specialArgs = {
+            inherit
+              unstable
+              inputs
+              system
+              nix-version
+              username
+              git-config
+              ;
+          };
+        };
+
+        # Use this for all other target
+        # nixos-anywhere --flake .#generic --generate-hardware-config nixos-generate-config ./hardware-configuration.nix <hostname>
+        generic = nixpkgs.lib.nixosSystem {
+          inherit system;
+
+          modules = [
+            disko.nixosModules.disko
+            ./system/dev/generic
+            ./hardware-configuration.nix
+          ];
+          specialArgs = {
+            inherit nix-version;
           };
         };
       };
