@@ -76,6 +76,8 @@ in
 
       # PDF Preview
       poppler
+
+      trash-cli
     ])
     ++ [
       vesktopOverride # discord

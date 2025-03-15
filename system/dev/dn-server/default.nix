@@ -13,14 +13,12 @@ let
   hyprcursor-size = "32";
   xcursor-size = "24";
   nvidia-mode = "offload";
-  # Get bus id with `lshw`
+  # Get bus id with `lshw -C display`
   intel-bus-id = "PCI:0:2:0";
   nvidia-bus-id = "PCI:1:0:0";
   nvidia-offload-enabled = config.hardware.nvidia.prime.offload.enable;
-  device-name = "dn-pre7780";
+  device-name = "dn-server";
   monitors = [
-    "DP-3"
-    "HDMI-A-2"
   ];
 in
 {
@@ -28,28 +26,23 @@ in
     inputs.home-manager.nixosModules.default
     ./hardware-configuration.nix
     ./boot.nix
-    ../../modules
+    ./packages.nix
+    ./services.nix
+    ./networking.nix
+    ../../modules/server-default.nix
     ../../modules/cuda.nix
     (import ../../modules/nvidia.nix {
       nvidia-mode = nvidia-mode;
       intel-bus-id = intel-bus-id;
       nvidia-bus-id = nvidia-bus-id;
     })
-    ../../modules/gaming.nix
-    # ../../modules/wireguard.nix
-    ../../modules/dn-ca.nix
-    (import ../../modules/wallpaper-engine.nix {
-      offload = nvidia-offload-enabled;
-    })
     ../../modules/wine.nix
-    ../../modules/secure-boot.nix
   ];
 
   # Overrides
   networking.hostName = lib.mkForce device-name;
 
   system.stateVersion = nix-version;
-  services.wallpaperEngine.enable = lib.mkForce false;
 
   home-manager = {
     backupFileExtension = "backup";
