@@ -1,5 +1,6 @@
 {
   pkgs,
+  inputs,
   ...
 }:
 {
@@ -76,5 +77,7 @@
     pkgs.gst_all_1.gst-libav
     pkgs.gst_all_1.gstreamer
     pkgs.gst_all_1.gst-plugins-good
+
+    inputs.ghostty.packages.${system}.default
   ];
 }

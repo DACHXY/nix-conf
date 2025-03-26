@@ -3,17 +3,12 @@
 {
   networking = {
     networkmanager.enable = true;
-    enableIPv6 = false;
+    enableIPv6 = true;
     firewall = {
       enable = true;
       allowedTCPPorts = [
-        22
         443
         80
-        30072
-      ];
-      allowedUDPPorts = [
-        51820
       ];
     };
   };

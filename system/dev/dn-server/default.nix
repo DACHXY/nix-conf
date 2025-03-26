@@ -36,7 +36,7 @@ in
       intel-bus-id = intel-bus-id;
       nvidia-bus-id = nvidia-bus-id;
     })
-    ../../modules/wine.nix
+    # ../../modules/wine.nix
   ];
 
   # Overrides
@@ -64,7 +64,7 @@ in
     };
     users."${username}" = {
       imports = [
-        ../../../home
+        ../../../home/server-default.nix
       ];
     };
   };
