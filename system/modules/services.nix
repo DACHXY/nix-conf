@@ -20,7 +20,7 @@
       settings = {
         PasswordAuthentication = false;
         AllowUsers = [ username ];
-        UseDns = true;
+        UseDns = false;
         PermitRootLogin = "no";
       };
     };
