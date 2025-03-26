@@ -36,13 +36,14 @@ in
       nvidia-bus-id = nvidia-bus-id;
     })
     ../../modules/gaming.nix
-    # ../../modules/wireguard.nix
+    ../../modules/wireguard.nix
     ../../modules/dn-ca.nix
     (import ../../modules/wallpaper-engine.nix {
       offload = nvidia-offload-enabled;
     })
     ../../modules/wine.nix
     ../../modules/secure-boot.nix
+    ../../modules/kubernetes.nix
   ];
 
   # Overrides
@@ -74,5 +75,12 @@ in
         ../../../home
       ];
     };
+  };
+
+  users.users = {
+    "${username}".openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFQA42R3fZmjb9QnUgzzOTIXQBC+D2ravE/ZLvdjoOQ danny@lap.dn"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSHkPa6vmr5WBPXAazY16+Ph1Mqv9E24uLIf32oC2oH danny@phone.dn"
+    ];
   };
 }

@@ -66,6 +66,10 @@
     };
   };
 
+  nixConfig = {
+
+  };
+
   outputs =
     {
       nixpkgs,

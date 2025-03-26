@@ -18,4 +18,8 @@
   setWin = "sudo bootctl set-oneshot auto-windows";
   goWin = "sudo bootctl set-oneshot auto-windows && reboot";
   goBios = "sudo bootctl set-oneshot auto-reboot-to-firmware-setup && reboot";
+
+  # TTY
+  hideTTY = ''sudo sh -c "echo 0 > /sys/class/graphics/fb0/blank"'';
+  showTTY = ''sudo sh -c "echo 1 > /sys/class/graphics/fb0/blank"'';
 }
