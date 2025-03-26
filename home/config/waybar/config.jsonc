@@ -84,8 +84,8 @@
 
     "modules-right": [
       "wlr/taskbar",
-      "custom/wireguard",
       "temperature",
+      "custom/wireguard",
       "idle_inhibitor",
       "network",
       "pulseaudio",
