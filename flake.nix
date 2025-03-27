@@ -64,6 +64,10 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nix-minecraft = {
+      url = "github:Infinidoge/nix-minecraft";
+    };
   };
 
   nixConfig = {
@@ -135,6 +139,7 @@
           modules = [
             disko.nixosModules.disko
             nix-index-database.nixosModules.nix-index
+            inputs.nix-minecraft.nixosModules.minecraft-servers
             lanzaboote.nixosModules.lanzaboote
             ./system/dev/dn-server
           ];
