@@ -1,6 +1,7 @@
 {
   lib,
   unstable,
+  pkgs,
   inputs,
   system,
   nix-version,
@@ -37,6 +38,29 @@ in
       nvidia-bus-id = nvidia-bus-id;
     })
     # ../../modules/wine.nix
+  ];
+
+  nixpkgs.overlays = [ inputs.nix-minecraft.overlay ];
+
+  environment.systemPackages = [
+    (pkgs.ferium.overrideAttrs (
+      final: prev: rec {
+        cargoHash = "sha256-yedl4KQCpT7Ai1EPvwD5kzhkHesIjGVAcxKjp5k2jmI=";
+        version = "4.7.0";
+        src = pkgs.fetchFromGitHub {
+          owner = "gorilla-devs";
+          repo = prev.pname;
+          rev = "v${version}";
+          hash = "sha256-jj3BdaxH7ofhHNF2eu+burn6+/0bPQQZ8JfjXAFyN4A=";
+        };
+
+        cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
+          inherit (final) pname src version;
+          useFetchCargoVendor = true;
+          hash = final.cargoHash;
+        };
+      }
+    ))
   ];
 
   # Overrides

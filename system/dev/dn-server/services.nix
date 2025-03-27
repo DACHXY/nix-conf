@@ -117,8 +117,12 @@ in
         53
         personal.port
         kube.port
+        25565
       ];
-      allowedTCPPorts = sshPorts ++ [ 53 ];
+      allowedTCPPorts = sshPorts ++ [
+        53
+        25565
+      ];
     };
 
     nftables = {
@@ -269,6 +273,37 @@ in
     gvfs.enable = true;
     udisks2.enable = true;
     devmon.enable = true;
+
+    minecraft-servers = {
+      enable = true;
+      eula = true;
+      openFirewall = true;
+
+      servers = {
+        prominence = {
+          enable = true;
+          package = pkgs.fabricServers.fabric-1_20_1.override {
+            loaderVersion = "0.16.10";
+          };
+          jvmOpts = "-Xmx24G -Xms4G";
+
+          symlinks = {
+            "config" = "/etc/minecraft/prominence/config";
+            "defaultconfigs" = "/etc/minecraft/prominence/defaultconfigs";
+            "modernfix" = "/etc/minecraft/prominence/modernfix";
+            "schematics" = "/etc/minecraft/prominence/schematics";
+            "manifest.json" = "/etc/minecraft/prominence/manifest.json";
+            "server-icon.png" = "/etc/minecraft/prominence/server-icon.png";
+            "mods" = "/etc/minecraft/prominence/mods";
+          };
+
+          serverProperties = {
+            server-port = 25565;
+            motd = "簡欣欣的媽媽天堂";
+          };
+        };
+      };
+    };
   };
 
   users.users = {
