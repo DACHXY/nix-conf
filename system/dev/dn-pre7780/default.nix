@@ -38,13 +38,11 @@ in
     })
     ../../modules/gaming.nix
     ../../modules/wireguard.nix
-    ../../modules/dn-ca.nix
     (import ../../modules/wallpaper-engine.nix {
       offload = nvidia-offload-enabled;
     })
     ../../modules/wine.nix
     ../../modules/secure-boot.nix
-    ../../modules/kubernetes.nix
   ];
 
   # Overrides
@@ -54,24 +52,7 @@ in
   services.wallpaperEngine.enable = lib.mkForce false;
 
   environment.systemPackages = [
-    pkgs.lunar-client
-    (pkgs.ferium.overrideAttrs (
-      final: prev: rec {
-        cargoHash = "sha256-yedl4KQCpT7Ai1EPvwD5kzhkHesIjGVAcxKjp5k2jmI=";
-        version = "4.7.0";
-        src = pkgs.fetchFromGitHub {
-          owner = "gorilla-devs";
-          repo = prev.pname;
-          rev = "v${version}";
-          hash = "sha256-jj3BdaxH7ofhHNF2eu+burn6+/0bPQQZ8JfjXAFyN4A=";
-        };
-
-        cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
-          inherit (final) pname src version;
-          hash = final.cargoHash;
-        };
-      }
-    ))
+    pkgs.prismlauncher
   ];
 
   home-manager = {

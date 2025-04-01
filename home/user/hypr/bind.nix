@@ -1,7 +1,7 @@
 { mainMod, nvidia-offload-enabled }:
 let
   firefox = "firefox-nightly";
-  prefix = if nvidia-offload-enabled then "offload" else "";
+  prefix = if nvidia-offload-enabled then "nvidia-offload" else "";
   browser = "${prefix} ${firefox}";
   noOffloadBrowser = "${firefox} -P noOffload";
   terminal = "${prefix} ghostty";

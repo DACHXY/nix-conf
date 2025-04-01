@@ -7,7 +7,7 @@
 }:
 
 let
-  pkgs-unstable = inputs.hyprland.inputs.nixpkgs.legacyPackages.${system};
+  pkgs-hyprland = inputs.hyprland.inputs.nixpkgs.legacyPackages.${system};
 in
 {
   hardware = {
@@ -29,8 +29,8 @@ in
     graphics = {
       enable = true;
       enable32Bit = true;
-      package32 = pkgs-unstable.pkgsi686Linux.mesa.drivers;
-      package = pkgs-unstable.mesa.drivers;
+      package32 = pkgs-hyprland.pkgsi686Linux.mesa;
+      package = pkgs-hyprland.mesa;
       extraPackages = with pkgs; [
         intel-media-driver # LIBVA_DRIVER_NAME=iHD
         vaapiVdpau
