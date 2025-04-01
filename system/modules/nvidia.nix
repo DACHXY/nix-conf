@@ -17,14 +17,9 @@ in
   lib,
   ...
 }:
-
 # Nvidia offload mode
-let
-  offload = import ./offload.nix { inherit pkgs; };
-in
 lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
   environment.systemPackages = with pkgs; [
-    offload
     nvtopPackages.nvidia
     vulkan-loader
     vulkan-validation-layers

@@ -20,16 +20,6 @@
     ];
   };
 
-  fileSystems."/mnt/storage" = {
-    device = "router.dn:/mnt/storage";
-    fsType = "nfs";
-    options = [
-      "x-systemd.automount"
-      "noauto"
-      "x-systemd.idle-timeout=600"
-    ];
-  };
-
   fileSystems."/mnt/windows" = {
     device = "/dev/disk/by-uuid/460237D00237C429";
     fsType = "ntfs-3g";

@@ -12,7 +12,7 @@ let
       (lib.head oldAttrs.desktopItems).override {
         name = "discord";
         desktopName = "Discord";
-        exec = if nvidia-offload-enabled == true then "offload vesktop %U" else "vesktop %U";
+        exec = if nvidia-offload-enabled == true then "nvidia-offload vesktop %U" else "vesktop %U";
       }
     );
 
@@ -32,9 +32,7 @@ let
       echo '${discordIcon}' > $out/share/icons/hicolor/scalable/apps/vesktop.svg
     '';
   });
-
 in
-# zen-browser = pkgs.callPackage ../../pkgs/zen-browser.nix { };
 {
   home.packages =
     (with pkgs; [
@@ -47,9 +45,6 @@ in
         python-pkgs.weasyprint
       ]))
       rustup
-      pkgsCross.mingwW64.stdenv.cc
-      pkgsCross.mingwW64.windows.pthreads
-      postman
       ripdrag
 
       # Work stuff
@@ -62,6 +57,7 @@ in
 
       # Gaming
       steam-run
+      protonup
 
       # Downloads
       qbittorrent
@@ -81,6 +77,9 @@ in
     ])
     ++ [
       vesktopOverride # discord
-      # zen-browser
     ];
+
+  home.sessionVariables = {
+    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
+  };
 }

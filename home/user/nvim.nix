@@ -288,11 +288,6 @@ in
                   nixd = {
                     cmd = { "nixd" },
                     filetypes = { "nix" },
-                    single_file_support = true,
-                    root_dir = function(fname)
-                      return require("lspconfig.util").root_pattern("flake.nix")(fname)
-                        or vim.fs.dirname(vim.fs.find(".git", { path = fname, upward = true })[1])
-                    end,
                     settings = {
                       nixd = {
                         nixpkgs = {

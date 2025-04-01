@@ -27,7 +27,10 @@
 
     xserver = {
       enable = false;
-      xkb.layout = "us";
+      xkb = {
+        layout = "us";
+        options = "caps:swapescape";
+      };
     };
 
     # USB auto mount
