@@ -18,7 +18,9 @@ in
     };
   };
 
-  environment.systemPackages = with pkgs; [ tmuxinator ];
+  environment.systemPackages = with pkgs; [
+    tmuxinator
+  ];
 
   programs = {
     tmux = {

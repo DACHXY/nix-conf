@@ -6,20 +6,20 @@
       url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
-    nixpkgs-unstable = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
-    };
-
     firefox = {
       url = "github:nix-community/flake-firefox-nightly";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-    nix-index-database.url = "github:nix-community/nix-index-database";
-    nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     ghostty = {
       url = "github:ghostty-org/ghostty";
@@ -70,105 +70,201 @@
     };
   };
 
-  nixConfig = {
-
-  };
-
   outputs =
     {
       nixpkgs,
-      nixpkgs-unstable,
       nix-index-database,
       lanzaboote,
-      disko,
+      home-manager,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
-      # pkgs = import nixpkgs {
-      #   system = "x86_64-linux";
-      #   config.allowUnfree = true;
-      # };
       nix-version = "25.05";
-      username = "danny";
-      git-config = {
-        username = "DACHXY";
-        email = "danny10132024@gmail.com";
+
+      # Declare COMMON modules here
+      common-settings = {
+        modules = [
+          home-manager.nixosModules.default
+          nix-index-database.nixosModules.nix-index
+        ];
+        args = {
+          inherit
+            inputs
+            system
+            nix-version
+            ;
+        };
       };
-      unstable = import nixpkgs-unstable { inherit system; };
-    in
-    {
-      nixosConfigurations = {
-        dn-pre7780 = nixpkgs.lib.nixosSystem {
-          modules = [
-            nix-index-database.nixosModules.nix-index
+
+      devices = {
+        dn-pre7780 = {
+          settings = {
+            personal = {
+              hostname = "dn-pre7780";
+              username = "danny";
+              git = {
+                username = "DACHXY";
+                email = "Danny10132024@gmail.com";
+              };
+            };
+
+            hyprland = {
+              # Can leave monitors empty if only has one monitors
+              # This is for assign workspace to a specific monitor
+              # e.g. 1, 3, 5 for "DP-3"; 2, 4, 6 for "HDMI-A-2"
+              monitors = [
+                "DP-3"
+                "HDMI-A-2"
+              ];
+              cursor-size = 32;
+              xcursor-size = 24;
+            };
+
+            # Optional
+            nvidia = {
+              # Choose from offload, sync, rsync
+              mode = "offload";
+
+              # Only needed when using GPU hybrid mode
+              intel-bus-id = "PCI:0:2:0";
+              nvidia-bus-id = "PCI:1:0:0";
+            };
+          };
+          extra-modules = [
             lanzaboote.nixosModules.lanzaboote
             ./system/dev/dn-pre7780
           ];
-          specialArgs = {
-            inherit
-              unstable
-              inputs
-              system
-              nix-version
-              username
-              git-config
-              ;
-          };
+          overlays = [
+
+          ];
         };
 
-        dn-lap = nixpkgs.lib.nixosSystem {
-          modules = [
-            nix-index-database.nixosModules.nix-index
+        dn-lap = {
+          settings = {
+            personal = {
+              hostname = "dn-lap";
+              username = "danny";
+              git = {
+                username = "DACHXY";
+                email = "Danny10132024@gmail.com";
+              };
+            };
+
+            hyprland = {
+              # Can leave monitors empty if only has one monitors
+              # This is for assign workspace to a specific monitor
+              # e.g. 1, 3, 5 for "DP-3"; 2, 4, 6 for "HDMI-A-2"
+              monitors = [ ];
+              cursor-size = 32;
+              xcursor-size = 24;
+            };
+          };
+          extra-modules = [
             lanzaboote.nixosModules.lanzaboote
             ./system/dev/dn-lap
           ];
-          specialArgs = {
-            inherit
-              unstable
-              inputs
-              system
-              nix-version
-              username
-              git-config
-              ;
-          };
+          overlays = [
+
+          ];
         };
 
-        dn-server = nixpkgs.lib.nixosSystem {
-          modules = [
-            disko.nixosModules.disko
-            nix-index-database.nixosModules.nix-index
+        dn-server = {
+          settings = {
+            personal = {
+              hostname = "dn-server";
+              username = "danny";
+              git = {
+                username = "DACHXY";
+                email = "Danny10132024@gmail.com";
+              };
+            };
+
+            hyprland = {
+              # Can leave monitors empty if only has one monitors
+              # This is for assign workspace to a specific monitor
+              # e.g. 1, 3, 5 for "DP-3"; 2, 4, 6 for "HDMI-A-2"
+              monitors = [ ];
+              cursor-size = 32;
+              xcursor-size = 24;
+            };
+
+            # Optional
+            nvidia = {
+              # Choose from offload, sync, rsync
+              mode = "offload";
+
+              # Only needed when using GPU hybrid mode
+              intel-bus-id = "PCI:0:2:0";
+              nvidia-bus-id = "PCI:1:0:0";
+            };
+          };
+          extra-modules = [
             inputs.nix-minecraft.nixosModules.minecraft-servers
-            lanzaboote.nixosModules.lanzaboote
             ./system/dev/dn-server
           ];
-          specialArgs = {
-            inherit
-              unstable
-              inputs
-              system
-              nix-version
-              username
-              git-config
-              ;
-          };
-        };
-
-        # Use this for all other target
-        # nixos-anywhere --flake .#generic --generate-hardware-config nixos-generate-config ./hardware-configuration.nix <hostname>
-        generic = nixpkgs.lib.nixosSystem {
-          inherit system;
-
-          modules = [
-            disko.nixosModules.disko
-            ./system/dev/generic
-            ./hardware-configuration.nix
+          overlays = [
+            inputs.nix-minecraft.overlay
           ];
-          specialArgs = {
-            inherit nix-version;
-          };
         };
       };
+    in
+    {
+      nixosConfigurations = builtins.mapAttrs (
+        dev: conf:
+        let
+          settings = conf.settings;
+          username = settings.personal.username;
+          hostname = settings.personal.hostname;
+        in
+        nixpkgs.lib.nixosSystem {
+          modules =
+            [
+              (
+                { config, ... }:
+                {
+                  system.stateVersion = nix-version;
+                  home-manager = {
+                    backupFileExtension = "backup";
+                    useUserPackages = true;
+                    useGlobalPkgs = true;
+                    extraSpecialArgs = {
+                      inherit
+                        inputs
+                        system
+                        nix-version
+                        settings
+                        ;
+                    };
+                    users."${username}" = {
+                      imports = [
+                        inputs.hyprland.homeManagerModules.default
+                        {
+                          home = {
+                            homeDirectory = "/home/${username}";
+                            stateVersion = nix-version;
+                          };
+                          # Let Home Manager install and manage itself.
+                          programs.home-manager.enable = true;
+                        }
+                      ];
+                    };
+                  };
+                  networking.hostName = hostname;
+                  nixpkgs.hostPlatform = system;
+                  nixpkgs.config.allowUnfree = true;
+                  nixpkgs.overlays = [
+                    (import ./pkgs/overlays { inherit config; })
+                  ] ++ conf.overlays;
+                }
+              )
+            ]
+            ++ common-settings.modules
+            ++ conf.extra-modules;
+          specialArgs = {
+            inherit settings;
+          } // common-settings.args;
+        }
+      ) devices;
     };
 }

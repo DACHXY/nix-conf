@@ -1,5 +1,4 @@
 {
-  pkgs,
   inputs,
   system,
   ...
@@ -22,34 +21,12 @@ let
     # Disable Ctrl+Q
     "browser.quitShortcut.disabled" = true;
   };
-
 in
 {
   programs = {
-    vscode = {
-      enable = true;
-      package = pkgs.vscode;
-    };
-
-    yazi = {
-      enable = true;
-      package = inputs.yazi.packages.${system}.default;
-      enableFishIntegration = false;
-    };
-
-    obs-studio = {
-      enable = true;
-      plugins = with pkgs.obs-studio-plugins; [
-        wlrobs
-        obs-backgroundremoval
-        obs-pipewire-audio-capture
-      ];
-    };
-
     firefox = {
       enable = true;
-      # package = (pkgs.wrapFirefox (pkgs.firefox-unwrapped.override { pipewireSupport = true; }) { });
-      package = inputs.firefox.packages.${pkgs.system}.firefox-nightly-bin;
+      package = inputs.firefox.packages.${system}.firefox-nightly-bin;
       languagePacks = [
         "en-US"
         "zh-TW"

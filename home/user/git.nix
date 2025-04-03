@@ -1,13 +1,9 @@
-{ git-config, ... }:
-let
-  userName = git-config.username;
-  email = git-config.email;
-in
+{ settings, ... }:
 {
   programs.git = {
     enable = true;
-    userName = userName;
-    userEmail = email;
+    userName = settings.personal.git.username;
+    userEmail = settings.personal.git.email;
     extraConfig = {
       safe.directory = [ "/etc/nixos" ];
       init.defaultBranch = "main";
