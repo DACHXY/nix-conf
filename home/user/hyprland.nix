@@ -3,10 +3,8 @@
   lib,
   inputs,
   system,
-  hyprcursor-size,
-  xcursor-size,
-  nvidia-offload-enabled ? false,
-  monitors ? [ ],
+  osConfig,
+  settings,
   ...
 }:
 let
@@ -18,8 +16,8 @@ let
       inputs
       system
       terminal
-      xcursor-size
       ;
+    xcursor-size = settings.hyprland.xcursor-size;
   };
   mainMod = "SUPER";
   window = import ./hypr/window.nix;
@@ -67,7 +65,10 @@ in
         debug = {
           disable_logs = false;
         };
-        bind = import ./hypr/bind.nix { inherit mainMod nvidia-offload-enabled; };
+        bind = import ./hypr/bind.nix {
+          inherit mainMod;
+          nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
+        };
         bindm = import ./hypr/bindm.nix { inherit mainMod; };
         binde = import ./hypr/binde.nix { inherit mainMod; };
         monitor = import ./hypr/monitor.nix;
@@ -75,14 +76,14 @@ in
         exec-once = ''${startScript}'';
         env = [
           ''HYPRCURSOR_THEME, ${cursorName}''
-          ''HYPRCURSOR_SIZE, ${hyprcursor-size}''
+          ''HYPRCURSOR_SIZE, ${builtins.toString settings.hyprland.cursor-size}''
           ''XCURSOR_THEME, ${cursorName}''
-          ''XCURSOR_SIZE, ${xcursor-size}''
+          ''XCURSOR_SIZE, ${builtins.toString settings.hyprland.xcursor-size}''
           ''XDG_CURRENT_DESKTOP, Hyprland''
           ''XDG_SESSION_DESKTOP, Hyprland''
           ''GDK_PIXBUF_MODULE_FILE, ${pkgs.librsvg}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache'' # Make rofi load svg
         ];
-        workspace = import ./hypr/workspace.nix { inherit monitors; };
+        workspace = import ./hypr/workspace.nix { monitors = settings.hyprland.monitors; };
       }
       // window
       // windowrule

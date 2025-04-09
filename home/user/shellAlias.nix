@@ -1,3 +1,4 @@
+{ hostname }:
 {
   ls = "exa --icons";
   lp = "exa"; # Pure output
@@ -7,7 +8,7 @@
   t = "tmux";
 
   # Nixos
-  rebuild = "sudo nixos-rebuild switch --flake /etc/nixos";
+  rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#${hostname}";
   fullClean = "sudo nix store gc && sudo /run/current-system/bin/switch-to-configuration boot";
 
   # Hyprland
@@ -22,4 +23,7 @@
   # TTY
   hideTTY = ''sudo sh -c "echo 0 > /sys/class/graphics/fb0/blank"'';
   showTTY = ''sudo sh -c "echo 1 > /sys/class/graphics/fb0/blank"'';
+
+  # Recover from hyprlock corruption
+  letMeIn = ''hyprctl --instance 0 "keyword misc:allow_session_lock_restore 1" && hyprctl --instance 0 dispatch "exec hyprlock"'';
 }

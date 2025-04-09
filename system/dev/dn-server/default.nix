@@ -1,94 +1,52 @@
 {
-  lib,
-  unstable,
   pkgs,
   inputs,
-  system,
-  nix-version,
-  git-config,
-  username,
-  config,
+  settings,
   ...
 }:
-let
-  hyprcursor-size = "32";
-  xcursor-size = "24";
-  nvidia-mode = "offload";
-  # Get bus id with `lshw -C display`
-  intel-bus-id = "PCI:0:2:0";
-  nvidia-bus-id = "PCI:1:0:0";
-  nvidia-offload-enabled = config.hardware.nvidia.prime.offload.enable;
-  device-name = "dn-server";
-  monitors = [
-  ];
-in
 {
   imports = [
-    inputs.home-manager.nixosModules.default
+    (import ../../modules/nvidia.nix {
+      nvidia-mode = settings.nvidia.mode;
+      intel-bus-id = settings.nvidia.intel-bus-id;
+      nvidia-bus-id = settings.nvidia.nvidia-bus-id;
+    })
     ./hardware-configuration.nix
     ./boot.nix
     ./packages.nix
     ./services.nix
     ./networking.nix
-    ../../modules/server-default.nix
+    ../../modules/presets/minimal.nix
+    ../../modules/bluetooth.nix
     ../../modules/cuda.nix
-    (import ../../modules/nvidia.nix {
-      nvidia-mode = nvidia-mode;
-      intel-bus-id = intel-bus-id;
-      nvidia-bus-id = nvidia-bus-id;
-    })
-    # ../../modules/wine.nix
+    ../../modules/gc.nix
   ];
 
-  nixpkgs.overlays = [ inputs.nix-minecraft.overlay ];
-
-  environment.systemPackages = [
-    (pkgs.ferium.overrideAttrs (
-      final: prev: rec {
-        cargoHash = "sha256-yedl4KQCpT7Ai1EPvwD5kzhkHesIjGVAcxKjp5k2jmI=";
-        version = "4.7.0";
-        src = pkgs.fetchFromGitHub {
-          owner = "gorilla-devs";
-          repo = prev.pname;
-          rev = "v${version}";
-          hash = "sha256-jj3BdaxH7ofhHNF2eu+burn6+/0bPQQZ8JfjXAFyN4A=";
-        };
-
-        cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
-          inherit (final) pname src version;
-          useFetchCargoVendor = true;
-          hash = final.cargoHash;
-        };
-      }
-    ))
+  environment.systemPackages = with pkgs; [
+    ferium
   ];
-
-  # Overrides
-  networking.hostName = lib.mkForce device-name;
-
-  system.stateVersion = nix-version;
 
   home-manager = {
-    backupFileExtension = "backup";
-    useUserPackages = true;
-    extraSpecialArgs = {
-      inherit
-        unstable
-        inputs
-        system
-        nix-version
-        xcursor-size
-        hyprcursor-size
-        git-config
-        username
-        nvidia-offload-enabled
-        device-name
-        monitors
-        ;
-    };
-    users."${username}" = {
+    users."${settings.personal.username}" = {
       imports = [
-        ../../../home/server-default.nix
+        ../../../home/user/config.nix
+        ../../../home/user/direnv.nix
+        ../../../home/user/environment.nix
+        ../../../home/user/git.nix
+        ../../../home/user/nvim.nix
+        ../../../home/user/shell.nix
+        ../../../home/user/tmux.nix
+        ../../../home/user/yazi.nix
+        {
+          home.packages = with pkgs; [
+            inputs.ghostty.packages.${system}.default
+            (python3.withPacakges (
+              p: with p; [
+                pip
+              ]
+            ))
+          ];
+        }
       ];
     };
   };

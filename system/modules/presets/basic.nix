@@ -1,0 +1,29 @@
+{ ... }:
+{
+  imports = [
+    ../auto-mount.nix
+    ../bluetooth.nix
+    ../display-manager.nix
+    ../environment.nix
+    ../flatpak.nix
+    ../fonts.nix
+    ../gc.nix
+    ../hardware.nix
+    ../hyprland.nix
+    ../internationalisation.nix
+    ../misc.nix
+    ../networking.nix
+    ../nixsettings.nix
+    ../obs-studio.nix
+    ../packages.nix
+    ../plymouth.nix
+    ../polkit.nix
+    ../programs.nix
+    ../security.nix
+    ../services.nix
+    ../sound.nix
+    ../time.nix
+    ../tmux.nix
+    ../users.nix
+  ];
+}

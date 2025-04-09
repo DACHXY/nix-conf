@@ -1,15 +1,13 @@
 {
   lib,
   pkgs,
-  unstable,
-  device-name,
-  username,
+  settings,
   inputs,
   ...
 }:
 let
   lazyVim = (
-    unstable.vimPlugins.LazyVim.overrideAttrs (previous: {
+    pkgs.vimPlugins.LazyVim.overrideAttrs (previous: {
       version = "2025-02-15";
       src = pkgs.fetchFromGitHub {
         owner = "LazyVim";
@@ -23,6 +21,28 @@ in
 {
   home.packages = with pkgs; [
     gh
+    ripgrep
+    fd
+    lua-language-server
+    nodejs_22
+    nixfmt-rfc-style
+    markdownlint-cli2
+    shfmt
+    nixd
+    marksman
+    nginx-language-server
+    bash-language-server
+    tailwindcss-language-server
+    vscode-langservers-extracted
+    gopls
+    pyright
+    yaml-language-server
+    marksman
+    lazygit
+
+    # formatter
+    prettierd
+    black
   ];
 
   programs.neovim = {
@@ -298,10 +318,10 @@ in
                         },
                         options = {
                           nixos = {
-                            expr = '(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations.${device-name}.options',
+                            expr = '(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations.${settings.personal.hostname}.options',
                           },
                           home_manager = {
-                            expr = '(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."${username}@${device-name}".options',
+                            expr = '(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."${settings.personal.username}@${settings.personal.hostname}".options',
                           }
                         }
                       }

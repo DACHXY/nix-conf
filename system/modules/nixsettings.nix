@@ -1,6 +1,15 @@
-{ ... }:
+{ inputs, ... }:
 {
   documentation.nixos.enable = false;
-  nixpkgs.config.allowUnfree = true;
-  nixpkgs.config.rcomSupport = true;
+  nix = {
+    settings = {
+      warn-dirty = false;
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
+      auto-optimise-store = true;
+    };
+    nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+  };
 }

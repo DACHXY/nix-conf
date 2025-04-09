@@ -16,7 +16,7 @@ let
     dconf write /org/cinnamon/desktop/applications/terminal/exec "''\'${terminal}''\'" &
     dconf write /org/cinnamon/desktop/applications/terminal/exec-arg "''\'''\'" &
 
-    dconf write /org/gnome/desktop/interface/cursor-size ${xcursor-size} &
+    dconf write /org/gnome/desktop/interface/cursor-size ${builtins.toString xcursor-size} &
 
     ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1 &
     ${swayncScript}/bin/swaync-start &

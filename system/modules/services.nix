@@ -1,26 +1,23 @@
-{ username, pkgs, ... }:
+{ settings, ... }:
 
 {
-  systemd.services.flatpak-repo = {
-    wantedBy = [ "multi-user.target" ];
-    path = [ pkgs.flatpak ];
-    script = ''
-      flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-    '';
+  networking = {
+    firewall = {
+      allowedTCPPorts = [
+        22 # SSH
+      ];
+    };
   };
 
   services = {
     dbus.enable = true;
-
-    blueman.enable = true;
-
     openssh = {
       enable = true;
       ports = [ 22 ];
       settings = {
         PasswordAuthentication = false;
-        AllowUsers = [ username ];
-        UseDns = false;
+        AllowUsers = [ settings.personal.username ];
+        UseDns = true;
         PermitRootLogin = "no";
       };
     };
@@ -32,15 +29,5 @@
         options = "caps:swapescape";
       };
     };
-
-    # USB auto mount
-    gvfs.enable = true;
-    udisks2.enable = true;
-    devmon.enable = true;
-
-    flatpak.enable = true;
-
-    # Thuner plugin
-    tumbler.enable = true; # Thumbnail
   };
 }
