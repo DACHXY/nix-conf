@@ -1,12 +1,12 @@
 {
   pkgs,
-  xcursor-size,
+  settings,
   ...
 }:
 let
   cursorName = "catppuccin-macchiato-lavender-cursors";
   themeName = "catppuccin-macchiato-lavender-compact";
-  cursorSize = pkgs.lib.strings.toInt xcursor-size;
+  cursorSize = settings.hyprland.xcursor-size;
 in
 {
   gtk = {
@@ -49,6 +49,9 @@ in
     libsForQt5.qtstyleplugin-kvantum
     libsForQt5.lightly
     libsForQt5.qt5ct
+    adwaita-icon-theme
+    gsettings-desktop-schemas
+    glib
     (catppuccin-kvantum.override {
       accent = "lavender";
       variant = "macchiato";

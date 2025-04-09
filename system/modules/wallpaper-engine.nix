@@ -1,6 +1,6 @@
 # Work pretty good on ONE monitor
 {
-  offload ? false,
+  config,
   ...
 }:
 { lib, ... }:
@@ -15,7 +15,7 @@ in
     enable = true;
     assetsDir = assetsDir;
     contentDir = contentDir;
-    extraPrefix = lib.mkIf offload "nvidia-offload";
+    extraPrefix = lib.mkIf config.hardware.nvidia.prime.offload.enableOffloadCmd "nvidia-offload";
     fps = 30;
     monitors = {
       "DP-3" = {

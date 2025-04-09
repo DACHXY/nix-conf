@@ -5,7 +5,6 @@ in
 {
   home.file = {
     ".config/wallpapers".source = "${configDir}/wallpapers";
-    ".config/kitty".source = "${configDir}/kitty";
     ".config/neofetch".source = "${configDir}/neofetch";
     ".config/wlogout".source = "${configDir}/wlogout";
     ".config/waybar" = {
@@ -28,16 +27,11 @@ in
       recursive = true;
       source = "${configDir}/fcitx5";
     };
-    ".config/electron-flags.conf".source = "${configDir}/electron/electron-flags.conf";
     ".config/ghostty" = {
       recursive = true;
       source = "${configDir}/ghostty";
     };
     ".face".source = "${configDir}/.face";
-    ".config/yazi" = {
-      recursive = true;
-      source = "${configDir}/yazi";
-    };
   };
 
   xdg.mimeApps = {

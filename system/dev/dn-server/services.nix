@@ -274,11 +274,6 @@ in
       enable = false;
       xkb.layout = "us";
     };
-
-    # USB auto mount
-    gvfs.enable = true;
-    udisks2.enable = true;
-    devmon.enable = true;
   };
 
   users.users = {

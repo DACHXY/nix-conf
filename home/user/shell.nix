@@ -1,8 +1,21 @@
-{ pkgs, ... }:
+{ pkgs, settings, ... }:
 let
-  shellAlias = import ./shellAlias.nix;
+  shellAlias = import ./shellAlias.nix { hostname = settings.personal.hostname; };
 in
 {
+  home.packages = with pkgs; [
+    # Shell
+    fishPlugins.done
+    fishPlugins.fzf-fish
+    fishPlugins.forgit
+    fishPlugins.hydro
+    fishPlugins.grc
+    grc # Colorize
+    zoxide # Dir jumper
+    starship # Shell theme
+    carapace # Autocomplete
+  ];
+
   programs = {
     fish = {
       enable = true;
