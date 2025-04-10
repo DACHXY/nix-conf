@@ -1,5 +1,14 @@
-{ pkgs, ... }:
+{ pkgs, settings, ... }:
 
+let
+  addons = with pkgs; [
+    fcitx5-gtk
+    fcitx5-mozc # Japanese
+    fcitx5-chinese-addons
+    fcitx5-rime # Bopomofo
+    rime-data
+  ];
+in
 {
   i18n.defaultLocale = "en_US.UTF-8";
 
@@ -20,13 +29,24 @@
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";
-    fcitx5.addons = with pkgs; [
-      fcitx5-gtk
-      fcitx5-mozc # Japanese
-      fcitx5-chinese-addons
-      fcitx5-rime # Bopomofo
-      rime-data
-    ];
+    fcitx5.addons = addons;
   };
 
+  systemd.user.services.fcitx5 = {
+    enable = true;
+    wantedBy = [ "graphical-session.target" ];
+    partOf = [ "graphical-session.target" ];
+    description = "Fcitx5 Input Method";
+    environment = {
+      GTK_IM_MODULE = "";
+      XMODIFIERS = "@im=fcitx";
+      QT_IM_MODULE = "fcitx";
+    };
+    serviceConfig = {
+      Type = "simple";
+      Restart = "on-failure";
+      RestartSec = 2;
+      ExecStart = "/run/current-system/sw/bin/fcitx5";
+    };
+  };
 }

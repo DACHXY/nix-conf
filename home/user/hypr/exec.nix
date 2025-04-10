@@ -26,8 +26,6 @@ let
     hyprpaper &
     waybar -c ~/.config/waybar/config.jsonc -s ~/.config/waybar/style.css &
     systemctl --user enable --now hypridle.service &
-    fcitx5 -rd &
-    fcitx5-remote -r &
     hyprsunset -t 3000k
   '';
 in
