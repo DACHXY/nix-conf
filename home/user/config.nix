@@ -7,9 +7,6 @@ in
     ".config/wallpapers".source = "${configDir}/wallpapers";
     ".config/neofetch".source = "${configDir}/neofetch";
     ".config/wlogout".source = "${configDir}/wlogout";
-    ".config/waybar" = {
-      source = "${configDir}/waybar";
-    };
     ".config/btop".source = "${configDir}/btop";
     ".config/rofi".source = "${configDir}/rofi";
     ".config/scripts".source = "${configDir}/scripts";

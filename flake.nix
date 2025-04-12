@@ -110,12 +110,12 @@
             };
 
             hyprland = {
-              # Can leave monitors empty if only has one monitors
+              # Leave empty if you only have one monitor
               # This is for assign workspace to a specific monitor
-              # e.g. 1, 3, 5 for "DP-3"; 2, 4, 6 for "HDMI-A-2"
+              # e.g. 1, 3, 5 for the first one; 2, 4, 6 for the second one
               monitors = [
-                "DP-3"
-                "HDMI-A-2"
+                "desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271"
+                "desc:Acer Technologies XV272U V3 1322131231233"
               ];
               cursor-size = 32;
               xcursor-size = 24;
@@ -152,9 +152,9 @@
             };
 
             hyprland = {
-              # Can leave monitors empty if only has one monitors
+              # Leave empty if you only have one monitor
               # This is for assign workspace to a specific monitor
-              # e.g. 1, 3, 5 for "DP-3"; 2, 4, 6 for "HDMI-A-2"
+              # e.g. 1, 3, 5 for the first one; 2, 4, 6 for the second one
               monitors = [ ];
               cursor-size = 32;
               xcursor-size = 24;
@@ -181,9 +181,9 @@
             };
 
             hyprland = {
-              # Can leave monitors empty if only has one monitors
+              # Leave empty if you only have one monitor
               # This is for assign workspace to a specific monitor
-              # e.g. 1, 3, 5 for "DP-3"; 2, 4, 6 for "HDMI-A-2"
+              # e.g. 1, 3, 5 for the first one; 2, 4, 6 for the second one
               monitors = [ ];
               cursor-size = 32;
               xcursor-size = 24;
@@ -220,44 +220,39 @@
         nixpkgs.lib.nixosSystem {
           modules =
             [
-              (
-                { config, ... }:
-                {
-                  system.stateVersion = nix-version;
-                  home-manager = {
-                    backupFileExtension = "backup";
-                    useUserPackages = true;
-                    useGlobalPkgs = true;
-                    extraSpecialArgs = {
-                      inherit
-                        inputs
-                        system
-                        nix-version
-                        settings
-                        ;
-                    };
-                    users."${username}" = {
-                      imports = [
-                        inputs.hyprland.homeManagerModules.default
-                        {
-                          home = {
-                            homeDirectory = "/home/${username}";
-                            stateVersion = nix-version;
-                          };
-                          # Let Home Manager install and manage itself.
-                          programs.home-manager.enable = true;
-                        }
-                      ];
-                    };
+              {
+                system.stateVersion = nix-version;
+                home-manager = {
+                  backupFileExtension = "backup";
+                  useUserPackages = true;
+                  useGlobalPkgs = true;
+                  extraSpecialArgs = {
+                    inherit
+                      inputs
+                      system
+                      nix-version
+                      settings
+                      ;
                   };
-                  networking.hostName = hostname;
-                  nixpkgs.hostPlatform = system;
-                  nixpkgs.config.allowUnfree = true;
-                  nixpkgs.overlays = [
-                    (import ./pkgs/overlays { inherit config; })
-                  ] ++ conf.overlays;
-                }
-              )
+                  users."${username}" = {
+                    imports = [
+                      inputs.hyprland.homeManagerModules.default
+                      {
+                        home = {
+                          homeDirectory = "/home/${username}";
+                          stateVersion = nix-version;
+                        };
+                        # Let Home Manager install and manage itself.
+                        programs.home-manager.enable = true;
+                      }
+                    ];
+                  };
+                };
+                networking.hostName = hostname;
+                nixpkgs.hostPlatform = system;
+                nixpkgs.config.allowUnfree = true;
+                nixpkgs.overlays = ((import ./pkgs/overlays) ++ conf.overlays);
+              }
             ]
             ++ common-settings.modules
             ++ conf.extra-modules;

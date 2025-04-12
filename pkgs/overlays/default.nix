@@ -1,7 +1,4 @@
-{ config }:
-prev: final: {
-  imports = [
-    ./ferium.nix
-    (import ./vesktop.nix { inherit config; })
-  ];
-}
+[
+  (import ./ferium.nix)
+  (import ./vesktop.nix)
+]

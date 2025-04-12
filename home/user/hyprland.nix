@@ -35,7 +35,6 @@ in
   home.packages = with pkgs; [
     mpvpaper # Video Wallpaper
     yt-dlp
-    hyprpaper
     hyprcursor
   ];
 
@@ -46,7 +45,7 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
-    systemd.enable = false;
+    systemd.enable = true;
     package = null;
     portalPackage = null;
 
@@ -63,7 +62,7 @@ in
     settings =
       {
         debug = {
-          disable_logs = false;
+          disable_logs = true;
         };
         bind = import ./hypr/bind.nix {
           inherit mainMod;
@@ -90,6 +89,7 @@ in
       // input;
   };
 
+  # === hyprpaper === #
   services.hyprpaper = {
     enable = true;
     settings = {
@@ -100,6 +100,7 @@ in
     };
   };
 
+  # === hyprlock === #
   programs.hyprlock = {
     enable = true;
     importantPrefixes = [
@@ -126,6 +127,7 @@ in
       '';
   };
 
+  # === hypridle === #
   services.hypridle = {
     enable = true;
     settings = {
@@ -170,6 +172,218 @@ in
     };
   };
 
+  # === hyprsunset === #
+  systemd.user.services.hyprsunset = {
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+    Unit = {
+      ConditionEnvironment = "WAYLAND_DISPLAY";
+      Description = "Blue light filter";
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset -t 3000k";
+      Restart = "always";
+      RestartSec = 2;
+    };
+  };
+
+  # === waybar === #
+  programs.waybar = {
+    enable = true;
+    style = ../../home/config/waybar/style.css;
+    settings = import ../../home/config/waybar/config.nix { inherit terminal; };
+    systemd = {
+      enable = true;
+    };
+  };
+
+  # === swaync === #
+  services.swaync = {
+    enable = true;
+    settings = {
+      control-center-height = 900;
+      control-center-margin-bottom = 20;
+      control-center-margin-left = 20;
+      control-center-margin-right = 20;
+      control-center-margin-top = 20;
+      control-center-width = 500;
+      fit-to-screen = false;
+      hide-on-action = true;
+      hide-on-clear = true;
+      image-visibility = "when-available";
+      keyboard-shortcuts = true;
+      layer = "overlay";
+      notification-body-image-height = 100;
+      notification-body-image-width = 200;
+      notification-icon-size = 64;
+      notification-window-width = 490;
+      positionX = "right";
+      positionY = "top";
+      script-fail-notify = true;
+      timeout = 3;
+      timeout-critical = 0;
+      timeout-low = 2;
+      transition-time = 200;
+      widgets = [
+        "title"
+        "notifications"
+        "mpris"
+      ];
+    };
+    style = # css
+      ''
+        @define-color bgc rgba(0, 0, 0, 0.1);
+        @define-color borderc #ebdbb2;
+        @define-color textc #282828;
+
+        * {
+          font-family: JetBrainsMonoNerdFontMono;
+          font-weight: bold;
+          font-size: 15px;
+          border-width: 3px;
+          border-color: #ebdbb2;
+        }
+
+        .control-center .notification-row:focus,
+        .control-center .notification-row:hover {
+          opacity: 1;
+          background: @bgc;
+        }
+
+        .notification-row {
+          outline: none;
+          margin: 20px;
+          padding: 0;
+        }
+
+        .notification {
+          background: @textc;
+          margin: 0px;
+          border-radius: 6px;
+          border-width: 3px;
+          border-color: #ebdbb2;
+        }
+
+        .notification-content {
+          background: @textc;
+          padding: 7px;
+          margin: 0;
+        }
+
+        .close-button {
+          background: @textc;
+          color: @borderc;
+          text-shadow: none;
+          padding: 0;
+          border-radius: 20px;
+          margin-top: 9px;
+          margin-right: 5px;
+        }
+
+        .close-button:hover {
+          box-shadow: none;
+          background: @borderc;
+          color: @textc;
+          transition: all .15s ease-in-out;
+          border: none;
+        }
+
+        .notification-action {
+          color: @bgc;
+          background: @textc;
+        }
+
+        .summary {
+          padding-top: 7px;
+          font-size: 13px;
+          color: @borderc;
+        }
+
+        .time {
+          font-size: 11px;
+          color: @borderc;
+          margin-right: 40px;
+        }
+
+        .body {
+          font-size: 12px;
+          color: @borderc;
+        }
+
+        .control-center {
+          background-color: @bgc;
+          border-radius: 20px;
+        }
+
+        .control-center-list {
+          background: transparent;
+        }
+
+        .control-center-list-placeholder {
+          opacity: .5;
+        }
+
+        .floating-notifications {
+          background: transparent;
+        }
+
+        .blank-window {
+          background: alpha(black, 0.1);
+        }
+
+        .widget-title {
+          color: @borderc;
+          padding: 10px 10px;
+          margin: 10px 10px 5px 10px;
+          font-size: 1.5rem;
+        }
+
+        .widget-title>button {
+          font-size: 1rem;
+          color: @borderc;
+          padding: 10px;
+          text-shadow: none;
+          background: @bgc;
+          box-shadow: none;
+          border-radius: 5px;
+        }
+
+        .widget-title>button:hover {
+          background: @borderc;
+          color: #282828;
+        }
+
+        .widget-label {
+          margin: 10px 10px 10px 10px;
+        }
+
+        .widget-label>label {
+          font-size: 1rem;
+          color: @textc;
+        }
+
+        .widget-mpris {
+          color: @borderc;
+          padding: 5px 5px 5px 5px;
+          margin: 10px;
+          border-radius: 20px;
+        }
+
+        .widget-mpris>box>button {
+          border-radius: 20px;
+        }
+
+        .widget-mpris-player {
+          padding: 5px 5px;
+          margin: 10px;
+        }
+      '';
+  };
+
+  # === rofi === #
   programs.rofi = {
     enable = true;
     package = pkgs.rofi-wayland;

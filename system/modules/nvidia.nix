@@ -95,14 +95,13 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
   };
 
   environment.variables = {
-    # GPU
     LIBVA_DRIVER_NAME = "nvidia";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     NVD_BACKEND = "direct";
     GBM_BACKEND = "nvidia-drm";
     MOZ_DISABLE_RDD_SANDBOX = 1;
     OGL_DEDICATED_HW_STATE_PER_CONTEXT = "ENABLE_ROBUST";
-    INTEL_GPU_MIN_FREQ_ON_AC = "500";
+
     # If multiple monitors are connected to dGPU & iGPU,
     # make sure to put the iGPU first
     # AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
