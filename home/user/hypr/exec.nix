@@ -5,7 +5,7 @@
   ...
 }:
 let
-  startupScript = pkgs.pkgs.writeShellScriptBin "start" ''
+  startupScript = pkgs.writeShellScriptBin "start" ''
     # Fix nemo open in terminal
     dconf write /org/cinnamon/desktop/applications/terminal/exec "''\'${terminal}''\'" &
     dconf write /org/cinnamon/desktop/applications/terminal/exec-arg "''\'''\'" &
