@@ -1,4 +1,4 @@
-{ pkgs, settings, ... }:
+{ pkgs, ... }:
 
 let
   addons = with pkgs; [
@@ -44,7 +44,7 @@ in
     };
     serviceConfig = {
       Type = "simple";
-      Restart = "on-failure";
+      Restart = "always";
       RestartSec = 2;
       ExecStart = "/run/current-system/sw/bin/fcitx5";
     };

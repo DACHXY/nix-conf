@@ -1,4 +1,3 @@
-{ config }:
 final: prev:
 let
   discordIcon = prev.lib.readFile ../../pkgs/assets/discord.svg;
@@ -10,11 +9,6 @@ in
       (prev.lib.head oldAttrs.desktopItems).override {
         name = "discord";
         desktopName = "Discord";
-        exec =
-          if config.hardware.nvidia.prime.offload.enableOffloadCmd == true then
-            "nvidia-offload vesktop %U"
-          else
-            "vesktop %U";
       }
     );
 

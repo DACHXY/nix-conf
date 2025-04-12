@@ -3,9 +3,7 @@ let
   firefox = "firefox-nightly";
   prefix = if nvidia-offload-enabled then "nvidia-offload" else "";
   browser = "${prefix} ${firefox}";
-  noOffloadBrowser = "${firefox} -P noOffload";
-  terminal = "${prefix} ghostty";
-  # filemanager = "nemo";
+  terminal = "ghostty";
   filemanager = "${terminal} -e yazi";
   scripts = "~/.config/scripts";
 
@@ -17,7 +15,6 @@ let
 in
 [
   ''${mainMod}, F, exec, ${browser}''
-  ''CTRL ${mainMod}, F, exec, ${noOffloadBrowser} -no-remote''
   ''${mainMod}, RETURN, exec, ${terminal}''
   ''CTRL ALT, T, exec, ${terminal}''
   ''${mainMod}, Q, killactive, ''
