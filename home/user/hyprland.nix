@@ -12,9 +12,6 @@ let
   startScript = import ./hypr/exec.nix {
     inherit
       pkgs
-      lib
-      inputs
-      system
       terminal
       ;
     xcursor-size = settings.hyprland.xcursor-size;
@@ -72,7 +69,7 @@ in
         binde = import ./hypr/binde.nix { inherit mainMod; };
         monitor = import ./hypr/monitor.nix;
         plugin = plugins;
-        exec-once = ''${startScript}'';
+        exec-once = [ ''${startScript}'' ];
         env = [
           ''HYPRCURSOR_THEME, ${cursorName}''
           ''HYPRCURSOR_SIZE, ${builtins.toString settings.hyprland.cursor-size}''
