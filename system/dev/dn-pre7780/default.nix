@@ -29,6 +29,11 @@
     };
   };
 
+  # Disable integrated bluetooth adapter
+  services.udev.extraRules = ''
+    SUBSYSTEM=="usb", ATTRS{idVendor}=="8087", ATTRS{idProduct}=="0033", ATTR{authorized}="0"
+  '';
+
   environment.systemPackages = with pkgs; [
     prismlauncher
   ];

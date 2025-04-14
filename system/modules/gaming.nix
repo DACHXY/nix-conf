@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  lib,
   ...
 }:
 
@@ -39,8 +38,12 @@
 
   hardware = {
     steam-hardware.enable = true;
+
     # Xbox controller
     xpadneo.enable = true;
+
+    # Xbox USB dongle
+    xone.enable = true;
   };
 
   boot.extraModulePackages = with config.boot.kernelPackages; [
