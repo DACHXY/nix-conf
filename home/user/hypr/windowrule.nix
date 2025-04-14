@@ -45,6 +45,9 @@
 
     # VLC
     "workspace: 3, initialClass: ^(vlc), floating: 0"
+
+    # vesktop
+    "workspace: 2 silent, initialClass: ^(vesktop), floating: 0"
   ];
 
   layerrule = [
