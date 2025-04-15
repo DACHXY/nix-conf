@@ -2,6 +2,7 @@
   pkgs,
   lib,
   inputs,
+  config,
   system,
   osConfig,
   settings,
@@ -224,7 +225,7 @@ in
       timeout-critical = 0;
       timeout-low = 2;
       transition-time = 200;
-      widgets = [
+      widgets = lib.mkForce [
         "title"
         "notifications"
         "mpris"
@@ -378,6 +379,15 @@ in
           margin: 10px;
         }
       '';
+  };
+
+  systemd.user.services.swaync.Service = {
+    ExecStart = lib.mkForce ''${pkgs.swaynotificationcenter}/bin/swaync --config ${
+      config.xdg.configFile."swaync/config.json".target
+    } --style ${config.xdg.configFile."swaync/style.css".target}'';
+    Environment = [
+      "XDG_CONFIG_HOME=/home/_dummy"
+    ];
   };
 
   # === rofi === #
