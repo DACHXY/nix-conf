@@ -1,14 +1,73 @@
-{ username, pkgs, ... }:
+{
+  settings,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
+  username = settings.personal.username;
   ethInterface = "enp0s31f6";
-  wlInterface = "wlp0s20f3";
   sshPorts = [ 30072 ];
   sshPortsString = builtins.concatStringsSep ", " (builtins.map (p: builtins.toString p) sshPorts);
+
+  getCleanAddress =
+    ip:
+    with builtins;
+    let
+      result = replaceStrings [ "/24" "/32" ] [ "" "" ] ip;
+    in
+    result;
+
+  getReverseFilename =
+    ip:
+    with builtins;
+    with lib.lists;
+    with lib.strings;
+    let
+      octets = take 3 (splitString "." (getCleanAddress ip));
+      reversedFilename = "db." + (concatStringsSep "." (reverseList octets));
+    in
+    reversedFilename;
+
+  getSubAddress =
+    ip:
+    with builtins;
+    with lib.lists;
+    with lib.strings;
+    let
+      octets = reverseList (splitString "." (getCleanAddress ip));
+      sub = head octets;
+    in
+    sub;
+
+  reverseIP =
+    ip:
+    with builtins;
+    with lib.lists;
+    with lib.strings;
+    let
+      octets = splitString "." (getCleanAddress ip);
+      reversedIP = (concatStringsSep "." (reverseList octets)) + ".in-addr.arpa";
+    in
+    reversedIP;
+
+  reverseZone =
+    ip:
+    with builtins;
+    with lib.lists;
+    with lib.strings;
+    let
+      octets = take 3 (splitString "." (getCleanAddress ip));
+      reversedZone = (concatStringsSep "." (reverseList octets)) + ".in-addr.arpa";
+    in
+    reversedZone;
+
   personal = {
     ip = "10.0.0.1/24";
     interface = "wg0";
     port = 51820;
+    domain = "net.dn";
     range = "10.0.0.0/24";
     full = "10.0.0.1/25";
     restrict = "10.0.0.128/25";
@@ -19,6 +78,9 @@ let
     range = "10.10.0.0/24";
     interface = "wg1";
     port = 51821;
+    masterIP = "10.10.0.1";
+    masterHostname = "api-kube.net.dn";
+    masterAPIServerPort = 6443;
   };
 
   allowedSSHIPs = builtins.concatStringsSep ", " [
@@ -73,6 +135,12 @@ let
       allowedIPs = [ "10.0.0.135/32" ];
     }
     {
+      # justin03
+      dns = "justin";
+      publicKey = "WOze/PPilBPqQudk1D4Se34zWV3UghKXWTG6M/f7bEM=";
+      allowedIPs = [ "10.0.0.136/32" ];
+    }
+    {
       # ahhaha
       dns = "ahhaha";
       publicKey = "PGBqCPLxaFd/+KqwrjF6B6lqxvpPKos0sst5gk8p8Bo=";
@@ -96,14 +164,49 @@ let
       publicKey = "VVzGcHjSo6QkvN6raS9g/NYLIrZ1xzxdnEronQaTIHs=";
       allowedIPs = [ "10.0.0.141/32" ];
     }
+    {
+      dns = "yc-mesh";
+      publicKey = "dKcEjRq9eYA8rXVfispNoKEbrs9R3ZIVlQi5AXfFch8=";
+      allowedIPs = [ "10.0.0.142/32" ];
+    }
+    {
+      dns = "jonly-mesh";
+      publicKey = "EyRL+iyKZJaqz9DXVsH2Ne/wVInx5hg9oQARrXP3/k0=";
+      allowedIPs = [ "10.0.0.143/32" ];
+    }
+    {
+      dns = "tommy-mesh";
+      publicKey = "oCRNCyg0bw6W6W87XQ4pIUW+WFi/bx9MG4cIwE23GxI=";
+      allowedIPs = [ "10.0.0.144/32" ];
+    }
   ];
 
   dnsRecords =
     with builtins;
     concatStringsSep "\n" (
-      map (r: ''
-        ${r.dns}    IN     A      ${replaceStrings [ "/32" ] [ "" ] (elemAt r.allowedIPs 0)}
-      '') (fullRoute ++ meshRoute)
+      map (
+        r:
+        let
+          ip = getCleanAddress (elemAt r.allowedIPs 0);
+        in
+        ''
+          ${r.dns}    IN     A      ${ip}
+        ''
+      ) (fullRoute ++ meshRoute)
+    );
+
+  dnsReversedRecords =
+    with builtins;
+    concatStringsSep "\n" (
+      map (
+        r:
+        let
+          reversed = getSubAddress (getCleanAddress (elemAt r.allowedIPs 0));
+        in
+        ''
+          ${reversed}   IN     PTR    ${r.dns}.${personal.domain}.
+        ''
+      ) (fullRoute ++ meshRoute)
     );
 in
 {
@@ -124,10 +227,12 @@ in
         personal.port
         kube.port
         25565
+        kube.masterAPIServerPort
       ];
       allowedTCPPorts = sshPorts ++ [
         53
         25565
+        kube.masterAPIServerPort
       ];
     };
 
@@ -213,11 +318,12 @@ in
         };
       };
     };
+
+    extraHosts = "${kube.masterIP} ${kube.masterHostname}";
   };
 
   services = {
     dbus.enable = true;
-
     blueman.enable = true;
 
     openssh = {
@@ -232,6 +338,10 @@ in
 
     bind = {
       enable = true;
+      forwarders = [
+        "8.8.8.8"
+        "8.8.4.4"
+      ];
       cacheNetworks = [
         "127.0.0.0/24"
         "::1/128"
@@ -239,7 +349,7 @@ in
         kube.range
       ];
       zones = {
-        "net.dn" = {
+        "${personal.domain}" = {
           master = true;
           allowQuery = [
             "127.0.0.0/24"
@@ -247,25 +357,67 @@ in
             personal.range
             kube.range
           ];
-          file = pkgs.writeText "zone-net.dn" ''
-            $ORIGIN net.dn.
-            $TTL    1h
-            @           IN     SOA    server hostmaster (
-                                          1     ; Serial
-                                          3h    ; Refresh
-                                          1h    ; Retry
-                                          1w    ; Expire
-                                          1h)   ; Negative Cache TTL
-                        IN     NS     server
-                        IN     NS     phone
-            @           IN     A      10.0.0.1
-                        IN     AAAA   fe80::3319:e2bb:fc15:c9df
-                        IN     MX     10 mail
-                        IN     TXT    "v=spf1 mx"
+          file =
+            let
+              serverIP = getCleanAddress personal.ip;
+              kubeIP = getCleanAddress kube.ip;
+              origin = "${personal.domain}.";
+            in
+            pkgs.writeText "db.${personal.domain}" ''
+              $ORIGIN ${origin}
+              $TTL    1h
+              @           IN     SOA    dns.${origin} admin.dns.${origin} (
+                                            1     ; Serial
+                                            3h    ; Refresh
+                                            1h    ; Retry
+                                            1w    ; Expire
+                                            1h)   ; Negative Cache TTL
+                          IN     NS     dns.${origin}
+              @           IN     A      ${serverIP}
+                          IN     AAAA   fe80::3319:e2bb:fc15:c9df
+                          IN     MX     10 mail.${origin}
+                          IN     TXT    "v=spf1 mx"
+              dns         IN     A      ${serverIP}
+              nextcloud   IN     A      ${serverIP}
+              ca          IN     A      ${serverIP}
+              server      IN     A      ${serverIP}
+              mail        IN     A      ${serverIP}
+              api-kube    IN     A      ${kubeIP}
+              ${dnsRecords}
+            '';
+        };
 
-            server      IN     A      10.0.0.1
-            ${dnsRecords}
-          '';
+        "${reverseZone personal.ip}" = {
+          master = true;
+          allowQuery = [
+            "127.0.0.0/24"
+            "::1/128"
+            personal.range
+            kube.range
+          ];
+          file =
+            let
+              serverIP = getSubAddress personal.ip;
+              mailIP = getSubAddress personal.ip;
+            in
+            pkgs.writeText "${getReverseFilename personal.ip}" ''
+              $TTL 86400
+              @           IN     SOA    dns.${personal.domain}. admin.dns.${personal.domain}. (
+                                            1     ; Serial
+                                            3h    ; Refresh
+                                            1h    ; Retry
+                                            1w    ; Expire
+                                            1h)   ; Negative Cache TTL
+                          IN     NS     dns.${personal.domain}.
+
+              ${serverIP} IN     PTR    dns.${personal.domain}.
+              ${serverIP} IN     PTR    server.${personal.domain}.
+              ${serverIP} IN     PTR    nextcloud.${personal.domain}.
+              ${serverIP} IN     PTR    ca.${personal.domain}.
+              ${mailIP}   IN     PTR    mail.${personal.domain}.
+              ${dnsReversedRecords}
+            '';
+
         };
       };
     };
@@ -278,7 +430,7 @@ in
 
   users.users = {
     root.openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBzLpMKn0Q24ACC6k/7lOX0FIdcFhq15NY6849yROeUK danny@dn-pre7780"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSAOufpee7f8D8ONIIGU3qsN+8+DGO7BfZnEOTYqtQ5 danny@pre7780.dn"
     ];
 
     "${username}".openssh.authorizedKeys.keys = [

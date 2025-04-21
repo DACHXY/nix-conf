@@ -1,9 +1,10 @@
+{ lib, ... }:
 {
   networking = {
     networkmanager.enable = true;
-    enableIPv6 = false;
+    enableIPv6 = lib.mkDefault false;
     firewall = {
-      enable = true;
+      enable = lib.mkDefault true;
     };
   };
 }
