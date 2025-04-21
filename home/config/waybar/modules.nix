@@ -185,9 +185,9 @@ in
     on-click = "${terminalRun} cava";
   };
   battery = {
-    full-at = 96;
+    full-at = 80;
     states = {
-      good = 95;
+      good = 80;
       warning = 30;
       critical = 15;
     };
