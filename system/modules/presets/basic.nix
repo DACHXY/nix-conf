@@ -25,5 +25,6 @@
     ../time.nix
     ../tmux.nix
     ../users.nix
+    ../ca.nix
   ];
 }

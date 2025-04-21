@@ -14,5 +14,7 @@
     ../sound.nix
     ../time.nix
     ../users.nix
+    ../tmux.nix
+    ../ca.nix
   ];
 }

@@ -1,4 +1,4 @@
-{ settings, ... }:
+{ settings, lib, ... }:
 
 {
   networking = {
@@ -15,10 +15,10 @@
       enable = true;
       ports = [ 22 ];
       settings = {
-        PasswordAuthentication = false;
-        AllowUsers = [ settings.personal.username ];
-        UseDns = true;
-        PermitRootLogin = "no";
+        PasswordAuthentication = lib.mkDefault false;
+        AllowUsers = lib.mkDefault [ settings.personal.username ];
+        UseDns = lib.mkDefault true;
+        PermitRootLogin = lib.mkDefault "no";
       };
     };
 

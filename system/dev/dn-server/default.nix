@@ -11,11 +11,13 @@
       intel-bus-id = settings.nvidia.intel-bus-id;
       nvidia-bus-id = settings.nvidia.nvidia-bus-id;
     })
-    ./hardware-configuration.nix
     ./boot.nix
-    ./packages.nix
-    ./services.nix
+    ./hardware-configuration.nix
     ./networking.nix
+    ./services.nix
+    ./nginx.nix
+    ./nextcloud.nix
+    # ./step-ca.nix
     ../../modules/presets/minimal.nix
     ../../modules/bluetooth.nix
     ../../modules/cuda.nix
@@ -24,6 +26,7 @@
 
   environment.systemPackages = with pkgs; [
     ferium
+    openssl
   ];
 
   home-manager = {
@@ -40,7 +43,7 @@
         {
           home.packages = with pkgs; [
             inputs.ghostty.packages.${system}.default
-            (python3.withPacakges (
+            (python3.withPackages (
               p: with p; [
                 pip
               ]
