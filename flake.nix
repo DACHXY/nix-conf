@@ -68,6 +68,10 @@
     nix-minecraft = {
       url = "github:Infinidoge/nix-minecraft";
     };
+
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+    };
   };
 
   outputs =
@@ -87,6 +91,7 @@
         modules = [
           home-manager.nixosModules.default
           nix-index-database.nixosModules.nix-index
+          inputs.sops-nix.nixosModules.sops
         ];
         args = {
           inherit

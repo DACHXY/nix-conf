@@ -64,7 +64,7 @@
               tar -xf passwords.tar.gz
               mv passwords/* ./
               rm passwords.tar.gz
-              rm -rpasswords
+              rm -r passwords
             '';
           });
     };
@@ -72,7 +72,7 @@
 
     database.createLocally = true;
     config = {
-      adminpassFile = "/run/keys/nextcloud-admin-password.key";
+      adminpassFile = config.sops.secrets."nextcloud/adminPassword".path;
       dbtype = "pgsql";
     };
 

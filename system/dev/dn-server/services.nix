@@ -1,5 +1,6 @@
 {
   settings,
+  config,
   pkgs,
   lib,
   ...
@@ -303,7 +304,7 @@ in
         ${personal.interface} = {
           ips = [ personal.ip ];
           listenPort = personal.port;
-          privateKeyFile = "/etc/wireguard/privatekey";
+          privateKeyFile = config.sops.secrets."wireguard/privateKey".path;
           peers = builtins.map (r: {
             publicKey = r.publicKey;
             allowedIPs = r.allowedIPs;
@@ -313,7 +314,7 @@ in
         ${kube.interface} = {
           ips = [ kube.ip ];
           listenPort = kube.port;
-          privateKeyFile = "/etc/wireguard/privatekey";
+          privateKeyFile = config.sops.secrets."wireguard/privateKey".path;
           peers = [ ];
         };
       };
