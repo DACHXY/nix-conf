@@ -19,7 +19,6 @@
     users."${settings.personal.username}" = {
       imports = [
         ../../../home/presets/basic.nix
-        ../../../home/user/barrier.nix
       ];
     };
   };
