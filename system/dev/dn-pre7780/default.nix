@@ -12,6 +12,7 @@
     })
     ./hardware-configuration.nix
     ./boot.nix
+    ./sops-conf.nix
     ../../modules/presets/basic.nix
     ../../modules/cuda.nix
     ../../modules/gaming.nix

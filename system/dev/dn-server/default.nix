@@ -11,6 +11,7 @@
       intel-bus-id = settings.nvidia.intel-bus-id;
       nvidia-bus-id = settings.nvidia.nvidia-bus-id;
     })
+    ./sops-conf.nix
     ./boot.nix
     ./hardware-configuration.nix
     ./networking.nix

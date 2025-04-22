@@ -1,0 +1,7 @@
+{
+  sops = {
+    secrets = {
+      "wireguard/conf" = { };
+    };
+  };
+}
