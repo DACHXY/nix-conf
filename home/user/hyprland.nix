@@ -192,7 +192,7 @@ in
   programs.waybar = {
     enable = true;
     style = ../../home/config/waybar/style.css;
-    settings = import ../../home/config/waybar/config.nix { inherit terminal; };
+    settings = import ../../home/config/waybar/config.nix { inherit terminal osConfig; };
     systemd = {
       enable = true;
     };

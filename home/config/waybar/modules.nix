@@ -1,4 +1,4 @@
-{ terminal }:
+{ terminal, osConfig }:
 let
   terminalRun = "${terminal} -e";
 in
@@ -184,31 +184,35 @@ in
     format = "{}";
     on-click = "${terminalRun} cava";
   };
-  battery = {
-    full-at = 80;
-    states = {
-      good = 80;
-      warning = 30;
-      critical = 15;
+  battery =
+    let
+      fullAt = if osConfig.services.tlp.enable then 80 else 96;
+    in
+    {
+      full-at = fullAt;
+      states = {
+        good = fullAt;
+        warning = 30;
+        critical = 15;
+      };
+      format = "{icon} {capacity}%";
+      format-icons = [
+        "󰂎"
+        "󰁺"
+        "󰁻"
+        "󰁼"
+        "󰁽"
+        "󰁾"
+        "󰁿"
+        "󰂀"
+        "󰂁"
+        "󰂂"
+        "󰁹"
+      ];
+      format-charging = "󰂄 {capacity}%";
+      format-plugged = "󰂄 {capacity}%";
+      format-alt = "{icon} {time}";
     };
-    format = "{icon} {capacity}%";
-    format-icons = [
-      "󰂎"
-      "󰁺"
-      "󰁻"
-      "󰁼"
-      "󰁽"
-      "󰁾"
-      "󰁿"
-      "󰂀"
-      "󰂁"
-      "󰂂"
-      "󰁹"
-    ];
-    format-charging = "󰂄 {capacity}%";
-    format-plugged = "󰂄 {capacity}%";
-    format-alt = "{icon} {time}";
-  };
   network = {
     format = "{ifname}";
     format-wifi = "󰤨";

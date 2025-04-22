@@ -1,6 +1,6 @@
-{ terminal }:
+{ terminal, osConfig }:
 let
-  modulesConfig = import ./modules.nix { inherit terminal; };
+  modulesConfig = import ./modules.nix { inherit terminal osConfig; };
 in
 map (dev: dev // modulesConfig) [
   # Monitor 1
