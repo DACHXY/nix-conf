@@ -33,6 +33,7 @@ See the above repository for updates as well as full license text. */
   line-height: 0;
   z-index: 1;
   pointer-events: none;
+  width: 100vw;
 }
 :root[sessionrestored] #urlbar[popover]{
   pointer-events: none;
@@ -41,18 +42,17 @@ See the above repository for updates as well as full license text. */
   transform-origin: 0px calc(0px - var(--tab-min-height) - var(--tab-block-margin) * 2);
   transform: rotateX(89.9deg);
 }
-#mainPopupSet:has(> [panelopen]:not(#ask-chat-shortcuts,#tab-preview-panel)) ~ toolbox #urlbar[popover],
-#navigator-toolbox:is(:hover,:focus-within) #urlbar[popover],
+#mainPopupSet:has(> [panelopen]:not(#ask-chat-shortcuts,#selection-shortcut-action-panel,#chat-shortcuts-options-panel,#tab-preview-panel)) ~ toolbox #urlbar[popover],
+#navigator-toolbox:is(:hover,:focus-within,[movingtab]) #urlbar[popover],
 #urlbar-container > #urlbar[popover]:is([focused],[open]){
   pointer-events: auto;
   opacity: 1;
   transition-delay: 33ms;
   transform: rotateX(0deg);
 }
-#mainPopupSet:has(> [panelopen]:not(#ask-chat-shortcuts,#tab-preview-panel)) ~ toolbox,
+#mainPopupSet:has(> [panelopen]:not(#ask-chat-shortcuts,#selection-shortcut-action-panel,#chat-shortcuts-options-panel,#tab-preview-panel)) ~ toolbox,
 #navigator-toolbox:has(#urlbar:is([open],[focus-within])),
-#navigator-toolbox:hover,
-#navigator-toolbox:focus-within{
+#navigator-toolbox:is(:hover,:focus-within,[movingtab]){
   transition-delay: 33ms !important;
   transform: rotateX(0);
   opacity: 1;
@@ -60,7 +60,8 @@ See the above repository for updates as well as full license text. */
 /* This makes things like OS menubar/taskbar show the toolbox when hovered in maximized windows.
  * Unfortunately it also means that other OS native surfaces (such as context menu on macos)
  * and other always-on-top applications will trigger toolbox to show up. */
-@media (-moz-bool-pref: "userchrome.autohide-toolbox.unhide-by-native-ui.enabled"){
+@media (-moz-bool-pref: "userchrome.autohide-toolbox.unhide-by-native-ui.enabled"),
+       -moz-pref("userchrome.autohide-toolbox.unhide-by-native-ui.enabled"){
   :root[sizemode="maximized"]:not(:hover){
     #navigator-toolbox:not(:-moz-window-inactive),
     #urlbar[popover]:not(:-moz-window-inactive){
@@ -73,16 +74,6 @@ See the above repository for updates as well as full license text. */
 
 #navigator-toolbox > *{ line-height: normal; pointer-events: auto }
 
-#navigator-toolbox,
-#navigator-toolbox > *{
-  width: 100vw;
-  -moz-appearance: none !important;
-}
-
-/* These two exist for oneliner compatibility */
-#nav-bar{ width: var(--uc-navigationbar-width,100vw) }
-#TabsToolbar{ width: calc(100vw - var(--uc-navigationbar-width,0px)) }
-
 /* Don't apply transform before window has been fully created */
 :root:not([sessionrestored]) #navigator-toolbox{ transform:none !important }
 
@@ -94,6 +85,11 @@ See the above repository for updates as well as full license text. */
 
 #navigator-toolbox[inFullscreen] > #PersonalToolbar,
 #PersonalToolbar[collapsed="true"]{ display: none }
+
+/* This is a bit hacky fix for an issue that will make urlbar zero pixels tall after you enter customize mode */
+#urlbar[breakout][breakout-extend] > .urlbar-input-container{
+  padding-block: calc(min(4px,(var(--urlbar-container-height) - var(--urlbar-height)) / 2) + var(--urlbar-container-padding)) !important;
+}
 
 /* Uncomment this if tabs toolbar is hidden with hide_tabs_toolbar.css */
  /*#titlebar{ margin-bottom: -9px }*/
