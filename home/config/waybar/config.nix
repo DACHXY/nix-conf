@@ -5,7 +5,7 @@ in
 map (dev: dev // modulesConfig) [
   # Monitor 1
   {
-    output = "DP-2";
+    output = "DP-3";
     layer = "top";
     exclusive = true;
     passthrough = false;
@@ -39,7 +39,7 @@ map (dev: dev // modulesConfig) [
   }
   # Monitor 2
   {
-    output = "DP-3";
+    output = "DP-2";
     layer = "top";
     exclusive = true;
     height = 54;

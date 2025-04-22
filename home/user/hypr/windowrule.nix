@@ -11,7 +11,6 @@
     "float, class:confirmreset"
     "float, title:Open File"
     "float, title:branchdialog"
-    "float, class:viewnior"
     "float, class:pavucontrol-qt"
     "float, class:pavucontrol"
     "float, class:file-roller"
