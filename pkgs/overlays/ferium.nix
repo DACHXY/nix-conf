@@ -1,4 +1,4 @@
-prev: final: {
+final: prev: {
   ferium = prev.ferium.overrideAttrs (
     final: prev: rec {
       cargoHash = "sha256-yedl4KQCpT7Ai1EPvwD5kzhkHesIjGVAcxKjp5k2jmI=";

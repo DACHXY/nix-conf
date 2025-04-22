@@ -26,5 +26,6 @@
     ../tmux.nix
     ../users.nix
     ../ca.nix
+    ../sops-nix.nix
   ];
 }
