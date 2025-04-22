@@ -35,7 +35,6 @@
       qbittorrent
 
       # Utils
-      viewnior
       cava
       papirus-folders
       inkscape
