@@ -1,6 +1,7 @@
 keys:
   - &dn_server age1z6f643a6vqm7cqh6fna5dhmxfkgwxgqy8kg9s0vf9uxhaswtngtspmqsjw
   - &dn_pre7780 age1uvsvf5ljaezh5wze32p685kfentyle0l2mvysc67yvgct2h4850qqph9lv
+  - &dn_lap age17rjcght2y5p4ryr76ysnxpy2wff62sml7pyc5udcts48985j05vqpwdfq2
 
 creation_rules:
   - path_regex: system/dev/dn-server/secret.yaml
@@ -11,3 +12,7 @@ creation_rules:
     key_groups:
       - age:
           - *dn_pre7780
+  - path_regex: system/dev/dn-lap/secret.yaml
+    key_groups:
+      - age:
+          - *dn_lap

@@ -10,13 +10,6 @@ in
     age = {
       keyFile = ageKeyFile;
     };
-
-    secrets = {
-      "wireguard/privateKey" = { };
-      "wireguard/conf" = { };
-      "nextcloud/adminPassword" = { };
-      "step_ca/password" = { };
-    };
   };
 
   environment.variables = {
