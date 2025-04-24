@@ -96,4 +96,56 @@
   environment.systemPackages = with pkgs; [
     exiftool
   ];
+
+  systemd.timers."nextcloud-backup" = {
+    enable = true;
+    description = "Nextcloud backup";
+    timerConfig = {
+      OnCalendar = "*-*-* 03:00:00";
+      Persistent = true;
+      OnUnitActiveSec = "1d";
+      AccuracySec = "1h";
+      Unit = "nextcloud-backup.service";
+    };
+    wantedBy = [ "timers.target" ];
+  };
+
+  systemd.services."nextcloud-backup" = {
+    enable = true;
+    serviceConfig = {
+      User = "nextcloud";
+      ExecStart =
+        let
+          script = pkgs.writeShellScriptBin "backup" ''
+            nextcloudPath="/var/lib/nextcloud"
+            mountPoint="/mnt/backup_dn"
+            nextcloudBakPath="$mountPoint"
+            nextcloudDBBakPath="$mountPoint/nextcloud-db.bak.tar"
+
+            if [ ! -d "$nextcloudPath" ]; then
+              echo "nextcloud path not found: $nextcloudPath"
+              exit 1
+            fi
+
+            if [ ! -d "$mountPoint" ]; then
+              echo "Backup device is not mounted: $mountPoint"
+              exit 1
+            fi
+
+            if [ ! -d "$nextcloudBakPath" ]; then
+              mkdir -p "$nextcloudBakPath"
+            fi
+
+            echo "Start syncing..."
+            ${pkgs.rsync}/bin/rsync -rh --delete "$nextcloudPath" "$nextcloudBakPath"
+            echo "Data dir backup completed."
+
+            echo "Try backing up database (postgresql)"
+            ${pkgs.postgresql}/bin/pg_dump -F t nextcloud -f "$nextcloudDBBakPath"
+            echo "Database backup completed."
+          '';
+        in
+        "${script}/bin/backup";
+    };
+  };
 }
