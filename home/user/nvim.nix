@@ -43,6 +43,7 @@ in
     # formatter
     prettierd
     black
+
   ];
 
   programs.neovim = {
@@ -86,6 +87,10 @@ in
       taplo
       zls
       vscode-js-debug
+
+      # SystemVerilog
+      svls
+      svlint
     ];
 
     plugins = with pkgs.vimPlugins; [
@@ -400,6 +405,8 @@ in
               vue
               yaml
               zig
+
+              verilog
             ]
           )).dependencies;
       };
