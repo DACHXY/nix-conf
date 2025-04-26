@@ -28,8 +28,7 @@ Bq-3sY8n13Dv0E6yx2hVIAlzLj3aE29LC4A2j81vW5MtpaM27lMpg.cwlqZ-8l1iZNeeS9.idRpRJ9zB
               kty = "EC";
               use = "sig";
               x = "o-Srd0v3IY7zU9U2COE9BOsjyIPjBvNT2WKPTo8ePZI";
-              y = "y5OFjciRMVg8ePaEsjSPWbKp_
-NjQ6U4CtbplRx7z3Bw";
+              y = "y5OFjciRMVg8ePaEsjSPWbKp_NjQ6U4CtbplRx7z3Bw";
             };
             name = "danny@smallstep.net.dn";
             type = "JWK";
@@ -46,8 +45,7 @@ NjQ6U4CtbplRx7z3Bw";
           }
         ];
       };
-      crt = "/var/lib/s
-tep-ca/certs/intermediate_ca.crt";
+      crt = "/var/lib/step-ca/certs/intermediate_ca.crt";
       db = {
         badgerFileLoadingMode = "";
         dataSource = "/var/lib/step-ca/db";
@@ -67,8 +65,7 @@ tep-ca/certs/intermediate_ca.crt";
       tls = {
         cipherSuites = [
           "TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256"
-          "TLS_EC
-DHE_ECDSA_WITH_AES_128_GCM_SHA256"
+          "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
         ];
         maxVersion = 1.3;
         minVersion = 1.2;
