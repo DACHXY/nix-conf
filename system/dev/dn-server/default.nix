@@ -18,7 +18,8 @@
     ./services.nix
     ./nginx.nix
     ./nextcloud.nix
-    # ./step-ca.nix
+    ./step-ca.nix
+    ./cerbot.nix
     ../../modules/presets/minimal.nix
     ../../modules/bluetooth.nix
     ../../modules/cuda.nix
