@@ -44,6 +44,8 @@ in
     prettierd
     black
 
+    # SystemVerilog
+    verible
   ];
 
   programs.neovim = {
@@ -87,10 +89,6 @@ in
       taplo
       zls
       vscode-js-debug
-
-      # SystemVerilog
-      svls
-      svlint
     ];
 
     plugins = with pkgs.vimPlugins; [
