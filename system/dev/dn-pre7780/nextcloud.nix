@@ -44,18 +44,23 @@ in
       "nextcloud"
     ];
   };
+
   networking.firewall.allowedTCPPorts = [
     80
     443
   ];
 
+  users.groups.windows = {
+    members = [ "nextcloud" ];
+  };
+
   services.nextcloud = {
     enable = true;
-    datadir = "/mnt/windows/Linux/nextcloud";
+    datadir = "/mnt/nextcloud";
     package = pkgs.nextcloud31;
     configureRedis = true;
     hostName = "pre7780.net.dn";
-    https = false;
+    https = true;
 
     extraApps = {
       inherit (config.services.nextcloud.package.packages.apps)
