@@ -1,19 +1,6 @@
 {
-  security.pki.certificates = [
+  security.pki.certificateFiles = [
     # Step CA Root
-    ''
-      -----BEGIN CERTIFICATE-----
-      MIIBqDCCAU2gAwIBAgIQBnU3DLmknEy9zgvkjtIhEjAKBggqhkjOPQQDAjAyMRMw
-      EQYDVQQKEwpzdGVwLWNhLWRuMRswGQYDVQQDExJzdGVwLWNhLWRuIFJvb3QgQ0Ew
-      HhcNMjUwNDE4MTQ1NjU1WhcNMzUwNDE2MTQ1NjU1WjAyMRMwEQYDVQQKEwpzdGVw
-      LWNhLWRuMRswGQYDVQQDExJzdGVwLWNhLWRuIFJvb3QgQ0EwWTATBgcqhkjOPQIB
-      BggqhkjOPQMBBwNCAAQT0Q5Zt9yRE6LGDGzMqxyzxDHH6yMcpRHxeam5QWNyBLT2
-      TLhQvH/xJSFxeolKbf+kQGlE1armOqOxVUuy1kbho0UwQzAOBgNVHQ8BAf8EBAMC
-      AQYwEgYDVR0TAQH/BAgwBgEB/wIBATAdBgNVHQ4EFgQU2Cr1FiPu24tU5Asobi0Z
-      t3R9HvUwCgYIKoZIzj0EAwIDSQAwRgIhAINLdkW3wqMSzIZro3JbYbX+T7MYVQFM
-      Weu1hXe28LWsAiEA371C55I6Dooe2hRZ1KaUAdZ5jh4hk63o7m0/B2xgFSc=
-      -----END CERTIFICATE-----
-    ''
+    ../extra/ca.crt
   ];
-
 }

@@ -19,11 +19,11 @@
     ./nginx.nix
     ./nextcloud.nix
     ./step-ca.nix
-    ./cerbot.nix
     ../../modules/presets/minimal.nix
     ../../modules/bluetooth.nix
     ../../modules/cuda.nix
     ../../modules/gc.nix
+    ../../modules/certbot.nix
   ];
 
   environment.systemPackages = with pkgs; [

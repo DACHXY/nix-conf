@@ -13,6 +13,7 @@
     ./hardware-configuration.nix
     ./boot.nix
     ./sops-conf.nix
+    ./nextcloud.nix
     ../../modules/presets/basic.nix
     ../../modules/cuda.nix
     ../../modules/gaming.nix
@@ -20,6 +21,7 @@
     ../../modules/virtualization.nix
     ../../modules/wine.nix
     ../../modules/wireguard.nix
+    ../../modules/certbot.nix
   ];
 
   home-manager = {
