@@ -20,7 +20,7 @@
     ];
     wantedBy = [ "multi-user.target" ];
     environment = {
-      "REQUESTS_CA_BUNDLE" = "/var/lib/step-ca/certs/root_ca.crt";
+      "REQUESTS_CA_BUNDLE" = ../extra/ca.crt;
     };
     serviceConfig = {
       ExecStart = "${pkgs.certbot}/bin/certbot renew";
