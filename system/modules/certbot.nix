@@ -23,7 +23,8 @@
       "REQUESTS_CA_BUNDLE" = ../extra/ca.crt;
     };
     serviceConfig = {
-      ExecStart = "${pkgs.certbot}/bin/certbot renew";
+      ExecStart = ''${pkgs.certbot}/bin/certbot renew'';
+      ExecStartPost = "${pkgs.busybox}/bin/chown nginx:nginx -R /etc/letsencrypt";
     };
   };
 }

@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  settings,
+  config,
+  ...
+}:
 
 {
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -20,15 +25,34 @@
     ];
   };
 
+  users.groups.windows = {
+    gid = 1200;
+    members = [ settings.personal.username ];
+  };
+
   fileSystems."/mnt/windows" = {
+    enable = true;
     device = "/dev/disk/by-uuid/460237D00237C429";
     fsType = "ntfs-3g";
     options = [
       "nofail"
-      "uid=1000"
-      "gid=1000"
-      "dmask=077"
-      "fmask=077"
+      "users"
+      "uid=992"
+      "gid=${builtins.toString config.users.groups.windows.gid}"
+      "dmask=007"
+      "fmask=007"
+    ];
+  };
+
+  fileSystems."/mnt/nextcloud" = {
+    enable = true;
+    depends = [ "/mnt/windows" ];
+    device = "/mnt/windows/Linux/nextcloud";
+
+    fsType = "none";
+    options = [
+      "nofail"
+      "bind"
     ];
   };
 
