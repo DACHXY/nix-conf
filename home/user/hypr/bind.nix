@@ -1,4 +1,8 @@
-{ mainMod, nvidia-offload-enabled }:
+{
+  mainMod,
+  nvidia-offload-enabled,
+  pkgs,
+}:
 let
   firefox = "firefox-nightly";
   prefix = if nvidia-offload-enabled then "nvidia-offload" else "";
@@ -12,6 +16,22 @@ let
   # clipboard-only = "${clipboardOnly}";
   screenshotFolder = "--output-folder ~/Pictures/Screenshots";
   clipboardOnly = "${screenshotFolder}";
+
+  toggleWlogout = pkgs.writeShellScriptBin "toggle" ''
+    if ${pkgs.busybox}/bin/pgrep wlogout > /dev/null; then
+      ${pkgs.busybox}/bin/pkill wlogout
+    else
+        ${pkgs.wlogout}/bin/wlogout --protocol layer-shell
+    fi
+  '';
+
+  toggleRofi = pkgs.writeShellScriptBin "toggle" ''
+    if ${pkgs.busybox}/bin/pgrep rofi > /dev/null; then
+      ${pkgs.busybox}/bin/pkill rofi
+    else
+        rofi "$@"
+    fi
+  '';
 in
 [
   ''${mainMod}, F, exec, ${browser}''
@@ -19,10 +39,10 @@ in
   ''CTRL ALT, T, exec, ${terminal}''
   ''${mainMod}, Q, killactive, ''
 
-  ''${mainMod}, M, exec, wlogout --protocol layer-shell''
+  ''${mainMod}, M, exec, ${toggleWlogout}/bin/toggle''
   ''${mainMod}, E, exec, ${filemanager}''
   ''${mainMod}, V, togglefloating, ''
-  ''ALT, SPACE, exec, rofi -config ~/.config/rofi/apps.rasi -show drun''
+  ''ALT, SPACE, exec, ${toggleRofi}/bin/toggle -config ~/.config/rofi/apps.rasi -show drun''
   ''${mainMod} ALT, W, exec, ${scripts}/waybarRestart.sh''
   ''${mainMod}, P, pseudo, # dwindle''
   ''${mainMod}, S, togglesplit, # dwindle''
@@ -34,8 +54,8 @@ in
   ''CTRL SHIFT ${mainMod}, s, exec, hyprshot -m output ${clipboardOnly} ${freezeShot}''
   ''CTRL ALT, s, exec, hyprshot -m active -m window ${clipboardOnly} ${freezeShot}''
 
-  ''${mainMod}, PERIOD, exec, rofi -modi emoji -show emoji''
-  ''CTRL ${mainMod}, c, exec, rofi -show calc -modi calc -no-show-match -no-sort''
+  ''${mainMod}, PERIOD, exec, ${toggleRofi}/bin/toggle -modi emoji -show emoji''
+  ''CTRL ${mainMod}, c, exec, ${toggleRofi}/bin/toggle -show calc -modi calc -no-show-match -no-sort''
   ''${mainMod}, X, exec, sleep 0.1 && swaync-client -t -sw''
   ''${mainMod} SHIFT, C, centerwindow''
   '',F11, fullscreen''

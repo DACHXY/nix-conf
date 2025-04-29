@@ -64,6 +64,7 @@ in
         };
         bind = import ./hypr/bind.nix {
           inherit mainMod;
+          inherit pkgs;
           nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
         };
         bindm = import ./hypr/bindm.nix { inherit mainMod; };
