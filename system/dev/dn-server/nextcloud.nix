@@ -50,6 +50,10 @@ in
     configureRedis = true;
     hostName = "nextcloud.net.dn";
     https = true;
+    phpExtraExtensions =
+      all: with all; [
+        imagick
+      ];
 
     extraApps = {
       inherit (config.services.nextcloud.package.packages.apps)
@@ -58,12 +62,6 @@ in
         calendar
         tasks
         ;
-
-      memories = pkgs.fetchNextcloudApp {
-        sha256 = "sha256-BfxJDCGsiRJrZWkNJSQF3rSFm/G3zzQn7C6DCETSzw4=";
-        url = "https://github.com/pulsejet/memories/releases/download/v7.5.2/memories.tar.gz";
-        license = "agpl3Plus";
-      };
 
       passwords =
         (pkgs.fetchNextcloudApp {
@@ -90,6 +88,7 @@ in
     };
 
     settings = {
+      log_type = "file";
       enabledPreviewProviders = [
         "OC\\Preview\\BMP"
         "OC\\Preview\\GIF"
