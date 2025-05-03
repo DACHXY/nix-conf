@@ -18,6 +18,7 @@
     ./services.nix
     ./nginx.nix
     ./step-ca.nix
+    ./mail-server.nix
     ../../modules/presets/minimal.nix
     ../../modules/bluetooth.nix
     ../../modules/cuda.nix
