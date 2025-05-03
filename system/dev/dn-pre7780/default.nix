@@ -13,8 +13,7 @@
     ./hardware-configuration.nix
     ./boot.nix
     ./sops-conf.nix
-    ./nextcloud.nix
-    ../../modules/presets/basic.nix
+    ./nginx.nix
     ../../modules/cuda.nix
     ../../modules/gaming.nix
     ../../modules/secure-boot.nix
@@ -22,6 +21,9 @@
     ../../modules/wine.nix
     ../../modules/wireguard.nix
     ../../modules/certbot.nix
+    (import ../../modules/nextcloud.nix {
+      hostname = "pre7780.net.dn";
+    })
   ];
 
   home-manager = {
