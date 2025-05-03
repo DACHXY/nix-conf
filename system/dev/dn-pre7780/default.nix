@@ -14,6 +14,7 @@
     ./boot.nix
     ./sops-conf.nix
     ./nginx.nix
+    ../../modules/presets/basic.nix
     ../../modules/cuda.nix
     ../../modules/gaming.nix
     ../../modules/secure-boot.nix
@@ -22,7 +23,7 @@
     ../../modules/wireguard.nix
     ../../modules/certbot.nix
     (import ../../modules/nextcloud.nix {
-      hostname = "pre7780.net.dn";
+      hostname = "pre-nextcloud.net.dn";
     })
   ];
 
