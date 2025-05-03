@@ -17,13 +17,17 @@
     ./networking.nix
     ./services.nix
     ./nginx.nix
-    ./nextcloud.nix
     ./step-ca.nix
     ../../modules/presets/minimal.nix
     ../../modules/bluetooth.nix
     ../../modules/cuda.nix
     ../../modules/gc.nix
     ../../modules/certbot.nix
+    (import ../../modules/nextcloud.nix {
+      hostname = "nextcloud.net.dn";
+      dataBackupPath = "/mnt/backup_dn";
+      dbBackupPath = "/mnt/backup_dn";
+    })
   ];
 
   environment.systemPackages = with pkgs; [

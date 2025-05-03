@@ -237,6 +237,7 @@
                       system
                       nix-version
                       settings
+                      devices
                       ;
                   };
                   users."${username}" = {
