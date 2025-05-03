@@ -5,7 +5,7 @@
   ...
 }:
 let
-  browser = "firefox-nightly";
+  browser = "firefox";
   iconPrefix = ".local/share/icons/hicolor/scalable/apps";
   newWindow = "${browser} --new-window";
   mkIconPkg = pkgs.callPackage ../../utils/make-icon.nix { };

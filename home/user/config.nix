@@ -1,6 +1,6 @@
 let
   configDir = ../config;
-  browser = "firefox-nightly.desktop";
+  browser = "firefox.desktop";
 in
 {
   home.file = {
