@@ -180,6 +180,11 @@ let
       publicKey = "oCRNCyg0bw6W6W87XQ4pIUW+WFi/bx9MG4cIwE23GxI=";
       allowedIPs = [ "10.0.0.144/32" ];
     }
+    {
+      dns = "rasp";
+      publicKey = "z+2d+4FhSClGlSiAtaGnTgU6utxElfdRqiwPpCJFRn8=";
+      allowedIPs = [ "10.0.0.145/32" ];
+    }
   ];
 
   dnsRecords =

@@ -18,13 +18,23 @@
       "nginx.service"
       "network.target"
     ];
-    wantedBy = [ "multi-user.target" ];
     environment = {
       "REQUESTS_CA_BUNDLE" = ../extra/ca.crt;
     };
     serviceConfig = {
       ExecStart = ''${pkgs.certbot}/bin/certbot renew'';
       ExecStartPost = "${pkgs.busybox}/bin/chown nginx:nginx -R /etc/letsencrypt";
+    };
+    unitConfig = {
+      OnSuccess = "nginx-reload-after-certbot.service";
+    };
+  };
+
+  systemd.services."nginx-reload-after-certbot" = {
+    serviceConfig = {
+      User = "nginx";
+      # This config file path refers to "services.nginx.enableReload"
+      ExecStart = ''${pkgs.nginx}/bin/nginx -s reload -c /etc/nginx/nginx.conf'';
     };
   };
 }
