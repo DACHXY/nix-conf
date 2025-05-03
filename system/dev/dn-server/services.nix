@@ -68,7 +68,7 @@ let
     ip = "10.0.0.1/24";
     interface = "wg0";
     port = 51820;
-    domain = "net.dn";
+    domain = config.networking.domain;
     range = "10.0.0.0/24";
     full = "10.0.0.1/25";
     restrict = "10.0.0.128/25";
@@ -80,7 +80,7 @@ let
     interface = "wg1";
     port = 51821;
     masterIP = "10.10.0.1";
-    masterHostname = "api-kube.net.dn";
+    masterHostname = "api-kube.${config.networking.domain}";
     masterAPIServerPort = 6443;
   };
 
@@ -368,6 +368,7 @@ in
               serverIP = getCleanAddress personal.ip;
               kubeIP = getCleanAddress kube.ip;
               origin = "${personal.domain}.";
+              hostname = config.networking.hostName;
             in
             pkgs.writeText "db.${personal.domain}" ''
               $ORIGIN ${origin}
@@ -387,7 +388,7 @@ in
               nextcloud   IN     A      ${serverIP}
               pre-nextcloud   IN     A  ${serverIP}
               ca          IN     A      ${serverIP}
-              server      IN     A      ${serverIP}
+              ${hostname} IN     A      ${serverIP}
               mail        IN     A      ${serverIP}
               api-kube    IN     A      ${kubeIP}
               ${dnsRecords}
@@ -406,6 +407,7 @@ in
             let
               serverIP = getSubAddress personal.ip;
               mailIP = getSubAddress personal.ip;
+              hostname = config.networking.hostName;
             in
             pkgs.writeText "${getReverseFilename personal.ip}" ''
               $TTL 86400
@@ -418,7 +420,7 @@ in
                           IN     NS     dns.${personal.domain}.
 
               ${serverIP} IN     PTR    dns.${personal.domain}.
-              ${serverIP} IN     PTR    server.${personal.domain}.
+              ${serverIP} IN     PTR    ${hostname}.${personal.domain}.
               ${serverIP} IN     PTR    nextcloud.${personal.domain}.
               ${serverIP} IN     PTR    pre-nextcloud.${personal.domain}.
               ${serverIP} IN     PTR    ca.${personal.domain}.
