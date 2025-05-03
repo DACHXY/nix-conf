@@ -20,7 +20,7 @@ let
   '';
 
   pre7780 = {
-    hostname = "pre7780.net.dn";
+    hostname = "pre-nextcloud.net.dn";
     ip = "10.0.0.130";
   };
 in
