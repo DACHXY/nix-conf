@@ -4,7 +4,7 @@
   pkgs,
 }:
 let
-  firefox = "firefox-nightly";
+  firefox = "firefox";
   prefix = if nvidia-offload-enabled then "nvidia-offload" else "";
   browser = "${prefix} ${firefox}";
   terminal = "ghostty";

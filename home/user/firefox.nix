@@ -1,6 +1,4 @@
 {
-  inputs,
-  system,
   ...
 }:
 let
@@ -20,13 +18,14 @@ let
     "font.name.monospace.zh-TW" = "Noto Sans Mono CJK TC";
     # Disable Ctrl+Q
     "browser.quitShortcut.disabled" = true;
+    "security.enterprise_roots.enabled" = true;
   };
 in
 {
   programs = {
     firefox = {
       enable = true;
-      package = inputs.firefox.packages.${system}.firefox-nightly-bin;
+      # package = inputs.firefox.packages.${system}.firefox-nightly-bin;
       languagePacks = [
         "en-US"
         "zh-TW"
@@ -36,6 +35,11 @@ in
       policies = {
         DontCheckDefaultBrowser = true;
         DisplayBookmarksToolbar = "never";
+        Certificates = {
+          Install = [
+            "~/.mozilla/certificates/step-ca.net.dn.crt"
+          ];
+        };
       };
 
       profiles.default = {
@@ -44,7 +48,6 @@ in
         isDefault = true;
 
         userChrome = userChrome;
-
         settings = profileSettings;
       };
 
@@ -56,6 +59,12 @@ in
         userChrome = userChrome;
         settings = profileSettings;
       };
+    };
+  };
+
+  home.file = {
+    ".mozilla/certificates/step-ca.net.dn.crt" = {
+      source = ../../system/extra/ca.crt;
     };
   };
 }

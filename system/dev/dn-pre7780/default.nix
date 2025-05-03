@@ -21,9 +21,9 @@
     ../../modules/virtualization.nix
     ../../modules/wine.nix
     ../../modules/wireguard.nix
-    ../../modules/certbot.nix
     (import ../../modules/nextcloud.nix {
       hostname = "pre-nextcloud.net.dn";
+      datadir = "/mnt/nextcloud";
     })
   ];
 

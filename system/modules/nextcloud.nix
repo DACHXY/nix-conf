@@ -1,5 +1,6 @@
 {
   hostname,
+  datadir ? null,
   dataBackupPath ? null,
   dbBackupPath ? null,
 }:
@@ -42,6 +43,7 @@
     configureRedis = true;
     hostName = hostname;
     https = true;
+    datadir = lib.mkIf (datadir != null) datadir;
     phpExtraExtensions =
       all: with all; [
         imagick
