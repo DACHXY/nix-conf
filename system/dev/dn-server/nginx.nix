@@ -2,8 +2,6 @@
   config,
   lib,
   pkgs,
-  settings,
-  devices,
   ...
 }:
 let
@@ -12,7 +10,7 @@ let
   certScript = pkgs.writeShellScriptBin "certbot-nextcloud" ''
     ${pkgs.certbot}/bin/certbot certonly --webroot \
     --webroot-path ${acmeWebRoot} -v \
-    -d ${config.services.neextcloud.hostName} \
+    -d ${config.services.nextcloud.hostName} \
     --server https://ca.net.dn:8443/acme/acme/directory \
     -m admin@mail.net.dn
 
@@ -63,7 +61,7 @@ in
         '';
       };
 
-      pre7780Hostname = {
+      ${pre7780.hostname} = {
         listen = [
           {
             addr = "0.0.0.0";
@@ -92,6 +90,10 @@ in
             default_type "text/plain";
           '';
         };
+
+        forceSSL = true;
+        sslCertificate = "/etc/letsencrypt/live/${pre7780.hostname}/fullchain.pem";
+        sslCertificateKey = "/etc/letsencrypt/live/${pre7780.hostname}/privkey.pem";
 
         extraConfig = ''
           ssl_protocols TLSv1.2 TLSv1.3;
