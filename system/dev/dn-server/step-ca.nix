@@ -9,6 +9,8 @@
 
   users.groups.step-ca = { };
 
+  networking.firewall.allowedTCPPorts = [ 8443 ];
+
   services.step-ca = {
     enable = true;
     address = "0.0.0.0";
