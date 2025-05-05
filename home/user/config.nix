@@ -35,10 +35,14 @@ in
     enable = true;
     associations.added = {
       "application/pdf" = [ browser ];
+      "image/jpeg" = [ browser ];
+      "image/png" = [ browser ];
     };
     defaultApplications = {
       "text/html" = browser;
       "application/pdf" = [ browser ];
+      "image/jpeg" = [ browser ];
+      "image/png" = [ browser ];
     };
   };
 }

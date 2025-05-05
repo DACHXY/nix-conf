@@ -1,4 +1,5 @@
 {
+  pkgs,
   ...
 }:
 let
@@ -25,7 +26,7 @@ in
   programs = {
     firefox = {
       enable = true;
-      # package = inputs.firefox.packages.${system}.firefox-nightly-bin;
+      package = pkgs.firefox;
       languagePacks = [
         "en-US"
         "zh-TW"
