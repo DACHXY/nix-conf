@@ -38,4 +38,11 @@
       ExecStart = ''${pkgs.nginx}/bin/nginx -s reload -c /etc/nginx/nginx.conf'';
     };
   };
+
+  systemd.services."nginx-config-reload" = {
+    serviceConfig = {
+      User = "root";
+      ExecStartPre = "${pkgs.busybox}/bin/chown -R nginx:nginx /etc/letsencrypt/";
+    };
+  };
 }
