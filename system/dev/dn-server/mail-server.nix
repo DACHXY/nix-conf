@@ -1,6 +1,6 @@
 {
   config,
-  pkgs,
+  lib,
   settings,
   ...
 }:
@@ -59,4 +59,6 @@ in
       vaultwarden: root
     '';
   };
+
+  programs.msmtp.enable = lib.mkForce false;
 }
