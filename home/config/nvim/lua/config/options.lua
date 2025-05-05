@@ -31,3 +31,22 @@ vim.g.mkdp_combine_preview = 1
 vim.g.mkdp_echo_preview_url = 1
 vim.g.mkdp_open_to_the_world = 1
 vim.g.mkdp_port = "20088"
+
+-- Use osc52 as clipboard provider
+local function paste()
+  return { vim.fn.split(vim.fn.getreg(""), "\n"), vim.fn.getregtype("") }
+end
+vim.g.clipboard = {
+  name = "OSC 52",
+  copy = {
+    ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+    ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+  },
+  paste = {
+    ["+"] = paste,
+    ["*"] = paste,
+  },
+}
+-- To ALWAYS use the clipboard for ALL operations
+-- (instead of interacting with the "+" and/or "*" registers explicitly):
+vim.opt.clipboard = "unnamedplus"

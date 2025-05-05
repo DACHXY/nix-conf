@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   settings,
   ...
 }:
@@ -16,7 +17,10 @@ let
   # fqdn = "dn-server.daccc.info";
 in
 {
-  networking.firewall.allowedTCPPorts = [ 25 ];
+  networking.firewall.allowedTCPPorts = [
+    25
+    587
+  ];
 
   services.postfix = {
     enable = true;
@@ -29,8 +33,16 @@ in
       fqdn
     ];
 
+    config = {
+      home_mailbox = "Mailbox";
+    };
+
     postmasterAlias = "root";
     rootAlias = settings.personal.username;
+
+    config = {
+      alias_maps = [ "ldap:${config.sops.secrets."postfix/openldap".path}" ];
+    };
 
     extraAliases = ''
       mailer-daemon: postmaster
@@ -44,6 +56,7 @@ in
       abuse: root
       noc: root
       security: root
+      vaultwarden: root
     '';
   };
 }

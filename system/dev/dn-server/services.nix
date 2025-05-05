@@ -382,10 +382,11 @@ in
                           IN     NS     dns.${origin}
               @           IN     A      ${serverIP}
                           IN     AAAA   fe80::3319:e2bb:fc15:c9df
-                          IN     MX     10 mail.${origin}
+              @           IN     MX     10 mail.${origin}
                           IN     TXT    "v=spf1 mx"
               dns         IN     A      ${serverIP}
               nextcloud   IN     A      ${serverIP}
+              bitwarden   IN     A      ${serverIP}
               pre-nextcloud   IN     A  ${serverIP}
               ca          IN     A      ${serverIP}
               ${hostname} IN     A      ${serverIP}
@@ -406,7 +407,6 @@ in
           file =
             let
               serverIP = getSubAddress personal.ip;
-              mailIP = getSubAddress personal.ip;
               hostname = config.networking.hostName;
             in
             pkgs.writeText "${getReverseFilename personal.ip}" ''
@@ -420,11 +420,12 @@ in
                           IN     NS     dns.${personal.domain}.
 
               ${serverIP} IN     PTR    dns.${personal.domain}.
+              ${serverIP} IN     PTR    mail.${personal.domain}.
               ${serverIP} IN     PTR    ${hostname}.${personal.domain}.
               ${serverIP} IN     PTR    nextcloud.${personal.domain}.
+              ${serverIP} IN     PTR    bitwarden.${personal.domain}.
               ${serverIP} IN     PTR    pre-nextcloud.${personal.domain}.
               ${serverIP} IN     PTR    ca.${personal.domain}.
-              ${mailIP}   IN     PTR    mail.${personal.domain}.
               ${dnsReversedRecords}
             '';
 

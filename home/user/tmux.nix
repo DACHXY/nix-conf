@@ -31,9 +31,18 @@ let
 
     tmux switch-client -t $selected_name
   '';
+
+  ryank = pkgs.writeShellScriptBin "ryank" ''
+    # copy via OSC 52
+    buf=$( cat "$@" )
+    len=$( printf %s "$buf" | wc -c ) max=74994
+    test $len -gt $max && echo "$0: input is $(( len - max )) bytes too long" >&2
+    printf "\033]52;c;$( printf %s "$buf" | head -c $max | base64 | tr -d '\r\n' )\a"
+  '';
 in
 {
   home.packages = [
     tmuxSessionizer
+    ryank
   ];
 }

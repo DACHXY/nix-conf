@@ -36,7 +36,10 @@ in
       ];
 
       extraConfig = ''
-        set -gq allow-passthrough on
+        set -g allow-passthrough on
+        set -s set-clipboard on
+        set-option -s set-clipboard on
+
         set -g status "on"
         set -g status-style fg=default,bg=default
         set -g status-position top
@@ -47,7 +50,6 @@ in
 
         setw -g window-status-format "#[fg=#171616,bg=default]  #[fg=#495361,bg=default]#(${getIconScript}/get-icon #I) #W"
         setw -g window-status-current-format "#[fg=#7e93a9,bg=default]  #[fg=#7e93a9,bg=default,bold]#(${getIconScript}/get-icon #I) #W"
-
 
         set -g default-terminal "xterm-256color"
         set -ga terminal-overrides ",*256col*:Tc"
