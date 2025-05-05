@@ -14,5 +14,8 @@ mouse-hide-while-typing = true
 
 keybind = ctrl+shift+zero=toggle_tab_overview
 
+clipboard-read = allow
+clipboard-write = allow
+
 # custom-shader = ./shader/mnoise.glsl
 # custom-shader-animation = always
