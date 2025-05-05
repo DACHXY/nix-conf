@@ -25,13 +25,14 @@
       ExecStart = ''${pkgs.certbot}/bin/certbot renew'';
       ExecStartPost = "${pkgs.busybox}/bin/chown nginx:nginx -R /etc/letsencrypt";
     };
-    unitConfig = {
-      OnSuccess = "nginx-reload-after-certbot.service";
-    };
   };
 
   systemd.services."nginx-reload-after-certbot" = {
+    after = [ "certbot-renew.service" ];
+    requires = [ "certbot-renew.service" ];
+    wantedBy = [ "certbot-renew.service" ];
     serviceConfig = {
+      Type = "oneshot";
       User = "nginx";
       # This config file path refers to "services.nginx.enableReload"
       ExecStart = ''${pkgs.nginx}/bin/nginx -s reload -c /etc/nginx/nginx.conf'';

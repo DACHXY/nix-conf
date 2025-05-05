@@ -29,6 +29,10 @@
       dataBackupPath = "/mnt/backup_dn";
       dbBackupPath = "/mnt/backup_dn";
     })
+    (import ../../modules/vaultwarden.nix {
+      domain = "https://bitwarden.net.dn";
+    })
+    (import ../../modules/openldap.nix { })
   ];
 
   environment.systemPackages = with pkgs; [
