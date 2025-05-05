@@ -19,6 +19,10 @@
     users."${settings.personal.username}" = {
       imports = [
         ../../../home/presets/basic.nix
+        (import ../../../home/user/bitwarden.nix {
+          email = "danny@dn-server.net.dn";
+          baseUrl = "https://bitwarden.net.dn";
+        })
       ];
     };
   };

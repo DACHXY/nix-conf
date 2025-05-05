@@ -1,4 +1,9 @@
-{ settings, lib, ... }:
+{
+  settings,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
   networking = {
@@ -10,7 +15,10 @@
   };
 
   services = {
-    dbus.enable = true;
+    dbus = {
+      enable = true;
+      packages = [ pkgs.gcr ];
+    };
     openssh = {
       enable = true;
       ports = [ 22 ];
