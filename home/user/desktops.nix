@@ -8,10 +8,18 @@ let
   browser = "firefox";
   iconPrefix = ".local/share/icons/hicolor/scalable/apps";
   newWindow = "${browser} --new-window";
-  mkIconPkg = pkgs.callPackage ../../utils/make-icon.nix { };
+  googleCalendarIcon = pkgs.callPackage (import ../../utils/make-icon.nix {
+    name = "google-calendar";
+    url = "https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_6_2x.png";
+    sha256 = "sha256-IODUWX9m0iwunJWPJv1kw5gfgDPvAZtmD8vcSTEBjsQ=";
+  }) { };
 in
 {
-  # Update icon cache
+  home.packages = [
+    googleCalendarIcon
+  ];
+
+  # UpdamkIconPkg te icon cache
   home.activation = {
     updateIconCache = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
       $DRY_RUN_CMD ${pkgs.gtk3}/bin/gtk-update-icon-cache -t -f ~/.local/share/icons/hicolor
@@ -22,7 +30,7 @@ in
     "${iconPrefix}/notion.svg".text = ''
       <?xml version="1.0" encoding="UTF-8" standalone="no"?>
       <svg class="wordmark_wordmark__gPyj1" viewBox="-1 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g clip-path="url(#a)">
+        <g clip-path="url(c.com/calendar/images/dynamiclogo_2020q4/calendar_6_2x.png#a)">
           <mask id="b" width="29" height="30" x="0" y="0" maskUnits="userSpaceOnUse">
             <path fill="#fff" d="M28.714 0H0v29.995h28.714V0Z">
             </path>
@@ -55,6 +63,18 @@ in
       categories = [
         "Office"
         "Utility"
+      ];
+    };
+
+    google-calendar = {
+      name = "Google Calendar";
+      genericName = "Calendar";
+      exec = "${pkgs.xdg-utils}/bin/xdg-open https://calendar.google.com/u/2/r";
+      comment = "Google Calendar";
+      icon = "google-calendar";
+      terminal = false;
+      categories = [
+        "Office"
       ];
     };
   };
