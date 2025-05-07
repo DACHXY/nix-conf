@@ -4,9 +4,8 @@
     enable = true;
     description = "certbot renew";
     timerConfig = {
-      OnCalendar = "*-*-* 03:00:00";
       Persistent = true;
-      OnUnitActiveSec = "1d";
+      OnCalendar = "*-*-* 03:00:00";
       Unit = "certbot-renew.service";
     };
     wantedBy = [ "timers.target" ];
@@ -22,7 +21,7 @@
       "REQUESTS_CA_BUNDLE" = ../extra/ca.crt;
     };
     serviceConfig = {
-      ExecStart = ''${pkgs.certbot}/bin/certbot renew'';
+      ExecStart = ''${pkgs.certbot}/bin/certbot renew --no-random-sleep-on-renew --force-renewal'';
       ExecStartPost = "${pkgs.busybox}/bin/chown nginx:nginx -R /etc/letsencrypt";
     };
   };
