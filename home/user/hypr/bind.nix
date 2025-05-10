@@ -92,8 +92,8 @@ in
 
   # ==== Plugins ==== #
   # Overview
-  ''${mainMod}, o, hyprtasking:toggle, cursor''
-  ''${mainMod}, TAB, hyprtasking:toggle, all''
+  # ''${mainMod}, o, hyprtasking:toggle, cursor''
+  # ''${mainMod}, TAB, hyprtasking:toggle, all''
 ]
 ++ (
   # workspaces

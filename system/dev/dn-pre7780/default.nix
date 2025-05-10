@@ -15,7 +15,6 @@
     ./sops-conf.nix
     ./nginx.nix
     ../../modules/presets/basic.nix
-    ../../modules/cuda.nix
     ../../modules/gaming.nix
     ../../modules/secure-boot.nix
     ../../modules/virtualization.nix

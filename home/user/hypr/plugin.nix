@@ -1,23 +1,23 @@
 {
-  hyprtasking = {
-    layout = "grid";
-    bg_color = "0xffebdbb2";
-
-    gap_size = 20;
-
-    gestures = {
-      enabled = true;
-      open_fingers = 3;
-      open_distance = 300;
-      open_positive = true;
-    };
-
-    linear = {
-      height = 400;
-      scroll_speed = 1.1;
-      blur = 0;
-    };
-  };
+  # hyprtasking = {
+  #   layout = "grid";
+  #   bg_color = "0xffebdbb2";
+  #
+  #   gap_size = 20;
+  #
+  #   gestures = {
+  #     enabled = true;
+  #     open_fingers = 3;
+  #     open_distance = 300;
+  #     open_positive = true;
+  #   };
+  #
+  #   linear = {
+  #     height = 400;
+  #     scroll_speed = 1.1;
+  #     blur = 0;
+  #   };
+  # };
 
   hyprwinrap = {
     class = "kitty-bg";
