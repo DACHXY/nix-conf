@@ -53,8 +53,8 @@ in
         hyprwinwrap
       ])
       ++ [
-        inputs.hyprgrass.packages.${system}.default
-        inputs.hyprtasking.packages.${system}.hyprtasking
+        # inputs.hyprgrass.packages.${system}.default
+        # inputs.hyprtasking.packages.${system}.hyprtasking
       ];
 
     settings =

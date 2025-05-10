@@ -67,7 +67,6 @@ in
       vue-language-server
       dockerfile-language-server-nodejs
       ruff
-      ruff-lsp
       hadolint
       cmake-language-server
       cmake-lint
