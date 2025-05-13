@@ -5,8 +5,19 @@
     description = "certbot renew";
     timerConfig = {
       Persistent = true;
-      OnCalendar = "*-*-* 03:00:00";
+      OnCalendar = "*-*-* 16:30:00";
       Unit = "certbot-renew.service";
+    };
+    wantedBy = [ "timers.target" ];
+  };
+
+  systemd.timers."certbot-nginx-reload" = {
+    enable = true;
+    description = "certbot renew";
+    timerConfig = {
+      Persistent = true;
+      OnCalendar = "*-*-* 16:32:00";
+      Unit = "nginx-config-reload.service";
     };
     wantedBy = [ "timers.target" ];
   };
@@ -26,19 +37,9 @@
     };
   };
 
-  systemd.services."nginx-reload-after-certbot" = {
-    after = [ "certbot-renew.service" ];
-    requires = [ "certbot-renew.service" ];
-    wantedBy = [ "certbot-renew.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      User = "nginx";
-      # This config file path refers to "services.nginx.enableReload"
-      ExecStart = ''${pkgs.nginx}/bin/nginx -s reload -c /etc/nginx/nginx.conf'';
-    };
-  };
-
   systemd.services."nginx-config-reload" = {
+    after = [ "certbot-renew.service" ];
+    wantedBy = [ "certbot-renew.service" ];
     serviceConfig = {
       User = "root";
       ExecStartPre = "${pkgs.busybox}/bin/chown -R nginx:nginx /etc/letsencrypt/";
