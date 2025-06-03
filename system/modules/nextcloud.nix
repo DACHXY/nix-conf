@@ -3,6 +3,7 @@
   datadir ? null,
   dataBackupPath ? null,
   dbBackupPath ? null,
+  https ? true,
 }:
 {
   config,
@@ -42,7 +43,7 @@
     package = pkgs.nextcloud31;
     configureRedis = true;
     hostName = hostname;
-    https = true;
+    https = if https then true else false;
     datadir = lib.mkIf (datadir != null) datadir;
     phpExtraExtensions =
       all: with all; [

@@ -13,17 +13,19 @@
     ./hardware-configuration.nix
     ./boot.nix
     ./sops-conf.nix
-    ./nginx.nix
+    # ./nginx.nix
     ../../modules/presets/basic.nix
     ../../modules/gaming.nix
     ../../modules/secure-boot.nix
     ../../modules/virtualization.nix
     ../../modules/wine.nix
     ../../modules/wireguard.nix
-    (import ../../modules/nextcloud.nix {
-      hostname = "pre-nextcloud.net.dn";
-      datadir = "/mnt/nextcloud";
-    })
+    (import ../../modules/rustdesk-server.nix { relayHosts = [ "10.0.0.0/24" ]; })
+    # (import ../../modules/nextcloud.nix {
+    #   hostname = "192.168.0.3";
+    #   datadir = "/mnt/nextcloud";
+    #   https = false;
+    # })
   ];
 
   home-manager = {
@@ -38,19 +40,16 @@
     };
   };
 
-  # Disable integrated bluetooth adapter
-  services.udev.extraRules = ''
-    SUBSYSTEM=="usb", ATTRS{idVendor}=="8087", ATTRS{idProduct}=="0033", ATTR{authorized}="0"
-  '';
-
   environment.systemPackages = with pkgs; [
     prismlauncher
+    heroic
   ];
 
   users.users = {
     "${settings.personal.username}".openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFQA42R3fZmjb9QnUgzzOTIXQBC+D2ravE/ZLvdjoOQ danny@lap.dn"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSHkPa6vmr5WBPXAazY16+Ph1Mqv9E24uLIf32oC2oH danny@phone.dn"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMj/LeB3i/vca3YwGNpAjf922FgiY2svro48fUSQAjOv Shortcuts on :D"
     ];
   };
 }

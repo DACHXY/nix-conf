@@ -16,7 +16,7 @@
     QT_IM_MODULES = "wayland;fcitx;ibus";
 
     MOZ_ENABLE_WAYLAND = "1";
-    SDL_VIDEODRIVER = "wayland";
+    SDL_VIDEODRIVER = "wayland,x11";
     WLR_NO_HARDWARE_CURSORS = "1";
     CLUTTER_BACKEND = "wayland";
     EGL_PLATFORM = "wayland";

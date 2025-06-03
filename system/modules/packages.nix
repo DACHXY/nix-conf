@@ -8,6 +8,10 @@
     [
       file
 
+      man-pages
+      man-pages-posix
+      stdmanpages
+
       # Binary cache platform
       cachix
 
