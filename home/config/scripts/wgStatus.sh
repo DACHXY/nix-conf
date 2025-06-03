@@ -4,9 +4,9 @@ INTERFACE="wg0"
 
 if [ "$1" = "toggle" ]; then
   if ip link show "$INTERFACE" >/dev/null 2>&1; then
-    pkexec wg-quick down "$INTERFACE"
+    pkexec systemctl stop wg-quick-wg0.service
   else
-    pkexec wg-quick up "$INTERFACE"
+    pkexec systemctl start wg-quick-wg0.service
   fi
   exit 0
 fi

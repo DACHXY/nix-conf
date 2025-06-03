@@ -5,19 +5,6 @@
   inputs,
   ...
 }:
-let
-  lazyVim = (
-    pkgs.vimPlugins.LazyVim.overrideAttrs (previous: {
-      version = "2025-02-15";
-      src = pkgs.fetchFromGitHub {
-        owner = "LazyVim";
-        repo = "LazyVim";
-        rev = "main";
-        sha256 = "sha256-lwT39h97ZyF/SFJhkOqZ2vU5f3QpCpe7L1MVDPEXN28=";
-      };
-    })
-  );
-in
 {
   home.packages = with pkgs; [
     gh
@@ -62,8 +49,8 @@ in
 
     extraPackages = with pkgs; [
       lua-language-server
-      stylua
       ripgrep
+      stylua
       vue-language-server
       dockerfile-language-server-nodejs
       ruff
@@ -88,6 +75,9 @@ in
       taplo
       zls
       vscode-js-debug
+      neocmakelsp
+
+      ghostscript
     ];
 
     plugins = with pkgs.vimPlugins; [
@@ -97,8 +87,7 @@ in
     extraLuaConfig =
       let
         plugins = with pkgs.vimPlugins; [
-          # LazyVim
-          lazyVim
+          LazyVim
 
           bufferline-nvim
           cmp-buffer

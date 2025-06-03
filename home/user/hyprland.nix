@@ -102,6 +102,18 @@ in
   # === hyprlock === #
   programs.hyprlock = {
     enable = true;
+    package = (
+      pkgs.hyprlock.overrideAttrs (
+        final: prev: {
+          src = pkgs.fetchFromGitHub {
+            owner = "hyprwm";
+            repo = "hyprlock";
+            rev = "da1d076d849fc0f298c1d287bddd04802bf7d0f9";
+            hash = "sha256-IypoV7crmhQ4llD0n4qqO4XTRNAAbHfA+2oiTiq2qpk=";
+          };
+        }
+      )
+    );
     importantPrefixes = [
       "$"
       "monitor"
@@ -115,10 +127,7 @@ in
         font2 = "SF Pro Display Bold";
         mainMonitor =
           if ((builtins.length settings.hyprland.monitors) > 0) then
-            # TODO: Identifying monitor by desc is broken
-            # https://github.com/hyprwm/hyprlock/issues/737
-            # builtins.elemAt settings.hyprland.monitors 0
-            "DP-2"
+            builtins.elemAt settings.hyprland.monitors 0
           else
             "";
       in
