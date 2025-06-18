@@ -1,6 +1,7 @@
 {
   pkgs,
   settings,
+  config,
   ...
 }:
 {
@@ -14,6 +15,7 @@
     ./boot.nix
     ./sops-conf.nix
     # ./nginx.nix
+    ../../modules/certbot.nix
     ../../modules/presets/basic.nix
     ../../modules/gaming.nix
     ../../modules/secure-boot.nix
@@ -26,6 +28,19 @@
     #   datadir = "/mnt/nextcloud";
     #   https = false;
     # })
+    (import ../../modules/mail-server.nix {
+      fqdn = "vmail.net.dn";
+      networks = [
+        "127.0.0.0/8"
+        "10.0.0.0/24"
+      ];
+      rootAlias = settings.personal.username;
+      enableOpenldap = true;
+      dovecotLdapSecretFile = config.sops.secrets."dovecot/openldap".path;
+      openldapAdmPassPath = config.sops.secrets."openldap/adminPassword".path;
+      sslCertPath = "/etc/letsencrypt/live/vmail.net.dn/fullchain.pem";
+      sslKeyPath = "/etc/letsencrypt/live/vmail.net.dn/privkey.pem";
+    })
   ];
 
   home-manager = {
@@ -46,10 +61,13 @@
   ];
 
   users.users = {
-    "${settings.personal.username}".openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFQA42R3fZmjb9QnUgzzOTIXQBC+D2ravE/ZLvdjoOQ danny@lap.dn"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSHkPa6vmr5WBPXAazY16+Ph1Mqv9E24uLIf32oC2oH danny@phone.dn"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMj/LeB3i/vca3YwGNpAjf922FgiY2svro48fUSQAjOv Shortcuts on :D"
-    ];
+    "${settings.personal.username}" = {
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFQA42R3fZmjb9QnUgzzOTIXQBC+D2ravE/ZLvdjoOQ danny@lap.dn"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSHkPa6vmr5WBPXAazY16+Ph1Mqv9E24uLIf32oC2oH danny@phone.dn"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMj/LeB3i/vca3YwGNpAjf922FgiY2svro48fUSQAjOv Shortcuts on :D"
+      ];
+    };
   };
+
 }
