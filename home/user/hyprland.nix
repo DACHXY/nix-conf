@@ -88,6 +88,13 @@ in
       // input;
   };
 
+  # === gamemode === #
+  systemd.user.services.gamemode = lib.mkIf osConfig.programs.gamemode.enable {
+    Service = {
+      ExecStart = "${pkgs.gamemode}/bin/gamemoded -r";
+    };
+  };
+
   # === hyprpaper === #
   services.hyprpaper = {
     enable = true;

@@ -17,6 +17,8 @@ let
   screenshotFolder = "--output-folder ~/Pictures/Screenshots";
   clipboardOnly = "${screenshotFolder}";
 
+  gamingWorkspace = 7;
+
   toggleWlogout = pkgs.writeShellScriptBin "toggle" ''
     if ${pkgs.busybox}/bin/pgrep wlogout > /dev/null; then
       ${pkgs.busybox}/bin/pkill wlogout
@@ -33,6 +35,7 @@ let
     fi
   '';
 in
+with builtins;
 [
   ''${mainMod}, F, exec, ${browser}''
   ''${mainMod}, RETURN, exec, ${terminal}''
@@ -90,6 +93,8 @@ in
   '',XF86AudioStop, exec, playerctl stop''
   '',XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle''
 
+  ''${mainMod}, G, workspace, ${toString gamingWorkspace}''
+  ''${mainMod} SHIFT, G, movetoworkspace, ${toString gamingWorkspace}''
   # ==== Plugins ==== #
   # Overview
   # ''${mainMod}, o, hyprtasking:toggle, cursor''
