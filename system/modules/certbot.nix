@@ -1,4 +1,9 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 {
   systemd.timers."certbot-renew" = {
     enable = true;
@@ -11,7 +16,7 @@
     wantedBy = [ "timers.target" ];
   };
 
-  systemd.timers."certbot-nginx-reload" = {
+  systemd.timers."certbot-nginx-reload" = lib.mkIf config.services.nginx.enable {
     enable = true;
     description = "certbot renew";
     timerConfig = {
@@ -24,8 +29,7 @@
 
   systemd.services."certbot-renew" = {
     enable = true;
-    after = [
-      "nginx.service"
+    after = (if config.services.nginx.enable then [ "nginx.service" ] else [ ]) ++ [
       "network.target"
     ];
     environment = {
@@ -33,11 +37,11 @@
     };
     serviceConfig = {
       ExecStart = ''${pkgs.certbot}/bin/certbot renew --no-random-sleep-on-renew --force-renewal'';
-      ExecStartPost = "${pkgs.busybox}/bin/chown nginx:nginx -R /etc/letsencrypt";
+      ExecStartPost = lib.mkIf config.services.nginx.enable "${pkgs.busybox}/bin/chown nginx:nginx -R /etc/letsencrypt";
     };
   };
 
-  systemd.services."nginx-config-reload" = {
+  systemd.services."nginx-config-reload" = lib.mkIf config.services.nginx.enable {
     after = [ "certbot-renew.service" ];
     wantedBy = [ "certbot-renew.service" ];
     serviceConfig = {

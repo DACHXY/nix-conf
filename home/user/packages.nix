@@ -56,6 +56,8 @@
 
       # Thumbnail
       ffmpegthumbnailer
+
+      thunderbird
     ]
     ++ (
       if osConfig.programs.steam.enable then

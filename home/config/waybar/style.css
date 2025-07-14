@@ -43,6 +43,8 @@ tooltip label {
 #idle_inhibitor,
 #custom-cava,
 #custom-wireguard,
+#custom-gamemode,
+#custom-wallRand,
 #clock,
 #cpu,
 #memory,
@@ -80,6 +82,8 @@ tooltip label {
 #temperature,
 #network,
 #custom-wireguard,
+#custom-gamemode,
+#custom-wallRand,
 #battery {
   margin-left: 4px;
 }
@@ -126,6 +130,8 @@ tooltip label {
 /* Center Icon */
 #custom-os,
 #custom-wireguard,
+#custom-gamemode,
+#custom-wallRand,
 #network,
 #idle_inhibitor {
   padding-left: 10px; padding-right: 14px;

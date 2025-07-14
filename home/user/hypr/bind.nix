@@ -1,8 +1,10 @@
 {
+  settings,
   mainMod,
   nvidia-offload-enabled,
   pkgs,
 }:
+with builtins;
 let
   firefox = "firefox";
   prefix = if nvidia-offload-enabled then "nvidia-offload" else "";
@@ -16,6 +18,8 @@ let
   # clipboard-only = "${clipboardOnly}";
   screenshotFolder = "--output-folder ~/Pictures/Screenshots";
   clipboardOnly = "${screenshotFolder}";
+
+  gamingWorkspace = 7;
 
   toggleWlogout = pkgs.writeShellScriptBin "toggle" ''
     if ${pkgs.busybox}/bin/pgrep wlogout > /dev/null; then
@@ -32,6 +36,13 @@ let
         rofi "$@"
     fi
   '';
+
+  scrollStep =
+    let
+      monitorsNum = length settings.hyprland.monitors;
+
+    in
+    toString (if (monitorsNum == 0) then 1 else monitorsNum);
 in
 [
   ''${mainMod}, F, exec, ${browser}''
@@ -73,8 +84,8 @@ in
   ''${mainMod}, k, movefocus, u''
   ''${mainMod}, j, movefocus, d''
 
-  ''${mainMod}, mouse_down, workspace, e-1''
-  ''${mainMod}, mouse_up, workspace, e+1''
+  ''${mainMod}, mouse_down, workspace, e-${scrollStep}''
+  ''${mainMod}, mouse_up, workspace, e+${scrollStep}''
 
   ''${mainMod} SHIFT, l, movewindow, r''
   ''${mainMod} SHIFT, h, movewindow, l''
@@ -90,6 +101,8 @@ in
   '',XF86AudioStop, exec, playerctl stop''
   '',XF86AudioMute, exec, wpctl set-mute @DEFAULT_SINK@ toggle''
 
+  ''${mainMod}, G, workspace, ${toString gamingWorkspace}''
+  ''${mainMod} SHIFT, G, movetoworkspace, ${toString gamingWorkspace}''
   # ==== Plugins ==== #
   # Overview
   # ''${mainMod}, o, hyprtasking:toggle, cursor''

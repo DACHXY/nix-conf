@@ -33,7 +33,5 @@
     GTK_CSD = "0";
     GTK_USE_PORTAL = "1";
     GTK_IM_MODULE = "";
-
-    MAIL = "~/Mailbox";
   };
 }
