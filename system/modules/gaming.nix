@@ -15,6 +15,8 @@
     };
   };
 
+  programs.gamescope.enable = lib.mkDefault true;
+
   programs = {
     steam = {
       enable = true;

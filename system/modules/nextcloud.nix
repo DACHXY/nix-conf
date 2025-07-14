@@ -59,21 +59,11 @@
         tasks
         ;
 
-      passwords =
-        (pkgs.fetchNextcloudApp {
-          sha256 = "sha256-Nu6WViFawQWby9CEEezAwoBNdp7O5O8a9IhDp/me/E0=";
-          url = "https://git.mdns.eu/api/v4/projects/45/packages/generic/passwords/2025.2.0/passwords.tar.gz";
-          license = "agpl3Plus";
-        }).overrideAttrs
-          (prev: {
-            unpackPhase = ''
-              cp $src passwords.tar.gz
-              tar -xf passwords.tar.gz
-              mv passwords/* ./
-              rm passwords.tar.gz
-              rm -r passwords
-            '';
-          });
+      camerarawpreviews = pkgs.fetchNextcloudApp {
+        url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v0.8.7/camerarawpreviews_nextcloud.tar.gz";
+        sha256 = "sha256-aiMUSJQVbr3xlJkqOaE3cNhdZu3CnPEIWTNVOoG4HSo=";
+        license = "agpl3Plus";
+      };
     };
     extraAppsEnable = true;
 
@@ -97,6 +87,10 @@
         "OC\\Preview\\TXT"
         "OC\\Preview\\XBitmap"
         "OC\\Preview\\HEIC"
+        "OC\\Preview\\SVG"
+        "OC\\Preview\\FONT"
+        "OC\\Preview\\Imaginary"
+        "OC\\Preview\\ImaginaryPDF"
       ];
     };
   };

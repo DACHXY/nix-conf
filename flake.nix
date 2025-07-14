@@ -69,6 +69,10 @@
       url = "github:Infinidoge/nix-minecraft";
     };
 
+    nix-tmodloader = {
+      url = "github:andOrlando/nix-tmodloader";
+    };
+
     sops-nix = {
       url = "github:Mic92/sops-nix";
     };
@@ -206,10 +210,12 @@
           };
           extra-modules = [
             inputs.nix-minecraft.nixosModules.minecraft-servers
+            inputs.nix-tmodloader.nixosModules.tmodloader
             ./system/dev/dn-server
           ];
           overlays = [
             inputs.nix-minecraft.overlay
+            inputs.nix-tmodloader.overlay
           ];
         };
       };

@@ -32,6 +32,7 @@
       domain = "https://bitwarden.net.dn";
     })
     (import ../../modules/openldap.nix { })
+    ../../modules/terraria.nix
   ];
 
   environment.systemPackages = with pkgs; [

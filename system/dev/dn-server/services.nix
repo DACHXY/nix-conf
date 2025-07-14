@@ -98,6 +98,11 @@ let
       allowedIPs = [ "10.0.0.5/32" ];
     }
     {
+      dns = "jonly-mac";
+      publicKey = "jPmeA0WH3vQw/PDNdJwYLfE7Ibl5oZGuta9UkZNEyTk=";
+      allowedIPs = [ "10.0.0.9/32" ];
+    }
+    {
       # YC
       dns = "yc";
       publicKey = "5LfmjAg07ixmBCcsEn319UHqMRO3AdusXsoibGUqfQE=";
@@ -385,13 +390,14 @@ in
               @           IN     MX     10 mail.${origin}
                           IN     TXT    "v=spf1 mx"
               dns         IN     A      ${serverIP}
+              files       IN     A      ${serverIP}
               nextcloud   IN     A      ${serverIP}
               bitwarden   IN     A      ${serverIP}
-              pre-nextcloud   IN     A  ${serverIP}
               ca          IN     A      ${serverIP}
               ${hostname} IN     A      ${serverIP}
               mail        IN     A      ${serverIP}
               api-kube    IN     A      ${kubeIP}
+              vmail       IN     A      10.0.0.130
               ${dnsRecords}
             '';
         };
@@ -423,9 +429,10 @@ in
               ${serverIP} IN     PTR    mail.${personal.domain}.
               ${serverIP} IN     PTR    ${hostname}.${personal.domain}.
               ${serverIP} IN     PTR    nextcloud.${personal.domain}.
+              ${serverIP} IN     PTR    files.${personal.domain}.
               ${serverIP} IN     PTR    bitwarden.${personal.domain}.
-              ${serverIP} IN     PTR    pre-nextcloud.${personal.domain}.
               ${serverIP} IN     PTR    ca.${personal.domain}.
+              130         IN     PTR    vmail.${personal.domain}.
               ${dnsReversedRecords}
             '';
 
