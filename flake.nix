@@ -228,7 +228,7 @@
               {
                 system.stateVersion = nix-version;
                 home-manager = {
-                  backupFileExtension = "backup";
+                  backupFileExtension = "backup-hm";
                   useUserPackages = true;
                   useGlobalPkgs = true;
                   extraSpecialArgs = {

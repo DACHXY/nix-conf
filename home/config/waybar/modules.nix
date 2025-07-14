@@ -1,4 +1,8 @@
-{ terminal, osConfig }:
+{
+  terminal,
+  osConfig,
+  wallRand,
+}:
 let
   terminalRun = "${terminal} -e";
 in
@@ -246,5 +250,22 @@ in
     interval = 3;
     return-type = "json";
     escape = true;
+  };
+  "custom/gamemode" = {
+    format = "{icon}";
+    format-icons = {
+      active = "󰊗";
+      inactive = "󰺷";
+    };
+    exec = "~/.config/scripts/gamemodeStatus.sh";
+    on-click = "~/.config/scripts/gamemodeStatus.sh toggle";
+    tooltip = true;
+    interval = 3;
+    return-type = "json";
+    escape = true;
+  };
+  "custom/wallRand" = {
+    format = "";
+    on-click = "${wallRand}/bin/wallRand";
   };
 }

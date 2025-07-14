@@ -48,10 +48,5 @@
         fi
       '';
     };
-
-    # mail
-    msmtp = {
-      enable = true;
-    };
   };
 }

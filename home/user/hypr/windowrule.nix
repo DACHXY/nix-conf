@@ -35,8 +35,10 @@
     "float, class:^(steam)$,title:^(Friends List)$"
 
     # Steam
-    "workspace: 5 silent, class: ^(steam)$"
+    "workspace: 7 silent, class: ^(steam)$"
     "workspace: unset, class: ^(steam)$, floating: 1"
+    # steam game
+    "workspace: 7 silent, initialClass: steam_app_*"
 
     # Line
     "workspace: 2, initialTitle: ^(LINE)$"

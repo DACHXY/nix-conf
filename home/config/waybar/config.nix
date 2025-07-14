@@ -1,6 +1,10 @@
-{ terminal, osConfig }:
+{
+  terminal,
+  osConfig,
+  wallRand,
+}:
 let
-  modulesConfig = import ./modules.nix { inherit terminal osConfig; };
+  modulesConfig = import ./modules.nix { inherit terminal osConfig wallRand; };
 in
 map (dev: dev // modulesConfig) [
   # Monitor 1
@@ -26,16 +30,29 @@ map (dev: dev // modulesConfig) [
     modules-center = [
       "hyprland/window"
     ];
-    modules-right = [
-      "wlr/taskbar"
-      "custom/wireguard"
-      "idle_inhibitor"
-      "network"
-      "cpu"
-      "memory"
-      "pulseaudio"
-      "custom/swaync"
-    ];
+    modules-right = (
+      [
+        "wlr/taskbar"
+      ]
+      ++ (
+        if osConfig.programs.gamemode.enable then
+          [
+            "custom/gamemode"
+          ]
+        else
+          [ ]
+      )
+      ++ [
+        "custom/wallRand"
+        "custom/wireguard"
+        "idle_inhibitor"
+        "network"
+        "cpu"
+        "memory"
+        "pulseaudio"
+        "custom/swaync"
+      ]
+    );
   }
   # Monitor 2
   {

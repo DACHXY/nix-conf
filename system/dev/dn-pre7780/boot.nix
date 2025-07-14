@@ -37,18 +37,6 @@
     ];
   };
 
-  # fileSystems."/mnt/nextcloud" = {
-  #   enable = true;
-  #   depends = [ "/mnt/windows" ];
-  #   device = "/mnt/windows/Linux/nextcloud";
-  #
-  #   fsType = "none";
-  #   options = [
-  #     "nofail"
-  #     "bind"
-  #   ];
-  # };
-
   boot.supportedFilesystems = [ "ntfs" ];
   boot.loader.systemd-boot.enable = true;
 

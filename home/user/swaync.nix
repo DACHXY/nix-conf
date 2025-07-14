@@ -46,6 +46,7 @@
         font-size: 15px;
         border-width: 3px;
         border-color: #ebdbb2;
+        color: #ebdbb2;
       }
 
       .control-center .notification-row:focus,
@@ -154,7 +155,7 @@
 
       .widget-title>button:hover {
         background: @borderc;
-        color: #282828;
+        color: @textc;
       }
 
       .widget-label {
@@ -163,7 +164,7 @@
 
       .widget-label>label {
         font-size: 1rem;
-        color: @textc;
+        color: @borderc;
       }
 
       .widget-mpris {

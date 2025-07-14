@@ -28,6 +28,50 @@ let
     song_info=$(playerctl metadata --format '{{title}}  󰎆    {{artist}}')
        echo "$song_info"
   '';
+
+  wallpapers = [
+    (pkgs.fetchurl {
+      url = "http://files.net.dn/dennis-yu-fVadSuPPE8M-unsplash.jpg";
+      hash = "sha256-YCusefLnTntOZAh2fIoWuJbm1+iE+RNeWTbn22UDjSU=";
+    })
+    (pkgs.fetchurl {
+      url = "http://files.net.dn/karsten-winegeart-LZRZJam4Avg-unsplash.jpg";
+      hash = "sha256-NpJhRJRiFCFmdDP/8FDmzIBellSdJ1Y6Pz63QJzkPMk=";
+    })
+    (pkgs.fetchurl {
+      url = "http://files.net.dn/nick-design-q3s4a7FZgjY-unsplash.jpg";
+      hash = "sha256-kJajqRuf+ZMTaORKKK4A+8MNzGd2SHjMcRYnq9T8LmA=";
+    })
+    (pkgs.fetchurl {
+      url = "http://files.net.dn/oleg-demakov-zEIApnww3fU-unsplash.jpg";
+      hash = "sha256-79JRnxJdCZOh2u8+5LcUDGjzwE1mMM2ZHrKLn36wd40=";
+    })
+    "$HOME/.config/wallpapers/wall.png"
+  ];
+
+  # Change Wallpaper
+  wallRand = pkgs.writeShellScriptBin "wallRand" (
+    with builtins;
+    let
+      pathString = concatStringsSep " " (map (w: "\"" + w + "\"") wallpapers);
+    in
+    ''
+      wallpapers=(
+        ${pathString}
+      )
+
+      count="''${#wallpapers[@]}"
+      random_index=$(( RANDOM % count ))
+      selected="''${wallpapers[$random_index]}"
+
+      if [ ! -f "$selected" ]; then
+        echo "File not exist: $selected"
+        exit 1
+      fi
+
+      ${pkgs.hyprland}/bin/hyprctl hyprpaper wallpaper ",$selected"
+    ''
+  );
 in
 {
   home.packages = with pkgs; [
@@ -63,6 +107,7 @@ in
           disable_logs = true;
         };
         bind = import ./hypr/bind.nix {
+          inherit settings;
           inherit mainMod;
           inherit pkgs;
           nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
@@ -88,11 +133,18 @@ in
       // input;
   };
 
+  # === gamemode === #
+  systemd.user.services.gamemode = lib.mkIf osConfig.programs.gamemode.enable {
+    Service = {
+      ExecStart = "${pkgs.gamemode}/bin/gamemoded -r";
+    };
+  };
+
   # === hyprpaper === #
   services.hyprpaper = {
     enable = true;
     settings = {
-      preload = [ "~/.config/wallpapers/wall.png" ];
+      preload = wallpapers;
       wallpaper = [ ", ~/.config/wallpapers/wall.png" ];
       splash = false;
       ipc = "on";
@@ -309,7 +361,7 @@ in
   programs.waybar = {
     enable = true;
     style = ../../home/config/waybar/style.css;
-    settings = import ../../home/config/waybar/config.nix { inherit terminal osConfig; };
+    settings = import ../../home/config/waybar/config.nix { inherit terminal osConfig wallRand; };
     systemd = {
       enable = true;
     };
