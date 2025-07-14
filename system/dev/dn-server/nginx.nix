@@ -23,6 +23,10 @@ let
               port = 443;
               ssl = true;
             }
+            {
+              addr = "0.0.0.0";
+              port = 80;
+            }
           ];
         }
       else
@@ -77,11 +81,6 @@ let
     chown nginx:nginx -R /etc/letsencrypt
   '';
 
-  pre7780 = {
-    hostname = "pre-nextcloud.net.dn";
-    ip = "10.0.0.130";
-  };
-
   vaultwarden = {
     domain = "bitwarden.net.dn";
   };
@@ -128,10 +127,30 @@ in
         '';
       };
 
-      ${pre7780.hostname} = mkProxyHost {
-        domain = pre7780.hostname;
-        proxyPass = "http://${pre7780.ip}";
-        ssl = true;
+      "files.net.dn" = {
+        listen = [
+          {
+            addr = "0.0.0.0";
+            port = 80;
+          }
+        ];
+
+        root = "/var/www/files";
+        locations."/" = {
+          extraConfig = ''
+            autoindex on;
+            autoindex_exact_size off;
+            autoindex_localtime on;
+          '';
+        };
+
+        extraConfig = ''
+          types {
+            image/png png;
+            image/jpeg jpg jpeg;
+            image/gif gif;
+          }
+        '';
       };
 
       ${vaultwarden.domain} = mkProxyHost {
