@@ -108,6 +108,7 @@ map (dev: dev // modulesConfig) [
     modules-right = [
       "wlr/taskbar"
       "temperature"
+      "custom/wallRand"
       "custom/wireguard"
       "idle_inhibitor"
       "network"
