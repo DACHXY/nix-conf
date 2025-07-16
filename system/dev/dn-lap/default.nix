@@ -12,6 +12,7 @@
     ../../modules/virtualization.nix
     ../../modules/wine.nix
     ../../modules/wireguard.nix
+    ../../modules/airplay.nix
     # ../../modules/battery-life.nix
   ];
 
