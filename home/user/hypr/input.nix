@@ -9,7 +9,7 @@
     follow_mouse = 1;
     accel_profile = "flat";
 
-    kb_options = "caps:swapescape";
+    kb_options = [ "caps:swapescape" ];
 
     touchpad = {
       natural_scroll = true;

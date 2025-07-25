@@ -31,15 +31,10 @@
     hyprshot
     kitty
 
-    # Notification
-    libnotify
-    swaynotificationcenter
-
     qt5.qtwayland
     qt6.qtwayland
     wlogout
     wl-clipboard
-    waybar
 
     # Util
     grim

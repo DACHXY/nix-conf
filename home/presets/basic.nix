@@ -13,10 +13,8 @@
     ../user/packages.nix
     ../user/firefox.nix
     ../user/shell.nix
-    ../user/swaync.nix
     ../user/tmux.nix
     ../user/virtualization.nix
-    ../user/swaync.nix
     ../user/vscode.nix
     ../user/yazi.nix
   ];

@@ -76,61 +76,55 @@ in
 {
   home.packages = with pkgs; [
     mpvpaper # Video Wallpaper
-    yt-dlp
     hyprcursor
-  ];
-
-  systemd.user.targets.hyprland-session.Unit.Wants = [
-    "xdg-desktop-autostart.target"
   ];
 
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
-    systemd.enable = true;
+    systemd = {
+      enable = true;
+      variables = [ "--all" ];
+    };
     package = null;
     portalPackage = null;
 
-    plugins =
-      (with inputs.hyprland-plugins.packages.${system}; [
+    plugins = (
+      with inputs.hyprland-plugins.packages.${system};
+      [
         xtra-dispatchers
         hyprwinwrap
-      ])
-      ++ [
-        # inputs.hyprgrass.packages.${system}.default
-        # inputs.hyprtasking.packages.${system}.hyprtasking
-      ];
+      ]
+    );
 
-    settings =
-      {
-        debug = {
-          disable_logs = true;
-        };
-        bind = import ./hypr/bind.nix {
-          inherit settings;
-          inherit mainMod;
-          inherit pkgs;
-          nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
-        };
-        bindm = import ./hypr/bindm.nix { inherit mainMod; };
-        binde = import ./hypr/binde.nix { inherit mainMod; };
-        monitor = import ./hypr/monitor.nix;
-        plugin = plugins;
-        exec-once = [ ''${startScript}'' ];
-        env = [
-          ''HYPRCURSOR_THEME, ${cursorName}''
-          ''HYPRCURSOR_SIZE, ${builtins.toString settings.hyprland.cursor-size}''
-          ''XCURSOR_THEME, ${cursorName}''
-          ''XCURSOR_SIZE, ${builtins.toString settings.hyprland.xcursor-size}''
-          ''XDG_CURRENT_DESKTOP, Hyprland''
-          ''XDG_SESSION_DESKTOP, Hyprland''
-          ''GDK_PIXBUF_MODULE_FILE, ${pkgs.librsvg}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache'' # Make rofi load svg
-        ];
-        workspace = import ./hypr/workspace.nix { monitors = settings.hyprland.monitors; };
-      }
-      // window
-      // windowrule
-      // input;
+    settings = {
+      debug = {
+        disable_logs = true;
+      };
+      bind = import ./hypr/bind.nix {
+        inherit settings;
+        inherit mainMod;
+        inherit pkgs;
+        nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
+      };
+      bindm = import ./hypr/bindm.nix { inherit mainMod; };
+      binde = import ./hypr/binde.nix { inherit mainMod; };
+      monitor = import ./hypr/monitor.nix;
+      plugin = plugins;
+      exec-once = [ ''${startScript}'' ];
+      env = [
+        ''HYPRCURSOR_THEME, ${cursorName}''
+        ''HYPRCURSOR_SIZE, ${builtins.toString settings.hyprland.cursor-size}''
+        ''XCURSOR_THEME, ${cursorName}''
+        ''XCURSOR_SIZE, ${builtins.toString settings.hyprland.xcursor-size}''
+        ''XDG_CURRENT_DESKTOP, Hyprland''
+        ''XDG_SESSION_DESKTOP, Hyprland''
+      ];
+      workspace = import ./hypr/workspace.nix { monitors = settings.hyprland.monitors; };
+    }
+    // window
+    // windowrule
+    // input;
   };
 
   # === gamemode === #
@@ -354,16 +348,25 @@ in
       ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset -t 3000k";
       Restart = "always";
       RestartSec = 2;
+      KillSignal = "SIGKILL"; # Hyprsunset seems not handle the SIGTERM signal
     };
   };
 
   # === waybar === #
+  systemd.user.services.waybar = {
+    Unit = {
+      PartOf = [ "graphical-session.target" ];
+      After = [ "graphical-session.target" ];
+    };
+  };
+
   programs.waybar = {
     enable = true;
     style = ../../home/config/waybar/style.css;
     settings = import ../../home/config/waybar/config.nix { inherit terminal osConfig wallRand; };
     systemd = {
       enable = true;
+      target = "graphical-session.target";
     };
   };
 
@@ -550,13 +553,26 @@ in
       '';
   };
 
-  systemd.user.services.swaync.Service = {
-    ExecStart = lib.mkForce ''${pkgs.swaynotificationcenter}/bin/swaync --config ${
-      config.xdg.configFile."swaync/config.json".target
-    } --style ${config.xdg.configFile."swaync/style.css".target}'';
-    Environment = [
-      "XDG_CONFIG_HOME=/home/_dummy"
-    ];
+  systemd.user.services.swaync = lib.mkIf config.services.swaync.enable {
+    Unit = {
+      Requires = [ "waybar.service" ];
+      After = [
+        "waybar.service"
+        "graphical-session.target"
+      ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+    Service = {
+      ExecStart = lib.mkForce ''${pkgs.swaynotificationcenter}/bin/swaync --config ${
+        config.xdg.configFile."swaync/config.json".target
+      } --style ${config.xdg.configFile."swaync/style.css".target}'';
+      Environment = [
+        "XDG_CONFIG_HOME=/home/_dummy"
+      ];
+    };
   };
 
   # === rofi === #
