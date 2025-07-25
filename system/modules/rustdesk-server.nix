@@ -7,9 +7,9 @@
 }:
 {
   services.rustdesk-server = {
-    enable = lib.mkDefault true;
-    openFirewall = lib.mkDefault true;
-    relay.enable = lib.mkDefault false;
+    enable = true;
+    openFirewall = true;
+    relay.enable = true;
     signal.relayHosts = relayHosts;
   };
 }

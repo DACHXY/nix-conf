@@ -1,7 +1,6 @@
 {
   pkgs,
   settings,
-  config,
   ...
 }:
 {
@@ -14,48 +13,26 @@
     ./hardware-configuration.nix
     ./boot.nix
     ./sops-conf.nix
-    # ./nginx.nix
-    ../../modules/certbot.nix
     ../../modules/presets/basic.nix
     ../../modules/gaming.nix
-    ../../modules/secure-boot.nix
+    # ../../modules/secure-boot.nix
     ../../modules/virtualization.nix
     ../../modules/wine.nix
     ../../modules/wireguard.nix
-    (import ../../modules/rustdesk-server.nix { relayHosts = [ "10.0.0.0/24" ]; })
-    # (import ../../modules/nextcloud.nix {
-    #   hostname = "192.168.0.3";
-    #   datadir = "/mnt/nextcloud";
-    #   https = false;
-    # })
-    ../../modules/mail-server
+    (import ../../modules/rustdesk-server.nix {
+      relayHosts = [
+        "10.0.0.0/24"
+        "192.168.0.0/24"
+      ];
+    })
   ];
-
-  mail-server = {
-    enable = true;
-    mailDir = "~/Maildir";
-    virtualMailDir = "/var/mail/vhosts";
-    domain = "vmail.net.dn";
-    networks = [
-      "127.0.0.0/8"
-      "10.0.0.0/24"
-    ];
-    openFirewall = true;
-    sslKey = "/etc/letsencrypt/live/vmail.net.dn/privkey.pem";
-    sslCert = "/etc/letsencrypt/live/vmail.net.dn/fullchain.pem";
-    dovecot.ldapFile = config.sops.secrets."dovecot/openldap".path;
-    openldap = {
-      passwordFile = config.sops.secrets."openldap/adminPassword".path;
-      enableWebUI = true;
-    };
-  };
 
   home-manager = {
     users."${settings.personal.username}" = {
       imports = [
         ../../../home/presets/basic.nix
         (import ../../../home/user/bitwarden.nix {
-          email = "danny@dn-server.net.dn";
+          email = "danny@net.dn";
           baseUrl = "https://bitwarden.net.dn";
         })
       ];
@@ -63,8 +40,7 @@
   };
 
   environment.systemPackages = with pkgs; [
-    prismlauncher
-    heroic
+    rustdesk
   ];
 
   users.users = {

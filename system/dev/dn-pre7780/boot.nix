@@ -7,7 +7,7 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
   fileSystems."/mnt/ssd" = {
-    device = "/dev/disk/by-uuid/4E21-0000";
+    device = "/dev/disk/by-label/DN-SSD";
     fsType = "exfat";
     options = [
       "x-systemd.automount"
@@ -23,21 +23,6 @@
     ];
   };
 
-  fileSystems."/mnt/windows" = {
-    enable = true;
-    device = "/dev/disk/by-uuid/460237D00237C429";
-    fsType = "ntfs-3g";
-    options = [
-      "uid=1000"
-      "gid=100"
-      "umask=000"
-      "nofail"
-      "users"
-      "exec"
-    ];
-  };
-
-  boot.supportedFilesystems = [ "ntfs" ];
   boot.loader.systemd-boot.enable = true;
 
   # Enable F keys in some wireless keyboard (Ex. neo65)

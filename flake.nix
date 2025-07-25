@@ -22,7 +22,7 @@
     };
 
     ghostty = {
-      url = "github:ghostty-org/ghostty";
+      url = "github:ghostty-org/ghostty?rev=7f9bb3c0e54f585e11259bc0c9064813d061929c";
     };
 
     yazi = {
@@ -111,6 +111,7 @@
           settings = {
             personal = {
               hostname = "dn-pre7780";
+              domain = "net.dn";
               username = "danny";
               git = {
                 username = "DACHXY";
@@ -229,48 +230,48 @@
           hostname = settings.personal.hostname;
         in
         nixpkgs.lib.nixosSystem {
-          modules =
-            [
-              {
-                system.stateVersion = nix-version;
-                home-manager = {
-                  backupFileExtension = "backup-hm";
-                  useUserPackages = true;
-                  useGlobalPkgs = true;
-                  extraSpecialArgs = {
-                    inherit
-                      inputs
-                      system
-                      nix-version
-                      settings
-                      devices
-                      ;
-                  };
-                  users."${username}" = {
-                    imports = [
-                      inputs.hyprland.homeManagerModules.default
-                      {
-                        home = {
-                          homeDirectory = "/home/${username}";
-                          stateVersion = nix-version;
-                        };
-                        # Let Home Manager install and manage itself.
-                        programs.home-manager.enable = true;
-                      }
-                    ];
-                  };
+          modules = [
+            {
+              system.stateVersion = nix-version;
+              home-manager = {
+                backupFileExtension = "backup-hm";
+                useUserPackages = true;
+                useGlobalPkgs = true;
+                extraSpecialArgs = {
+                  inherit
+                    inputs
+                    system
+                    nix-version
+                    settings
+                    devices
+                    ;
                 };
-                networking.hostName = hostname;
-                nixpkgs.hostPlatform = system;
-                nixpkgs.config.allowUnfree = true;
-                nixpkgs.overlays = ((import ./pkgs/overlays) ++ conf.overlays);
-              }
-            ]
-            ++ common-settings.modules
-            ++ conf.extra-modules;
+                users."${username}" = {
+                  imports = [
+                    inputs.hyprland.homeManagerModules.default
+                    {
+                      home = {
+                        homeDirectory = "/home/${username}";
+                        stateVersion = nix-version;
+                      };
+                      # Let Home Manager install and manage itself.
+                      programs.home-manager.enable = true;
+                    }
+                  ];
+                };
+              };
+              networking.hostName = hostname;
+              nixpkgs.hostPlatform = system;
+              nixpkgs.config.allowUnfree = true;
+              nixpkgs.overlays = ((import ./pkgs/overlays) ++ conf.overlays);
+            }
+          ]
+          ++ common-settings.modules
+          ++ conf.extra-modules;
           specialArgs = {
             inherit settings;
-          } // common-settings.args;
+          }
+          // common-settings.args;
         }
       ) devices;
     };

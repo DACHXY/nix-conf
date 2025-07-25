@@ -13,9 +13,7 @@ let
   filemanager = "${terminal} -e yazi";
   scripts = "~/.config/scripts";
 
-  # freezeShot = "--freeze";
   freezeShot = "";
-  # clipboard-only = "${clipboardOnly}";
   screenshotFolder = "--output-folder ~/Pictures/Screenshots";
   clipboardOnly = "${screenshotFolder}";
 
@@ -30,6 +28,8 @@ let
   '';
 
   toggleRofi = pkgs.writeShellScriptBin "toggle" ''
+    GDK_PIXBUF_MODULE_FILE="${pkgs.librsvg}/lib/gdk-pixbuf-2.0/${pkgs.librsvg.version}/loaders.cache" # Make rofi load svg
+
     if ${pkgs.busybox}/bin/pgrep rofi > /dev/null; then
       ${pkgs.busybox}/bin/pkill rofi
     else
@@ -54,7 +54,6 @@ in
   ''${mainMod}, E, exec, ${filemanager}''
   ''${mainMod}, V, togglefloating, ''
   ''ALT, SPACE, exec, ${toggleRofi}/bin/toggle -config ~/.config/rofi/apps.rasi -show drun''
-  ''${mainMod} ALT, W, exec, ${scripts}/waybarRestart.sh''
   ''${mainMod}, P, pseudo, # dwindle''
   ''${mainMod}, S, togglesplit, # dwindle''
   ''CTRL ${mainMod} SHIFT, L, exec, hyprlock''

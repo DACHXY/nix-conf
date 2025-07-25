@@ -392,7 +392,6 @@
               yaml
               zig
 
-              verilog
             ]
           )).dependencies;
       };
