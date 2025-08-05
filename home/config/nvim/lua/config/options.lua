@@ -25,6 +25,11 @@ vim.g.lazyvim_python_ruff = "ruff"
 vim.g.lazyvim_eslint_auto_format = true
 vim.o.background = "dark"
 
+-- Tab settings
+vim.g.expandtab = true
+vim.g.softtabstop = 2
+vim.g.shiftwidth = 2
+
 -- Markdown preview
 vim.g.mkdp_auto_close = 0
 vim.g.mkdp_combine_preview = 1

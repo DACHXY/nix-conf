@@ -45,6 +45,7 @@ tooltip label {
 #custom-wireguard,
 #custom-gamemode,
 #custom-wallRand,
+#custom-airplay,
 #clock,
 #cpu,
 #memory,
@@ -84,6 +85,7 @@ tooltip label {
 #custom-wireguard,
 #custom-gamemode,
 #custom-wallRand,
+#custom-airplay,
 #battery {
   margin-left: 4px;
 }
@@ -132,6 +134,7 @@ tooltip label {
 #custom-wireguard,
 #custom-gamemode,
 #custom-wallRand,
+#custom-airplay,
 #network,
 #idle_inhibitor {
   padding-left: 10px; padding-right: 14px;

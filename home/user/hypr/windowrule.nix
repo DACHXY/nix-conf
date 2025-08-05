@@ -1,3 +1,7 @@
+{ lib, settings }:
+let
+  inherit (lib) optionalString;
+in
 {
   windowrule = [
     "pseudo, class:fcitx"
@@ -34,11 +38,50 @@
     "pin, class:^(vesktop)$,title:^(Discord Popout)$"
     "float, class:^(steam)$,title:^(Friends List)$"
 
+    # Media Control
+    "float, class: ^(org.pulseaudio.pavucontrol)$"
+    "pin, class: ^(org.pulseaudio.pavucontrol)$"
+    "animation slide top 20%, class: ^(org.pulseaudio.pavucontrol)$"
+    (optionalString (
+      settings.personal.hostname == "dn-pre7780"
+    ) "move 1680 59, class: ^(org.pulseaudio.pavucontrol)$")
+    (optionalString (
+      settings.personal.hostname == "dn-pre7780"
+    ) "size 868 561, class: ^(org.pulseaudio.pavucontrol)$")
+
+    # Local Send (File Sharing)
+    "float, class: ^(localsend_app)$"
+    "pin, class: ^(localsend_app)$"
+    "animation slide right 20%, class: ^(localsend_app)$"
+    (optionalString (
+      settings.personal.hostname == "dn-pre7780"
+    ) "size 523 1372, class: ^(localsend_app)$")
+    (optionalString (
+      settings.personal.hostname == "dn-pre7780"
+    ) "move 2024 56, class: ^(localsend_app)$")
+
+    # Airplay
+    "pseudo, class: ^(GStreamer)$"
+    "opacity 1.0, class: ^(GStreamer)$"
+    (optionalString (settings.personal.hostname == "dn-pre7780") "size 487 1055, class: ^(GStreamer)$")
+
+    # Bluetooth
+    "float, class: ^(blueberry.py)$"
+    "pin, class: ^(blueberry.py)$"
+    (optionalString (
+      settings.personal.hostname == "dn-pre7780"
+    ) "move 1943 59, class: ^(blueberry.py)$")
+    (optionalString (
+      settings.personal.hostname == "dn-pre7780"
+    ) "size 605 763, class: ^(blueberry.py)$")
+    "animation slide top 20%, class: ^(blueberry.py)$"
+
     # Steam
     "workspace: 7 silent, class: ^(steam)$"
     "workspace: unset, class: ^(steam)$, floating: 1"
+
     # steam game
-    "workspace: 7 silent, initialClass: steam_app_*"
+    "workspace: 7 silent, class: ^(steam_app_)(.*)"
 
     # Line
     "workspace: 2, initialTitle: ^(LINE)$"
@@ -48,7 +91,7 @@
     "workspace: 3, initialClass: ^(vlc), floating: 0"
 
     # vesktop
-    "workspace: 2 silent, initialClass: ^(vesktop), floating: 0"
+    "workspace: 4 silent, initialClass: ^(vesktop), floating: 0"
   ];
 
   layerrule = [

@@ -76,6 +76,11 @@
     sops-nix = {
       url = "github:Mic92/sops-nix";
     };
+
+    hyprlock = {
+      url = "github:hyprwm/hyprlock";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

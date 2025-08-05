@@ -1,4 +1,0 @@
-[manager]
-prepend_keymap = [{ on = ["c", "D"], run = '''
-    shell 'ripdrag "$@" -x 2>/dev/null &' --confirm
-''', desc = "Drag the file" }]

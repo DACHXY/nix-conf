@@ -2,9 +2,19 @@
   terminal,
   osConfig,
   wallRand,
+  pkgs,
+  lib,
 }:
 let
-  modulesConfig = import ./modules.nix { inherit terminal osConfig wallRand; };
+  modulesConfig = import ./modules.nix {
+    inherit
+      terminal
+      osConfig
+      wallRand
+      pkgs
+      lib
+      ;
+  };
 in
 map (dev: dev // modulesConfig) [
   # Monitor 1
@@ -43,6 +53,7 @@ map (dev: dev // modulesConfig) [
           [ ]
       )
       ++ [
+        "custom/airplay"
         "custom/wallRand"
         "custom/wireguard"
         "idle_inhibitor"

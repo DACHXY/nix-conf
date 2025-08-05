@@ -5,31 +5,12 @@ in
 {
   home.packages = with pkgs; [
     # Shell
-    fishPlugins.done
-    fishPlugins.fzf-fish
-    fishPlugins.forgit
-    fishPlugins.hydro
-    fishPlugins.grc
-    grc # Colorize
-    zoxide # Dir jumper
-    starship # Shell theme
-    carapace # Autocomplete
+    grc
   ];
 
   programs = {
     fish = {
       enable = true;
-      shellInit = ''
-        # Yazi
-        function y
-          set tmp (mktemp -t "yazi-cwd.XXXXXX")
-          yazi $argv --cwd-file="$tmp"
-          if set cwd (command cat -- "$tmp"); and [ -n "$cwd" ]; and [ "$cwd" != "$PWD" ]
-            builtin cd -- "$cwd"
-          end
-          rm -f -- "$tmp"
-        end
-      '';
       interactiveShellInit = ''
         set fish_greeting # Disable greeting
       '';
@@ -37,6 +18,18 @@ in
         {
           name = "grc";
           src = pkgs.fishPlugins.grc.src;
+        }
+        {
+          name = "fzf-fish";
+          src = pkgs.fishPlugins.fzf-fish.src;
+        }
+        {
+          name = "forgit";
+          src = pkgs.fishPlugins.forgit.src;
+        }
+        {
+          name = "hydro";
+          src = pkgs.fishPlugins.hydro.src;
         }
       ];
       shellAliases = shellAlias;

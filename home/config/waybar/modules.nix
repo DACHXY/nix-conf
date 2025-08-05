@@ -2,6 +2,8 @@
   terminal,
   osConfig,
   wallRand,
+  pkgs,
+  lib,
 }:
 let
   terminalRun = "${terminal} -e";
@@ -268,4 +270,43 @@ in
     format = "";
     on-click = "${wallRand}/bin/wallRand";
   };
+  "custom/airplay" =
+    let
+      toggleScript = pkgs.writeShellScript "airplayStatus" ''
+        SERVICE="uxplay"
+        ICON="󱖑"
+
+        if [ "$1" = "toggle" ]; then
+          if systemctl --user is-active --quiet "$SERVICE"; then
+            systemctl --user stop "$SERVICE"
+            notify-send "$ICON Airplay" "off" >/dev/null 2>&1
+          else
+            systemctl --user start "$SERVICE"
+            notify-send "$ICON Airplay" "on" >/dev/null 2>&1
+          fi
+          exit 0
+        fi
+
+        if ! systemctl --user is-active --quiet "$SERVICE"; then
+          echo "{\"text\": \"inactive\", \"tooltip\": \"airplay is inactive\", \"alt\": \"inactive\", \"class\": \"inactive\"}"
+          exit 0
+        fi
+
+        echo "{\"text\": \"active\", \"tooltip\": \"airplay is running\", \"alt\": \"active\", \"class\": \"active\"}"
+        exit 0
+      '';
+    in
+    {
+      format = "{icon}";
+      format-icons = {
+        active = "󱖑";
+        inactive = "";
+      };
+      exec = toggleScript;
+      interval = 3;
+      tooltip = true;
+      return-type = "json";
+      escape = true;
+      on-click = "${toggleScript} toggle";
+    };
 }

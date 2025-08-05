@@ -6,6 +6,9 @@
   osConfig,
   ...
 }:
+let
+  inherit (lib) optional;
+in
 {
   programs.poetry = {
     enable = true;
@@ -15,11 +18,38 @@
     };
   };
 
+  programs.ghostty = {
+    enable = true;
+    installBatSyntax = true;
+    enableFishIntegration = true;
+    package = inputs.ghostty.packages.${system}.default;
+    settings = {
+      font-family = "CaskaydiaCove Nerd Font Mono";
+      font-size = 15;
+      theme = "Espresso";
+      unfocused-split-opacity = 0.85;
+      desktop-notifications = false;
+
+      wait-after-command = false;
+      shell-integration = "detect";
+      window-theme = "dark";
+
+      confirm-close-surface = false;
+      window-decoration = false;
+
+      mouse-hide-while-typing = true;
+
+      keybind = [ "ctrl+shift+zero=toggle_tab_overview" ];
+
+      clipboard-read = "allow";
+      clipboard-write = "allow";
+    };
+  };
+
   home.packages =
     with pkgs;
     [
-      # Terminal
-      inputs.ghostty.packages.${system}.default
+      obsidian
 
       # Discord
       vesktop
@@ -66,9 +96,7 @@
           protonup
         ]
       else
-        [
-
-        ]
+        [ ]
     );
 
   home.sessionVariables = lib.mkIf osConfig.programs.steam.enable {
