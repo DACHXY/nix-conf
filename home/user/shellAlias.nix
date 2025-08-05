@@ -3,7 +3,6 @@
   ls = "exa --icons";
   lp = "exa"; # Pure output
   cat = "bat";
-  y = "yazi";
   g = "git";
   t = "tmux";
 

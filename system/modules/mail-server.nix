@@ -123,21 +123,20 @@ with builtins;
     };
 
     postmasterAlias = "root";
-    extraAliases =
-      ''
-        mailer-daemon: postmaster
-        nobody: root
-        hostmaster: root
-        usenet: root
-        news: root
-        webmaster: root
-        www: root
-        ftp: root
-        abuse: root
-        noc: root
-        security: root
-      ''
-      + extraAliases;
+    extraAliases = ''
+      mailer-daemon: postmaster
+      nobody: root
+      hostmaster: root
+      usenet: root
+      news: root
+      webmaster: root
+      www: root
+      ftp: root
+      abuse: root
+      noc: root
+      security: root
+    ''
+    + extraAliases;
   };
 
   services.dovecot2 = {

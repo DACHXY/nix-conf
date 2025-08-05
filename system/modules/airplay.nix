@@ -1,4 +1,10 @@
-{ pkgs, ... }:
+{
+  hostname ? null,
+}:
+{ pkgs, lib, ... }:
+let
+  inherit (lib) optionalString;
+in
 {
   networking.firewall = {
     allowedTCPPorts = [
@@ -19,8 +25,12 @@
   ];
 
   systemd.user.services.uxplay = {
+    wantedBy = [ "multi-user.target" ];
+    after = [ "networking-online.target" ];
     serviceConfig = {
-      ExecStart = "${pkgs.uxplay}/bin/uxplay -p";
+      ExecStart = "${pkgs.uxplay}/bin/uxplay ${
+        optionalString (hostname != null) "-n ${hostname} -nh -hls 3"
+      } -p";
     };
   };
 

@@ -19,7 +19,7 @@ let
   };
   mainMod = "SUPER";
   window = import ./hypr/window.nix;
-  windowrule = import ./hypr/windowrule.nix;
+  windowrule = import ./hypr/windowrule.nix { inherit lib settings; };
   input = import ./hypr/input.nix;
   plugins = import ./hypr/plugin.nix;
   cursorName = "catppuccin-macchiato-lavender-cursors";
@@ -31,19 +31,19 @@ let
 
   wallpapers = [
     (pkgs.fetchurl {
-      url = "http://files.net.dn/dennis-yu-fVadSuPPE8M-unsplash.jpg";
+      url = "https://files.net.dn/dennis-yu-fVadSuPPE8M-unsplash.jpg";
       hash = "sha256-YCusefLnTntOZAh2fIoWuJbm1+iE+RNeWTbn22UDjSU=";
     })
     (pkgs.fetchurl {
-      url = "http://files.net.dn/karsten-winegeart-LZRZJam4Avg-unsplash.jpg";
+      url = "https://files.net.dn/karsten-winegeart-LZRZJam4Avg-unsplash.jpg";
       hash = "sha256-NpJhRJRiFCFmdDP/8FDmzIBellSdJ1Y6Pz63QJzkPMk=";
     })
     (pkgs.fetchurl {
-      url = "http://files.net.dn/nick-design-q3s4a7FZgjY-unsplash.jpg";
+      url = "https://files.net.dn/nick-design-q3s4a7FZgjY-unsplash.jpg";
       hash = "sha256-kJajqRuf+ZMTaORKKK4A+8MNzGd2SHjMcRYnq9T8LmA=";
     })
     (pkgs.fetchurl {
-      url = "http://files.net.dn/oleg-demakov-zEIApnww3fU-unsplash.jpg";
+      url = "https://files.net.dn/oleg-demakov-zEIApnww3fU-unsplash.jpg";
       hash = "sha256-79JRnxJdCZOh2u8+5LcUDGjzwE1mMM2ZHrKLn36wd40=";
     })
     "$HOME/.config/wallpapers/wall.png"
@@ -77,6 +77,7 @@ in
   home.packages = with pkgs; [
     mpvpaper # Video Wallpaper
     hyprcursor
+    libnotify
   ];
 
   wayland.windowManager.hyprland = {
@@ -148,18 +149,7 @@ in
   # === hyprlock === #
   programs.hyprlock = {
     enable = true;
-    package = (
-      pkgs.hyprlock.overrideAttrs (
-        final: prev: {
-          src = pkgs.fetchFromGitHub {
-            owner = "hyprwm";
-            repo = "hyprlock";
-            rev = "da1d076d849fc0f298c1d287bddd04802bf7d0f9";
-            hash = "sha256-IypoV7crmhQ4llD0n4qqO4XTRNAAbHfA+2oiTiq2qpk=";
-          };
-        }
-      )
-    );
+    package = inputs.hyprlock.packages.${system}.default;
     importantPrefixes = [
       "$"
       "monitor"
@@ -363,7 +353,15 @@ in
   programs.waybar = {
     enable = true;
     style = ../../home/config/waybar/style.css;
-    settings = import ../../home/config/waybar/config.nix { inherit terminal osConfig wallRand; };
+    settings = import ../../home/config/waybar/config.nix {
+      inherit
+        terminal
+        osConfig
+        wallRand
+        pkgs
+        lib
+        ;
+    };
     systemd = {
       enable = true;
       target = "graphical-session.target";
@@ -523,7 +521,7 @@ in
 
         .widget-title>button:hover {
           background: @borderc;
-          color: #282828;
+          color: @textc;
         }
 
         .widget-label {
@@ -532,7 +530,7 @@ in
 
         .widget-label>label {
           font-size: 1rem;
-          color: @textc;
+          color: @borderc;
         }
 
         .widget-mpris {

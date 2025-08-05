@@ -24,10 +24,6 @@ in
       recursive = true;
       source = "${configDir}/fcitx5";
     };
-    ".config/ghostty" = {
-      recursive = true;
-      source = "${configDir}/ghostty";
-    };
     ".face".source = "${configDir}/.face";
   };
 

@@ -19,6 +19,8 @@
     ../../modules/virtualization.nix
     ../../modules/wine.nix
     ../../modules/wireguard.nix
+    ../../modules/localsend.nix
+    (import ../../modules/airplay.nix { hostname = "pre7780"; })
     (import ../../modules/rustdesk-server.nix {
       relayHosts = [
         "10.0.0.0/24"
@@ -35,6 +37,14 @@
           email = "danny@net.dn";
           baseUrl = "https://bitwarden.net.dn";
         })
+        {
+          home.file.".steam/root/compatibilitytools.d/GE-Proton10-10" = {
+            source = fetchTarball {
+              url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton10-10/GE-Proton10-10.tar.gz";
+              sha256 = "sha256:1vkj66x84yqmpqm857hjzmx1s02h2lffcbc60jdfqz9xj34dx5jc";
+            };
+          };
+        }
       ];
     };
   };
