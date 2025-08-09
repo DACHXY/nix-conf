@@ -17,7 +17,7 @@
 - [X] Hyprlock
 - [X] Hypridle
 - [X] Swaync (Notification Center)
-- [X] Hyprpaper (Wallpaper)
+- [X] Swww (Wallpaper)
 - [X] Ghostty (Terminal)
 - [X] SDDM (Display Manager)
 - [X] Fish (shell)

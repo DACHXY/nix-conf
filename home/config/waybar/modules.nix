@@ -3,6 +3,7 @@
   osConfig,
   wallRand,
   pkgs,
+  rofiWall,
   lib,
 }:
 let
@@ -268,7 +269,8 @@ in
   };
   "custom/wallRand" = {
     format = "";
-    on-click = "${wallRand}/bin/wallRand";
+    on-click = "${rofiWall}";
+    on-click-right = "${wallRand}";
   };
   "custom/airplay" =
     let

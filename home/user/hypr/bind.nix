@@ -1,8 +1,9 @@
 {
-  settings,
   mainMod,
   nvidia-offload-enabled,
   pkgs,
+  rofiWall,
+  monitors ? [ ],
 }:
 with builtins;
 let
@@ -11,9 +12,7 @@ let
   browser = "${prefix} ${firefox}";
   terminal = "ghostty";
   filemanager = "${terminal} -e yazi";
-  scripts = "~/.config/scripts";
 
-  freezeShot = "";
   screenshotFolder = "--output-folder ~/Pictures/Screenshots";
   clipboardOnly = "${screenshotFolder}";
 
@@ -27,20 +26,9 @@ let
     fi
   '';
 
-  toggleRofi = pkgs.writeShellScriptBin "toggle" ''
-    GDK_PIXBUF_MODULE_FILE="${pkgs.librsvg}/lib/gdk-pixbuf-2.0/${pkgs.librsvg.version}/loaders.cache" # Make rofi load svg
-
-    if ${pkgs.busybox}/bin/pgrep rofi > /dev/null; then
-      ${pkgs.busybox}/bin/pkill rofi
-    else
-        rofi "$@"
-    fi
-  '';
-
   scrollStep =
     let
-      monitorsNum = length settings.hyprland.monitors;
-
+      monitorsNum = length monitors;
     in
     toString (if (monitorsNum == 0) then 1 else monitorsNum);
 in
@@ -53,19 +41,20 @@ in
   ''${mainMod}, M, exec, ${toggleWlogout}/bin/toggle''
   ''${mainMod}, E, exec, ${filemanager}''
   ''${mainMod}, V, togglefloating, ''
-  ''ALT, SPACE, exec, ${toggleRofi}/bin/toggle -config ~/.config/rofi/apps.rasi -show drun''
+  ''ALT, SPACE, exec, rofi -config ~/.config/rofi/apps.rasi -show drun''
+  ''${mainMod}, W, exec, ${rofiWall}''
   ''${mainMod}, P, pseudo, # dwindle''
   ''${mainMod}, S, togglesplit, # dwindle''
   ''CTRL ${mainMod} SHIFT, L, exec, hyprlock''
 
   # Screenshot
-  ''${mainMod} SHIFT, s, exec, hyprshot -m region ${clipboardOnly} ${freezeShot}''
-  ''CTRL SHIFT, s, exec, hyprshot -m window ${clipboardOnly} ${freezeShot}''
-  ''CTRL SHIFT ${mainMod}, s, exec, hyprshot -m output ${clipboardOnly} ${freezeShot}''
-  ''CTRL ALT, s, exec, hyprshot -m active -m window ${clipboardOnly} ${freezeShot}''
+  ''${mainMod} SHIFT, s, exec, hyprshot -m region ${clipboardOnly}''
+  ''CTRL SHIFT, s, exec, hyprshot -m window ${clipboardOnly}''
+  ''CTRL SHIFT ${mainMod}, s, exec, hyprshot -m output ${clipboardOnly}''
+  ''CTRL ALT, s, exec, hyprshot -m active -m window ${clipboardOnly}''
 
-  ''${mainMod}, PERIOD, exec, ${toggleRofi}/bin/toggle -modi emoji -show emoji''
-  ''CTRL ${mainMod}, c, exec, ${toggleRofi}/bin/toggle -show calc -modi calc -no-show-match -no-sort''
+  ''${mainMod}, PERIOD, exec, rofi -modi emoji -show emoji''
+  ''CTRL ${mainMod}, c, exec, rofi -show calc -modi calc -no-show-match -no-sort''
   ''${mainMod}, X, exec, sleep 0.1 && swaync-client -t -sw''
   ''${mainMod} SHIFT, C, centerwindow''
   '',F11, fullscreen''
@@ -102,10 +91,6 @@ in
 
   ''${mainMod}, G, workspace, ${toString gamingWorkspace}''
   ''${mainMod} SHIFT, G, movetoworkspace, ${toString gamingWorkspace}''
-  # ==== Plugins ==== #
-  # Overview
-  # ''${mainMod}, o, hyprtasking:toggle, cursor''
-  # ''${mainMod}, TAB, hyprtasking:toggle, all''
 ]
 ++ (
   # workspaces

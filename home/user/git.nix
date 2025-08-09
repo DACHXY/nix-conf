@@ -1,9 +1,13 @@
-{ settings, ... }:
+{
+  username,
+  email,
+}:
+{ ... }:
 {
   programs.git = {
     enable = true;
-    userName = settings.personal.git.username;
-    userEmail = settings.personal.git.email;
+    userName = username;
+    userEmail = email;
     extraConfig = {
       safe.directory = [ "/etc/nixos" ];
       init.defaultBranch = "main";

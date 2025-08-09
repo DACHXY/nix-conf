@@ -2,6 +2,7 @@
   terminal,
   osConfig,
   wallRand,
+  rofiWall,
   pkgs,
   lib,
 }:
@@ -11,6 +12,7 @@ let
       terminal
       osConfig
       wallRand
+      rofiWall
       pkgs
       lib
       ;
@@ -19,7 +21,7 @@ in
 map (dev: dev // modulesConfig) [
   # Monitor 1
   {
-    output = "DP-6";
+    output = "DP-5";
     layer = "top";
     exclusive = true;
     passthrough = false;
@@ -67,7 +69,7 @@ map (dev: dev // modulesConfig) [
   }
   # Monitor 2
   {
-    output = "DP-5";
+    output = "DP-6";
     layer = "top";
     exclusive = true;
     height = 54;

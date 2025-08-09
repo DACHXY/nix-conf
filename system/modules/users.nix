@@ -1,13 +1,12 @@
 {
-  settings,
   pkgs,
-  lib,
   config,
+  username,
   ...
 }:
 
 {
-  users.users.${settings.personal.username} = {
+  users.users.${username} = {
     isNormalUser = true;
     shell = pkgs.bash; # Actually fish
     extraGroups = (

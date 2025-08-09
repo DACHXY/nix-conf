@@ -81,6 +81,10 @@
       url = "github:hyprwm/hyprlock";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    swww = {
+      url = "github:LGFae/swww";
+    };
   };
 
   outputs =
@@ -111,70 +115,25 @@
         };
       };
 
+      # Declaring All Devices
       devices = {
+        # Home Computer
         dn-pre7780 = {
-          settings = {
-            personal = {
-              hostname = "dn-pre7780";
-              domain = "net.dn";
-              username = "danny";
-              git = {
-                username = "DACHXY";
-                email = "Danny10132024@gmail.com";
-              };
-            };
-
-            hyprland = {
-              # Leave empty if you only have one monitor
-              # This is for assign workspace to a specific monitor
-              # e.g. 1, 3, 5 for the first one; 2, 4, 6 for the second one
-              monitors = [
-                "desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271"
-                "desc:Acer Technologies XV272U V3 1322131231233"
-              ];
-              cursor-size = 32;
-              xcursor-size = 24;
-            };
-
-            # Optional
-            nvidia = {
-              # Choose from offload, sync, rsync
-              mode = "offload";
-
-              # Only needed when using GPU hybrid mode
-              intel-bus-id = "PCI:0:2:0";
-              nvidia-bus-id = "PCI:1:0:0";
-            };
-          };
+          hostname = "dn-pre7780";
+          domain = "net.dn";
+          username = "danny";
           extra-modules = [
             lanzaboote.nixosModules.lanzaboote
             ./system/dev/dn-pre7780
           ];
-          overlays = [
-
-          ];
+          overlays = [ ];
         };
 
+        # Laptop
         dn-lap = {
-          settings = {
-            personal = {
-              hostname = "dn-lap";
-              username = "danny";
-              git = {
-                username = "DACHXY";
-                email = "Danny10132024@gmail.com";
-              };
-            };
-
-            hyprland = {
-              # Leave empty if you only have one monitor
-              # This is for assign workspace to a specific monitor
-              # e.g. 1, 3, 5 for the first one; 2, 4, 6 for the second one
-              monitors = [ ];
-              cursor-size = 32;
-              xcursor-size = 24;
-            };
-          };
+          hostname = "dn-lap";
+          username = "danny";
+          domain = "net.dn";
           extra-modules = [
             lanzaboote.nixosModules.lanzaboote
             ./system/dev/dn-lap
@@ -184,36 +143,11 @@
           ];
         };
 
+        # Server
         dn-server = {
-          settings = {
-            personal = {
-              hostname = "dn-server";
-              username = "danny";
-              git = {
-                username = "DACHXY";
-                email = "Danny10132024@gmail.com";
-              };
-            };
-
-            hyprland = {
-              # Leave empty if you only have one monitor
-              # This is for assign workspace to a specific monitor
-              # e.g. 1, 3, 5 for the first one; 2, 4, 6 for the second one
-              monitors = [ ];
-              cursor-size = 32;
-              xcursor-size = 24;
-            };
-
-            # Optional
-            nvidia = {
-              # Choose from offload, sync, rsync
-              mode = "offload";
-
-              # Only needed when using GPU hybrid mode
-              intel-bus-id = "PCI:0:2:0";
-              nvidia-bus-id = "PCI:1:0:0";
-            };
-          };
+          hostname = "dn-server";
+          username = "danny";
+          domain = "net.dn";
           extra-modules = [
             inputs.nix-minecraft.nixosModules.minecraft-servers
             inputs.nix-tmodloader.nixosModules.tmodloader
@@ -230,9 +164,7 @@
       nixosConfigurations = builtins.mapAttrs (
         dev: conf:
         let
-          settings = conf.settings;
-          username = settings.personal.username;
-          hostname = settings.personal.hostname;
+          inherit (conf) username hostname domain;
         in
         nixpkgs.lib.nixosSystem {
           modules = [
@@ -247,8 +179,8 @@
                     inputs
                     system
                     nix-version
-                    settings
                     devices
+                    username
                     ;
                 };
                 users."${username}" = {
@@ -265,7 +197,10 @@
                   ];
                 };
               };
-              networking.hostName = hostname;
+              networking = {
+                inherit domain;
+                hostName = hostname;
+              };
               nixpkgs.hostPlatform = system;
               nixpkgs.config.allowUnfree = true;
               nixpkgs.overlays = ((import ./pkgs/overlays) ++ conf.overlays);
@@ -274,7 +209,7 @@
           ++ common-settings.modules
           ++ conf.extra-modules;
           specialArgs = {
-            inherit settings;
+            inherit username;
           }
           // common-settings.args;
         }

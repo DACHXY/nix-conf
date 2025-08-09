@@ -1,83 +1,81 @@
 {
+  monitors ? [ ],
+}:
+{
   pkgs,
   lib,
   inputs,
   config,
   system,
+  username,
   osConfig,
-  settings,
   ...
 }:
 let
   terminal = "ghostty";
-  startScript = import ./hypr/exec.nix {
-    inherit
-      pkgs
-      terminal
-      ;
-    xcursor-size = settings.hyprland.xcursor-size;
-  };
-  mainMod = "SUPER";
-  window = import ./hypr/window.nix;
-  windowrule = import ./hypr/windowrule.nix { inherit lib settings; };
-  input = import ./hypr/input.nix;
-  plugins = import ./hypr/plugin.nix;
-  cursorName = "catppuccin-macchiato-lavender-cursors";
 
-  getCurrentSong = pkgs.writeShellScriptBin "getSong" ''
+  execOnceScript = pkgs.writeShellScript "hyprlandExecOnce" ''
+    # Fix nemo open in terminal
+    dconf write /org/cinnamon/desktop/applications/terminal/exec "''\'${terminal}''\'" &
+    dconf write /org/cinnamon/desktop/applications/terminal/exec-arg "''\'''\'" &
+
+    systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORMTHEME &
+  '';
+
+  mainMod = "SUPER";
+
+  getCurrentSong = pkgs.writeShellScript "getSong" ''
     song_info=$(playerctl metadata --format '{{title}}  󰎆    {{artist}}')
        echo "$song_info"
   '';
 
-  wallpapers = [
-    (pkgs.fetchurl {
-      url = "https://files.net.dn/dennis-yu-fVadSuPPE8M-unsplash.jpg";
-      hash = "sha256-YCusefLnTntOZAh2fIoWuJbm1+iE+RNeWTbn22UDjSU=";
-    })
-    (pkgs.fetchurl {
-      url = "https://files.net.dn/karsten-winegeart-LZRZJam4Avg-unsplash.jpg";
-      hash = "sha256-NpJhRJRiFCFmdDP/8FDmzIBellSdJ1Y6Pz63QJzkPMk=";
-    })
-    (pkgs.fetchurl {
-      url = "https://files.net.dn/nick-design-q3s4a7FZgjY-unsplash.jpg";
-      hash = "sha256-kJajqRuf+ZMTaORKKK4A+8MNzGd2SHjMcRYnq9T8LmA=";
-    })
-    (pkgs.fetchurl {
-      url = "https://files.net.dn/oleg-demakov-zEIApnww3fU-unsplash.jpg";
-      hash = "sha256-79JRnxJdCZOh2u8+5LcUDGjzwE1mMM2ZHrKLn36wd40=";
-    })
-    "$HOME/.config/wallpapers/wall.png"
-  ];
+  mkWall = pkgs.writeShellScriptBin "setWall" ''
+    url="$1"
+    filepath="/tmp/wall_cache/$(echo -n "$url" | base64 | tr -d '\n')"
+
+    if [[ ! -f "$filepath" ]]; then
+        curl -sL "$url" -o "$filepath"
+    fi
+
+    ${config.services.swww.package}/bin/swww img "$filepath" \
+      --transition-fps 45 \
+      --transition-duration 1 \
+      --transition-type random
+  '';
+
+  rofiWall = pkgs.writeShellScript "rofiWall" ''
+    url=$(rofi -i -dmenu -config ~/.config/rofi/config.rasi -p "URL")
+    ${mkWall}/bin/setWall "$url"
+  '';
 
   # Change Wallpaper
-  wallRand = pkgs.writeShellScriptBin "wallRand" (
-    with builtins;
-    let
-      pathString = concatStringsSep " " (map (w: "\"" + w + "\"") wallpapers);
-    in
-    ''
-      wallpapers=(
-        ${pathString}
-      )
+  wallRand = pkgs.writeShellScript "wallRand" ''
+    mapfile -t wallpapers < <(find /tmp/wall_cache -type f)
 
-      count="''${#wallpapers[@]}"
-      random_index=$(( RANDOM % count ))
-      selected="''${wallpapers[$random_index]}"
+    count="''${#wallpapers[@]}"
 
-      if [ ! -f "$selected" ]; then
-        echo "File not exist: $selected"
-        exit 1
-      fi
+    random_index=$(( RANDOM % count ))
+    selected="''${wallpapers[$random_index]}"
 
-      ${pkgs.hyprland}/bin/hyprctl hyprpaper wallpaper ",$selected"
-    ''
-  );
+    if [ ! -f "$selected" ]; then
+      echo "File not exist: $selected"
+      exit 1
+    fi
+
+    ${config.services.swww.package}/bin/swww img $selected --transition-fps 45 --transition-duration 1 --transition-type random
+  '';
 in
 {
+  # For wallpapers
+  systemd.user.tmpfiles.rules = [
+    "d /tmp/wall_cache 700 ${username} -"
+  ];
+
   home.packages = with pkgs; [
     mpvpaper # Video Wallpaper
     hyprcursor
     libnotify
+    mkWall
   ];
 
   wayland.windowManager.hyprland = {
@@ -102,30 +100,72 @@ in
       debug = {
         disable_logs = true;
       };
+
       bind = import ./hypr/bind.nix {
-        inherit settings;
-        inherit mainMod;
-        inherit pkgs;
+        inherit
+          mainMod
+          pkgs
+          monitors
+          rofiWall
+          ;
         nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
       };
-      bindm = import ./hypr/bindm.nix { inherit mainMod; };
-      binde = import ./hypr/binde.nix { inherit mainMod; };
-      monitor = import ./hypr/monitor.nix;
-      plugin = plugins;
-      exec-once = [ ''${startScript}'' ];
+
+      bindm = [
+        # Move/resize windows with mainMod + LMB/RMB and dragging
+        ''${mainMod}, mouse:272, movewindow''
+        ''${mainMod}, mouse:273, resizewindow''
+      ];
+
+      binde =
+        let
+          resizeStep = builtins.toString 20;
+          brightnessStep = builtins.toString 10;
+          volumeStep = builtins.toString 2;
+        in
+        [
+          '',XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%+''
+          '',XF86AudioLowerVolume, exec, wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%-''
+          '',XF86MonBrightnessDown, exec, brightnessctl set ${brightnessStep}%-''
+          '',XF86MonBrightnessUp, exec, brightnessctl set ${brightnessStep}%+''
+          ''${mainMod} CTRL, l, resizeactive, ${resizeStep} 0''
+          ''${mainMod} CTRL, h, resizeactive, -${resizeStep} 0''
+          ''${mainMod} CTRL, k, resizeactive, 0 -${resizeStep}''
+          ''${mainMod} CTRL, j, resizeactive, 0 ${resizeStep}''
+        ];
+
+      monitor = [
+        ", prefered, 0x0, 1"
+      ];
+
+      plugin = {
+        hyprwinrap = {
+          class = "kitty-bg";
+        };
+
+        touch_gestures = {
+          sensitivity = 4.0;
+          workspace_swipe_fingers = 3;
+          workspace_swipe_edge = "d";
+          long_press_delay = 400;
+          resize_on_border_long_press = true;
+          edge_margin = 10;
+          emulate_touchpad_swipe = false;
+        };
+      };
+
+      exec-once = [ "${execOnceScript}" ];
+
       env = [
-        ''HYPRCURSOR_THEME, ${cursorName}''
-        ''HYPRCURSOR_SIZE, ${builtins.toString settings.hyprland.cursor-size}''
-        ''XCURSOR_THEME, ${cursorName}''
-        ''XCURSOR_SIZE, ${builtins.toString settings.hyprland.xcursor-size}''
         ''XDG_CURRENT_DESKTOP, Hyprland''
         ''XDG_SESSION_DESKTOP, Hyprland''
       ];
-      workspace = import ./hypr/workspace.nix { monitors = settings.hyprland.monitors; };
+
+      workspace = (import ./hypr/workspace.nix { inherit monitors; });
     }
-    // window
-    // windowrule
-    // input;
+    // (import ./hypr/window.nix)
+    // (import ./hypr/windowrule.nix)
+    // (import ./hypr/input.nix);
   };
 
   # === gamemode === #
@@ -135,11 +175,17 @@ in
     };
   };
 
+  # === Swww === #
+  services.swww = {
+    enable = true;
+    package = inputs.swww.packages.${system}.swww;
+  };
+
   # === hyprpaper === #
   services.hyprpaper = {
-    enable = true;
+    enable = false;
     settings = {
-      preload = wallpapers;
+      # preload = wallpapers;
       wallpaper = [ ", ~/.config/wallpapers/wall.png" ];
       splash = false;
       ipc = "on";
@@ -161,11 +207,7 @@ in
       let
         font = "CaskaydiaCove Nerd Font";
         font2 = "SF Pro Display Bold";
-        mainMonitor =
-          if ((builtins.length settings.hyprland.monitors) > 0) then
-            builtins.elemAt settings.hyprland.monitors 0
-          else
-            "";
+        mainMonitor = if ((builtins.length monitors) > 0) then builtins.elemAt monitors 0 else "";
       in
       {
         background = {
@@ -226,7 +268,7 @@ in
           # Current Song
           {
             monitor = "${mainMonitor}";
-            text = ''cmd[update:1000] echo "$(${getCurrentSong}/bin/getSong)"'';
+            text = ''cmd[update:1000] echo "$(${getCurrentSong})"'';
             color = "rgba(235, 219, 178, .75)";
             font_size = 16;
             font_family = "${font}, ${font2}";
@@ -358,6 +400,7 @@ in
         terminal
         osConfig
         wallRand
+        rofiWall
         pkgs
         lib
         ;

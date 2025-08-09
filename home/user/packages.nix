@@ -52,7 +52,8 @@ in
       obsidian
 
       # Discord
-      vesktop
+      # vesktop
+      discord
 
       # Dev stuff
       (python3.withPackages (python-pkgs: [
