@@ -158,6 +158,21 @@
             inputs.nix-tmodloader.overlay
           ];
         };
+
+        # Yu lap
+        ahlap = {
+          hostname = "ahlap";
+          username = "ahhaha9119";
+          extra-modules = [
+            inputs.nix-minecraft.nixosModules.minecraft-servers
+            inputs.nix-tmodloader.nixosModules.tmodloader
+            ./system/dev/ahlap
+          ];
+          overlays = [
+            inputs.nix-minecraft.overlay
+            inputs.nix-tmodloader.overlay
+          ];
+        };
       };
     in
     {

@@ -133,9 +133,9 @@ map (dev: dev // modulesConfig) [
   # Other
   {
     output = [
+      "!DP-5"
+      "!DP-6"
       "!eDP-1"
-      "!DP-1"
-      "!DP-3"
     ];
     layer = "top";
     exclusive = true;
@@ -151,23 +151,35 @@ map (dev: dev // modulesConfig) [
       "custom/os"
       "hyprland/workspaces"
       "clock"
-      "mpris"
       "custom/cava"
+      "mpris"
     ];
     modules-center = [
       "hyprland/window"
     ];
-    modules-right = [
-      "wlr/taskbar"
-      "temperature"
-      "custom/wireguard"
-      "idle_inhibitor"
-      "network"
-      "cpu"
-      "memory"
-      "pulseaudio"
-      "battery"
-      "custom/swaync"
-    ];
+    modules-right = (
+      [
+        "wlr/taskbar"
+      ]
+      ++ (
+        if osConfig.programs.gamemode.enable then
+          [
+            "custom/gamemode"
+          ]
+        else
+          [ ]
+      )
+      ++ [
+        "custom/airplay"
+        "custom/wallRand"
+        # "custom/wireguard"
+        "idle_inhibitor"
+        "network"
+        "cpu"
+        "memory"
+        "pulseaudio"
+        "custom/swaync"
+      ]
+    );
   }
 ]
