@@ -67,6 +67,10 @@ in
                 "move 1943 59, class: ^(blueberry.py)$"
                 "size 605 763, class: ^(blueberry.py)$"
               ];
+
+              input = {
+                kb_options = lib.mkForce [ ];
+              };
             };
           };
 
