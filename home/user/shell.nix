@@ -1,6 +1,6 @@
-{ pkgs, settings, ... }:
+{ osConfig, pkgs, ... }:
 let
-  shellAlias = import ./shellAlias.nix { hostname = settings.personal.hostname; };
+  shellAlias = import ./shellAlias.nix { hostname = osConfig.networking.hostName; };
 in
 {
   home.packages = with pkgs; [

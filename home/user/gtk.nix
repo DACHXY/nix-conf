@@ -1,12 +1,10 @@
 {
   pkgs,
-  settings,
   ...
 }:
 let
   cursorName = "catppuccin-macchiato-lavender-cursors";
   themeName = "catppuccin-macchiato-lavender-compact";
-  cursorSize = settings.hyprland.xcursor-size;
 in
 {
   gtk = {
@@ -15,7 +13,6 @@ in
     cursorTheme = {
       name = cursorName;
       package = pkgs.catppuccin-cursors.macchiatoLavender;
-      size = cursorSize;
     };
 
     theme = {

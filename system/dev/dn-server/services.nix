@@ -1,13 +1,14 @@
 {
-  settings,
   config,
   pkgs,
   lib,
+  username,
   ...
 }:
 
 let
-  username = settings.personal.username;
+  inherit username;
+
   ethInterface = "enp0s31f6";
   sshPorts = [ 30072 ];
   sshPortsString = builtins.concatStringsSep ", " (builtins.map (p: builtins.toString p) sshPorts);

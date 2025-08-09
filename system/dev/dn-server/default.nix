@@ -1,15 +1,15 @@
 {
   pkgs,
   inputs,
-  settings,
+  username,
   ...
 }:
 {
   imports = [
     (import ../../modules/nvidia.nix {
-      nvidia-mode = settings.nvidia.mode;
-      intel-bus-id = settings.nvidia.intel-bus-id;
-      nvidia-bus-id = settings.nvidia.nvidia-bus-id;
+      nvidia-mode = "offload";
+      intel-bus-id = "PCI:0:2:0";
+      nvidia-bus-id = "PCI:1:0:0";
     })
     ./sops-conf.nix
     ./boot.nix
@@ -41,7 +41,7 @@
   ];
 
   home-manager = {
-    users."${settings.personal.username}" = {
+    users."${username}" = {
       imports = [
         ../../../home/user/config.nix
         ../../../home/user/direnv.nix
@@ -61,6 +61,12 @@
             ))
           ];
         }
+
+        # Git
+        (import ../../../home/user/git.nix {
+          inherit username;
+          email = "danny10132024@gmail.com";
+        })
       ];
     };
   };

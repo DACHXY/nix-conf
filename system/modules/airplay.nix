@@ -29,7 +29,7 @@ in
     after = [ "networking-online.target" ];
     serviceConfig = {
       ExecStart = "${pkgs.uxplay}/bin/uxplay ${
-        optionalString (hostname != null) "-n ${hostname} -nh -hls 3"
+        optionalString (hostname != null) "-n ${hostname} -fs -fps 60 -nh"
       } -p";
     };
   };

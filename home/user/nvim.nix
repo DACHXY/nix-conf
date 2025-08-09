@@ -1,7 +1,6 @@
 {
   lib,
   pkgs,
-  settings,
   inputs,
   ...
 }:
@@ -307,14 +306,6 @@
                         formatting = {
                           command = { "nixfmt" },
                         },
-                        -- options = {
-                        --   nixos = {
-                        --     expr = '(builtins.getFlake ("git+file://" + toString ./.)).nixosConfigurations.${settings.personal.hostname}.options',
-                        --   },
-                        --   home_manager = {
-                        --     expr = '(builtins.getFlake ("git+file://" + toString ./.)).homeConfigurations."${settings.personal.username}@${settings.personal.hostname}".options',
-                        --   }
-                        -- }
                       }
                     }
                   }

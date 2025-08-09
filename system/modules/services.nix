@@ -1,7 +1,7 @@
 {
-  settings,
   lib,
   pkgs,
+  username,
   ...
 }:
 
@@ -19,12 +19,13 @@
       enable = true;
       packages = [ pkgs.gcr ];
     };
+
     openssh = {
       enable = true;
       ports = [ 22 ];
       settings = {
         PasswordAuthentication = lib.mkDefault false;
-        AllowUsers = lib.mkDefault [ settings.personal.username ];
+        AllowUsers = lib.mkDefault [ username ];
         UseDns = lib.mkDefault true;
         PermitRootLogin = lib.mkDefault "no";
       };
