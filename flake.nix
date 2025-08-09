@@ -180,7 +180,7 @@
       nixosConfigurations = builtins.mapAttrs (
         dev: conf:
         let
-          domain = if conf.domain then conf.domain else "local";
+          domain = if conf.domain != null then conf.domain else "local";
           inherit (conf) username hostname;
         in
         nixpkgs.lib.nixosSystem {

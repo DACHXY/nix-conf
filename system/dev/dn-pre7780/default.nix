@@ -79,23 +79,28 @@ in
         {
           wayland.windowManager.hyprland = {
             settings = {
-              windowrulev2 = [
-                # Meidia control
-                "move 1680 59, class: ^(org.pulseaudio.pavucontrol)$"
-                "size 868 561, class: ^(org.pulseaudio.pavucontrol)$"
+              windowrulev2 =
+                let
+                  top = "60";
+                  right = "100%-w-10";
+                in
+                [
+                  # Meidia control
+                  "move ${right} ${top}, class: ^(org.pulseaudio.pavucontrol)$"
+                  "size 30% 33%, class: ^(org.pulseaudio.pavucontrol)$"
 
-                # Local Send (File Sharing)
-                "size 523 1372, class: ^(localsend_app)$"
-                "move 2024 56, class: ^(localsend_app)$"
+                  # Local Send (File Sharing)
+                  "move ${right} 8%, class: ^(localsend_app)$"
+                  "size 20% 80%, class: ^(localsend_app)$"
 
-                # Airplay
-                "size 487 1055, class: ^(GStreamer)$"
-                "move 2061 203, class: ^(GStreamer)$"
+                  # Airplay
+                  "move ${right} 10%, class: ^(GStreamer)$"
+                  "size 20% 40%, class: ^(GStreamer)$"
 
-                # Bluetooth
-                "move 1943 59, class: ^(blueberry.py)$"
-                "size 605 763, class: ^(blueberry.py)$"
-              ];
+                  # Bluetooth
+                  "move ${right} ${top}, class: ^(blueberry.py)$"
+                  "size 25% 45%, class: ^(blueberry.py)$"
+                ];
 
               monitor = [
                 ''desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271, 2560x1440@165, 0x0, 1''

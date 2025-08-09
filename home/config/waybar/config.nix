@@ -113,22 +113,36 @@ map (dev: dev // modulesConfig) [
       "custom/os"
       "hyprland/workspaces"
       "clock"
+      "custom/cava"
       "mpris"
     ];
     modules-center = [
       "hyprland/window"
     ];
-    modules-right = [
-      "wlr/taskbar"
-      "temperature"
-      "custom/wallRand"
-      "custom/wireguard"
-      "idle_inhibitor"
-      "network"
-      "pulseaudio"
-      "battery"
-      "custom/swaync"
-    ];
+    modules-right = (
+      [
+        "wlr/taskbar"
+      ]
+      ++ (
+        if osConfig.programs.gamemode.enable then
+          [
+            "custom/gamemode"
+          ]
+        else
+          [ ]
+      )
+      ++ [
+        "custom/airplay"
+        "custom/wallRand"
+        # "custom/wireguard"
+        "idle_inhibitor"
+        "network"
+        "cpu"
+        "memory"
+        "pulseaudio"
+        "custom/swaync"
+      ]
+    );
   }
   # Other
   {
