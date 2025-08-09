@@ -73,10 +73,6 @@ in
               sha256 = "sha256:1vkj66x84yqmpqm857hjzmx1s02h2lffcbc60jdfqz9xj34dx5jc";
             };
           };
-
-          home.file.".face-test" = {
-            source = faceIcon;
-          };
         }
 
         # waybar
