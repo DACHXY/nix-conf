@@ -163,6 +163,7 @@
         ahlap = {
           hostname = "ahlap";
           username = "ahhaha9119";
+          domain = "net.dn";
           extra-modules = [
             inputs.nix-minecraft.nixosModules.minecraft-servers
             inputs.nix-tmodloader.nixosModules.tmodloader
