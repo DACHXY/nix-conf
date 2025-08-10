@@ -79,24 +79,6 @@ in
         {
           wayland.windowManager.hyprland = {
             settings = {
-              windowrulev2 = [
-                # Meidia control
-                "move 1680 59, class: ^(org.pulseaudio.pavucontrol)$"
-                "size 868 561, class: ^(org.pulseaudio.pavucontrol)$"
-
-                # Local Send (File Sharing)
-                "size 523 1372, class: ^(localsend_app)$"
-                "move 2024 56, class: ^(localsend_app)$"
-
-                # Airplay
-                "size 487 1055, class: ^(GStreamer)$"
-                "move 2061 203, class: ^(GStreamer)$"
-
-                # Bluetooth
-                "move 1943 59, class: ^(blueberry.py)$"
-                "size 605 763, class: ^(blueberry.py)$"
-              ];
-
               monitor = [
                 ''desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271, 2560x1440@165, 0x0, 1''
                 ''desc:Acer Technologies XV272U V3 1322131231233, 2560x1440@180, -1440x-600, 1, transform, 1''
