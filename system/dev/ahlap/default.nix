@@ -56,8 +56,48 @@ in
               };
             };
           };
-
         }
+
+        (import ../../../home/user/waybar.nix {
+          settings = [
+            # monitor 1
+            {
+              output = "eDP-1";
+              modules-left = [
+                "custom/os"
+                "hyprland/workspaces"
+                "clock"
+                "custom/cava"
+                "mpris"
+              ];
+              modules-right = (
+                [
+                  "wlr/taskbar"
+                ]
+                ++ (
+                  if config.programs.gamemode.enable then
+                    [
+                      "custom/gamemode"
+                    ]
+                  else
+                    [ ]
+                )
+                ++ [
+                  # "custom/bitwarden"
+                  "custom/airplay"
+                  "custom/wallRand"
+                  "custom/recording"
+                  "idle_inhibitor"
+                  "network"
+                  "cpu"
+                  "memory"
+                  "pulseaudio"
+                  "custom/swaync"
+                ]
+              );
+            }
+          ];
+        })
 
         # Git
         (import ../../../home/user/git.nix {
