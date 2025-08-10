@@ -46,6 +46,8 @@ tooltip label {
 #custom-gamemode,
 #custom-wallRand,
 #custom-airplay,
+#custom-bitwarden,
+#custom-recording,
 #clock,
 #cpu,
 #memory,
@@ -86,6 +88,8 @@ tooltip label {
 #custom-gamemode,
 #custom-wallRand,
 #custom-airplay,
+#custom-bitwarden,
+#custom-recording,
 #battery {
   margin-left: 4px;
 }
@@ -135,6 +139,8 @@ tooltip label {
 #custom-gamemode,
 #custom-wallRand,
 #custom-airplay,
+#custom-bitwarden,
+#custom-recording,
 #network,
 #idle_inhibitor {
   padding-left: 10px; padding-right: 14px;

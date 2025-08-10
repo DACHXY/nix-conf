@@ -1,10 +1,16 @@
 let
+  inherit (builtins) map concatLists;
   top = "60";
   right = "100%-w-10";
+  notransTag = "notrans";
+  noTransList = [
+    "title:(.*)( - YouTube — Mozilla Firefox)"
+    "title:(.*)( - 巴哈姆特動畫瘋 — Mozilla Firefox)"
+  ];
 in
 {
   windowrule = [
-    "pseudo, class:fcitx"
+    "pseudo, class:(org.fcitx.)"
     "float, class:file_progress"
     "float, class:confirm"
     "float, class:dialog"
@@ -21,10 +27,7 @@ in
     "fullscreen, title:wlogout"
     "float, title:wlogout"
     "fullscreen, title:wlogout"
-    "idleinhibit stayfocused, class:mpv"
-  ];
 
-  windowrulev2 = [
     "float, title:^(Media viewer)$"
     "float, title:^(File Operation Progress)$"
     "float, class:^(it.mijorus.smile)"
@@ -67,7 +70,7 @@ in
     # Airplay
     "pin, class: ^(GStreamer)$"
     "float, class: ^(GStreamer)$"
-    "opacity 1.0, class: ^(GStreamer)$"
+    "opacity 1.0 override 1.0 override, class: ^(GStreamer)$"
     "animation slide right 20%, class: ^(GStreamer)$"
 
     # Bluetooth
@@ -94,7 +97,24 @@ in
 
     # Davinci resolve
     "center 1, initialClass: ^(resolve), floating: 1"
-  ];
+
+    # Disable Tansparent for youtube video
+    "opacity 1.0 override 1.0 override, title:(.*)( - YouTube — Mozilla Firefox)"
+    "noblur, title:(.*)( - YouTube — Mozilla Firefox)"
+
+    "opacity 1.0 override 1.0 override, title:(.*)( - 巴哈姆特動畫瘋 — Mozilla Firefox)"
+    "noblur, title:(.*)( - YouTube — Mozilla Firefox)"
+
+    # Disable Tansparent
+    "opacity 1.0 override 1.0 override, tag:${notransTag}"
+    "noblur, tag: ^(${notransTag})$"
+  ]
+  ++ (concatLists (
+    map (w: [
+      "opacity 1.0 override 1.0 override, ${w}"
+      "noblur, ${w}"
+    ]) noTransList
+  ));
 
   layerrule = [
     "blur, waybar"

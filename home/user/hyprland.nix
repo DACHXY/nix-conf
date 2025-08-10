@@ -7,7 +7,6 @@
   inputs,
   config,
   system,
-  username,
   osConfig,
   ...
 }:
@@ -28,54 +27,12 @@ let
     song_info=$(playerctl metadata --format '{{title}}  󰎆    {{artist}}')
        echo "$song_info"
   '';
-
-  mkWall = pkgs.writeShellScriptBin "setWall" ''
-    url="$1"
-    filepath="/tmp/wall_cache/$(echo -n "$url" | base64 | tr -d '\n')"
-
-    if [[ ! -f "$filepath" ]]; then
-        curl -sL "$url" -o "$filepath"
-    fi
-
-    ${config.services.swww.package}/bin/swww img "$filepath" \
-      --transition-fps 45 \
-      --transition-duration 1 \
-      --transition-type random
-  '';
-
-  rofiWall = pkgs.writeShellScript "rofiWall" ''
-    url=$(rofi -i -dmenu -config ~/.config/rofi/config.rasi -p "URL")
-    ${mkWall}/bin/setWall "$url"
-  '';
-
-  # Change Wallpaper
-  wallRand = pkgs.writeShellScript "wallRand" ''
-    mapfile -t wallpapers < <(find /tmp/wall_cache -type f)
-
-    count="''${#wallpapers[@]}"
-
-    random_index=$(( RANDOM % count ))
-    selected="''${wallpapers[$random_index]}"
-
-    if [ ! -f "$selected" ]; then
-      echo "File not exist: $selected"
-      exit 1
-    fi
-
-    ${config.services.swww.package}/bin/swww img $selected --transition-fps 45 --transition-duration 1 --transition-type random
-  '';
 in
 {
-  # For wallpapers
-  systemd.user.tmpfiles.rules = [
-    "d /tmp/wall_cache 700 ${username} -"
-  ];
-
   home.packages = with pkgs; [
     mpvpaper # Video Wallpaper
     hyprcursor
     libnotify
-    mkWall
   ];
 
   wayland.windowManager.hyprland = {
@@ -106,7 +63,8 @@ in
           mainMod
           pkgs
           monitors
-          rofiWall
+          config
+          lib
           ;
         nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
       };
@@ -181,7 +139,7 @@ in
     package = inputs.swww.packages.${system}.swww;
   };
 
-  # === hyprpaper === #
+  # === hyprpaper (Disabled) === #
   services.hyprpaper = {
     enable = false;
     settings = {
@@ -381,33 +339,6 @@ in
       Restart = "always";
       RestartSec = 2;
       KillSignal = "SIGKILL"; # Hyprsunset seems not handle the SIGTERM signal
-    };
-  };
-
-  # === waybar === #
-  systemd.user.services.waybar = {
-    Unit = {
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
-    };
-  };
-
-  programs.waybar = {
-    enable = true;
-    style = ../../home/config/waybar/style.css;
-    settings = import ../../home/config/waybar/config.nix {
-      inherit
-        terminal
-        osConfig
-        wallRand
-        rofiWall
-        pkgs
-        lib
-        ;
-    };
-    systemd = {
-      enable = true;
-      target = "graphical-session.target";
     };
   };
 
