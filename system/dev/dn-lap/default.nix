@@ -1,5 +1,6 @@
 {
   username,
+  config,
   ...
 }:
 let
@@ -35,23 +36,6 @@ in
         {
           wayland.windowManager.hyprland = {
             settings = {
-              windowrulev2 = [
-                # Meidia control
-                "move 1680 59, class: ^(org.pulseaudio.pavucontrol)$"
-                "size 868 561, class: ^(org.pulseaudio.pavucontrol)$"
-
-                # Local Send (File Sharing)
-                "size 523 1372, class: ^(localsend_app)$"
-                "move 2024 56, class: ^(localsend_app)$"
-
-                # Airplay
-                "size 487 1055, class: ^(GStreamer)$"
-
-                # Bluetooth
-                "move 1943 59, class: ^(blueberry.py)$"
-                "size 605 763, class: ^(blueberry.py)$"
-              ];
-
               monitors = [
                 ''desc:LG Display 0x0665, preferred, 0x0, 1.25''
               ];
@@ -59,6 +43,33 @@ in
           };
 
         }
+
+        # waybar
+        (import ../../../home/user/waybar.nix {
+          settings = [
+            {
+              output = "eDP-1";
+              modules-left = [
+                "custom/os"
+                "hyprland/workspaces"
+                "clock"
+                "mpris"
+              ];
+              modules-right = [
+                "wlr/taskbar"
+                "temperature"
+                "custom/wallRand"
+                "custom/wireguard"
+                "custom/recording"
+                "idle_inhibitor"
+                "network"
+                "pulseaudio"
+                "battery"
+                "custom/swaync"
+              ];
+            }
+          ];
+        })
 
         # Git
         (import ../../../home/user/git.nix {

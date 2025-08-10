@@ -6,6 +6,7 @@
   ...
 }:
 let
+  inherit (lib) optionalString;
   monitors = [
     "desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271"
     "desc:Acer Technologies XV272U V3 1322131231233"
@@ -73,6 +74,65 @@ in
             };
           };
         }
+
+        # waybar
+        (import ../../../home/user/waybar.nix {
+          settings = [
+            # monitor 1
+            {
+              output = "DP-5";
+              modules-left = [
+                "custom/os"
+                "hyprland/workspaces"
+                "clock"
+                "custom/cava"
+                "mpris"
+              ];
+              modules-right = (
+                [
+                  "wlr/taskbar"
+                ]
+                ++ (
+                  if config.programs.gamemode.enable then
+                    [
+                      "custom/gamemode"
+                    ]
+                  else
+                    [ ]
+                )
+                ++ [
+                  "custom/bitwarden"
+                  "custom/airplay"
+                  "custom/wallRand"
+                  "custom/wireguard"
+                  "custom/recording"
+                  "idle_inhibitor"
+                  "network"
+                  "cpu"
+                  "memory"
+                  "pulseaudio"
+                  "custom/swaync"
+                ]
+              );
+            }
+            # monitor 2
+            {
+              output = "DP-6";
+              height = 54;
+              modules-left = [
+                "clock"
+                "mpris"
+              ];
+              modules-right = [
+                "wlr/taskbar"
+                "temperature"
+                "cpu"
+                "memory"
+                "pulseaudio"
+              ];
+            }
+          ];
+        })
 
         # Hyprland
         (import ../../../home/user/hyprland.nix { inherit monitors; })
