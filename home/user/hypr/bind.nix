@@ -1,12 +1,17 @@
 {
   mainMod,
+  config,
   nvidia-offload-enabled,
+  lib,
   pkgs,
-  rofiWall,
   monitors ? [ ],
 }:
 with builtins;
 let
+  inherit (lib) optionalString;
+
+  notransTag = "notrans";
+
   firefox = "firefox";
   prefix = if nvidia-offload-enabled then "nvidia-offload" else "";
   browser = "${prefix} ${firefox}";
@@ -25,6 +30,10 @@ let
         ${pkgs.wlogout}/bin/wlogout --protocol layer-shell
     fi
   '';
+
+  rofiWall = import ../../scripts/rofiwall.nix { inherit config pkgs; };
+
+  rbwSelector = import ../../scripts/rbwSelector.nix { inherit pkgs; };
 
   scrollStep =
     let
@@ -46,6 +55,12 @@ in
   ''${mainMod}, P, pseudo, # dwindle''
   ''${mainMod}, S, togglesplit, # dwindle''
   ''CTRL ${mainMod} SHIFT, L, exec, hyprlock''
+
+  # Toggle transparent
+  ''${mainMod}, n, tagwindow, ${notransTag}''
+
+  # Bitwarden Selector
+  (optionalString config.programs.rbw.enable ''CTRL ${mainMod}, P, exec, ${rbwSelector}'')
 
   # Screenshot
   ''${mainMod} SHIFT, s, exec, hyprshot -m region ${clipboardOnly}''
