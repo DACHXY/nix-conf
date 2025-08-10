@@ -27,16 +27,25 @@ let
         rm "$PID_FILE"
       fi
     else
+      # Start recording
       choice=$(printf "%s\n" "''\${!recordOptions[@]}" | rofi -i -dmenu -config ~/.config/rofi/config.rasi -p "Which mode")
-      
+
       if [[ -z "$choice" ]]; then
+        notify-send "󰑋 RECORD" "Cancelled"
         exit 1
       fi
 
       mkdir -p "$OUTPUT_DIR"
 
+      geometry="$(''\${recordOptions[$choice]})"
+
+      if [[ -z "$geometry" ]]; then
+        notify-send "󰑋 RECORD" "Cancelled"
+        exit 1
+      fi
+
       ${pkgs.wf-recorder}/bin/wf-recorder -y \
-      -g "$(''\${recordOptions[$choice]})" \
+      -g "$geometry" \
       --audio="$SINK_DEV" \
       -f "$FILENAME" &
       echo $! > "$PID_FILE"
