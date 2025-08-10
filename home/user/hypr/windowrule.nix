@@ -1,3 +1,7 @@
+let
+  top = "60";
+  right = "100%-w-10";
+in
 {
   windowrule = [
     "pseudo, class:fcitx"
@@ -33,6 +37,22 @@
     "float, class:^(vesktop)$,title:^(Discord Popout)$"
     "pin, class:^(vesktop)$,title:^(Discord Popout)$"
     "float, class:^(steam)$,title:^(Friends List)$"
+
+    # Meidia control
+    "move ${right} ${top}, class: ^(org.pulseaudio.pavucontrol)$"
+    "size 30% 33%, class: ^(org.pulseaudio.pavucontrol)$"
+
+    # Local Send (File Sharing)
+    "move ${right} 8%, class: ^(localsend_app)$"
+    "size 20% 80%, class: ^(localsend_app)$"
+
+    # Airplay
+    "move ${right} 10%, class: ^(GStreamer)$"
+    "size 21% 80%, class: ^(GStreamer)$"
+
+    # Bluetooth
+    "move ${right} ${top}, class: ^(blueberry.py)$"
+    "size 25% 45%, class: ^(blueberry.py)$"
 
     # Media Control
     "float, class: ^(org.pulseaudio.pavucontrol)$"

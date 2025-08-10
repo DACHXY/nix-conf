@@ -20,6 +20,7 @@ let
     # Disable Ctrl+Q
     "browser.quitShortcut.disabled" = true;
     "security.enterprise_roots.enabled" = true;
+    "full-screen-api.warning.timeout" = 0;
   };
 in
 {

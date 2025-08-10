@@ -51,29 +51,6 @@ in
         {
           wayland.windowManager.hyprland = {
             settings = {
-              windowrulev2 =
-                let
-                  top = "60";
-                  right = "100%-w-10";
-                in
-                [
-                  # Meidia control
-                  "move ${right} ${top}, class: ^(org.pulseaudio.pavucontrol)$"
-                  "size 30% 33%, class: ^(org.pulseaudio.pavucontrol)$"
-
-                  # Local Send (File Sharing)
-                  "move ${right} 8%, class: ^(localsend_app)$"
-                  "size 20% 80%, class: ^(localsend_app)$"
-
-                  # Airplay
-                  "move ${right} 10%, class: ^(GStreamer)$"
-                  "size 20% 40%, class: ^(GStreamer)$"
-
-                  # Bluetooth
-                  "move ${right} ${top}, class: ^(blueberry.py)$"
-                  "size 25% 45%, class: ^(blueberry.py)$"
-                ];
-
               input = {
                 kb_options = lib.mkForce [ ];
               };
