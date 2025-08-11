@@ -345,6 +345,26 @@ in
   # === swaync === #
   services.swaync = {
     enable = true;
+    package = (
+      pkgs.swaynotificationcenter.overrideAttrs (prev: rec {
+        version = "0.12.1";
+
+        buildInputs =
+          prev.buildInputs
+          ++ (with pkgs; [
+            libhandy
+            pantheon.granite
+            gtk-layer-shell
+          ]);
+
+        src = pkgs.fetchFromGitHub {
+          owner = "ErikReider";
+          repo = "SwayNotificationCenter";
+          rev = "v${version}";
+          hash = "sha256-kRawYbBLVx0ie4t7tChkA8QJShS83fUcGrJSKkxBy8Q=";
+        };
+      })
+    );
     settings = {
       control-center-height = 900;
       control-center-margin-bottom = 20;
@@ -523,28 +543,6 @@ in
           margin: 10px;
         }
       '';
-  };
-
-  systemd.user.services.swaync = lib.mkIf config.services.swaync.enable {
-    Unit = {
-      Requires = [ "waybar.service" ];
-      After = [
-        "waybar.service"
-        "graphical-session.target"
-      ];
-      PartOf = [ "graphical-session.target" ];
-    };
-    Install = {
-      WantedBy = [ "graphical-session.target" ];
-    };
-    Service = {
-      ExecStart = lib.mkForce ''${pkgs.swaynotificationcenter}/bin/swaync --config ${
-        config.xdg.configFile."swaync/config.json".target
-      } --style ${config.xdg.configFile."swaync/style.css".target}'';
-      Environment = [
-        "XDG_CONFIG_HOME=/home/_dummy"
-      ];
-    };
   };
 
   # === rofi === #
