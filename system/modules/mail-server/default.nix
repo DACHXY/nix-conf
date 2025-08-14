@@ -7,6 +7,13 @@ with lib;
 {
   options.mail-server = {
     enable = mkEnableOption "mail-server";
+    caFile = mkOption {
+      type = types.path;
+      default = config.security.pki.caBundle;
+      description = ''
+        Extra CA certification to trust;
+      '';
+    };
 
     openFirewall = mkOption {
       type = types.bool;
@@ -23,6 +30,23 @@ with lib;
           110 # POP3 STARTTLS
           995 # POP3S
         ];
+      '';
+    };
+
+    rootAlias = mkOption {
+      type = with types; uniq str;
+      default = "";
+      description = "Root alias";
+      example = ''
+        <your username>
+      '';
+    };
+
+    virtual = mkOption {
+      type = lib.types.lines;
+      default = "";
+      description = ''
+        Entries for the virtual alias map, cf. man-page {manpage}`virtual(5)`.
       '';
     };
 
@@ -86,37 +110,44 @@ with lib;
       description = "Postfix networks";
     };
 
-    sslKey = mkOption {
-      type = with types; path;
-      description = "Path to the SSL key";
-      example = "/etc/ssl/private/key.pem";
-    };
-
-    sslCert = mkOption {
-      type = with types; path;
-      description = "Path to the SSL Certification";
-      example = "/etc/ssl/private/cert.pem";
-    };
-
-    dovecot = {
-      ldapFile = mkOption {
-        type = with types; path;
-        description = "Path to the dovecot openldap config file";
-        example = "/run/secrets/dovecot/ldap";
+    oauth = {
+      username = mkOption {
+        type = with types; uniq str;
+        default = "keycloak";
+        description = "Keycloak username";
       };
-    };
 
-    openldap = {
       passwordFile = mkOption {
         type = with types; path;
-        description = "Path to the openldap admin password file";
-        example = "/run/secrets/openldap/passwd";
+        description = "Path to the keycloak password file";
+        example = "/run/secrets/keycloak/password";
+      };
+    };
+
+    ldap = {
+      passwordFile = mkOption {
+        type = with types; path;
+        description = "Path to the openldap password file";
+        example = "/run/secrets/ldap/password";
       };
 
-      enableWebUI = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Use docker to run Ldap Account Manager for using web ui.";
+      webEnv = mkOption {
+        type = with types; path;
+        description = "Path to phpLDAPadmin env file";
+        example = "/run/secrets/ldap/env";
+      };
+    };
+
+    rspamd = {
+      trainerSecret = mkOption {
+        type = with types; path;
+        description = "Path to rspamd trainer secret";
+        example = "/run/secrets/rspamd-trainer/secret";
+      };
+      port = mkOption {
+        type = with types; int;
+        default = 11334;
+        description = "Port for rspamd webUI";
       };
     };
   };

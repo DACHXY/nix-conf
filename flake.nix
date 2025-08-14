@@ -91,6 +91,10 @@
     };
 
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+    actual-budget-api = {
+      url = "github:DACHXY/actual-budget-api";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -112,6 +116,7 @@
           nix-index-database.nixosModules.nix-index
           inputs.sops-nix.nixosModules.sops
           inputs.chaotic.nixosModules.default
+          inputs.actual-budget-api.nixosModules.default
         ];
         args = {
           inherit
@@ -159,10 +164,12 @@
             inputs.nix-minecraft.nixosModules.minecraft-servers
             inputs.nix-tmodloader.nixosModules.tmodloader
             ./system/dev/dn-server
+            ./pkgs/options/dovecot.nix
           ];
           overlays = [
             inputs.nix-minecraft.overlay
             inputs.nix-tmodloader.overlay
+            (import ./pkgs/overlays/dovecot.nix)
           ];
         };
       };

@@ -11,6 +11,14 @@
   lib,
   ...
 }:
+let
+  nextcloudPkg = pkgs.nextcloud31.overrideAttrs (oldAttr: rec {
+    caBundle = config.security.pki.caBundle;
+    postPatch = ''
+      cp ${caBundle} resources/config/ca-bundle.crt
+    '';
+  });
+in
 {
   imports = [
     "${
@@ -23,10 +31,6 @@
 
   services.postgresql = {
     enable = true;
-    authentication = lib.mkOverride 10 ''
-      #type database  DBuser  origin-address  auth-method
-      local all       all                     trust
-    '';
     ensureUsers = [
       {
         name = "nextcloud";
@@ -40,7 +44,7 @@
 
   services.nextcloud = {
     enable = true;
-    package = pkgs.nextcloud31;
+    package = nextcloudPkg;
     configureRedis = true;
     hostName = hostname;
     https = if https then true else false;
@@ -49,8 +53,6 @@
       all: with all; [
         imagick
       ];
-
-    maxUploadSize = "10240M";
 
     extraApps = {
       inherit (config.services.nextcloud.package.packages.apps)
@@ -64,6 +66,12 @@
         sha256 = "sha256-aiMUSJQVbr3xlJkqOaE3cNhdZu3CnPEIWTNVOoG4HSo=";
         license = "agpl3Plus";
       };
+
+      user_oidc = pkgs.fetchNextcloudApp {
+        url = "https://github.com/nextcloud-releases/user_oidc/releases/download/v7.2.0/user_oidc-v7.2.0.tar.gz";
+        sha256 = "sha256-nXDWfRP9n9eH+JGg1a++kD5uLMsXh5BHAaTAOgLI9W4=";
+        license = "agpl3Plus";
+      };
     };
     extraAppsEnable = true;
 
@@ -74,7 +82,8 @@
     };
 
     settings = {
-      log_type = "file";
+      allow_local_remote_servers = true;
+      log_type = "syslog";
       enabledPreviewProviders = [
         "OC\\Preview\\BMP"
         "OC\\Preview\\GIF"
@@ -89,10 +98,13 @@
         "OC\\Preview\\HEIC"
         "OC\\Preview\\SVG"
         "OC\\Preview\\FONT"
-        "OC\\Preview\\Imaginary"
-        "OC\\Preview\\ImaginaryPDF"
       ];
     };
+  };
+
+  services.nginx.virtualHosts.${hostname} = {
+    enableACME = true;
+    forceSSL = true;
   };
 
   environment.systemPackages = with pkgs; [
@@ -115,59 +127,57 @@
       };
     };
 
-    services = lib.mkIf (dataBackupPath != null || dbBackupPath != null) {
-      "nextcloud-backup" = {
-        enable = true;
-        serviceConfig = {
-          User = "nextcloud";
-          ExecStart =
-            let
-              script = pkgs.writeShellScriptBin "backup" (
-                ''
-                  nextcloudPath="${config.services.nextcloud.datadir}"
+    services."nextcloud-backup" = lib.mkIf (dataBackupPath != null || dbBackupPath != null) {
+      enable = true;
+      serviceConfig = {
+        User = "nextcloud";
+        ExecStart =
+          let
+            script = pkgs.writeShellScriptBin "backup" (
+              ''
+                nextcloudPath="${config.services.nextcloud.datadir}"
 
-                  if [ ! -d "$nextcloudPath" ]; then
-                    echo "nextcloud path not found: $nextcloudPath"
-                    exit 1
-                  fi
-                ''
-                + (
-                  if dataBackupPath != null then
-                    ''
-                      backupPath="${dataBackupPath}"
-                      nextcloudBakPath="$backupPath"
+                if [ ! -d "$nextcloudPath" ]; then
+                  echo "nextcloud path not found: $nextcloudPath"
+                  exit 1
+                fi
+              ''
+              + (
+                if dataBackupPath != null then
+                  ''
+                    backupPath="${dataBackupPath}"
+                    nextcloudBakPath="$backupPath"
 
-                      if [ ! -d "$backupPath" ]; then
-                        echo "Backup device is not mounted: $backupPath"
-                        exit 1
-                      fi
+                    if [ ! -d "$backupPath" ]; then
+                      echo "Backup device is not mounted: $backupPath"
+                      exit 1
+                    fi
 
-                      echo "Start syncing..."
-                      ${pkgs.rsync}/bin/rsync -rh --delete "$nextcloudPath" "$nextcloudBakPath"
-                      echo "Data dir backup completed."
-                    ''
-                  else
-                    ""
-                )
-                + (
-                  if dbBackupPath != null then
-                    ''
-                      nextcloudDBBakPath="${dbBackupPath}/nextcloud-db.bak.tar"
-                      if [ ! -d "$nextcloudBakPath" ]; then
-                        mkdir -p "$nextcloudBakPath"
-                      fi
+                    echo "Start syncing..."
+                    ${pkgs.rsync}/bin/rsync -rh --delete "$nextcloudPath" "$nextcloudBakPath"
+                    echo "Data dir backup completed."
+                  ''
+                else
+                  ""
+              )
+              + (
+                if dbBackupPath != null then
+                  ''
+                    nextcloudDBBakPath="${dbBackupPath}/nextcloud-db.bak.tar"
+                    if [ ! -d "$nextcloudBakPath" ]; then
+                      mkdir -p "$nextcloudBakPath"
+                    fi
 
-                      echo "Try backing up database (postgresql)"
-                      ${pkgs.postgresql}/bin/pg_dump -F t nextcloud -f "$nextcloudDBBakPath"
-                      echo "Database backup completed."
-                    ''
-                  else
-                    ""
-                )
-              );
-            in
-            "${script}/bin/backup";
-        };
+                    echo "Try backing up database (postgresql)"
+                    ${pkgs.postgresql}/bin/pg_dump -F t nextcloud -f "$nextcloudDBBakPath"
+                    echo "Database backup completed."
+                  ''
+                else
+                  ""
+              )
+            );
+          in
+          "${script}/bin/backup";
       };
     };
   };
