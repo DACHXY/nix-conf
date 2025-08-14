@@ -12,9 +12,9 @@ let
 
   notransTag = "notrans";
 
-  firefox = "firefox";
+  browser-bin = "zen";
   prefix = if nvidia-offload-enabled then "nvidia-offload" else "";
-  browser = "${prefix} ${firefox}";
+  browser = "${prefix} ${browser-bin}";
   terminal = "ghostty";
   filemanager = "${terminal} -e yazi";
 
@@ -23,11 +23,11 @@ let
 
   gamingWorkspace = 7;
 
-  toggleWlogout = pkgs.writeShellScriptBin "toggle" ''
+  toggleWlogout = pkgs.writeShellScript "toggle" ''
     if ${pkgs.busybox}/bin/pgrep wlogout > /dev/null; then
       ${pkgs.busybox}/bin/pkill wlogout
     else
-        ${pkgs.wlogout}/bin/wlogout --protocol layer-shell
+       ${config.programs.wlogout.package}/bin/wlogout --protocol layer-shell
     fi
   '';
 
@@ -47,7 +47,7 @@ in
   ''CTRL ALT, T, exec, ${terminal}''
   ''${mainMod}, Q, killactive, ''
 
-  ''${mainMod}, M, exec, ${toggleWlogout}/bin/toggle''
+  ''${mainMod}, M, exec, ${toggleWlogout}''
   ''${mainMod}, E, exec, ${filemanager}''
   ''${mainMod}, V, togglefloating, ''
   ''ALT, SPACE, exec, rofi -config ~/.config/rofi/apps.rasi -show drun''

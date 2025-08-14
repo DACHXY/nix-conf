@@ -6,6 +6,7 @@
     ../user/direnv.nix
     ../user/environment.nix
     ../user/gtk.nix
+    ../user/wlogout.nix
     # ../user/music-production.nix
     ../user/nvim.nix
     ../user/packages.nix

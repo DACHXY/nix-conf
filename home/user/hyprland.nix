@@ -19,6 +19,10 @@ let
     dconf write /org/cinnamon/desktop/applications/terminal/exec-arg "''\'''\'" &
 
     systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORMTHEME &
+    dbus-update-activation-environment --systemd HYPRLAND_INSTANCE_SIGNATURE
+
+    # Hint dark theme
+    gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
   '';
 
   mainMod = "SUPER";
@@ -33,6 +37,7 @@ in
     mpvpaper # Video Wallpaper
     hyprcursor
     libnotify
+    sunsetr
   ];
 
   wayland.windowManager.hyprland = {
@@ -117,6 +122,7 @@ in
       env = [
         ''XDG_CURRENT_DESKTOP, Hyprland''
         ''XDG_SESSION_DESKTOP, Hyprland''
+        ''GDK_PIXBUF_MODULE_FILE, ${pkgs.librsvg}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache''
       ];
 
       workspace = (import ./hypr/workspace.nix { inherit monitors; });
@@ -331,14 +337,12 @@ in
     Unit = {
       ConditionEnvironment = "WAYLAND_DISPLAY";
       Description = "Blue light filter";
-      PartOf = [ "graphical-session.target" ];
-      After = [ "graphical-session.target" ];
     };
     Service = {
       ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset -t 3000k";
       Restart = "always";
       RestartSec = 2;
-      KillSignal = "SIGKILL"; # Hyprsunset seems not handle the SIGTERM signal
+      KillSignal = "SIGKILL"; # Hyprsunset seems not handle the SIGTERM signal properly
     };
   };
 
@@ -399,7 +403,7 @@ in
       ''
         @define-color bgc rgba(0, 0, 0, 0.1);
         @define-color borderc #ebdbb2;
-        @define-color textc #282828;
+        @define-color textc #212121;
 
         * {
           font-family: JetBrainsMonoNerdFontMono;
@@ -422,21 +426,21 @@ in
         }
 
         .notification {
-          background: @textc;
+          background: @bgc;
           margin: 0px;
           border-radius: 6px;
           border-width: 3px;
-          border-color: #ebdbb2;
+          border-color: @borderc;
         }
 
         .notification-content {
-          background: @textc;
+          background: @bgc;
           padding: 7px;
           margin: 0;
         }
 
         .close-button {
-          background: @textc;
+          background: @bgc;
           color: @borderc;
           text-shadow: none;
           padding: 0;
@@ -454,8 +458,13 @@ in
         }
 
         .notification-action {
-          color: @bgc;
-          background: @textc;
+          color: @borderc;
+          background: @bgc;
+        }
+
+        .notification-action:hover {
+          color: @textc;
+          background: @borderc;
         }
 
         .summary {
