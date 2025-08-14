@@ -40,12 +40,12 @@ let
     }
   '';
 
-  dovecotDomain = config.services.postfix.hostname;
+  dovecotDomain = config.services.postfix.settings.main.myhostname;
 in
 {
   config = mkIf cfg.enable {
     security.acme.certs = {
-      "${config.services.postfix.hostname}" = {
+      "${config.services.postfix.settings.main.myhostname}" = {
         dnsProvider = null;
         webroot = "/var/lib/acme/acme-challenge";
         postRun = ''
@@ -74,11 +74,12 @@ in
 
     systemd.services.postfix = {
       requires = [
-        "acme-finished-${config.services.postfix.hostname}.target"
+        "acme-finished-${config.services.postfix.settings.main.myhostname}.target"
       ];
       serviceConfig.LoadCredential =
         let
-          certDir = config.security.acme.certs."${config.services.postfix.hostname}".directory;
+          certDir =
+            config.security.acme.certs."${config.services.postfix.settings.main.myhostname}".directory;
         in
         [
           "cert.pem:${certDir}/cert.pem"
@@ -88,28 +89,26 @@ in
 
     services.postfix = {
       enable = true;
-      hostname = "mail.${cfg.domain}";
-      origin = cfg.origin;
-      destination = cfg.destination;
-      networks = cfg.networks;
       virtual = cfg.virtual;
       enableSubmissions = true;
-      relayPort = 465;
-      submissionOptions = {
-        milter_macro_daemon_name = "ORIGINATING";
-        smtpd_client_restrictions = "permit_mynetworks, permit_sasl_authenticated, reject";
-        smtpd_relay_restrictions = "permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination";
-        smtpd_tls_security_level = "encrypt";
-        smtpd_tls_loglevel = "10";
-      };
 
-      config =
+      settings.main =
         let
           credsDir = "/run/credentials/postfix.service";
           certDir = "${credsDir}/cert.pem";
           keyDir = "${credsDir}/key.pem";
         in
         {
+          myhostname = "mail.${cfg.domain}";
+          mynetworks = cfg.networks;
+          mydestination = cfg.destination;
+          myorigin = if cfg.origin == "" then cfg.domain else cfg.origin;
+          relayhost = [ "0.0.0.0:465" ];
+          smtpd_tls_security_level = "encrypt";
+          smtpd_client_restrictions = "permit_mynetworks, permit_sasl_authenticated, reject";
+          smtpd_relay_restrictions = "permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination";
+          milter_macro_daemon_name = "ORIGINATING";
+
           virtual_uid_maps = [
             "static:${toString cfg.uid}"
           ];
@@ -308,7 +307,7 @@ in
           ssl = required
 
           service auth {
-            unix_listener ${config.services.postfix.config.queue_directory}/private/auth {
+            unix_listener ${config.services.postfix.settings.main.queue_directory}/private/auth {
               mode = 0660
               user = ${config.services.postfix.user}
               group = ${config.services.postfix.group}
@@ -317,7 +316,7 @@ in
           }
 
           service lmtp {
-            unix_listener ${config.services.postfix.config.queue_directory}/private/dovecot-lmtp {
+            unix_listener ${config.services.postfix.settings.main.queue_directory}/private/dovecot-lmtp {
               mode = 0660
               user = ${config.services.postfix.user}
               group = ${config.services.postfix.group}
@@ -600,7 +599,7 @@ in
       recommendedProxySettings = mkDefault true;
 
       virtualHosts = {
-        "${config.services.postfix.hostname}" = {
+        "${config.services.postfix.settings.main.myhostname}" = {
           enableACME = true;
           forceSSL = true;
           locations."/dovecot/ping".proxyPass = "http://localhost:${toString 5002}/ping";
