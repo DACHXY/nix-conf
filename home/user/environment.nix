@@ -1,6 +1,6 @@
 {
   home.sessionVariables = {
-    BROWSER = "firefox";
+    BROWSER = "zen";
     EDITOR = "nvim";
     TERMINAL = "ghostty";
     ELECTRON_OZONE_PLATFORM_HINT = "auto";
