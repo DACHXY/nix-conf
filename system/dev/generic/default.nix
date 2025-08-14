@@ -32,6 +32,7 @@
     settings = {
       PasswordAuthentication = true;
       PermitRootLogin = "yes";
+      UseDns = false;
     };
   };
 

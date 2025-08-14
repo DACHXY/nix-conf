@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   imports = [
     ../auto-mount.nix
@@ -28,4 +28,6 @@
     ../ca.nix
     ../sops-nix.nix
   ];
+
+  programs.gdk-pixbuf.modulePackages = [ pkgs.librsvg ];
 }

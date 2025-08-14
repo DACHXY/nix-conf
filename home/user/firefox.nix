@@ -20,6 +20,7 @@ let
     # Disable Ctrl+Q
     "browser.quitShortcut.disabled" = true;
     "security.enterprise_roots.enabled" = true;
+    "browser.tabs.allow_transparent_browser" = true;
   };
 in
 {

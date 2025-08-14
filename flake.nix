@@ -85,6 +85,12 @@
     swww = {
       url = "github:LGFae/swww";
     };
+
+    zen-browser = {
+      url = "github:dachxy/zen-browser-flake";
+    };
+
+    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
   };
 
   outputs =
@@ -105,6 +111,7 @@
           home-manager.nixosModules.default
           nix-index-database.nixosModules.nix-index
           inputs.sops-nix.nixosModules.sops
+          inputs.chaotic.nixosModules.default
         ];
         args = {
           inherit
@@ -187,6 +194,7 @@
                 users."${username}" = {
                   imports = [
                     inputs.hyprland.homeManagerModules.default
+                    inputs.zen-browser.homeManagerModules.${system}.default
                     {
                       home = {
                         homeDirectory = "/home/${username}";

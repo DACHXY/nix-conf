@@ -58,6 +58,7 @@ in
     users."${username}" = {
       imports = [
         ../../../home/presets/basic.nix
+        ../../../home/user/zen-browser.nix
 
         # Bitwarden client
         (import ../../../home/user/bitwarden.nix {
@@ -65,12 +66,18 @@ in
           baseUrl = "https://bitwarden.net.dn";
         })
 
-        # Proton GE
+        # Proton Extra Versions
         {
           home.file.".steam/root/compatibilitytools.d/GE-Proton10-10" = {
             source = fetchTarball {
               url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton10-10/GE-Proton10-10.tar.gz";
               sha256 = "sha256:1vkj66x84yqmpqm857hjzmx1s02h2lffcbc60jdfqz9xj34dx5jc";
+            };
+          };
+          home.file.".steam/root/compatibilitytools.d/CachyOS-Proton10-0_v3" = {
+            source = fetchTarball {
+              url = "https://github.com/CachyOS/proton-cachyos/releases/download/cachyos-10.0-20250714-slr/proton-cachyos-10.0-20250714-slr-x86_64_v3.tar.xz";
+              sha256 = "sha256:0hp22hkfv3f1p75im3xpif0pmixkq2i3hq3dhllzr2r7l1qx16iz";
             };
           };
         }
@@ -160,6 +167,12 @@ in
     rustdesk
     blender
   ];
+
+  services.openssh = {
+    settings = {
+      UseDns = false;
+    };
+  };
 
   users.users = {
     ${username} = {

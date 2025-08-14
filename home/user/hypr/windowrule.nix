@@ -34,6 +34,8 @@ in
     "float, class:^(xdg-desktop-portal-gtk)$"
     "float, title:^(Steam Settings)$"
 
+    "opacity 0.9999 override, initialClass:^(zen)(.*)"
+
     # Picture in picture windows
     "float, title:^(Picture-in-Picture)$"
     "pin, title:^(Picture-in-Picture)$"
@@ -71,7 +73,9 @@ in
     "pin, class: ^(GStreamer)$"
     "float, class: ^(GStreamer)$"
     "opacity 1.0 override 1.0 override, class: ^(GStreamer)$"
+    "noblur, class: ^(GStreamer)$"
     "animation slide right 20%, class: ^(GStreamer)$"
+    "keepaspectratio, class: ^(GStreamer)$"
 
     # Bluetooth
     "float, class: ^(blueberry.py)$"
@@ -97,13 +101,6 @@ in
 
     # Davinci resolve
     "center 1, initialClass: ^(resolve), floating: 1"
-
-    # Disable Tansparent for youtube video
-    "opacity 1.0 override 1.0 override, title:(.*)( - YouTube — Mozilla Firefox)"
-    "noblur, title:(.*)( - YouTube — Mozilla Firefox)"
-
-    "opacity 1.0 override 1.0 override, title:(.*)( - 巴哈姆特動畫瘋 — Mozilla Firefox)"
-    "noblur, title:(.*)( - YouTube — Mozilla Firefox)"
 
     # Disable Tansparent
     "opacity 1.0 override 1.0 override, tag:${notransTag}"

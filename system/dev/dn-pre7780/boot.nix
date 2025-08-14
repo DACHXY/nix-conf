@@ -1,10 +1,9 @@
 {
   pkgs,
-  config,
   ...
 }:
 {
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_cachyos;
 
   fileSystems."/mnt/ssd" = {
     device = "/dev/disk/by-label/DN-SSD";
