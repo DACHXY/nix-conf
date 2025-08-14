@@ -91,6 +91,7 @@
     };
 
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
+
     actual-budget-api = {
       url = "github:DACHXY/actual-budget-api";
       inputs.nixpkgs.follows = "nixpkgs";

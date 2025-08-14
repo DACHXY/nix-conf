@@ -2,7 +2,9 @@
   pkgs,
   lib,
   inputs,
+  system,
   username,
+  config,
   ...
 }:
 let
@@ -92,14 +94,14 @@ in
     caFile = "" + ../../extra/ca.crt;
     virtualMailDir = "/var/mail/vhosts";
     domain = "net.dn";
-    rootAlias = "${settings.personal.username}";
+    rootAlias = "${username}";
     networks = [
       "127.0.0.0/8"
       "10.0.0.0/24"
     ];
     virtual = ''
-      admin@net.dn ${settings.personal.username}@net.dn
-      postmaster@net.dn ${settings.personal.username}@net.dn
+      admin@net.dn ${username}@net.dn
+      postmaster@net.dn ${username}@net.dn
     '';
     openFirewall = true;
     oauth = {
@@ -120,7 +122,6 @@ in
         ../../../home/user/config.nix
         ../../../home/user/direnv.nix
         ../../../home/user/environment.nix
-        ../../../home/user/git.nix
         ../../../home/user/nvim.nix
         ../../../home/user/shell.nix
         ../../../home/user/tmux.nix
