@@ -32,12 +32,14 @@ Bq-3sY8n13Dv0E6yx2hVIAlzLj3aE29LC4A2j81vW5MtpaM27lMpg.cwlqZ-8l1iZNeeS9.idRpRJ9zB
               x = "o-Srd0v3IY7zU9U2COE9BOsjyIPjBvNT2WKPTo8ePZI";
               y = "y5OFjciRMVg8ePaEsjSPWbKp_NjQ6U4CtbplRx7z3Bw";
             };
-            name = "danny@smallstep.net.dn";
+            name = "danny@net.dn";
             type = "JWK";
           }
           {
             claims = {
-              maxTLSCertDuration = "8760h";
+              minTLSCertDuration = "32h";
+              maxTLSCertDuration = "72h";
+              defaultTLSCertDuration = "72h";
             };
             name = "acme";
             options = {
@@ -73,7 +75,6 @@ Bq-3sY8n13Dv0E6yx2hVIAlzLj3aE29LC4A2j81vW5MtpaM27lMpg.cwlqZ-8l1iZNeeS9.idRpRJ9zB
         minVersion = 1.2;
         renegotiation = false;
       };
-
     };
     port = 8443;
     openFirewall = true;

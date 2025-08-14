@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   lib,
   username,
   ...
@@ -12,58 +11,6 @@ let
   ethInterface = "enp0s31f6";
   sshPorts = [ 30072 ];
   sshPortsString = builtins.concatStringsSep ", " (builtins.map (p: builtins.toString p) sshPorts);
-
-  getCleanAddress =
-    ip:
-    with builtins;
-    let
-      result = replaceStrings [ "/24" "/32" ] [ "" "" ] ip;
-    in
-    result;
-
-  getReverseFilename =
-    ip:
-    with builtins;
-    with lib.lists;
-    with lib.strings;
-    let
-      octets = take 3 (splitString "." (getCleanAddress ip));
-      reversedFilename = "db." + (concatStringsSep "." (reverseList octets));
-    in
-    reversedFilename;
-
-  getSubAddress =
-    ip:
-    with builtins;
-    with lib.lists;
-    with lib.strings;
-    let
-      octets = reverseList (splitString "." (getCleanAddress ip));
-      sub = head octets;
-    in
-    sub;
-
-  reverseIP =
-    ip:
-    with builtins;
-    with lib.lists;
-    with lib.strings;
-    let
-      octets = splitString "." (getCleanAddress ip);
-      reversedIP = (concatStringsSep "." (reverseList octets)) + ".in-addr.arpa";
-    in
-    reversedIP;
-
-  reverseZone =
-    ip:
-    with builtins;
-    with lib.lists;
-    with lib.strings;
-    let
-      octets = take 3 (splitString "." (getCleanAddress ip));
-      reversedZone = (concatStringsSep "." (reverseList octets)) + ".in-addr.arpa";
-    in
-    reversedZone;
 
   personal = {
     ip = "10.0.0.1/24";
@@ -131,8 +78,8 @@ let
     }
     {
       # ken
-      dns = "ken";
-      publicKey = "iWjBGArok96mFzFHXYjTxwyRHGQ4U0V77txoi6WS2QU=";
+      dns = "phone.ken";
+      publicKey = "knRpD7qb2JejioJBP5HZgWCrDEOWUq27+ueWPYwnWws=";
       allowedIPs = [ "10.0.0.134/32" ];
     }
     {
@@ -187,39 +134,12 @@ let
       allowedIPs = [ "10.0.0.144/32" ];
     }
     {
-      dns = "rasp";
-      publicKey = "z+2d+4FhSClGlSiAtaGnTgU6utxElfdRqiwPpCJFRn8=";
+      # ken
+      dns = "pc.ken";
+      publicKey = "ERLMpSbSIYRN5HoKmvsk2852/aAvzjvMV7tOs0oupxI=";
       allowedIPs = [ "10.0.0.145/32" ];
     }
   ];
-
-  dnsRecords =
-    with builtins;
-    concatStringsSep "\n" (
-      map (
-        r:
-        let
-          ip = getCleanAddress (elemAt r.allowedIPs 0);
-        in
-        ''
-          ${r.dns}    IN     A      ${ip}
-        ''
-      ) (fullRoute ++ meshRoute)
-    );
-
-  dnsReversedRecords =
-    with builtins;
-    concatStringsSep "\n" (
-      map (
-        r:
-        let
-          reversed = getSubAddress (getCleanAddress (elemAt r.allowedIPs 0));
-        in
-        ''
-          ${reversed}   IN     PTR    ${r.dns}.${personal.domain}.
-        ''
-      ) (fullRoute ++ meshRoute)
-    );
 in
 {
   networking = {
@@ -334,6 +254,27 @@ in
     extraHosts = "${kube.masterIP} ${kube.masterHostname}";
   };
 
+  services.postgresql = {
+    enable = lib.mkDefault true;
+    authentication = ''
+      host  powerdnsadmin powerdnsadmin 127.0.0.1/32    trust
+    '';
+    ensureUsers = [
+      {
+        name = "powerdnsadmin";
+        ensureDBOwnership = true;
+      }
+      {
+        name = "pdns";
+        ensureDBOwnership = true;
+      }
+    ];
+    ensureDatabases = [
+      "powerdnsadmin"
+      "pdns"
+    ];
+  };
+
   services = {
     dbus.enable = true;
     blueman.enable = true;
@@ -348,97 +289,58 @@ in
       };
     };
 
-    bind = {
+    powerdns = {
       enable = true;
-      forwarders = [
-        "8.8.8.8"
-        "8.8.4.4"
-      ];
-      cacheNetworks = [
-        "127.0.0.0/24"
-        "::1/128"
-        personal.range
-        kube.range
-      ];
-      zones = {
-        "${personal.domain}" = {
-          master = true;
-          allowQuery = [
-            "127.0.0.0/24"
-            "::1/128"
-            personal.range
-            kube.range
-          ];
-          file =
-            let
-              serverIP = getCleanAddress personal.ip;
-              kubeIP = getCleanAddress kube.ip;
-              origin = "${personal.domain}.";
-              hostname = config.networking.hostName;
-            in
-            pkgs.writeText "db.${personal.domain}" ''
-              $ORIGIN ${origin}
-              $TTL    1h
-              @           IN     SOA    dns.${origin} admin.dns.${origin} (
-                                            1     ; Serial
-                                            3h    ; Refresh
-                                            1h    ; Retry
-                                            1w    ; Expire
-                                            1h)   ; Negative Cache TTL
-                          IN     NS     dns.${origin}
-              @           IN     A      ${serverIP}
-                          IN     AAAA   fe80::3319:e2bb:fc15:c9df
-              @           IN     MX     10 mail.${origin}
-                          IN     TXT    "v=spf1 mx"
-              dns         IN     A      ${serverIP}
-              files       IN     A      ${serverIP}
-              nextcloud   IN     A      ${serverIP}
-              bitwarden   IN     A      ${serverIP}
-              ca          IN     A      ${serverIP}
-              ${hostname} IN     A      ${serverIP}
-              mail        IN     A      ${serverIP}
-              api-kube    IN     A      ${kubeIP}
-              vmail       IN     A      10.0.0.130
-              ${dnsRecords}
-            '';
-        };
+      extraConfig = ''
+        launch=gpgsql
+        webserver-password=$WEB_PASSWORD
+        api=yes
+        api-key=$WEB_PASSWORD
+        gpgsql-host=/var/run/postgresql
+        gpgsql-dbname=pdns
+        gpgsql-user=pdns
+        webserver=yes
+        webserver-port=8081
+        local-port=5359
+      '';
+      secretFile = config.sops.secrets.powerdns.path;
+    };
 
-        "${reverseZone personal.ip}" = {
-          master = true;
-          allowQuery = [
-            "127.0.0.0/24"
-            "::1/128"
-            personal.range
-            kube.range
-          ];
-          file =
-            let
-              serverIP = getSubAddress personal.ip;
-              hostname = config.networking.hostName;
-            in
-            pkgs.writeText "${getReverseFilename personal.ip}" ''
-              $TTL 86400
-              @           IN     SOA    dns.${personal.domain}. admin.dns.${personal.domain}. (
-                                            1     ; Serial
-                                            3h    ; Refresh
-                                            1h    ; Retry
-                                            1w    ; Expire
-                                            1h)   ; Negative Cache TTL
-                          IN     NS     dns.${personal.domain}.
-
-              ${serverIP} IN     PTR    dns.${personal.domain}.
-              ${serverIP} IN     PTR    mail.${personal.domain}.
-              ${serverIP} IN     PTR    ${hostname}.${personal.domain}.
-              ${serverIP} IN     PTR    nextcloud.${personal.domain}.
-              ${serverIP} IN     PTR    files.${personal.domain}.
-              ${serverIP} IN     PTR    bitwarden.${personal.domain}.
-              ${serverIP} IN     PTR    ca.${personal.domain}.
-              130         IN     PTR    vmail.${personal.domain}.
-              ${dnsReversedRecords}
-            '';
-
-        };
+    pdns-recursor = {
+      enable = true;
+      forwardZones = {
+        "${config.networking.domain}." = "127.0.0.1:5359";
       };
+      forwardZonesRecurse = {
+        "." = "8.8.8.8";
+      };
+      dnssecValidation = "off";
+      dns.allowFrom = [
+        "127.0.0.0/8"
+        "10.0.0.0/24"
+        "192.168.100.0/24"
+        "::1/128"
+        "fc00::/7"
+        "fe80::/10"
+      ];
+      yaml-settings = {
+        webservice.webserver = true;
+      };
+    };
+
+    powerdns-admin = {
+      enable = true;
+      secretKeyFile = config.sops.secrets."powerdns-admin/secret".path;
+      saltFile = config.sops.secrets."powerdns-admin/salt".path;
+      config =
+        # python
+        ''
+          import cachelib
+
+          SESSION_TYPE = 'cachelib'
+          SESSION_CACHELIB = cachelib.simple.SimpleCache()
+          SQLALCHEMY_DATABASE_URI = 'postgresql://powerdnsadmin@/powerdnsadmin?host=localhost'
+        '';
     };
 
     xserver = {
@@ -457,6 +359,39 @@ in
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFQA42R3fZmjb9QnUgzzOTIXQBC+D2ravE/ZLvdjoOQ danny@lap.dn"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSHkPa6vmr5WBPXAazY16+Ph1Mqv9E24uLIf32oC2oH danny@phone.dn"
     ];
+  };
+
+  virtualisation = {
+    oci-containers = {
+      backend = "docker";
+      containers = {
+        uptime-kuma = {
+          extraOptions = [ "--network=host" ];
+          image = "louislam/uptime-kuma:1";
+          volumes = [
+            "/var/lib/uptime-kuma:/app/data"
+            "${config.security.pki.caBundle}:/etc/ca.crt:ro"
+          ];
+          environment = {
+            NODE_EXTRA_CA_CERTS = "/etc/ca.crt";
+          };
+        };
+      };
+    };
+  };
+
+  services.nginx.virtualHosts = {
+    "powerdns.${config.networking.domain}" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/".proxyPass = "http://localhost:8000";
+    };
+
+    "uptime.${config.networking.domain}" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/".proxyPass = "http://localhost:3001";
+    };
   };
 
   nix.settings.trusted-users = [

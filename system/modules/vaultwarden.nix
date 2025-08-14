@@ -19,7 +19,7 @@
     dbBackend = "postgresql";
     environmentFile = config.sops.secrets.vaultwarden.path;
     config = {
-      DOMAIN = domain;
+      DOMAIN = "https://${domain}";
       SIGNUPS_ALLOWED = true;
       SIGNUPS_VERIFY = true;
       ROCKET_PORT = 8222;
@@ -28,5 +28,12 @@
 
       DATABASE_URL = "postgresql:///vaultwarden";
     };
+  };
+
+  services.nginx.virtualHosts.${domain} = {
+    enableACME = true;
+    forceSSL = true;
+    locations."/".proxyPass =
+      "http://localhost:${toString config.services.vaultwarden.config.ROCKET_PORT}/";
   };
 }
