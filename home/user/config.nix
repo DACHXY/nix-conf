@@ -1,3 +1,4 @@
+{ ... }:
 let
   configDir = ../config;
   browser = "zen.desktop";
@@ -37,6 +38,8 @@ in
       "application/pdf" = [ browser ];
       "image/jpeg" = [ browser ];
       "image/png" = [ browser ];
+      "x-scheme-handler/http" = browser;
+      "x-scheme-handler/https" = browser;
     };
   };
 }

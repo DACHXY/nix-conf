@@ -5,6 +5,7 @@
   osConfig,
   config,
   username,
+  lib,
   pkgs,
   ...
 }:
@@ -44,7 +45,7 @@ in
   ];
 
   # === waybar === #
-  systemd.user.services.waybar = {
+  systemd.user.services.waybar = lib.mkIf config.programs.waybar.enable {
     Unit = {
       PartOf = [ "graphical-session.target" ];
       After = [ "graphical-session.target" ];
@@ -252,6 +253,8 @@ in
                 "code"
                 ".virt-manager-wrapped"
                 "virt-manager"
+                "steam_app_*"
+                "obsidian"
               ];
             };
             "custom/cava" = {

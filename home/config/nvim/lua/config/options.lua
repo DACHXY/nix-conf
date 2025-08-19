@@ -55,3 +55,5 @@ vim.g.clipboard = {
 -- To ALWAYS use the clipboard for ALL operations
 -- (instead of interacting with the "+" and/or "*" registers explicitly):
 vim.opt.clipboard = "unnamedplus"
+
+vim.g.gruvbox_material_transparent_background = 2
