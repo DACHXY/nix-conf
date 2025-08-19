@@ -4,8 +4,8 @@
 {
   pkgs,
   lib,
-  inputs,
   config,
+  inputs,
   system,
   osConfig,
   ...
@@ -63,16 +63,18 @@ in
         disable_logs = true;
       };
 
-      bind = import ./hypr/bind.nix {
-        inherit
-          mainMod
-          pkgs
-          monitors
-          config
-          lib
-          ;
-        nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
-      };
+      bind = (
+        import ./hypr/bind.nix {
+          inherit
+            mainMod
+            pkgs
+            monitors
+            config
+            lib
+            ;
+          nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
+        }
+      );
 
       bindm = [
         # Move/resize windows with mainMod + LMB/RMB and dragging
@@ -84,7 +86,7 @@ in
         let
           resizeStep = builtins.toString 20;
           brightnessStep = builtins.toString 10;
-          volumeStep = builtins.toString 2;
+          volumeStep = builtins.toString 4;
         in
         [
           '',XF86AudioRaiseVolume, exec, wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%+''
@@ -126,6 +128,10 @@ in
       ];
 
       workspace = (import ./hypr/workspace.nix { inherit monitors; });
+      misc = {
+        disable_hyprland_logo = true;
+        force_default_wallpaper = 0;
+      };
     }
     // (import ./hypr/window.nix)
     // (import ./hypr/windowrule.nix)
@@ -143,17 +149,6 @@ in
   services.swww = {
     enable = true;
     package = inputs.swww.packages.${system}.swww;
-  };
-
-  # === hyprpaper (Disabled) === #
-  services.hyprpaper = {
-    enable = false;
-    settings = {
-      # preload = wallpapers;
-      wallpaper = [ ", ~/.config/wallpapers/wall.png" ];
-      splash = false;
-      ipc = "on";
-    };
   };
 
   # === hyprlock === #
@@ -329,8 +324,8 @@ in
     };
   };
 
-  # === hyprsunset === #
-  systemd.user.services.hyprsunset = {
+  # === sunsetr === #
+  systemd.user.services.sunsetr = {
     Install = {
       WantedBy = [ "graphical-session.target" ];
     };
@@ -339,10 +334,9 @@ in
       Description = "Blue light filter";
     };
     Service = {
-      ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset -t 3000k";
+      ExecStart = "${pkgs.sunsetr}/bin/sunsetr";
       Restart = "always";
       RestartSec = 2;
-      KillSignal = "SIGKILL"; # Hyprsunset seems not handle the SIGTERM signal properly
     };
   };
 

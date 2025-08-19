@@ -101,9 +101,5 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
     GBM_BACKEND = "nvidia-drm";
     MOZ_DISABLE_RDD_SANDBOX = 1;
     OGL_DEDICATED_HW_STATE_PER_CONTEXT = "ENABLE_ROBUST";
-
-    # If multiple monitors are connected to dGPU & iGPU,
-    # make sure to put the iGPU first
-    # AQ_DRM_DEVICES = "/dev/dri/card1:/dev/dri/card0";
   };
 }

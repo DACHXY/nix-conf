@@ -10,7 +10,6 @@
     "col.active_border" = "rgb(EBDBB2) rgb(24273A) rgb(24273A) rgb(EBDBB2) 45deg";
     "col.inactive_border" = "rgb(24273A) rgb(24273A) rgb(24273A) rgb(24273A) 45deg";
     layout = "dwindle";
-    allow_tearing = false;
   };
 
   decoration = {

@@ -34,6 +34,8 @@ in
     "float, class:^(xdg-desktop-portal-gtk)$"
     "float, title:^(Steam Settings)$"
 
+    "fullscreen, initialClass:^(cs2)$"
+
     "opacity 0.9999 override, initialClass:^(zen)(.*)"
 
     # Picture in picture windows

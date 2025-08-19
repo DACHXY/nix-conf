@@ -1,6 +1,15 @@
 {
+  pkgs,
   ...
 }:
+let
+  zenNebula = pkgs.fetchFromGitHub {
+    owner = "justadumbprsn";
+    repo = "zen-nebula";
+    rev = "main";
+    sha256 = "sha256-f4J5ob/apKhxERUSvXE8QHMMsKJCQFRoMSo/Pw4LgTg=";
+  };
+in
 {
   programs.zen-browser = {
     enable = true;
@@ -12,6 +21,8 @@
           "zen.view.compact.should-enable-at-startup" = true;
           "zen.widget.linux.transparency" = true;
           "zen.view.compact.show-sidebar-and-toolbar-on-hover" = false;
+          "zen.tabs.vertical.right-side" = true;
+          "zen.urlbar.behavior" = "float";
 
           "app.update.auto" = false;
           "app.normandy.first_run" = false;
@@ -20,7 +31,7 @@
           "browser.shell.didSkipDefaultBrowserCheckOnFirstRun" = true;
           "browser.tabs.allow_transparent_browser" = true;
           "browser.urlbar.placeholderName" = "Google";
-          "browser.urlbar.placeholderName.private" = "private";
+          "browser.urlbar.placeholderName.private" = "DuckDuckGo";
           "middlemouse.paste" = false;
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
           "font.language.group" = "zh-TW";
@@ -35,7 +46,9 @@
         ensureCACertifications = [
           ../../system/extra/ca.crt
         ];
+        chrome = zenNebula;
       };
     };
   };
+
 }

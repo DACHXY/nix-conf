@@ -20,7 +20,8 @@ in
     }
   ];
 
-  hardware.nvidia.package = lib.mkForce config.boot.kernelPackages.nvidiaPackages.stable;
+  hardware.nvidia.package = lib.mkForce config.boot.kernelPackages.nvidiaPackages.latest;
+  hardware.nvidia.open = lib.mkForce true;
 
   imports = [
     ./hardware-configuration.nix
@@ -58,7 +59,6 @@ in
     users."${username}" = {
       imports = [
         ../../../home/presets/basic.nix
-        ../../../home/user/zen-browser.nix
 
         # Bitwarden client
         (import ../../../home/user/bitwarden.nix {
@@ -84,61 +84,65 @@ in
 
         # waybar
         (import ../../../home/user/waybar.nix {
-          settings = [
-            # monitor 1
-            {
-              output = "DP-5";
-              modules-left = [
-                "custom/os"
-                "hyprland/workspaces"
-                "clock"
-                "custom/cava"
-                "mpris"
-              ];
-              modules-right = (
-                [
+          settings =
+            let
+              id = 5;
+            in
+            [
+              # monitor 1
+              {
+                output = "DP-${toString id}";
+                modules-left = [
+                  "custom/os"
+                  "hyprland/workspaces"
+                  "clock"
+                  "custom/cava"
+                  "mpris"
+                ];
+                modules-right = (
+                  [
+                    "wlr/taskbar"
+                  ]
+                  ++ (
+                    if config.programs.gamemode.enable then
+                      [
+                        "custom/gamemode"
+                      ]
+                    else
+                      [ ]
+                  )
+                  ++ [
+                    "custom/bitwarden"
+                    "custom/airplay"
+                    "custom/wallRand"
+                    "custom/wireguard"
+                    "custom/recording"
+                    "idle_inhibitor"
+                    "network"
+                    "cpu"
+                    "memory"
+                    "pulseaudio"
+                    "custom/swaync"
+                  ]
+                );
+              }
+              # monitor 2
+              {
+                output = "DP-${toString (id + 1)}";
+                height = 54;
+                modules-left = [
+                  "clock"
+                  "mpris"
+                ];
+                modules-right = [
                   "wlr/taskbar"
-                ]
-                ++ (
-                  if config.programs.gamemode.enable then
-                    [
-                      "custom/gamemode"
-                    ]
-                  else
-                    [ ]
-                )
-                ++ [
-                  "custom/bitwarden"
-                  "custom/airplay"
-                  "custom/wallRand"
-                  "custom/wireguard"
-                  "custom/recording"
-                  "idle_inhibitor"
-                  "network"
+                  "temperature"
                   "cpu"
                   "memory"
                   "pulseaudio"
-                  "custom/swaync"
-                ]
-              );
-            }
-            # monitor 2
-            {
-              output = "DP-6";
-              height = 54;
-              modules-left = [
-                "clock"
-                "mpris"
-              ];
-              modules-right = [
-                "wlr/taskbar"
-                "temperature"
-                "cpu"
-                "memory"
-                "pulseaudio"
-              ];
-            }
-          ];
+                ];
+              }
+            ];
         })
 
         # Hyprland
@@ -150,6 +154,10 @@ in
                 ''desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271, 2560x1440@165, 0x0, 1''
                 ''desc:Acer Technologies XV272U V3 1322131231233, 2560x1440@180, -1440x-600, 1, transform, 1''
               ];
+
+              misc = {
+                vrr = 0;
+              };
             };
           };
         }
@@ -159,7 +167,31 @@ in
           inherit username;
           email = "danny10132024@gmail.com";
         })
+
+        # Cs go
+        {
+          home.file.".steam/steam/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg/autoexec.cfg".text =
+            ''
+              fps_max "250"
+
+              # Wheel Jump
+              bind "mwheeldown" "+jump"
+              bind "mwheelup" "+jump"
+              bind "space" "+jump"
+
+              echo "AUTOEXEC LOADED SUCCESSFULLY!"
+              host_writeconfig
+            '';
+        }
       ];
+    };
+  };
+
+  # Power Management
+  services.tlp = {
+    enable = true;
+    settings = {
+      INTEL_GPU_MIN_FREQ_ON_AC = 500;
     };
   };
 

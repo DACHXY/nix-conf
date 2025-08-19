@@ -26,7 +26,7 @@ in
 
     iconTheme = {
       name = "Papirus-Dark";
-      package = pkgs.papirus-folders;
+      package = pkgs.papirus-icon-theme;
     };
 
     gtk3 = {
@@ -43,29 +43,14 @@ in
   };
 
   home.packages = with pkgs; [
-    libsForQt5.qtstyleplugin-kvantum
-    libsForQt5.lightly
     libsForQt5.qt5ct
-    adwaita-icon-theme
     gsettings-desktop-schemas
     glib
-    (catppuccin-kvantum.override {
-      accent = "lavender";
-      variant = "macchiato";
-    })
   ];
 
   qt = {
     enable = true;
-    style.name = "qt5ct-style";
-    style.package = pkgs.catppuccin-kvantum;
-    platformTheme.name = "qtct";
-  };
-
-  xdg.configFile = {
-    "Kvantum/catppuccin-macchiato-Lavender/catppuccin-macchiato-lavender/catppuccin-macchiato-lavender.kvconfig".source =
-      "${pkgs.catppuccin-kvantum}/share/Kvantum/catppuccin-macchiato-lavender/cattpuccin-macchiato-lavender.kvconfig";
-    "Kvantum/catppuccin-macchiato-Lavender/catppuccin-macchiato-lavender/catppuccin-macchiato-lavender.svg".source =
-      "${pkgs.catppuccin-kvantum}/share/Kvantum/catppuccin-macchiato-lavender/cattpuccin-macchiato-lavender.svg";
+    style.name = "adwaita-dark";
+    platformTheme.name = "gtk3";
   };
 }

@@ -10,7 +10,8 @@
     # ../user/music-production.nix
     ../user/nvim.nix
     ../user/packages.nix
-    ../user/firefox.nix
+    # ../user/firefox.nix
+    ../user/zen-browser.nix
     ../user/shell.nix
     ../user/tmux.nix
     ../user/virtualization.nix

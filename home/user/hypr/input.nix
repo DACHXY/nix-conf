@@ -6,6 +6,9 @@
     kb_model = "";
     kb_rules = "";
 
+    repeat_delay = 250;
+    repeat_rate = 35;
+
     follow_mouse = 1;
     accel_profile = "flat";
 
@@ -16,6 +19,9 @@
     };
 
     sensitivity = -0.1; # -1.0 - 1.0, 0 means no modification.
+  };
+  binds = {
+    scroll_event_delay = 0;
   };
 
   cursor = {

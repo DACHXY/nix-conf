@@ -26,8 +26,8 @@ in
 
   systemd.user.services.uxplay = {
     wantedBy = [ "multi-user.target" ];
-    after = [ "networking-online.target" ];
     serviceConfig = {
+      Type = "oneshot";
       ExecStart = "${pkgs.uxplay}/bin/uxplay ${
         optionalString (hostname != null) "-n ${hostname} -fs -fps 60 -nh"
       } -p";
