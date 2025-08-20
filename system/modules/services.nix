@@ -26,7 +26,7 @@
       settings = {
         PasswordAuthentication = lib.mkDefault false;
         AllowUsers = lib.mkDefault [ username ];
-        UseDns = lib.mkDefault true;
+        UseDns = lib.mkDefault false;
         PermitRootLogin = lib.mkDefault "no";
       };
     };

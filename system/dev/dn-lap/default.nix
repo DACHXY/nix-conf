@@ -18,7 +18,7 @@ in
     ../../modules/virtualization.nix
     ../../modules/wine.nix
     ../../modules/wireguard.nix
-    ../../modules/airplay.nix
+    (import ../../modules/airplay.nix { })
     # ../../modules/battery-life.nix
   ];
 
@@ -36,7 +36,7 @@ in
         {
           wayland.windowManager.hyprland = {
             settings = {
-              monitors = [
+              monitor = [
                 ''desc:LG Display 0x0665, preferred, 0x0, 1.25''
               ];
             };
