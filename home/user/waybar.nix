@@ -107,6 +107,7 @@ in
           /* tooltip */
           tooltip {
             background-color: @fg-bg;
+            border: ${border};
             border-radius: ${borderRadius};
           }
 
@@ -120,9 +121,10 @@ in
             color: @main;
             border-radius: ${borderRadius};
             border: ${border};
-            padding: 2.5px 12px;
+            padding: 0px 12px;
           }
 
+          /* Gamemode center icon */
           #gamemode {
             padding-right: 6px;
           }
@@ -148,6 +150,18 @@ in
             border-color: transparent;
           }
 
+          /* Workspaces */
+          #workspaces {
+            padding-left: 2px;
+            padding-right: 2px;
+          }
+
+          #workspaces button {
+            border-radius: 16px;
+            padding: 0px 6px;
+          }
+
+          /* Taskbar */
           #taskbar {
             background: transparent;
             border-color: transparent;
@@ -430,9 +444,9 @@ in
               format-wifi = "󰤨";
               format-ethernet = "󰈀";
               format-disconnected = "󰤭";
-              tooltip-format = "{ifname} via {gwaddr} 󰊗";
+              tooltip-format = "{ifname} via {gwaddr}";
               tooltip-format-wifi = "󰤢   {essid}:  {signalStrength}%";
-              tooltip-format-ethernet = "{ifname} via {gwaddr} 󰊗";
+              tooltip-format-ethernet = "{ifname} via {gwaddr}";
               tooltip-format-disconnected = "Disconnected";
               max-length = 50;
               interval = 5;
