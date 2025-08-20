@@ -133,16 +133,9 @@ in
         force_default_wallpaper = 0;
       };
     }
-    // (import ./hypr/window.nix)
+    // (import ./hypr/window.nix { inherit lib; })
     // (import ./hypr/windowrule.nix)
     // (import ./hypr/input.nix);
-  };
-
-  # === gamemode === #
-  systemd.user.services.gamemode = lib.mkIf osConfig.programs.gamemode.enable {
-    Service = {
-      ExecStart = "${pkgs.gamemode}/bin/gamemoded -r";
-    };
   };
 
   # === Swww === #
@@ -254,7 +247,7 @@ in
         };
 
         # INPUT FIELD
-        input-field = [
+        input-field = lib.mkForce [
           {
             monitor = "${mainMonitor}";
             size = "290, 60";
@@ -370,7 +363,7 @@ in
       control-center-margin-right = 20;
       control-center-margin-top = 20;
       control-center-width = 500;
-      fit-to-screen = false;
+      fit-to-screen = true;
       hide-on-action = true;
       hide-on-clear = true;
       image-visibility = "when-available";
@@ -400,9 +393,9 @@ in
         @define-color textc #212121;
 
         * {
-          font-family: JetBrainsMonoNerdFontMono;
+          font-family: ${osConfig.stylix.fonts.sansSerif.name};
+          font-size: ${toString osConfig.stylix.fonts.sizes.desktop}pt;
           font-weight: bold;
-          font-size: 15px;
           border-width: 3px;
           border-color: #ebdbb2;
         }
@@ -415,7 +408,7 @@ in
 
         .notification-row {
           outline: none;
-          margin: 20px;
+          margin: 5px;
           padding: 0;
         }
 

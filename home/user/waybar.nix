@@ -10,6 +10,8 @@
   ...
 }:
 let
+  inherit (lib) optionalString;
+
   mkWall = import ../scripts/mkWall.nix { inherit config pkgs; };
   rofiWall = import ../scripts/rofiwall.nix { inherit config pkgs; };
 
@@ -44,6 +46,13 @@ in
     "d /tmp/wall_cache 700 ${username} -"
   ];
 
+  # === gamemode === #
+  systemd.user.services.gamemode = lib.mkIf osConfig.programs.gamemode.enable {
+    Service = {
+      ExecStart = "${pkgs.gamemode}/bin/gamemoded -r";
+    };
+  };
+
   # === waybar === #
   systemd.user.services.waybar = lib.mkIf config.programs.waybar.enable {
     Unit = {
@@ -54,7 +63,132 @@ in
 
   programs.waybar = {
     enable = true;
-    style = ../../home/config/waybar/style.css;
+    style =
+      let
+        borderRadius = "6px";
+        border = "1px solid @fg-bg";
+        gap = "4px";
+      in
+      lib.mkForce
+        # css
+        ''
+          @define-color main #ebdbb2;
+          @define-color bg-bg rgba(0, 0, 0, 0);
+          @define-color fg-bg alpha(#fff, 0.05);
+
+          * {
+            font-family: ${osConfig.stylix.fonts.sansSerif.name};
+            min-height: 0;
+            font-size: ${toString (osConfig.stylix.fonts.sizes.desktop + 2)};
+            font-feature-settings: '"zero", "ss01", "ss02", "ss03", "ss04", "ss05", "cv31"';
+            transition-property: all;
+            transition-duration: 0.3s;
+          }
+
+          /* Main bar */
+          window#waybar {
+            background-color: @bg-bg;
+          }
+
+          window#waybar > .horizontal {
+            padding: ${gap};
+          }
+
+          window#waybar.hidden {
+            opacity: 0.5;
+          }
+
+          /* Set transparent if empty */
+          window#waybar .empty {
+            background-color: transparent;
+            border-color: transparent;
+          }
+
+          /* tooltip */
+          tooltip {
+            background-color: @fg-bg;
+            border-radius: ${borderRadius};
+          }
+
+          tooltip label {
+            padding: 4px 10px;
+            color: @main;
+          }
+
+          box.module, label.module, #gamemode {
+            background: @fg-bg;
+            color: @main;
+            border-radius: ${borderRadius};
+            border: ${border};
+            padding: 2.5px 12px;
+          }
+
+          #gamemode {
+            padding-right: 6px;
+          }
+
+          box.module button:hover {
+            background: shade(@fg-bg, 1.5);
+          }
+
+          label:hover {
+            background: shade(@fg-bg, 1.5);
+          }
+
+          .modules-left .module {
+            margin-right: ${gap};
+          }
+
+          .modules-right .module {
+            margin-left: ${gap};
+          }
+
+          .modules-center .module {
+            background: transparent;
+            border-color: transparent;
+          }
+
+          #taskbar {
+            background: transparent;
+            border-color: transparent;
+          }
+
+          /* Group */
+          #cpu {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            padding-right: 0;
+            border-right: none;
+          }
+          #memory {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-left: 0;
+            border-left: none;
+          }
+
+          #temperature.critical {
+            background-color: red;
+          }
+
+          #battery.good {
+            color: #ebdbb2;
+          }
+
+          #battery.warning {
+            color: #eed49f;
+          }
+
+          #battery.critical {
+            color: #ee99a0;
+          }
+
+          #battery.charging,
+          #battery.plugged {
+            color: #a6da95;
+          }
+        '';
+
     settings =
       let
         commonConfig = {
@@ -325,18 +459,17 @@ in
               return-type = "json";
               escape = true;
             };
-            "custom/gamemode" = {
-              format = "{icon}";
-              format-icons = {
-                active = "󰊗";
-                inactive = "󰺷";
-              };
-              exec = "~/.config/scripts/gamemodeStatus.sh";
-              on-click = "~/.config/scripts/gamemodeStatus.sh toggle";
+            gamemode = {
+              format = "{glyph}";
+              glyph = "";
+              hide-not-running = false;
+              use-icon = true;
+              icon-name = "input-gaming-symbolic";
+              icon-spacing = 4;
+              icon-size = 20;
               tooltip = true;
-              interval = 3;
-              return-type = "json";
-              escape = true;
+              tooltip-format = "Games running: {count}";
+              on-click-right = "systemctl is-active --quiet gamemode.service && systemctl stop gamemode.service || systemctl start gamemode.service";
             };
             "custom/wallRand" = {
               format = "";
@@ -403,6 +536,7 @@ in
           ];
           modules-right = [
             "wlr/taskbar"
+            (optionalString config.programs.gamemode.enable "gamemode")
             "temperature"
             "custom/recording"
             "idle_inhibitor"
