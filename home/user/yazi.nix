@@ -28,22 +28,6 @@ in
         git = ''${yaziPlugins}/git'';
       };
 
-      flavors = {
-        gruvbox-dark = pkgs.fetchFromGitHub {
-          owner = "bennyyip";
-          repo = "gruvbox-dark.yazi";
-          rev = "91fdfa70f6d593934e62aba1e449f4ec3d3ccc90";
-          hash = "sha256-RWqyAdETD/EkDVGcnBPiMcw1mSd78Aayky9yoxSsry4=";
-        };
-      };
-
-      theme = {
-        flavors = {
-          dark = "gruvbox-dark";
-          light = "gruvbox-dark";
-        };
-      };
-
       settings = {
         plugin.prepend_fetchers = [
           {

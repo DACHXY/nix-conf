@@ -108,6 +108,11 @@
       url = "github:microvm-nix/microvm.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -137,6 +142,7 @@
           inputs.sops-nix.nixosModules.sops
           inputs.chaotic.nixosModules.default
           inputs.actual-budget-api.nixosModules.default
+          inputs.stylix.nixosModules.stylix
         ];
         args = {
           inherit
@@ -191,11 +197,6 @@
 
                 linkConfig.RequiredForOnline = "routable";
               };
-
-              # microvm.autostart = [
-              #   "vm-1"
-              #   "vm-2"
-              # ];
 
               microvm.vms = {
                 vm-1 = {

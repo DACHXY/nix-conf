@@ -1,3 +1,4 @@
+{ lib }:
 {
   xwayland = {
     force_zero_scaling = true;
@@ -7,8 +8,8 @@
     gaps_in = 5;
     gaps_out = 10;
     border_size = 2;
-    "col.active_border" = "rgb(EBDBB2) rgb(24273A) rgb(24273A) rgb(EBDBB2) 45deg";
-    "col.inactive_border" = "rgb(24273A) rgb(24273A) rgb(24273A) rgb(24273A) 45deg";
+    "col.active_border" = lib.mkForce "rgb(EBDBB2) rgb(24273A) rgb(24273A) rgb(EBDBB2) 45deg";
+    "col.inactive_border" = lib.mkForce "rgb(24273A) rgb(24273A) rgb(24273A) rgb(24273A) 45deg";
     layout = "dwindle";
   };
 

@@ -2,7 +2,6 @@
 {
   imports = [
     ../environment.nix
-    ../fonts.nix
     ../hardware.nix
     ../internationalisation.nix
     ../misc.nix

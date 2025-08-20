@@ -6,9 +6,6 @@
   osConfig,
   ...
 }:
-let
-  inherit (lib) optional;
-in
 {
   programs.poetry = {
     enable = true;
@@ -24,9 +21,6 @@ in
     enableFishIntegration = true;
     package = inputs.ghostty.packages.${system}.default;
     settings = {
-      font-family = "CaskaydiaCove Nerd Font Mono";
-      font-size = 15;
-      theme = "Espresso";
       unfocused-split-opacity = 0.85;
       desktop-notifications = false;
 

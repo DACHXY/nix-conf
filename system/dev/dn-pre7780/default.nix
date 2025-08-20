@@ -6,7 +6,6 @@
   ...
 }:
 let
-  inherit (lib) optionalString;
   monitors = [
     "desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271"
     "desc:Acer Technologies XV272U V3 1322131231233"
@@ -38,7 +37,7 @@ in
     ./sops-conf.nix # Secret
     ../../modules/gaming.nix
     # ../../modules/secure-boot.nix
-    (import ../../modules/virtualization.nix { inherit username; })
+    ../../modules/virtualization.nix
     ../../modules/wine.nix
     ../../modules/wireguard.nix
     ../../modules/localsend.nix
@@ -106,7 +105,7 @@ in
                   ++ (
                     if config.programs.gamemode.enable then
                       [
-                        "custom/gamemode"
+                        "gamemode"
                       ]
                     else
                       [ ]

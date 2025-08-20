@@ -5,15 +5,6 @@
   ...
 }:
 let
-  patchPapirus = pkgs.stdenv.mkDerivation {
-    name = "${pkgs.papirus-icon-theme.name}-patch";
-    src = pkgs.papirus-icon-theme;
-    installPhase = ''
-      mkdir -p $out/share/icons
-      ln $src/share/icons/Papirus $out/share/icons/hicolor
-    '';
-  };
-
   caelestiaDot = pkgs.fetchFromGitHub {
     owner = "caelestia-dots";
     repo = "caelestia";
@@ -199,11 +190,9 @@ in
 
   systemd.user.services.caelestia = {
     Service = {
-      ExecStart = lib.mkForce "${pkgs.writeShellScript "caelestia-wrapper" ''
-        export QT_QPA_PLATFORMTHEME=gtk3
-
-        ${config.programs.caelestia.package}/bin/caelestia-shell
-      ''}";
+      Environment = [
+        "QT_QPA_PLATFORMTHEME=gtk3"
+      ];
     };
   };
 
