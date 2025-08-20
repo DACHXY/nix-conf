@@ -11,7 +11,7 @@ let
 in
 {
   programs.wlogout = {
-    enable = true;
+    enable = false;
     layout = [
       {
         label = "lock";
