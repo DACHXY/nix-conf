@@ -79,10 +79,19 @@ in
           * {
             font-family: ${osConfig.stylix.fonts.sansSerif.name};
             min-height: 0;
-            font-size: ${toString (osConfig.stylix.fonts.sizes.desktop + 2)};
+            font-size: ${toString (osConfig.stylix.fonts.sizes.desktop + 4)}px;
             font-feature-settings: '"zero", "ss01", "ss02", "ss03", "ss04", "ss05", "cv31"';
             transition-property: all;
             transition-duration: 0.3s;
+          }
+
+          #clock,
+          #mpris,
+          #window,
+          #memory,
+          #cpu,
+          #pulseaudio {
+            font-size: ${toString (osConfig.stylix.fonts.sizes.desktop + 2)}px;
           }
 
           /* Main bar */
