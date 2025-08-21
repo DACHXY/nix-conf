@@ -91,6 +91,7 @@ in
               # monitor 1
               {
                 output = "DP-${toString id}";
+                height = 48;
                 modules-left = [
                   "custom/os"
                   "hyprland/workspaces"

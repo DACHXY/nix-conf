@@ -4,7 +4,6 @@
 }:
 let
   cursorName = "catppuccin-macchiato-lavender-cursors";
-  themeName = "catppuccin-macchiato-lavender-compact";
 in
 {
   gtk = {
