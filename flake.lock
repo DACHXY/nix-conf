@@ -2336,11 +2336,11 @@
         "nixpkgs": "nixpkgs_10"
       },
       "locked": {
-        "lastModified": 1755787119,
-        "narHash": "sha256-KZa0EuK01jJZr2lI+AzPa7dy7YFd+qnwjP83ecGASzU=",
+        "lastModified": 1755788000,
+        "narHash": "sha256-wREYvAtnBT8OD6NI/TO1M6Nc9Q9uV23Sem5EjW/lFw0=",
         "owner": "dachxy",
         "repo": "zen-browser-flake",
-        "rev": "0ce4920460aed92ca91cf0d15acccf514e45022b",
+        "rev": "99cc11ef1338b4bbba84308cdd07b0fd9d2dbbc4",
         "type": "github"
       },
       "original": {
