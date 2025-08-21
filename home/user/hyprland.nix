@@ -394,7 +394,7 @@ in
 
         * {
           font-family: ${osConfig.stylix.fonts.sansSerif.name};
-          font-size: ${toString osConfig.stylix.fonts.sizes.desktop}pt;
+          font-size: ${toString osConfig.stylix.fonts.sizes.desktop}px;
           font-weight: bold;
           border-width: 3px;
           border-color: #ebdbb2;

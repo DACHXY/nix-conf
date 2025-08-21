@@ -32,7 +32,7 @@ in
 
       sizes = {
         terminal = 15;
-        desktop = 15;
+        desktop = 14;
         popups = 12;
       };
     };
