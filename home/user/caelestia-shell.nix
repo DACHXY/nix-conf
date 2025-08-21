@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   lib,
   ...
@@ -185,6 +184,14 @@ in
     cli = {
       enable = true;
       settings = { };
+    };
+  };
+
+  gtk = {
+    enable = lib.mkDefault true;
+    iconTheme = {
+      name = lib.mkDefault "Papirus-Dark";
+      package = lib.mkDefault pkgs.papirus-icon-theme;
     };
   };
 

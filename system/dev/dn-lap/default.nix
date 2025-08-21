@@ -49,6 +49,7 @@ in
           settings = [
             {
               output = "eDP-1";
+              height = 46;
               modules-left = [
                 "custom/os"
                 "hyprland/workspaces"
