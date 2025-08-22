@@ -15,14 +15,6 @@ in
       recursive = true;
       source = "${configDir}/gh";
     };
-    # ".local/share/fcitx5/themes/fcitx5-dark-transparent" = {
-    #   recursive = true;
-    #   source = "${configDir}/fcitx5-dark-transparent";
-    # };
-    # ".config/fcitx5/conf" = {
-    #   recursive = true;
-    #   source = "${configDir}/fcitx5";
-    # };
     ".face".source = "${configDir}/.face";
   };
 
