@@ -22,9 +22,9 @@
     };
 
     ghostty = {
-      url = "github:ghostty-org/ghostty?rev=7f9bb3c0e54f585e11259bc0c9064813d061929c";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
-      inputs.nixpkgs-unstable.follows = "nixpkgs";
+      # url = "github:ghostty-org/ghostty?rev=7f9bb3c0e54f585e11259bc0c9064813d061929c";
+      url = "github:ghostty-org/ghostty";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     yazi = {
