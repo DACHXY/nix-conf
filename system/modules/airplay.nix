@@ -25,9 +25,9 @@ in
   ];
 
   systemd.user.services.uxplay = {
-    wantedBy = [ "multi-user.target" ];
+    wantedBy = [ "default.target" ];
     serviceConfig = {
-      Type = "oneshot";
+      Type = "simple";
       ExecStart = "${pkgs.uxplay}/bin/uxplay ${
         optionalString (hostname != null) "-n ${hostname} -fs -fps 60 -nh"
       } -p";

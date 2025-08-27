@@ -23,6 +23,7 @@ in
           "zen.view.compact.show-sidebar-and-toolbar-on-hover" = false;
           "zen.tabs.vertical.right-side" = true;
           "zen.urlbar.behavior" = "float";
+          "nebula-tab-loading-animation" = 0;
 
           "app.update.auto" = false;
           "app.normandy.first_run" = false;

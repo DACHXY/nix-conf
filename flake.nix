@@ -22,7 +22,6 @@
     };
 
     ghostty = {
-      # url = "github:ghostty-org/ghostty?rev=7f9bb3c0e54f585e11259bc0c9064813d061929c";
       url = "github:ghostty-org/ghostty";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -134,6 +133,8 @@
 
       inherit (pkgs) lib;
 
+      helper = import ./helper { inherit pkgs lib; };
+
       # Declare COMMON modules here
       common-settings = {
         modules = [
@@ -146,6 +147,7 @@
         ];
         args = {
           inherit
+            helper
             inputs
             system
             nix-version
@@ -266,6 +268,7 @@
                   useGlobalPkgs = true;
                   extraSpecialArgs = {
                     inherit
+                      helper
                       inputs
                       system
                       nix-version
@@ -411,7 +414,7 @@
             lib.mapAttrs' (
               name: value:
               lib.nameValuePair name (
-                nixpkgs.lib.nixosSystem ({
+                nixpkgs.lib.nixosSystem {
                   inherit system;
                   modules = [
                     inputs.microvm.nixosModules.microvm
@@ -469,10 +472,20 @@
                       ];
                     }
                   ];
-                })
+                }
               )
             ) vmList
-          );
+          )
+        // {
+          vps = nixpkgs.lib.nixosSystem {
+            inherit system;
+            specialArgs = common-settings.args;
+            modules = [
+              inputs.disko.nixosModules.disko
+              ./system/dev/generic
+            ];
+          };
+        };
 
       packages."${system}" = {
         vm-1 = self.nixosConfigurations.vm-1.config.microvm.declaredRunner;

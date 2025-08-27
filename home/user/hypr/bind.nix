@@ -13,9 +13,9 @@ let
   notransTag = "notrans";
 
   browser-bin = "zen";
-  prefix = if nvidia-offload-enabled then "nvidia-offload" else "";
-  browser = "${prefix} ${browser-bin}";
-  terminal = "ghostty";
+  prefix = if nvidia-offload-enabled then "nvidia-offload " else "";
+  browser = "${prefix}${browser-bin}";
+  terminal = "${prefix}ghostty";
   filemanager = "${terminal} -e yazi";
 
   screenshotFolder = "--output-folder ~/Pictures/Screenshots";

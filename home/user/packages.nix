@@ -31,6 +31,8 @@
     settings = {
       unfocused-split-opacity = 0.85;
       desktop-notifications = false;
+      background-opacity = 0.1;
+      background-blur = false;
 
       wait-after-command = false;
       shell-integration = "detect";

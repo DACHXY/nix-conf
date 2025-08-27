@@ -6,6 +6,7 @@
   ...
 }:
 let
+  inherit (lib) optionalString;
   monitors = [
     "desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271"
     "desc:Acer Technologies XV272U V3 1322131231233"
@@ -52,140 +53,8 @@ in
     ../../modules/davinci-resolve.nix
     ../../modules/webcam.nix
     ./nginx.nix
+
   ];
-
-  home-manager = {
-    users."${username}" = {
-      imports = [
-        ../../../home/presets/basic.nix
-
-        # Bitwarden client
-        (import ../../../home/user/bitwarden.nix {
-          email = "danny@net.dn";
-          baseUrl = "https://bitwarden.net.dn";
-        })
-
-        # Proton Extra Versions
-        {
-          home.file.".steam/root/compatibilitytools.d/GE-Proton10-10" = {
-            source = fetchTarball {
-              url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton10-10/GE-Proton10-10.tar.gz";
-              sha256 = "sha256:1vkj66x84yqmpqm857hjzmx1s02h2lffcbc60jdfqz9xj34dx5jc";
-            };
-          };
-          home.file.".steam/root/compatibilitytools.d/CachyOS-Proton10-0_v3" = {
-            source = fetchTarball {
-              url = "https://github.com/CachyOS/proton-cachyos/releases/download/cachyos-10.0-20250714-slr/proton-cachyos-10.0-20250714-slr-x86_64_v3.tar.xz";
-              sha256 = "sha256:0hp22hkfv3f1p75im3xpif0pmixkq2i3hq3dhllzr2r7l1qx16iz";
-            };
-          };
-        }
-
-        # waybar
-        (import ../../../home/user/waybar.nix {
-          settings =
-            let
-              id = 5;
-            in
-            [
-              # monitor 1
-              {
-                output = "DP-${toString id}";
-                height = 48;
-                modules-left = [
-                  "custom/os"
-                  "hyprland/workspaces"
-                  "clock"
-                  "custom/cava"
-                  "mpris"
-                ];
-                modules-right = (
-                  [
-                    "wlr/taskbar"
-                  ]
-                  ++ (
-                    if config.programs.gamemode.enable then
-                      [
-                        "gamemode"
-                      ]
-                    else
-                      [ ]
-                  )
-                  ++ [
-                    "custom/bitwarden"
-                    "custom/airplay"
-                    "custom/wallRand"
-                    "custom/wireguard"
-                    "custom/recording"
-                    "idle_inhibitor"
-                    "network"
-                    "cpu"
-                    "memory"
-                    "pulseaudio"
-                    "custom/swaync"
-                  ]
-                );
-              }
-              # monitor 2
-              {
-                output = "DP-${toString (id + 1)}";
-                height = 54;
-                modules-left = [
-                  "clock"
-                  "mpris"
-                ];
-                modules-right = [
-                  "wlr/taskbar"
-                  "temperature"
-                  "cpu"
-                  "memory"
-                  "pulseaudio"
-                ];
-              }
-            ];
-        })
-
-        # Hyprland
-        (import ../../../home/user/hyprland.nix { inherit monitors; })
-        {
-          wayland.windowManager.hyprland = {
-            settings = {
-              monitor = [
-                ''desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271, 2560x1440@165, 0x0, 1''
-                ''desc:Acer Technologies XV272U V3 1322131231233, 2560x1440@180, -1440x-600, 1, transform, 1''
-              ];
-
-              misc = {
-                vrr = 0;
-              };
-            };
-          };
-        }
-
-        # Git
-        (import ../../../home/user/git.nix {
-          inherit username;
-          email = "danny10132024@gmail.com";
-        })
-
-        # Cs go
-        {
-          home.file.".steam/steam/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg/autoexec.cfg".text =
-            ''
-              fps_max "250"
-
-              # Wheel Jump
-              bind "mwheeldown" "+jump"
-              bind "mwheelup" "+jump"
-              bind "space" "+jump"
-
-              echo "AUTOEXEC LOADED SUCCESSFULLY!"
-              host_writeconfig
-            '';
-        }
-      ];
-    };
-  };
 
   # Power Management
   services.tlp = {
@@ -217,6 +86,119 @@ in
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSHkPa6vmr5WBPXAazY16+Ph1Mqv9E24uLIf32oC2oH danny@phone.dn"
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMj/LeB3i/vca3YwGNpAjf922FgiY2svro48fUSQAjOv Shortcuts on :D"
       ];
+    };
+  };
+
+  home-manager = {
+    users."${username}" = {
+      imports = [
+        ../../../home/presets/basic.nix
+
+        # Bitwarden client
+        (import ../../../home/user/bitwarden.nix {
+          email = "danny@net.dn";
+          baseUrl = "https://bitwarden.net.dn";
+        })
+
+        # waybar
+        (import ../../../home/user/waybar.nix {
+          settings = [
+            # monitor 1
+            {
+              output = "DP-3";
+              height = 48;
+              modules-left = [
+                "custom/os"
+                "hyprland/workspaces"
+                "clock"
+                "custom/cava"
+                "mpris"
+              ];
+              modules-right = [
+                "wlr/taskbar"
+                (optionalString config.programs.gamemode.enable "custom/gamemode")
+                "custom/bitwarden"
+                "custom/airplay"
+                "custom/wallRand"
+                "custom/wireguard"
+                "custom/recording"
+                "idle_inhibitor"
+                "network"
+                "cpu"
+                "memory"
+                "pulseaudio"
+                "custom/swaync"
+              ];
+            }
+            # monitor 2
+            {
+              output = "DP-2";
+              height = 54;
+              modules-left = [
+                "clock"
+                "mpris"
+              ];
+              modules-right = [
+                "wlr/taskbar"
+                "temperature"
+                "cpu"
+                "memory"
+                "pulseaudio"
+              ];
+            }
+          ];
+        })
+
+        # Hyprland
+        (import ../../../home/user/hyprland.nix { inherit monitors; })
+        {
+          wayland.windowManager.hyprland = {
+            settings = {
+              monitor = [
+                ''desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271, 2560x1440@165, 0x0, 1''
+                ''desc:Acer Technologies XV272U V3 1322131231233, 2560x1440@180, -1440x-600, 1, transform, 1''
+              ];
+              misc = {
+                vrr = 0;
+              };
+            };
+          };
+        }
+
+        # Git
+        (import ../../../home/user/git.nix {
+          inherit username;
+          email = "danny10132024@gmail.com";
+        })
+      ];
+
+      home.file = {
+        # CS go
+        ".steam/steam/steamapps/common/Counter-Strike Global Offensive/game/csgo/cfg/autoexec.cfg".text = ''
+          fps_max "250"
+
+          # Wheel Jump
+          bind "mwheeldown" "+jump"
+          bind "mwheelup" "+jump"
+          bind "space" "+jump"
+
+          echo "AUTOEXEC LOADED SUCCESSFULLY!"
+          host_writeconfig
+        '';
+        # Proton GE
+        ".steam/root/compatibilitytools.d/GE-Proton10-10" = {
+          source = fetchTarball {
+            url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton10-10/GE-Proton10-10.tar.gz";
+            sha256 = "sha256:1vkj66x84yqmpqm857hjzmx1s02h2lffcbc60jdfqz9xj34dx5jc";
+          };
+        };
+        ".steam/root/compatibilitytools.d/CachyOS-Proton10-0_v3" = {
+          source = fetchTarball {
+            url = "https://github.com/CachyOS/proton-cachyos/releases/download/cachyos-10.0-20250714-slr/proton-cachyos-10.0-20250714-slr-x86_64_v3.tar.xz";
+            sha256 = "sha256:0hp22hkfv3f1p75im3xpif0pmixkq2i3hq3dhllzr2r7l1qx16iz";
+          };
+        };
+      };
     };
   };
 }

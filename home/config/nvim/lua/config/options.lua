@@ -56,4 +56,4 @@ vim.g.clipboard = {
 -- (instead of interacting with the "+" and/or "*" registers explicitly):
 vim.opt.clipboard = "unnamedplus"
 
-vim.g.gruvbox_material_transparent_background = 2
+vim.opt.spelllang = { "en", "cjk" }
