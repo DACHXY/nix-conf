@@ -10,15 +10,16 @@
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
     ./disk.nix
-    ./boot.nix
+    ./hardware-configuration.nix
+    ../../modules/nixsettings.nix
   ];
 
   # boot.loader.systemd-boot.enable = true;
   boot.loader.grub = {
     enable = true;
+    devices = [ "/dev/sda" ];
     efiSupport = true;
     efiInstallAsRemovable = true;
-    devices = [ "/dev/md126" ];
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -42,7 +43,7 @@
   ];
 
   users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBzLpMKn0Q24ACC6k/7lOX0FIdcFhq15NY6849yROeUK danny@dn-pre7780"
+    ''ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSAOufpee7f8D8ONIIGU3qsN+8+DGO7BfZnEOTYqtQ5 danny@pre7780.dn''
   ];
 
   system.stateVersion = nix-version;

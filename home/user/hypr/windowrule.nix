@@ -36,7 +36,11 @@ in
 
     "fullscreen, initialClass:^(cs2)$"
 
+    # Zen browser
     "opacity 0.9999 override, initialClass:^(zen)(.*)"
+
+    # Ghostty
+    "opacity 0.9999 override, initialClass:^(com.mitchellh.ghostty)$"
 
     # Picture in picture windows
     "float, title:^(Picture-in-Picture)$"
@@ -53,10 +57,6 @@ in
     "move ${right} 8%, class: ^(localsend_app)$"
     "size 20% 80%, class: ^(localsend_app)$"
 
-    # Airplay
-    "move ${right} 10%, class: ^(GStreamer)$"
-    "size 21% 80%, class: ^(GStreamer)$"
-
     # Bluetooth
     "move ${right} ${top}, class: ^(blueberry.py)$"
     "size 25% 45%, class: ^(blueberry.py)$"
@@ -72,6 +72,8 @@ in
     "animation slide right 20%, class: ^(localsend_app)$"
 
     # Airplay
+    "move ${right} 10%, class: ^(GStreamer)$"
+    "size 21% 80%, class: ^(GStreamer)$"
     "pin, class: ^(GStreamer)$"
     "float, class: ^(GStreamer)$"
     "opacity 1.0 override 1.0 override, class: ^(GStreamer)$"
