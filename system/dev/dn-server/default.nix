@@ -29,6 +29,11 @@ in
     ../../modules/bluetooth.nix
     ../../modules/gc.nix
     ../../modules/mail-server
+    ../../modules/stylix.nix
+    (import ../../modules/paperless-ngx.nix {
+      domain = "paperless.net.dn";
+      passwordFile = config.sops.secrets."paperless/adminPassword".path;
+    })
     (import ../../modules/prometheus.nix {
       fqdn = "metrics.net.dn";
       selfMonitor = true;
