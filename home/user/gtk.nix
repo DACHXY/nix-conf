@@ -2,16 +2,13 @@
   pkgs,
   ...
 }:
-let
-  cursorName = "catppuccin-macchiato-lavender-cursors";
-in
 {
   gtk = {
     enable = true;
 
     cursorTheme = {
-      name = cursorName;
-      package = pkgs.catppuccin-cursors.macchiatoLavender;
+      name = "Nordzy-cursors";
+      package = pkgs.nordzy-cursor-theme;
     };
 
     iconTheme = {
