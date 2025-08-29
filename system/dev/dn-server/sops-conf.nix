@@ -60,6 +60,9 @@ in
         owner = "prometheus";
         group = config.users.users.prometheus.group;
       };
+      "paperless/adminPassword" = mkIf config.services.paperless.enable {
+        owner = config.services.paperless.user;
+      };
     };
   };
 }
