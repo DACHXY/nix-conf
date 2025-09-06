@@ -8,7 +8,6 @@
     ../user/environment.nix
     ../user/gtk.nix
     ../user/wlogout.nix
-    ../user/nvim.nix
     ../user/packages.nix
     ../user/zen-browser.nix
     ../user/shell.nix
@@ -17,5 +16,6 @@
     ../user/vscode.nix
     ../user/yazi.nix
     ../user/zellij.nix
+    ../user/nvf.nix
   ];
 }

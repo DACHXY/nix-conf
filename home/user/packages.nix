@@ -31,7 +31,7 @@
     settings = {
       unfocused-split-opacity = 0.85;
       desktop-notifications = false;
-      background-opacity = 0;
+      background-opacity = 0.4;
       background-blur = false;
 
       wait-after-command = false;

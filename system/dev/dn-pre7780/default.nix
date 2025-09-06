@@ -11,6 +11,7 @@ let
     "desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271"
     "desc:Acer Technologies XV272U V3 1322131231233"
   ];
+  memeSelector = pkgs.callPackage ../../../home/scripts/memeSelector.nix { };
 in
 {
   networking.firewall.allowedTCPPortRanges = [
@@ -26,6 +27,7 @@ in
   imports = [
     ./hardware-configuration.nix
     ../../modules/presets/basic.nix
+    ../../modules/sunshine.nix
 
     # Nvidia GPU Driver
     (import ../../modules/nvidia.nix {
@@ -52,9 +54,15 @@ in
 
     ../../modules/davinci-resolve.nix
     ../../modules/webcam.nix
+    ../../modules/postgresql.nix
     ./nginx.nix
-
   ];
+
+  # Live Sync D
+  services.postgresql = {
+    ensureUsers = [ { name = "${username}"; } ];
+    ensureDatabases = [ "livesyncd" ];
+  };
 
   # Power Management
   services.tlp = {
@@ -65,6 +73,7 @@ in
   };
 
   environment.systemPackages = with pkgs; [
+    memeSelector
     rustdesk
     ((blender.override { cudaSupport = true; }).overrideAttrs (prev: {
       postInstall = ''
@@ -161,6 +170,9 @@ in
               misc = {
                 vrr = 0;
               };
+              bind = [
+                "$mainMod ctrl, M, exec, ${memeSelector}/bin/memeSelector"
+              ];
             };
           };
         }
