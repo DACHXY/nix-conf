@@ -112,6 +112,11 @@
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nvf = {
+      url = "github:NotAShelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -281,6 +286,7 @@
                       inputs.hyprland.homeManagerModules.default
                       inputs.caelestia-shell.homeManagerModules.default
                       inputs.zen-browser.homeManagerModules.${system}.default
+                      inputs.nvf.homeManagerModules.default
                       {
                         home = {
                           homeDirectory = "/home/${username}";

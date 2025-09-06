@@ -3,16 +3,14 @@
   config,
   username,
   ...
-}:
-let
+}: let
   caskaydia = {
     name = "CaskaydiaCove Nerd Font Mono";
     package = pkgs.nerd-fonts.caskaydia-cove;
   };
 
-  sf-pro-display-bold = pkgs.callPackage ../../pkgs/fonts/sf-pro-display-bold { };
-in
-{
+  sf-pro-display-bold = pkgs.callPackage ../../pkgs/fonts/sf-pro-display-bold {};
+in {
   stylix = {
     enable = true;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-material-dark-medium.yaml";
@@ -39,17 +37,14 @@ in
   };
 
   fonts = {
-    packages = (
-      with pkgs;
-      [
-        font-awesome
-        jetbrains-mono
-        noto-fonts-cjk-sans
-        noto-fonts-cjk-serif
-        noto-fonts-emoji
-        sf-pro-display-bold
-      ]
-    );
+    packages = with pkgs; [
+      font-awesome
+      jetbrains-mono
+      noto-fonts-cjk-sans
+      noto-fonts-cjk-serif
+      noto-fonts-emoji
+      sf-pro-display-bold
+    ];
 
     fontDir.enable = true;
   };
@@ -67,6 +62,10 @@ in
       hyprlock.enable = false;
       hyprland.enable = false;
       rofi.enable = false;
+      nvf = {
+        enable = true;
+        transparentBackground = true;
+      };
     };
   };
 }

@@ -59,6 +59,7 @@ in
     );
 
     settings = {
+      "$mainMod" = mainMod;
       debug = {
         disable_logs = true;
       };
