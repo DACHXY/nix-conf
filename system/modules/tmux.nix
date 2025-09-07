@@ -1,6 +1,8 @@
-{ pkgs, config, ... }:
-
-let
+{
+  pkgs,
+  config,
+  ...
+}: let
   getIconScript = pkgs.writeShellScript "get-icon" ''
     get_icons() {
       local session_name="$1"
@@ -28,21 +30,22 @@ let
 
   prefixKey = "C-Space";
   tmuxConfigPath = "/etc/tmux.conf";
-in
-{
-  environment.variables = {
-    TMUXINATOR_CONFIG = "/etc/tmuxinator";
-  };
-  environment.etc = {
-    "tmuxinator/tmux.yaml" = {
-      source = ../../home/config/tmux.yaml;
-      mode = "0444";
+in {
+  environment = {
+    variables = {
+      TMUXINATOR_CONFIG = "/etc/tmuxinator";
     };
-  };
+    etc = {
+      "tmuxinator/tmux.yaml" = {
+        source = ../../home/config/tmux.yaml;
+        mode = "0444";
+      };
+    };
 
-  environment.systemPackages = with pkgs; [
-    tmuxinator
-  ];
+    systemPackages = with pkgs; [
+      tmuxinator
+    ];
+  };
 
   programs = {
     tmux = {
@@ -61,6 +64,7 @@ in
         set -g allow-passthrough on
         set -s set-clipboard on
         set-option -s set-clipboard on
+        set-option -g extended-keys on
 
         set -g status "on"
         set -g status-style fg=default,bg=default
@@ -83,7 +87,7 @@ in
         bind-key ${prefixKey} send-prefix
 
         # Set Window start at 1
-        set -g base-index 1 
+        set -g base-index 1
         set -g pane-base-index 1
         set-window-option -g pane-base-index 1
         set-option -g renumber-windows on
@@ -117,7 +121,7 @@ in
 
         unbind -T copy-mode-vi MouseDragEnd1Pane
 
-        unbind f 
+        unbind f
         bind-key -r f run-shell "tmux neww tmux-sessionizer"
 
         set -g @resurrect-capture-pane-contents 'on'
