@@ -186,6 +186,12 @@ in {
             nowait = true;
             desc = "Notifications";
           }
+          {
+            key = "<ESC><ESC>";
+            mode = ["n"];
+            action = ":noh<CR>";
+            desc = "Clear highlight";
+          }
 
           # === Tab === #
           {
@@ -208,6 +214,16 @@ in {
             key = "<C-/>";
             mode = ["t"];
             action = "<C-\\><C-n>:ToggleTerm<CR>";
+          }
+          {
+            key = "<C-_>";
+            mode = ["t"];
+            action = "<C-\\><C-n>:ToggleTerm<CR>";
+          }
+          {
+            key = "<C-_>";
+            mode = ["n"];
+            action = ":ToggleTerm<CR>";
           }
           {
             key = "<ESC><ESC>";
