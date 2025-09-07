@@ -295,6 +295,20 @@ in {
               '';
             desc = "Highlight yanked";
           }
+          {
+            event = ["BufWritePost"];
+            callback =
+              mkLuaInline
+              # lua
+              ''
+                function(args)
+                  local bufname = vim.api.nvim_buf_get_name(args.buf)
+                  local info = string.format("Saved %s", vim.fn.fnamemodify(bufname, ":t"))
+                  require("fidget").notify(info, vim.log.levels.INFO)
+                end
+              '';
+            desc = "Fidget notify file saved";
+          }
         ];
 
         globals = {
@@ -316,6 +330,7 @@ in {
           autoindent = true;
           smartindent = true;
           fillchars = "eob: ";
+          wrap = false;
         };
 
         lsp = {
@@ -363,11 +378,29 @@ in {
 
           bash.enable = true;
           css.enable = true;
-          rust.enable = true;
+          rust = {
+            enable = true;
+            lsp = {
+              enable = true;
+              package = [
+                "rust-analyzer"
+              ];
+              opts = ''
+                ['rust-analyzer'] = {
+                  cargo = {allFeature = true},
+                  checkOnSave = true,
+                  procMacro = {
+                    enable = true,
+                  },
+                },
+              '';
+            };
+          };
           nix = {
             enable = true;
             lsp = {
               enable = true;
+              server = "nixd";
             };
           };
           sql.enable = true;
@@ -686,18 +719,36 @@ in {
         ui = {
           noice = {
             enable = true;
-            setupOpts.routes = [
-              # Hide neo-tree notification
-              {
-                filter = {
-                  event = "notify";
-                  kind = "info";
-                  any = [
-                    {find = "hidden";}
-                  ];
-                };
-              }
-            ];
+            setupOpts = {
+              routes = [
+                # Hide neo-tree notification
+                {
+                  filter = {
+                    event = "notify";
+                    kind = "info";
+                    any = [
+                      {find = "hidden";}
+                    ];
+                  };
+                }
+                # Hide Save
+                {
+                  filter = {
+                    event = "msg_show";
+                    kind = "bufwrite";
+                  };
+                  opts = {skip = true;};
+                }
+                {
+                  filter = {
+                    event = "msg_show";
+                    any = [
+                      {find = "written";}
+                    ];
+                  };
+                }
+              ];
+            };
           };
           colorizer.enable = true;
           fastaction.enable = true;
