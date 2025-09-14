@@ -1,57 +1,50 @@
-{
-  pkgs,
-  ...
-}:
-{
-  environment.systemPackages = (
-    with pkgs;
-    [
-      file
+{pkgs, ...}: {
+  environment.systemPackages = with pkgs; [
+    file
 
-      man-pages
-      man-pages-posix
-      stdmanpages
+    man-pages
+    man-pages-posix
+    stdmanpages
 
-      # Binary cache platform
-      cachix
+    # Binary cache platform
+    cachix
 
-      # Utils
-      upower
-      jq
-      bat
-      btop
-      eza
-      fzf
-      neofetch
-      ripgrep
-      tree
-      tldr # Alternative for man
-      wget
-      unzip
-      p7zip
-      killall
-      zip
-      glxinfo # OpenGL info
-      pciutils # PCI info
-      xdotool # Keyboard input simulation
-      ffmpeg # Video encoding
-      mpv # Media player
-      brightnessctl
+    # Utils
+    upower
+    jq
+    bat
+    btop
+    eza
+    fzf
+    neofetch
+    ripgrep
+    tree
+    tldr # Alternative for man
+    wget
+    unzip
+    p7zip
+    killall
+    zip
+    glxinfo # OpenGL info
+    pciutils # PCI info
+    xdotool # Keyboard input simulation
+    ffmpeg # Video encoding
+    mpv # Media player
+    brightnessctl
 
-      # Dev
-      git
-      gh # Github cli tool
-      gnumake
-      lm_sensors
-      pkg-config
-      nodejs
-      yarn-berry
-      rustup
-      gcc
-      zig
+    # Dev
+    git
+    gh # Github cli tool
+    gnumake
+    lm_sensors
+    pkg-config
+    nodejs
+    yarn-berry
+    rustup
+    gcc
+    zig
 
-      # Media
-      vlc
-    ]
-  );
+    # Media
+    vlc
+  ];
 }

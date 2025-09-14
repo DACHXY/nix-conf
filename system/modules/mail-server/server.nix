@@ -30,16 +30,6 @@ let
   '';
   authConf = "${dovecotSecretPath}/dovecot-auth.conf.ext";
 
-  oauthConf = pkgs.writeText "dovecot-oauth.conf.ext" ''
-    oauth2 {
-      client_id = dovecot
-      client_secret = 1l9EyvmaDQBMUHXgPkH69RwNcm7gDFbB
-      introspection_mode = post
-      introspection_url = https://keycloak.net.dn/realms/master/protocol/openid-connect/token/introspect
-      username_attribute = email
-    }
-  '';
-
   dovecotDomain = config.services.postfix.settings.main.myhostname;
 in
 {
@@ -336,7 +326,6 @@ in
           lda_mailbox_autocreate = yes
 
           !include ${authConf}
-          !include ${oauthConf}
         '';
       };
 

@@ -8,25 +8,18 @@
 
 ## ✨ Main Applications
 
-- [X] Hyprland
-- [X] Neovim
-  - ✅ [lazyvim](https://github.com/LazyVim/LazyVim)
-  - ✅ [treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
-  - ❌ mason (not support on NixOS)
-- [X] Waybar
-- [X] Hyprlock
-- [X] Hypridle
-- [X] Swaync (Notification Center)
-- [X] Swww (Wallpaper)
-- [X] Ghostty (Terminal)
-- [X] SDDM (Display Manager)
-- [X] Fish (shell)
-- [X] Rofi (Application Launcher)
-
-## 🎈 Theme
-
-- Catppuccin (Macchiato Lavender)
-- plymouth (Boot Splash)
+- [x] Hyprland
+- [x] NVF
+- [x] Waybar
+- [x] Hyprlock
+- [x] Hypridle
+- [x] Swaync (Notification Center)
+- [x] Swww (Wallpaper)
+- [x] Ghostty (Terminal)
+- [x] SDDM (Display Manager)
+- [x] Fish (shell)
+- [x] Rofi (Application Launcher)
+- [x] Stylix
 
 ## 🎮️ Game
 
@@ -38,15 +31,14 @@
 - Virt Manager (libvirt)
 - Windows 11 example config: [win11_kvm.xml](./home/config/vm/win11_kvm.xml)
 
-## ⌨️  Input (Fcitx5)
+## ⌨️ Input (Fcitx5)
 
 - Rime (bopomofo, pinyin)
 - Mozc (Japanese)
 
 ## 🌐 VPN
 
-- Wireguard (You need put your own `wg0.conf` file)
-.
+- Wireguard (You need put your own `wg0.conf` file) .
 
 > NOTE: If import `wireguard.nix` without config file, the Build will fail.
 
@@ -62,7 +54,9 @@ See [Python Cuda Flake](https://github.com/DACHXY/python-cuda-flake)
 
 ## 💿️ Installation
 
-> Your need to add your own device in [flake.nix](./flake.nix), and create configuration in [system/dev](./system/dev/) (don't forget the `hardware-configuration.nix` generated with `nixos-generate-config`)
+> Your need to add your own device in [flake.nix](./flake.nix), and create
+> configuration in [system/dev](./system/dev/) (don't forget the
+> `hardware-configuration.nix` generated with `nixos-generate-config`)
 
 ### Example
 

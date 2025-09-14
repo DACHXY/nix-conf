@@ -4,8 +4,8 @@
 }:
 let
   inherit (pkgs) writeShellScript;
-  inherit (lib) replaceString;
-  inherit (builtins) toJSON mapAttrs;
+  inherit (lib) replaceString optionalString;
+  inherit (builtins) toJSON;
 in
 {
   mkToggleScript =
@@ -14,6 +14,7 @@ in
       start,
       stop,
       icon ? "",
+      notify-icon ? "",
       extra ? { },
     }:
     let
@@ -26,10 +27,14 @@ in
       case $1 in toggle)
         if systemctl --user is-active --quiet "$SERVICE_NAME"; then
             systemctl --user stop "$SERVICE_NAME"
-            notify-send "${icon} ''\${SERVICE_NAME^}" "stopping"
+            notify-send ${
+              optionalString (notify-icon != "") "-i ${notify-icon}"
+            } "${icon} ''\${SERVICE_NAME^}" "stopping"
         else
             systemctl --user start "$SERVICE_NAME"
-            notify-send "${icon} ''\${SERVICE_NAME^}" "starting"
+            notify-send ${
+              optionalString (notify-icon != "") "-i ${notify-icon}"
+            }"${icon} ''\${SERVICE_NAME^}" "starting"
         fi
       esac
 
