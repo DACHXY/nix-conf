@@ -49,7 +49,7 @@ in
         })
       ];
     })
-    (import ../../modules/actual.nix {
+    (import ../../modules/actual {
       fqdn = "actual.net.dn";
     })
     (import ../../modules/nextcloud.nix {
@@ -127,7 +127,7 @@ in
         ../../../home/user/config.nix
         ../../../home/user/direnv.nix
         ../../../home/user/environment.nix
-        ../../../home/user/nvim.nix
+        ../../../home/user/nvf.nix
         ../../../home/user/shell.nix
         ../../../home/user/tmux.nix
         ../../../home/user/yazi.nix

@@ -7,17 +7,24 @@
 }:
 let
   inherit (lib) optionalString;
+  geVersion = "10-15";
   monitors = [
     "desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271"
     "desc:Acer Technologies XV272U V3 1322131231233"
   ];
-  memeSelector = pkgs.callPackage ../../../home/scripts/memeSelector.nix { };
+  memeSelector = pkgs.callPackage ../../../home/scripts/memeSelector.nix {
+    url = "https://nextcloud.net.dn/public.php/dav/files/pygHoPB5LxDZbeY/";
+  };
 in
 {
   networking.firewall.allowedTCPPortRanges = [
     {
       from = 8000;
       to = 8100;
+    }
+    {
+      from = 31000;
+      to = 31010;
     }
   ];
 
@@ -197,11 +204,12 @@ in
           echo "AUTOEXEC LOADED SUCCESSFULLY!"
           host_writeconfig
         '';
+
         # Proton GE
-        ".steam/root/compatibilitytools.d/GE-Proton10-10" = {
+        ".steam/root/compatibilitytools.d/GE-Proton${geVersion}" = {
           source = fetchTarball {
-            url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton10-10/GE-Proton10-10.tar.gz";
-            sha256 = "sha256:1vkj66x84yqmpqm857hjzmx1s02h2lffcbc60jdfqz9xj34dx5jc";
+            url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton${geVersion}/GE-Proton${geVersion}.tar.gz";
+            sha256 = "sha256:0iv7vak4a42b5m772gqr6wnarswib6dmybfcdjn3snvwxcb6hbsm";
           };
         };
         ".steam/root/compatibilitytools.d/CachyOS-Proton10-0_v3" = {

@@ -15,13 +15,14 @@ let
   inherit (lib) optionalString;
 
   gamemodeToggle = mkToggleScript {
-    service = "gamemoded";
+    service = "gamemodedr";
     start = "on";
     stop = "off";
     icon = "";
+    notify-icon = "preferences-desktop-gaming";
     extra = {
       text = "$(pgrep -c gamemode)";
-      tooltip = "Running: $(pgrep -c gamemode)";
+      tooltip = "Running: $(systemctl --user is-active gamemodedr)";
     };
   };
 
@@ -86,6 +87,14 @@ in
   systemd.user.tmpfiles.rules = [
     "d /tmp/wall_cache 700 ${username} -"
   ];
+
+  # === gamemoded -r === #
+  systemd.user.services.gamemodedr = lib.mkIf osConfig.programs.gamemode.enable {
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.gamemode}/bin/gamemoded -r";
+    };
+  };
 
   # === waybar === #
   systemd.user.services.waybar = lib.mkIf config.programs.waybar.enable {

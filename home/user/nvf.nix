@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  osConfig,
   ...
 }: let
   inherit (lib.generators) mkLuaInline;
@@ -232,25 +233,37 @@ in {
           }
           {
             key = "<C-j>";
-            mode = ["n" "t"];
+            mode = [
+              "n"
+              "t"
+            ];
             action = "<C-\\><C-n><C-w>j";
             nowait = true;
           }
           {
             key = "<C-k>";
-            mode = ["n" "t"];
+            mode = [
+              "n"
+              "t"
+            ];
             action = "<C-\\><C-n><C-w>k";
             nowait = true;
           }
           {
             key = "<C-l>";
-            mode = ["n" "t"];
+            mode = [
+              "n"
+              "t"
+            ];
             action = "<C-\\><C-n><C-w>l";
             nowait = true;
           }
           {
             key = "<C-h>";
-            mode = ["n" "t"];
+            mode = [
+              "n"
+              "t"
+            ];
             action = "<C-\\><C-n><C-w>h";
             nowait = true;
           }
@@ -414,14 +427,28 @@ in {
           };
           nix = {
             enable = true;
+            format.type = "nixfmt";
             lsp = {
-              enable = true;
               server = "nixd";
+              options = {
+                nixos.expr =
+                  # nix
+                  ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
+                home_manager.expr =
+                  # nix
+                  ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options.home-manager.users.type.getSubOptions []'';
+              };
             };
           };
           sql.enable = true;
           clang.enable = true;
-          ts.enable = true;
+          ts = {
+            enable = true;
+            format.type = "prettierd";
+            extensions = {
+              ts-error-translator.enable = true;
+            };
+          };
           python.enable = true;
           markdown.enable = true;
           html.enable = true;
@@ -627,7 +654,15 @@ in {
         autopairs.nvim-autopairs.enable = true;
 
         autocomplete = {
-          blink-cmp.enable = true;
+          blink-cmp = {
+            enable = true;
+            setupOpts = {
+              completion = {
+                menu.border = "rounded";
+                documentation.window.border = "rounded";
+              };
+            };
+          };
         };
 
         snippets.luasnip = {
@@ -705,6 +740,10 @@ in {
           multicursors.enable = true;
           undotree.enable = true;
 
+          yazi-nvim = {
+            enable = true;
+          };
+
           images = {
             img-clip.enable = true;
           };
@@ -753,7 +792,9 @@ in {
                     event = "msg_show";
                     kind = "bufwrite";
                   };
-                  opts = {skip = true;};
+                  opts = {
+                    skip = true;
+                  };
                 }
                 {
                   filter = {

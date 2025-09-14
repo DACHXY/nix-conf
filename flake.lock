@@ -29,11 +29,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1753936121,
-        "narHash": "sha256-gRZAewG5grwOchBqsZiOpJud3dMUColzvCoCkMRmJVo=",
+        "lastModified": 1757826057,
+        "narHash": "sha256-KE6kxoDme82jgmPUE67mvs/kjQBTfSxIuMufuEUSUSo=",
         "owner": "DACHXY",
         "repo": "actual-budget-api",
-        "rev": "368035ec590180f1229b1fccef33c16a2ba4df9a",
+        "rev": "1c7a816cbfe17c5821b446b5582e88404cb23596",
         "type": "github"
       },
       "original": {
