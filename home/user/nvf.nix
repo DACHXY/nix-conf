@@ -2,8 +2,11 @@
   pkgs,
   lib,
   osConfig,
+  inputs,
+  system,
   ...
-}: let
+}:
+let
   inherit (lib.generators) mkLuaInline;
 
   suda-nvim = pkgs.vimUtils.buildVimPlugin {
@@ -15,7 +18,13 @@
       hash = "sha256-46sy3rAdOCULVt1RkIoGdweoV3MqQaB33Et9MrxI6Lk=";
     };
   };
-in {
+
+  marks-nvim = pkgs.vimUtils.buildVimPlugin {
+    name = "marks-nvim";
+    src = inputs.marks-nvim;
+  };
+in
+{
   programs.nvf = {
     enable = true;
     settings = {
@@ -69,6 +78,12 @@ in {
           suda = {
             package = suda-nvim;
           };
+          marks = {
+            package = marks-nvim;
+            setup = ''
+              require("marks").setup {}
+            '';
+          };
         };
 
         keymaps = [
@@ -76,16 +91,16 @@ in {
           # Explorer
           {
             key = "<leader>e";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":Neotree toggle<CR>";
             silent = true;
             desc = "Toggle file explorer";
           }
-          # Fzf lua
+          # === Fzf lua === #
           {
             key = "<Leader><Space>";
             silent = true;
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":FzfLua files<CR>";
             nowait = true;
             unique = true;
@@ -93,7 +108,7 @@ in {
           }
           {
             key = "<Leader>/";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":FzfLua live_grep<CR>";
             nowait = true;
             unique = true;
@@ -103,7 +118,7 @@ in {
           {
             key = "<Leader>ss";
             silent = true;
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":FzfLua lsp_document_symbols<CR>";
             nowait = true;
             unique = true;
@@ -113,23 +128,37 @@ in {
           {
             key = "<Leader>sS";
             silent = true;
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":FzfLua lsp_workspace_symbols<CR>";
             unique = true;
             nowait = true;
             desc = "Find symbols (workspace)";
           }
+          # Registers
+          {
+            key = ''""'';
+            mode = [ "n" ];
+            action = ":FzfLua registers<CR>";
+            desc = "Registers";
+          }
+          # Marks
+          {
+            key = "''";
+            mode = [ "n" ];
+            action = ":FzfLua marks<CR>";
+            desc = "Marks";
+          }
 
           # === Buffer === #
           {
             key = "<Leader>bo";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":BufferLineCloseOther<CR>";
             desc = "Close other buffer";
           }
           {
             key = "<Leader>bS";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":SudaWrite<CR>";
             desc = "Save file as root";
           }
@@ -148,48 +177,48 @@ in {
           }
           {
             key = "<S-Tab>";
-            mode = ["i"];
+            mode = [ "i" ];
             action = "<C-d>";
             desc = "Shift left";
           }
           {
             key = "gd";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":FzfLua lsp_definitions<CR>";
             nowait = true;
             desc = "Go to definition";
           }
           {
             key = "gD";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":FzfLua lsp_declarations<CR>";
             nowait = true;
             desc = "Go to declaration";
           }
           {
             key = "gi";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":FzfLua lsp_implementations<CR>";
             nowait = true;
             desc = "Go to implementation";
           }
           {
             key = "gr";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":FzfLua lsp_references<CR>";
             nowait = true;
             desc = "List references";
           }
           {
             key = "<Leader>n";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":NoiceAll<CR>";
             nowait = true;
             desc = "Notifications";
           }
           {
             key = "<ESC><ESC>";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":noh<CR>";
             desc = "Clear highlight";
           }
@@ -197,14 +226,14 @@ in {
           # === Tab === #
           {
             key = ">";
-            mode = ["v"];
+            mode = [ "v" ];
             action = ">gv";
             silent = true;
             desc = "Shift right";
           }
           {
             key = "<";
-            mode = ["v"];
+            mode = [ "v" ];
             action = "<gv";
             silent = true;
             desc = "Shift left";
@@ -213,22 +242,22 @@ in {
           # === Terminal === #
           {
             key = "<C-/>";
-            mode = ["t"];
+            mode = [ "t" ];
             action = "<C-\\><C-n>:ToggleTerm<CR>";
           }
           {
             key = "<C-_>";
-            mode = ["t"];
+            mode = [ "t" ];
             action = "<C-\\><C-n>:ToggleTerm<CR>";
           }
           {
             key = "<C-_>";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":ToggleTerm<CR>";
           }
           {
             key = "<ESC><ESC>";
-            mode = ["t"];
+            mode = [ "t" ];
             action = "<C-\\><C-n>";
           }
           {
@@ -270,7 +299,7 @@ in {
           # New Term
           {
             key = "<Leader>tn";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":TermNew<CR>";
             nowait = true;
             desc = "Spawn new terminal";
@@ -278,7 +307,7 @@ in {
           # Select Term
           {
             key = "<Leader>tt";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ":TermSelect<CR>";
             nowait = true;
             desc = "Select terminal";
@@ -286,7 +315,7 @@ in {
           # Send current selection to Term
           {
             key = "<Leader>ts";
-            mode = ["v"];
+            mode = [ "v" ];
             action = ":ToggleTermSendVisualSelection<CR>";
             nowait = true;
             desc = "Send current selection to terminal";
@@ -295,7 +324,7 @@ in {
           # === Fold (nvim-ufo) === #
           {
             key = "zR";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ''
               require("ufo").openAllFolds
             '';
@@ -303,7 +332,7 @@ in {
           }
           {
             key = "zM";
-            mode = ["n"];
+            mode = [ "n" ];
             action = ''
               require("ufo").closeAllFolds
             '';
@@ -313,29 +342,29 @@ in {
 
         autocmds = [
           {
-            event = ["TextYankPost"];
+            event = [ "TextYankPost" ];
             callback =
               mkLuaInline
-              # lua
-              ''
-                function()
-                  vim.highlight.on_yank({ higroup = "IncSearch", timeout = 150 })
-                end
-              '';
+                # lua
+                ''
+                  function()
+                    vim.highlight.on_yank({ higroup = "IncSearch", timeout = 150 })
+                  end
+                '';
             desc = "Highlight yanked";
           }
           {
-            event = ["BufWritePost"];
+            event = [ "BufWritePost" ];
             callback =
               mkLuaInline
-              # lua
-              ''
-                function(args)
-                  local bufname = vim.api.nvim_buf_get_name(args.buf)
-                  local info = string.format("Saved %s", vim.fn.fnamemodify(bufname, ":t"))
-                  require("fidget").notify(info, vim.log.levels.INFO)
-                end
-              '';
+                # lua
+                ''
+                  function(args)
+                    local bufname = vim.api.nvim_buf_get_name(args.buf)
+                    local info = string.format("Saved %s", vim.fn.fnamemodify(bufname, ":t"))
+                    require("fidget").notify(info, vim.log.levels.INFO)
+                  end
+                '';
             desc = "Fidget notify file saved";
           }
         ];
@@ -391,12 +420,12 @@ in {
             };
             virtual_text.format =
               mkLuaInline
-              # lua
-              ''
-                function(diagnostic)
-                  return string.format("%s (%s)", diagnostic.message, diagnostic.source)
-                end
-              '';
+                # lua
+                ''
+                  function(diagnostic)
+                    return string.format("%s (%s)", diagnostic.message, diagnostic.source)
+                  end
+                '';
           };
         };
 
@@ -427,17 +456,21 @@ in {
           };
           nix = {
             enable = true;
+            extraDiagnostics.enable = false;
             format.type = "nixfmt";
             lsp = {
-              server = "nixd";
+              server = "nil";
               options = {
-                nixos.expr =
-                  # nix
-                  ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
-                home_manager.expr =
-                  # nix
-                  ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options.home-manager.users.type.getSubOptions []'';
+                nix.flake.autoArchive = true;
               };
+              # options = {
+              #   nixos.expr =
+              #     # nix
+              #     ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
+              #   home_manager.expr =
+              #     # nix
+              #     ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options.home-manager.users.type.getSubOptions []'';
+              # };
             };
           };
           sql.enable = true;
@@ -450,7 +483,12 @@ in {
             };
           };
           python.enable = true;
-          markdown.enable = true;
+          markdown = {
+            enable = true;
+            extensions = {
+              render-markdown-nvim.enable = true;
+            };
+          };
           html.enable = true;
           lua.enable = true;
         };
@@ -667,7 +705,7 @@ in {
 
         snippets.luasnip = {
           enable = true;
-          providers = ["blink-cmp"];
+          providers = [ "blink-cmp" ];
           setupOpts.enable_autosnippets = true;
         };
 
@@ -716,7 +754,85 @@ in {
           whichKey.enable = true;
         };
 
-        fzf-lua.enable = true;
+        fzf-lua = {
+          enable = true;
+          setupOpts = {
+            previewers = {
+              builtin = {
+                extensions = {
+                  "jpg" = {
+                    "kitty" = "";
+                  };
+                };
+                snacks_image = {
+                  enabled = false;
+                  render_inline = false;
+                };
+              };
+            };
+            winopts = {
+              preview = {
+                hidden = "hidden";
+              };
+              border = "rounded";
+            };
+            fzf_opts = {
+              "--no-header" = "";
+              "--no-scrollbar" = "";
+            };
+            files = {
+              formatter = "path.filename_first";
+              prompt = ":";
+              no_header = true;
+              cwd_header = false;
+              cwd_prompt = false;
+              winopts = {
+                title = " files 📑 ";
+                title_pos = "center";
+                title_flags = false;
+              };
+            };
+            buffers = {
+              formatter = "path.filename_first";
+              prompt = ":";
+              no_header = true;
+              fzf_opts = {
+                "--delimiter" = " ";
+                "--with-nth" = "-1..";
+              };
+              winopts = {
+                title = " buffers 📝 ";
+                title_pos = "center";
+              };
+            };
+            lsp = {
+              symbols = {
+                cwd_only = true;
+                no_header = true;
+                prompt = ":";
+                winopts = {
+                  title = " symbols ✨ ";
+                  title_pos = "center";
+                  height = 0.6;
+                  preview = {
+                    hidden = "nohidden";
+                    horizontal = "down:40%";
+                    wrap = "wrap";
+                  };
+                };
+              };
+
+            };
+            registers = {
+              prompt = "registers:";
+              filter = "%a";
+              winopts = {
+                title = " registers 🏷️ ";
+                title_pos = "center";
+              };
+            };
+          };
+        };
 
         dashboard = {
           alpha.enable = true;
@@ -745,7 +861,12 @@ in {
           };
 
           images = {
-            img-clip.enable = true;
+            image-nvim = {
+              enable = true;
+              setupOpts = {
+                backend = "kitty";
+              };
+            };
           };
         };
 
@@ -762,12 +883,12 @@ in {
             };
             setupOpts.winbar.name_formatter =
               mkLuaInline
-              # lua
-              ''
-                function(term)
-                  return "  " .. term.id
-                end
-              '';
+                # lua
+                ''
+                  function(term)
+                    return "  " .. term.id
+                  end
+                '';
           };
         };
 
@@ -782,7 +903,7 @@ in {
                     event = "notify";
                     kind = "info";
                     any = [
-                      {find = "hidden";}
+                      { find = "hidden"; }
                     ];
                   };
                 }
@@ -800,7 +921,7 @@ in {
                   filter = {
                     event = "msg_show";
                     any = [
-                      {find = "written";}
+                      { find = "written"; }
                     ];
                   };
                 }
@@ -814,45 +935,45 @@ in {
             setupOpts = {
               fold_virt_text_handler =
                 mkLuaInline
-                # lua
-                ''
-                  function(virtText, lnum, endLnum, width, truncate)
-                      local newVirtText = {}
-                      local suffix = (' 󰁂 %d '):format(endLnum - lnum)
-                      local sufWidth = vim.fn.strdisplaywidth(suffix)
-                      local targetWidth = width - sufWidth
-                      local curWidth = 0
-                      for _, chunk in ipairs(virtText) do
-                          local chunkText = chunk[1]
-                          local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-                          if targetWidth > curWidth + chunkWidth then
-                              table.insert(newVirtText, chunk)
-                          else
-                              chunkText = truncate(chunkText, targetWidth - curWidth)
-                              local hlGroup = chunk[2]
-                              table.insert(newVirtText, {chunkText, hlGroup})
-                              chunkWidth = vim.fn.strdisplaywidth(chunkText)
-                              -- str width returned from truncate() may less than 2nd argument, need padding
-                              if curWidth + chunkWidth < targetWidth then
-                                  suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
-                              end
-                              break
-                          end
-                          curWidth = curWidth + chunkWidth
-                      end
-                      table.insert(newVirtText, {suffix, 'MoreMsg'})
-                      return newVirtText
-                  end
-                '';
+                  # lua
+                  ''
+                    function(virtText, lnum, endLnum, width, truncate)
+                        local newVirtText = {}
+                        local suffix = (' 󰁂 %d '):format(endLnum - lnum)
+                        local sufWidth = vim.fn.strdisplaywidth(suffix)
+                        local targetWidth = width - sufWidth
+                        local curWidth = 0
+                        for _, chunk in ipairs(virtText) do
+                            local chunkText = chunk[1]
+                            local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+                            if targetWidth > curWidth + chunkWidth then
+                                table.insert(newVirtText, chunk)
+                            else
+                                chunkText = truncate(chunkText, targetWidth - curWidth)
+                                local hlGroup = chunk[2]
+                                table.insert(newVirtText, {chunkText, hlGroup})
+                                chunkWidth = vim.fn.strdisplaywidth(chunkText)
+                                -- str width returned from truncate() may less than 2nd argument, need padding
+                                if curWidth + chunkWidth < targetWidth then
+                                    suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
+                                end
+                                break
+                            end
+                            curWidth = curWidth + chunkWidth
+                        end
+                        table.insert(newVirtText, {suffix, 'MoreMsg'})
+                        return newVirtText
+                    end
+                  '';
 
               provider_selector =
                 mkLuaInline
-                # lua
-                ''
-                  function(bufnr, filetype, buftype)
-                      return {'treesitter', 'indent'}
-                  end
-                '';
+                  # lua
+                  ''
+                    function(bufnr, filetype, buftype)
+                        return {'treesitter', 'indent'}
+                    end
+                  '';
             };
           };
           borders = {

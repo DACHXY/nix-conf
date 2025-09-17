@@ -1,13 +1,20 @@
-{ ... }:
+{ config, ... }:
 {
+  networking.firewall.allowedTCPPorts = [
+    443
+    80
+  ];
+
   security.acme = {
     acceptTerms = true;
     defaults = {
       validMinDays = 2;
-      server = "https://10.0.0.1:${toString 8443}/acme/acme/directory";
+      server = "https://ca.net.dn/acme/acme/directory";
       renewInterval = "daily";
       email = "danny@net.dn";
-      webroot = "/var/lib/acme/acme-challenge";
+      dnsProvider = "pdns";
+      dnsPropagationCheck = false;
+      environmentFile = config.sops.secrets."acme/pdns".path;
     };
   };
 

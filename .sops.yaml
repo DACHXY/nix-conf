@@ -8,6 +8,7 @@ creation_rules:
     key_groups:
       - age:
           - *dn_server
+          - *dn_pre7780
   - path_regex: system/dev/dn-pre7780/secret.yaml
     key_groups:
       - age:

@@ -117,307 +117,317 @@
       url = "github:NotAShelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    nixd = {
+      url = "github:nix-community/nixd";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    marks-nvim = {
+      url = "github:chentoast/marks.nvim";
+      flake = false;
+    };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    nix-index-database,
-    lanzaboote,
-    home-manager,
-    ...
-  } @ inputs: let
-    system = "x86_64-linux";
-    nix-version = "25.05";
+  outputs =
+    {
+      self,
+      nixpkgs,
+      nix-index-database,
+      lanzaboote,
+      home-manager,
+      ...
+    }@inputs:
+    let
+      system = "x86_64-linux";
+      nix-version = "25.05";
 
-    pkgs = import nixpkgs {
-      inherit system;
-    };
-
-    inherit (pkgs) lib;
-
-    helper = import ./helper {inherit pkgs lib;};
-
-    # Declare COMMON modules here
-    common-settings = {
-      modules = [
-        home-manager.nixosModules.default
-        nix-index-database.nixosModules.nix-index
-        inputs.sops-nix.nixosModules.sops
-        inputs.chaotic.nixosModules.default
-        inputs.actual-budget-api.nixosModules.default
-        inputs.stylix.nixosModules.stylix
-      ];
-      args = {
-        inherit
-          helper
-          inputs
-          system
-          nix-version
-          self
-          ;
-      };
-    };
-
-    # Declaring All Devices
-    devices = {
-      # Home Computer
-      dn-pre7780 = {
-        hostname = "dn-pre7780";
-        domain = "net.dn";
-        username = "danny";
-        extra-modules = [
-          lanzaboote.nixosModules.lanzaboote
-          ./system/dev/dn-pre7780
-
-          # VM
-          inputs.microvm.nixosModules.host
-          {
-            networking.useNetworkd = true;
-            systemd.network.enable = true;
-            systemd.network.networks."10-lan" = {
-              matchConfig.Name = [
-                "enp0s31f6"
-                "vm-*"
-              ];
-              networkConfig = {
-                Bridge = "br0";
-              };
-            };
-
-            systemd.network.netdevs."br0" = {
-              netdevConfig = {
-                Name = "br0";
-                Kind = "bridge";
-              };
-            };
-
-            systemd.network.networks."10-lan-bridge" = {
-              matchConfig.Name = "br0";
-              networkConfig = {
-                Address = ["192.168.0.5/24"];
-                Gateway = "192.168.0.1";
-                DNS = ["192.168.0.1"];
-              };
-
-              linkConfig.RequiredForOnline = "routable";
-            };
-
-            microvm.vms = {
-              vm-1 = {
-                flake = self;
-                updateFlake = "git+file:///etc/nixos";
-                autostart = false;
-              };
-              vm-2 = {
-                flake = self;
-                updateFlake = "git+file:///etc/nixos";
-                autostart = false;
-              };
-            };
-          }
-        ];
-        overlays = [];
+      pkgs = import nixpkgs {
+        inherit system;
       };
 
-      # Laptop
-      dn-lap = {
-        hostname = "dn-lap";
-        username = "danny";
-        domain = "net.dn";
-        extra-modules = [
-          lanzaboote.nixosModules.lanzaboote
-          ./system/dev/dn-lap
+      inherit (pkgs) lib;
+
+      helper = import ./helper { inherit pkgs lib; };
+
+      # Declare COMMON modules here
+      common-settings = {
+        modules = [
+          home-manager.nixosModules.default
+          nix-index-database.nixosModules.nix-index
+          inputs.sops-nix.nixosModules.sops
+          inputs.chaotic.nixosModules.default
+          inputs.actual-budget-api.nixosModules.default
+          inputs.stylix.nixosModules.stylix
         ];
-        overlays = [
-        ];
+        args = {
+          inherit
+            helper
+            inputs
+            system
+            nix-version
+            self
+            ;
+        };
       };
 
-      # Server
-      dn-server = {
-        hostname = "dn-server";
-        username = "danny";
-        domain = "net.dn";
-        extra-modules = [
-          inputs.nix-minecraft.nixosModules.minecraft-servers
-          inputs.nix-tmodloader.nixosModules.tmodloader
-          ./system/dev/dn-server
-          ./pkgs/options/dovecot.nix
-        ];
-        overlays = [
-          inputs.nix-minecraft.overlay
-          inputs.nix-tmodloader.overlay
-          (import ./pkgs/overlays/dovecot.nix)
-        ];
+      # Declaring All Devices
+      devices = {
+        # Home Computer
+        dn-pre7780 = {
+          hostname = "dn-pre7780";
+          domain = "net.dn";
+          username = "danny";
+          extra-modules = [
+            lanzaboote.nixosModules.lanzaboote
+            ./system/dev/dn-pre7780
+
+            # VM
+            inputs.microvm.nixosModules.host
+            {
+              networking.useNetworkd = true;
+              systemd.network.enable = true;
+              systemd.network.networks."10-lan" = {
+                matchConfig.Name = [
+                  "enp0s31f6"
+                  "vm-*"
+                ];
+                networkConfig = {
+                  Bridge = "br0";
+                };
+              };
+
+              systemd.network.netdevs."br0" = {
+                netdevConfig = {
+                  Name = "br0";
+                  Kind = "bridge";
+                };
+              };
+
+              systemd.network.networks."10-lan-bridge" = {
+                matchConfig.Name = "br0";
+                networkConfig = {
+                  Address = [ "192.168.0.5/24" ];
+                  Gateway = "192.168.0.1";
+                  DNS = [ "192.168.0.1" ];
+                };
+
+                linkConfig.RequiredForOnline = "routable";
+              };
+
+              microvm.vms = {
+                vm-1 = {
+                  flake = self;
+                  updateFlake = "git+file:///etc/nixos";
+                  autostart = false;
+                };
+                vm-2 = {
+                  flake = self;
+                  updateFlake = "git+file:///etc/nixos";
+                  autostart = false;
+                };
+              };
+            }
+          ];
+          overlays = [ ];
+        };
+
+        # Laptop
+        dn-lap = {
+          hostname = "dn-lap";
+          username = "danny";
+          domain = "net.dn";
+          extra-modules = [
+            lanzaboote.nixosModules.lanzaboote
+            ./system/dev/dn-lap
+          ];
+          overlays = [
+          ];
+        };
+
+        # Server
+        dn-server = {
+          hostname = "dn-server";
+          username = "danny";
+          domain = "net.dn";
+          extra-modules = [
+            inputs.nix-minecraft.nixosModules.minecraft-servers
+            inputs.nix-tmodloader.nixosModules.tmodloader
+            ./system/dev/dn-server
+            ./pkgs/options/dovecot.nix
+          ];
+          overlays = [
+            inputs.nix-minecraft.overlay
+            inputs.nix-tmodloader.overlay
+            (import ./pkgs/overlays/dovecot.nix)
+          ];
+        };
       };
-    };
-  in {
-    nixosConfigurations =
-      (builtins.mapAttrs (
-          dev: conf: let
-            domain =
-              if conf.domain != null
-              then conf.domain
-              else "local";
+    in
+    {
+      nixosConfigurations =
+        (builtins.mapAttrs (
+          dev: conf:
+          let
+            domain = if conf.domain != null then conf.domain else "local";
             inherit (conf) username hostname;
           in
-            nixpkgs.lib.nixosSystem {
-              modules =
-                [
-                  {
-                    system.stateVersion = nix-version;
-                    home-manager = {
-                      backupFileExtension = "backup-hm";
-                      useUserPackages = true;
-                      useGlobalPkgs = true;
-                      extraSpecialArgs = {
-                        inherit
-                          helper
-                          inputs
-                          system
-                          nix-version
-                          devices
-                          username
-                          ;
-                      };
-                      users."${username}" = lib.mkIf (!((conf ? isVM) && (conf.isVM))) {
-                        imports = [
-                          inputs.hyprland.homeManagerModules.default
-                          inputs.caelestia-shell.homeManagerModules.default
-                          inputs.zen-browser.homeManagerModules.${system}.default
-                          inputs.nvf.homeManagerModules.default
-                          {
-                            home = {
-                              homeDirectory = "/home/${username}";
-                              stateVersion = nix-version;
-                            };
-                            # Let Home Manager install and manage itself.
-                            programs.home-manager.enable = true;
-                          }
-                        ];
-                      };
-                    };
-                    networking = {
-                      inherit domain;
-                      hostName = hostname;
-                    };
-                    nixpkgs.hostPlatform = system;
-                    nixpkgs.config.allowUnfree = true;
-                    nixpkgs.overlays = (import ./pkgs/overlays) ++ conf.overlays;
-                  }
-                ]
-                ++ common-settings.modules
-                ++ conf.extra-modules;
-              specialArgs =
-                {
-                  inherit username;
-                }
-                // common-settings.args;
+          nixpkgs.lib.nixosSystem {
+            modules = [
+              {
+                system.stateVersion = nix-version;
+                home-manager = {
+                  backupFileExtension = "backup-hm";
+                  useUserPackages = true;
+                  useGlobalPkgs = true;
+                  extraSpecialArgs = {
+                    inherit
+                      helper
+                      inputs
+                      system
+                      nix-version
+                      devices
+                      username
+                      ;
+                  };
+                  users."${username}" = lib.mkIf (!((conf ? isVM) && (conf.isVM))) {
+                    imports = [
+                      inputs.hyprland.homeManagerModules.default
+                      inputs.caelestia-shell.homeManagerModules.default
+                      inputs.zen-browser.homeManagerModules.${system}.default
+                      inputs.nvf.homeManagerModules.default
+                      {
+                        home = {
+                          homeDirectory = "/home/${username}";
+                          stateVersion = nix-version;
+                        };
+                        # Let Home Manager install and manage itself.
+                        programs.home-manager.enable = true;
+                      }
+                    ];
+                  };
+                };
+                networking = {
+                  inherit domain;
+                  hostName = hostname;
+                };
+                nixpkgs.hostPlatform = system;
+                nixpkgs.config.allowUnfree = true;
+                nixpkgs.overlays = (import ./pkgs/overlays) ++ conf.overlays;
+              }
+            ]
+            ++ common-settings.modules
+            ++ conf.extra-modules;
+            specialArgs = {
+              inherit username;
             }
-        )
-        devices)
-      //
-      # VM For k8s
-      (
-        let
-          vmList = let
-            kubeMasterIP = "192.168.0.6";
-            kubeMasterHostname = "api.kube";
-            kubeMasterAPIServerPort = 6443;
-            kubeApi = "https://${kubeMasterHostname}:${toString kubeMasterAPIServerPort}";
-          in {
-            # master
-            vm-1 = {
-              ip = "192.168.0.6";
-              mac = "02:00:00:00:00:01";
-              extraConfig = {
-                networking.extraHosts = "${kubeMasterIP} ${kubeMasterHostname}";
-                environment.systemPackages = with pkgs; [
-                  kompose
-                  kubectl
-                  kubernetes
-                ];
+            // common-settings.args;
+          }
+        ) devices)
+        //
+          # VM For k8s
+          (
+            let
+              vmList =
+                let
+                  kubeMasterIP = "192.168.0.6";
+                  kubeMasterHostname = "api.kube";
+                  kubeMasterAPIServerPort = 6443;
+                  kubeApi = "https://${kubeMasterHostname}:${toString kubeMasterAPIServerPort}";
+                in
+                {
+                  # master
+                  vm-1 = {
+                    ip = "192.168.0.6";
+                    mac = "02:00:00:00:00:01";
+                    extraConfig = {
+                      networking.extraHosts = "${kubeMasterIP} ${kubeMasterHostname}";
+                      environment.systemPackages = with pkgs; [
+                        kompose
+                        kubectl
+                        kubernetes
+                      ];
 
-                services.kubernetes = {
-                  roles = [
-                    "master"
-                    "node"
-                  ];
+                      services.kubernetes = {
+                        roles = [
+                          "master"
+                          "node"
+                        ];
 
-                  masterAddress = kubeMasterHostname;
-                  apiserverAddress = kubeApi;
-                  easyCerts = true;
-                  apiserver = {
-                    securePort = kubeMasterAPIServerPort;
-                    advertiseAddress = kubeMasterIP;
+                        masterAddress = kubeMasterHostname;
+                        apiserverAddress = kubeApi;
+                        easyCerts = true;
+                        apiserver = {
+                          securePort = kubeMasterAPIServerPort;
+                          advertiseAddress = kubeMasterIP;
+                        };
+
+                        addons.dns.enable = true;
+                      };
+
+                      systemd.services.link-kube-config = {
+                        wantedBy = [ "multi-user.target" ];
+                        serviceConfig = {
+                          Type = "oneshot";
+                          ExecStart = "${pkgs.writeShellScript "link-kube-config.sh" ''
+                            target="/etc/kubernetes/cluster-admin.kubeconfig"
+                            if [ -e "$target" ]; then
+                              [ ! -d "/root/.kube" ] && mkdir -p "/root/.kube"
+                              ln -sf $target /root/.kube/config
+                            fi
+                          ''}";
+                        };
+                      };
+                    };
                   };
+                  # Node
+                  vm-2 = {
+                    ip = "192.168.0.7";
+                    mac = "02:00:00:00:00:02";
+                    extraConfig = {
+                      networking.extraHosts = "${kubeMasterIP} ${kubeMasterHostname}";
 
-                  addons.dns.enable = true;
-                };
+                      environment.systemPackages = with pkgs; [
+                        kompose
+                        kubectl
+                        kubernetes
+                      ];
 
-                systemd.services.link-kube-config = {
-                  wantedBy = ["multi-user.target"];
-                  serviceConfig = {
-                    Type = "oneshot";
-                    ExecStart = "${pkgs.writeShellScript "link-kube-config.sh" ''
-                      target="/etc/kubernetes/cluster-admin.kubeconfig"
-                      if [ -e "$target" ]; then
-                        [ ! -d "/root/.kube" ] && mkdir -p "/root/.kube"
-                        ln -sf $target /root/.kube/config
-                      fi
-                    ''}";
+                      services.kubernetes = {
+                        roles = [ "node" ];
+                        masterAddress = kubeMasterHostname;
+                        easyCerts = true;
+
+                        kubelet.kubeconfig.server = kubeApi;
+                        apiserverAddress = kubeApi;
+                        addons.dns.enable = true;
+                      };
+                    };
                   };
                 };
-              };
-            };
-            # Node
-            vm-2 = {
-              ip = "192.168.0.7";
-              mac = "02:00:00:00:00:02";
-              extraConfig = {
-                networking.extraHosts = "${kubeMasterIP} ${kubeMasterHostname}";
 
-                environment.systemPackages = with pkgs; [
-                  kompose
-                  kubectl
-                  kubernetes
+              mkMicrovm = name: value: {
+                hypervisor = "qemu";
+                vcpu = 4;
+                mem = 8192;
+                interfaces = [
+                  {
+                    type = "tap";
+                    id = "${name}";
+                    mac = value.mac;
+                  }
                 ];
-
-                services.kubernetes = {
-                  roles = ["node"];
-                  masterAddress = kubeMasterHostname;
-                  easyCerts = true;
-
-                  kubelet.kubeconfig.server = kubeApi;
-                  apiserverAddress = kubeApi;
-                  addons.dns.enable = true;
-                };
+                shares = [
+                  {
+                    tag = "ro-store";
+                    source = "/nix/store";
+                    mountPoint = "/nix/.ro-store";
+                  }
+                ];
               };
-            };
-          };
-
-          mkMicrovm = name: value: {
-            hypervisor = "qemu";
-            vcpu = 4;
-            mem = 8192;
-            interfaces = [
-              {
-                type = "tap";
-                id = "${name}";
-                mac = value.mac;
-              }
-            ];
-            shares = [
-              {
-                tag = "ro-store";
-                source = "/nix/store";
-                mountPoint = "/nix/.ro-store";
-              }
-            ];
-          };
-        in
-          lib.mapAttrs' (
-            name: value:
+            in
+            lib.mapAttrs' (
+              name: value:
               lib.nameValuePair name (
                 nixpkgs.lib.nixosSystem {
                   inherit system;
@@ -448,15 +458,15 @@
                       systemd.network.networks."20-lan" = {
                         matchConfig.Type = "ether";
                         networkConfig = {
-                          Address = ["${value.ip}/24"];
+                          Address = [ "${value.ip}/24" ];
                           Gateway = "192.168.0.1";
-                          DNS = ["192.168.0.1"];
+                          DNS = [ "192.168.0.1" ];
                           DHCP = "no";
                         };
                       };
 
                       systemd.services.br-netfilter = {
-                        wantedBy = ["multi-user.target"];
+                        wantedBy = [ "multi-user.target" ];
                         serviceConfig = {
                           ExecStart = "/run/current-system/sw/bin/modprobe br_netfilter";
                         };
@@ -479,23 +489,22 @@
                   ];
                 }
               )
+            ) vmList
           )
-          vmList
-      )
-      // {
-        vps = nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = common-settings.args;
-          modules = [
-            inputs.disko.nixosModules.disko
-            ./system/dev/generic
-          ];
+        // {
+          vps = nixpkgs.lib.nixosSystem {
+            inherit system;
+            specialArgs = common-settings.args;
+            modules = [
+              inputs.disko.nixosModules.disko
+              ./system/dev/generic
+            ];
+          };
         };
-      };
 
-    packages."${system}" = {
-      vm-1 = self.nixosConfigurations.vm-1.config.microvm.declaredRunner;
-      vm-2 = self.nixosConfigurations.vm-2.config.microvm.declaredRunner;
+      packages."${system}" = {
+        vm-1 = self.nixosConfigurations.vm-1.config.microvm.declaredRunner;
+        vm-2 = self.nixosConfigurations.vm-2.config.microvm.declaredRunner;
+      };
     };
-  };
 }

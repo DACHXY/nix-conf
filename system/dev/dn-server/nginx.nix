@@ -64,6 +64,14 @@
 
         locations."/".proxyPass = "http://10.0.0.130:8001/phone.html";
       };
+
+      "ca.net.dn" = {
+        enableACME = true;
+        forceSSL = true;
+        locations."/" = {
+          proxyPass = "https://10.0.0.1:8443/";
+        };
+      };
     };
   };
 }

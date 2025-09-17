@@ -15,6 +15,36 @@
         group = config.services.dovecot2.group;
         mode = "0660";
       };
+
+      "stalwart/adminPassword" =
+        let
+          inherit (config.users.users.stalwart-mail) name group;
+        in
+        lib.mkIf config.services.stalwart-mail.enable {
+          inherit group;
+          owner = name;
+        };
+      "stalwart/tsig" =
+        let
+          inherit (config.users.users.stalwart-mail) name group;
+        in
+        lib.mkIf config.services.stalwart-mail.enable {
+          inherit group;
+          owner = name;
+        };
+      "stalwart/db" =
+        let
+          inherit (config.users.users.stalwart-mail) name group;
+        in
+        lib.mkIf config.services.stalwart-mail.enable {
+          inherit group;
+          owner = name;
+        };
+      "acme/pdns" = {
+        mode = "0660";
+        owner = "acme";
+        group = "acme";
+      };
     };
   };
 }

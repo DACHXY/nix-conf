@@ -59,6 +59,33 @@ in
       ];
     })
 
+    (import ../../modules/stalwart.nix {
+      enableNginx = true;
+      domain = "pre7780.dn";
+      adminPassFile = config.sops.secrets."stalwart/adminPassword".path;
+      dbPassFile = config.sops.secrets."stalwart/db".path;
+      acmeConf = {
+        directory = "https://ca.net.dn/acme/acme/directory";
+        ca_bundle = "${"" + ../../extra/ca.crt}";
+        challenge = "dns-01";
+        origin = "pre7780.dn";
+        contact = "admin@pre7780.dn";
+        domains = [
+          "pre7780.dn"
+          "mx1.pre7780.dn"
+        ];
+        default = true;
+        provider = "rfc2136-tsig";
+        host = "10.0.0.1";
+        renew-before = "1d";
+        port = 5359;
+        cache = "${config.services.stalwart-mail.dataDir}/acme";
+        key = "stalwart";
+        tsig-algorithm = "hmac-sha512";
+        secret = "%{file:${config.sops.secrets."stalwart/tsig".path}}%";
+      };
+    })
+
     ../../modules/davinci-resolve.nix
     ../../modules/webcam.nix
     ../../modules/postgresql.nix
