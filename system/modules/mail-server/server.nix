@@ -41,7 +41,6 @@ in
         postRun = ''
           systemctl restart postfix.service
           systemctl restart dovecot.service
-          systemctl restart rspamd-trainer.service
         '';
       };
       "${cfg.domain}" = {

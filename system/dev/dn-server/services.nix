@@ -4,7 +4,6 @@
   username,
   ...
 }:
-
 let
   inherit username;
 
@@ -13,10 +12,10 @@ let
   sshPortsString = builtins.concatStringsSep ", " (builtins.map (p: builtins.toString p) sshPorts);
 
   personal = {
+    inherit (config.networking) domain;
     ip = "10.0.0.1/24";
     interface = "wg0";
     port = 51820;
-    domain = config.networking.domain;
     range = "10.0.0.0/24";
     full = "10.0.0.1/25";
     restrict = "10.0.0.128/25";
@@ -160,11 +159,13 @@ in
         kube.port
         25565
         kube.masterAPIServerPort
+        5359
       ];
       allowedTCPPorts = sshPorts ++ [
         53
         25565
         kube.masterAPIServerPort
+        5359
       ];
     };
 
@@ -237,8 +238,7 @@ in
           listenPort = personal.port;
           privateKeyFile = config.sops.secrets."wireguard/privateKey".path;
           peers = builtins.map (r: {
-            publicKey = r.publicKey;
-            allowedIPs = r.allowedIPs;
+            inherit (r) publicKey allowedIPs;
           }) (fullRoute ++ meshRoute);
         };
 
@@ -254,30 +254,30 @@ in
     extraHosts = "${kube.masterIP} ${kube.masterHostname}";
   };
 
-  services.postgresql = {
-    enable = lib.mkDefault true;
-    authentication = ''
-      host  powerdnsadmin powerdnsadmin 127.0.0.1/32    trust
-    '';
-    ensureUsers = [
-      {
-        name = "powerdnsadmin";
-        ensureDBOwnership = true;
-      }
-      {
-        name = "pdns";
-        ensureDBOwnership = true;
-      }
-    ];
-    ensureDatabases = [
-      "powerdnsadmin"
-      "pdns"
-    ];
-  };
-
   services = {
     dbus.enable = true;
     blueman.enable = true;
+
+    postgresql = {
+      enable = lib.mkDefault true;
+      authentication = ''
+        host  powerdnsadmin powerdnsadmin 127.0.0.1/32    trust
+      '';
+      ensureUsers = [
+        {
+          name = "powerdnsadmin";
+          ensureDBOwnership = true;
+        }
+        {
+          name = "pdns";
+          ensureDBOwnership = true;
+        }
+      ];
+      ensureDatabases = [
+        "powerdnsadmin"
+        "pdns"
+      ];
+    };
 
     openssh = {
       enable = true;
@@ -293,6 +293,7 @@ in
       enable = true;
       extraConfig = ''
         launch=gpgsql
+        loglevel=6
         webserver-password=$WEB_PASSWORD
         api=yes
         api-key=$WEB_PASSWORD
@@ -302,6 +303,8 @@ in
         webserver=yes
         webserver-port=8081
         local-port=5359
+        dnsupdate=yes
+        allow-dnsupdate-from=10.0.0.0/24
       '';
       secretFile = config.sops.secrets.powerdns.path;
     };
@@ -310,6 +313,7 @@ in
       enable = true;
       forwardZones = {
         "${config.networking.domain}." = "127.0.0.1:5359";
+        "pre7780.dn." = "127.0.0.1:5359";
       };
       forwardZonesRecurse = {
         "." = "8.8.8.8";
@@ -380,11 +384,16 @@ in
     };
   };
 
+  systemd.services.raspamd-trainer = {
+    after = [ "pdns-recursor.service" ];
+  };
+
   services.nginx.virtualHosts = {
     "powerdns.${config.networking.domain}" = {
       enableACME = true;
       forceSSL = true;
-      locations."/".proxyPass = "http://localhost:8000";
+      locations."/api".proxyPass = "http://127.0.0.1:8081";
+      locations."/".proxyPass = "http://127.0.0.1:8000";
     };
 
     "uptime.${config.networking.domain}" = {

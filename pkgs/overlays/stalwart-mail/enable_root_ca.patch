@@ -1,0 +1,291 @@
+diff --git a/crates/common/src/config/server/tls.rs b/crates/common/src/config/server/tls.rs
+index 603cf889..58e38c84 100644
+--- a/crates/common/src/config/server/tls.rs
++++ b/crates/common/src/config/server/tls.rs
+@@ -5,7 +5,7 @@
+  */
+ 
+ use std::{
+-    io::Cursor,
++    io::{Cursor, Read},
+     net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr},
+     sync::Arc,
+     time::Duration,
+@@ -35,7 +35,8 @@ use x509_parser::{
+ 
+ use crate::listener::{
+     acme::{
+-        AcmeProvider, ChallengeSettings, EabSettings, directory::LETS_ENCRYPT_PRODUCTION_DIRECTORY,
++        AcmeProvider, ChallengeSettings, EabSettings,
++        directory::{CABundle, LETS_ENCRYPT_PRODUCTION_DIRECTORY},
+     },
+     tls::AcmeProviders,
+ };
+@@ -66,6 +67,31 @@ impl AcmeProviders {
+                 .property_or_default(("acme", acme_id, "renew-before"), "30d")
+                 .unwrap_or_else(|| Duration::from_secs(30 * 24 * 60 * 60));
+ 
++            let ca_bundle: CABundle = config
++                .value(("acme", acme_id, "ca_bundle"))
++                .map(|s| s.to_string())
++                .and_then(|path| {
++                    let buf = std::fs::read(&path)
++                        .map_err(|err| {
++                            config.new_parse_error(
++                                format!("acme.{acme_id}.ca_bundle"),
++                                err.to_string(),
++                            );
++                        })
++                        .ok()?;
++
++                    reqwest::Certificate::from_pem_bundle(&buf)
++                        .map_err(|err| {
++                            config.new_parse_error(
++                                format!("acme.{acme_id}.ca_bundle"),
++                                err.to_string(),
++                            );
++
++                            err
++                        })
++                        .ok()
++                });
++
+             if directory.is_empty() {
+                 config.new_parse_error(format!("acme.{acme_id}.directory"), "Missing property");
+                 continue;
+@@ -167,6 +193,7 @@ impl AcmeProviders {
+                     contact,
+                     challenge,
+                     eab,
++                    ca_bundle,
+                     renew_before,
+                     default,
+                 ) {
+@@ -304,7 +331,7 @@ fn build_dns_updater(config: &mut Config, acme_id: &str) -> Option<DnsUpdater> {
+         .map_err(|err| {
+             config.new_build_error(
+                 ("acme", acme_id, "provider"),
+-                format!("Failed to create Desec DNS updater: {err}"),
++                format!("Failed to create OVH DNS updater: {err}"),
+             )
+         })
+         .ok(),
+diff --git a/crates/common/src/listener/acme/directory.rs b/crates/common/src/listener/acme/directory.rs
+index 21640cd6..bbefd7aa 100644
+--- a/crates/common/src/listener/acme/directory.rs
++++ b/crates/common/src/listener/acme/directory.rs
+@@ -20,6 +20,8 @@ use store::write::Archiver;
+ use trc::AddContext;
+ use trc::event::conv::AssertSuccess;
+ 
++pub type CABundle = Option<Vec<reqwest::Certificate>>;
++
+ pub const LETS_ENCRYPT_STAGING_DIRECTORY: &str =
+     "https://acme-staging-v02.api.letsencrypt.org/directory";
+ pub const LETS_ENCRYPT_PRODUCTION_DIRECTORY: &str =
+@@ -31,6 +33,7 @@ pub struct Account {
+     pub key_pair: EcdsaKeyPair,
+     pub directory: Directory,
+     pub kid: String,
++    pub ca_bundle: CABundle,
+ }
+ 
+ #[derive(Debug, serde::Serialize)]
+@@ -89,16 +92,23 @@ impl Account {
+         let body = sign(
+             &key_pair,
+             None,
+-            directory.nonce().await?,
++            directory.nonce(&provider.ca_bundle).await?,
+             &directory.new_account,
+             &payload,
+         )?;
+-        let response = https(&directory.new_account, Method::POST, Some(body)).await?;
++        let response = https(
++            &directory.new_account,
++            Method::POST,
++            Some(body),
++            &provider.ca_bundle,
++        )
++        .await?;
+         let kid = get_header(&response, "Location")?;
+         Ok(Account {
+             key_pair,
+             kid,
+             directory,
++            ca_bundle: provider.ca_bundle.clone(),
+         })
+     }
+ 
+@@ -106,15 +116,16 @@ impl Account {
+         &self,
+         url: impl AsRef<str>,
+         payload: &str,
++        ca_bundle: &CABundle,
+     ) -> trc::Result<(Option<String>, String)> {
+         let body = sign(
+             &self.key_pair,
+             Some(&self.kid),
+-            self.directory.nonce().await?,
++            self.directory.nonce(ca_bundle).await?,
+             url.as_ref(),
+             payload,
+         )?;
+-        let response = https(url.as_ref(), Method::POST, Some(body)).await?;
++        let response = https(url.as_ref(), Method::POST, Some(body), ca_bundle).await?;
+         let location = get_header(&response, "Location").ok();
+         let body = response
+             .text()
+@@ -130,7 +141,9 @@ impl Account {
+             serde_json::to_string(&domains)
+                 .map_err(|err| trc::EventType::Acme(trc::AcmeEvent::Error).from_json_error(err))?
+         );
+-        let response = self.request(&self.directory.new_order, &payload).await?;
++        let response = self
++            .request(&self.directory.new_order, &payload, &self.ca_bundle)
++            .await?;
+         let url = response.0.ok_or(
+             trc::EventType::Acme(trc::AcmeEvent::Error)
+                 .caused_by(trc::location!())
+@@ -143,30 +156,30 @@ impl Account {
+     }
+ 
+     pub async fn auth(&self, url: impl AsRef<str>) -> trc::Result<Auth> {
+-        let response = self.request(url, "").await?;
++        let response = self.request(url, "", &self.ca_bundle).await?;
+         serde_json::from_str(&response.1)
+             .map_err(|err| trc::EventType::Acme(trc::AcmeEvent::Error).from_json_error(err))
+     }
+ 
+     pub async fn challenge(&self, url: impl AsRef<str>) -> trc::Result<()> {
+-        self.request(&url, "{}").await.map(|_| ())
++        self.request(&url, "{}", &self.ca_bundle).await.map(|_| ())
+     }
+ 
+     pub async fn order(&self, url: impl AsRef<str>) -> trc::Result<Order> {
+-        let response = self.request(&url, "").await?;
++        let response = self.request(&url, "", &self.ca_bundle).await?;
+         serde_json::from_str(&response.1)
+             .map_err(|err| trc::EventType::Acme(trc::AcmeEvent::Error).from_json_error(err))
+     }
+ 
+     pub async fn finalize(&self, url: impl AsRef<str>, csr: Vec<u8>) -> trc::Result<Order> {
+         let payload = format!("{{\"csr\":\"{}\"}}", URL_SAFE_NO_PAD.encode(csr));
+-        let response = self.request(&url, &payload).await?;
++        let response = self.request(&url, &payload, &self.ca_bundle).await?;
+         serde_json::from_str(&response.1)
+             .map_err(|err| trc::EventType::Acme(trc::AcmeEvent::Error).from_json_error(err))
+     }
+ 
+     pub async fn certificate(&self, url: impl AsRef<str>) -> trc::Result<String> {
+-        Ok(self.request(&url, "").await?.1)
++        Ok(self.request(&url, "", &self.ca_bundle).await?.1)
+     }
+ 
+     pub fn http_proof(&self, challenge: &Challenge) -> trc::Result<Vec<u8>> {
+@@ -218,9 +231,9 @@ pub struct Directory {
+ }
+ 
+ impl Directory {
+-    pub async fn discover(url: impl AsRef<str>) -> trc::Result<Self> {
++    pub async fn discover(url: impl AsRef<str>, ca_bundle: &CABundle) -> trc::Result<Self> {
+         serde_json::from_str(
+-            &https(url, Method::GET, None)
++            &https(url, Method::GET, None, ca_bundle)
+                 .await?
+                 .text()
+                 .await
+@@ -228,9 +241,9 @@ impl Directory {
+         )
+         .map_err(|err| trc::EventType::Acme(trc::AcmeEvent::Error).from_json_error(err))
+     }
+-    pub async fn nonce(&self) -> trc::Result<String> {
++    pub async fn nonce(&self, ca_bundle: &CABundle) -> trc::Result<String> {
+         get_header(
+-            &https(&self.new_nonce.as_str(), Method::HEAD, None).await?,
++            &https(&self.new_nonce.as_str(), Method::HEAD, None, ca_bundle).await?,
+             "replay-nonce",
+         )
+     }
+@@ -316,6 +329,7 @@ async fn https(
+     url: impl AsRef<str>,
+     method: Method,
+     body: Option<String>,
++    ca_bundle: &CABundle,
+ ) -> trc::Result<Response> {
+     let url = url.as_ref();
+     let mut builder = reqwest::Client::builder()
+@@ -329,6 +343,15 @@ async fn https(
+         );
+     }
+ 
++    match ca_bundle {
++        Some(certs) => {
++            for cert in certs {
++                builder = builder.add_root_certificate(cert.clone());
++            }
++        }
++        None => {}
++    };
++
+     let mut request = builder
+         .build()
+         .map_err(|err| trc::EventType::Acme(trc::AcmeEvent::Error).from_http_error(err))?
+diff --git a/crates/common/src/listener/acme/mod.rs b/crates/common/src/listener/acme/mod.rs
+index a6d9b978..2674dd3a 100644
+--- a/crates/common/src/listener/acme/mod.rs
++++ b/crates/common/src/listener/acme/mod.rs
+@@ -16,7 +16,7 @@ use arc_swap::ArcSwap;
+ use dns_update::DnsUpdater;
+ use rustls::sign::CertifiedKey;
+ 
+-use crate::Server;
++use crate::{Server, listener::acme::directory::CABundle};
+ 
+ use self::directory::{Account, ChallengeType};
+ 
+@@ -27,6 +27,7 @@ pub struct AcmeProvider {
+     pub contact: Vec<String>,
+     pub challenge: ChallengeSettings,
+     pub eab: Option<EabSettings>,
++    pub ca_bundle: CABundle,
+     renew_before: chrono::Duration,
+     account_key: ArcSwap<Vec<u8>>,
+     default: bool,
+@@ -64,6 +65,7 @@ impl AcmeProvider {
+         contact: Vec<String>,
+         challenge: ChallengeSettings,
+         eab: Option<EabSettings>,
++        ca_bundle: CABundle,
+         renew_before: Duration,
+         default: bool,
+     ) -> trc::Result<Self> {
+@@ -85,6 +87,7 @@ impl AcmeProvider {
+             account_key: Default::default(),
+             challenge,
+             eab,
++            ca_bundle,
+             default,
+         })
+     }
+@@ -153,6 +156,7 @@ impl Clone for AcmeProvider {
+             renew_before: self.renew_before,
+             account_key: ArcSwap::from_pointee(self.account_key.load().as_ref().clone()),
+             eab: self.eab.clone(),
++            ca_bundle: self.ca_bundle.clone(),
+             default: self.default,
+         }
+     }
+diff --git a/crates/common/src/listener/acme/order.rs b/crates/common/src/listener/acme/order.rs
+index 6def86a4..8ba3b185 100644
+--- a/crates/common/src/listener/acme/order.rs
++++ b/crates/common/src/listener/acme/order.rs
+@@ -85,7 +85,7 @@ impl Server {
+     }
+ 
+     async fn order(&self, provider: &AcmeProvider) -> trc::Result<Vec<u8>> {
+-        let directory = Directory::discover(&provider.directory_url).await?;
++        let directory = Directory::discover(&provider.directory_url, &provider.ca_bundle).await?;
+         let account = Account::create_with_keypair(directory, provider).await?;
+ 
+         let mut params = CertificateParams::new(provider.domains.clone());
