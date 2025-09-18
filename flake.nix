@@ -262,6 +262,23 @@
             (import ./pkgs/overlays/dovecot.nix)
           ];
         };
+
+        # Skydrive
+        skydrive-lap = {
+          hostname = "skydrive-lap";
+          username = "skydrive";
+          domain = "sky.dn";
+          extra-modules = [
+            inputs.nix-minecraft.nixosModules.minecraft-servers
+            inputs.nix-tmodloader.nixosModules.tmodloader
+            inputs.disko.nixosModules.disko
+            ./system/dev/skydrive-lap
+          ];
+          overlays = [
+            inputs.nix-minecraft.overlay
+            inputs.nix-tmodloader.overlay
+          ];
+        };
       };
     in
     {

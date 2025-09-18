@@ -60,7 +60,7 @@ in
   ''${mainMod}, n, tagwindow, ${notransTag}''
 
   # Bitwarden Selector
-  (optionalString config.programs.rbw.enable ''CTRL ${mainMod}, P, exec, ${rbwSelector}'')
+  ''CTRL ${mainMod}, P, exec, ${rbwSelector}''
 
   # Screenshot
   ''${mainMod} SHIFT, s, exec, hyprshot -m region ${clipboardOnly}''

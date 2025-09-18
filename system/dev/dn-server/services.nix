@@ -138,6 +138,12 @@ let
       publicKey = "ERLMpSbSIYRN5HoKmvsk2852/aAvzjvMV7tOs0oupxI=";
       allowedIPs = [ "10.0.0.145/32" ];
     }
+    {
+      # Skydrive
+      dns = "skydrive-mesh";
+      publicKey = "MK6UX8WadSbDXI3919F5EarYlZHjFNbHwYJH8Ub/YXk=";
+      allowedIPs = [ "10.0.0.146/32" ];
+    }
   ];
 in
 {
