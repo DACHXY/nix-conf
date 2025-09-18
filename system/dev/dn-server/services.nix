@@ -139,10 +139,16 @@ let
       allowedIPs = [ "10.0.0.145/32" ];
     }
     {
-      # Skydrive
+      # Skydrive Lap
       dns = "skydrive-mesh";
       publicKey = "MK6UX8WadSbDXI3919F5EarYlZHjFNbHwYJH8Ub/YXk=";
       allowedIPs = [ "10.0.0.146/32" ];
+    }
+    {
+      # Skydrive Phone
+      dns = "skydrive-mesh-phone";
+      publicKey = "K6Pd69/Hfu4ceCAp/JbeEL2QQ+/4ohugW1lAOxHFKDA=";
+      allowedIPs = [ "10.0.0.147/32" ];
     }
   ];
 in

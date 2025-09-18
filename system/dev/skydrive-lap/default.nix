@@ -152,5 +152,6 @@ in
 
   users.users."${username}".openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSAOufpee7f8D8ONIIGU3qsN+8+DGO7BfZnEOTYqtQ5 danny@pre7780.dn"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBDk8GmC7b9+XSDxnIj5brYmNLPVO47G5enrL3Q+8fuh 好強上的捷徑"
   ];
 }

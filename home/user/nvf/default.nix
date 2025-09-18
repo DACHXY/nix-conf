@@ -1,9 +1,7 @@
 {
   pkgs,
   lib,
-  osConfig,
   inputs,
-  system,
   ...
 }:
 let
@@ -25,6 +23,10 @@ let
   };
 in
 {
+  imports = [
+    ./plugins/snacks-nvim
+  ];
+
   programs.nvf = {
     enable = true;
     settings = {
@@ -87,68 +89,6 @@ in
         };
 
         keymaps = [
-          # === Files === #
-          # Explorer
-          {
-            key = "<leader>e";
-            mode = [ "n" ];
-            action = ":Neotree toggle<CR>";
-            silent = true;
-            desc = "Toggle file explorer";
-          }
-          # === Fzf lua === #
-          {
-            key = "<Leader><Space>";
-            silent = true;
-            mode = [ "n" ];
-            action = ":FzfLua files<CR>";
-            nowait = true;
-            unique = true;
-            desc = "Find file";
-          }
-          {
-            key = "<Leader>/";
-            mode = [ "n" ];
-            action = ":FzfLua live_grep<CR>";
-            nowait = true;
-            unique = true;
-            desc = "Live grep";
-          }
-          # Lsp symbol document
-          {
-            key = "<Leader>ss";
-            silent = true;
-            mode = [ "n" ];
-            action = ":FzfLua lsp_document_symbols<CR>";
-            nowait = true;
-            unique = true;
-            desc = "Find symbols (document)";
-          }
-          # Lsp symbol workspace
-          {
-            key = "<Leader>sS";
-            silent = true;
-            mode = [ "n" ];
-            action = ":FzfLua lsp_workspace_symbols<CR>";
-            unique = true;
-            nowait = true;
-            desc = "Find symbols (workspace)";
-          }
-          # Registers
-          {
-            key = ''""'';
-            mode = [ "n" ];
-            action = ":FzfLua registers<CR>";
-            desc = "Registers";
-          }
-          # Marks
-          {
-            key = "''";
-            mode = [ "n" ];
-            action = ":FzfLua marks<CR>";
-            desc = "Marks";
-          }
-
           # === Buffer === #
           {
             key = "<Leader>bo";
@@ -180,34 +120,6 @@ in
             mode = [ "i" ];
             action = "<C-d>";
             desc = "Shift left";
-          }
-          {
-            key = "gd";
-            mode = [ "n" ];
-            action = ":FzfLua lsp_definitions<CR>";
-            nowait = true;
-            desc = "Go to definition";
-          }
-          {
-            key = "gD";
-            mode = [ "n" ];
-            action = ":FzfLua lsp_declarations<CR>";
-            nowait = true;
-            desc = "Go to declaration";
-          }
-          {
-            key = "gi";
-            mode = [ "n" ];
-            action = ":FzfLua lsp_implementations<CR>";
-            nowait = true;
-            desc = "Go to implementation";
-          }
-          {
-            key = "gr";
-            mode = [ "n" ];
-            action = ":FzfLua lsp_references<CR>";
-            nowait = true;
-            desc = "List references";
           }
           {
             key = "<Leader>n";
@@ -496,12 +408,6 @@ in
         visuals = {
           nvim-web-devicons.enable = true;
           nvim-cursorline.enable = true;
-          cinnamon-nvim = {
-            enable = true;
-            setupOpts.keymaps = {
-              basic = true;
-            };
-          };
           fidget-nvim = {
             enable = true;
             setupOpts.notification = {
@@ -705,7 +611,15 @@ in
 
         snippets.luasnip = {
           enable = true;
-          providers = [ "blink-cmp" ];
+          providers = [
+            "friendly-snippets"
+            "blink-cmp"
+            "base16"
+            "lsp-signature-nvim"
+            "snacks-nvim"
+            "render-markdown-nvim"
+            "cmp-path"
+          ];
           setupOpts.enable_autosnippets = true;
         };
 
@@ -715,7 +629,7 @@ in
 
         filetree = {
           neo-tree = {
-            enable = true;
+            enable = false;
             setupOpts = {
               window = {
                 position = "right";
@@ -752,86 +666,6 @@ in
 
         binds = {
           whichKey.enable = true;
-        };
-
-        fzf-lua = {
-          enable = true;
-          setupOpts = {
-            previewers = {
-              builtin = {
-                extensions = {
-                  "jpg" = {
-                    "kitty" = "";
-                  };
-                };
-                snacks_image = {
-                  enabled = false;
-                  render_inline = false;
-                };
-              };
-            };
-            winopts = {
-              preview = {
-                hidden = "hidden";
-              };
-              border = "rounded";
-            };
-            fzf_opts = {
-              "--no-header" = "";
-              "--no-scrollbar" = "";
-            };
-            files = {
-              formatter = "path.filename_first";
-              prompt = ":";
-              no_header = true;
-              cwd_header = false;
-              cwd_prompt = false;
-              winopts = {
-                title = " files 📑 ";
-                title_pos = "center";
-                title_flags = false;
-              };
-            };
-            buffers = {
-              formatter = "path.filename_first";
-              prompt = ":";
-              no_header = true;
-              fzf_opts = {
-                "--delimiter" = " ";
-                "--with-nth" = "-1..";
-              };
-              winopts = {
-                title = " buffers 📝 ";
-                title_pos = "center";
-              };
-            };
-            lsp = {
-              symbols = {
-                cwd_only = true;
-                no_header = true;
-                prompt = ":";
-                winopts = {
-                  title = " symbols ✨ ";
-                  title_pos = "center";
-                  height = 0.6;
-                  preview = {
-                    hidden = "nohidden";
-                    horizontal = "down:40%";
-                    wrap = "wrap";
-                  };
-                };
-              };
-
-            };
-            registers = {
-              prompt = "registers:";
-              filter = "%a";
-              winopts = {
-                title = " registers 🏷️ ";
-                title_pos = "center";
-              };
-            };
-          };
         };
 
         dashboard = {

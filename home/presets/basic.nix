@@ -15,6 +15,6 @@
     ../user/vscode.nix
     ../user/yazi.nix
     ../user/zellij.nix
-    ../user/nvf.nix
+    ../user/nvf
   ];
 }
