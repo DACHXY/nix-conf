@@ -65,6 +65,11 @@ in
                 kb_options = lib.mkForce [ ];
               };
 
+              monitor = [
+                ''desc:AU Optronics 0x82ED, prefered, 0x0, 1''
+                ''desc:AOC 24B30HM2 27ZQ4HA00101, prefered, 1920x540, 1''
+              ];
+
               bind = [
                 "$mainMod ctrl, M, exec, ${memeSelector}/bin/memeSelector"
               ];
