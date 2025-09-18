@@ -3,7 +3,6 @@
   imports = [
     ../user/internationalisation.nix
     ../user/config.nix
-    ../user/desktops.nix
     ../user/direnv.nix
     ../user/environment.nix
     ../user/gtk.nix

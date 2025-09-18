@@ -148,7 +148,7 @@ in
           settings = [
             # monitor 1
             {
-              output = "DP-3";
+              output = "DP-6";
               height = 48;
               modules-left = [
                 "custom/os"
@@ -175,7 +175,7 @@ in
             }
             # monitor 2
             {
-              output = "DP-2";
+              output = "DP-5";
               height = 54;
               modules-left = [
                 "clock"
