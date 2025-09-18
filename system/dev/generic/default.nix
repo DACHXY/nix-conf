@@ -8,27 +8,24 @@
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
-    (modulesPath + "/profiles/qemu-guest.nix")
     ./disk.nix
     ./hardware-configuration.nix
     ../../modules/nixsettings.nix
   ];
 
-  # boot.loader.systemd-boot.enable = true;
-  boot.loader.grub = {
-    enable = true;
-    devices = [ "/dev/sda" ];
-    efiSupport = true;
-    efiInstallAsRemovable = true;
-  };
+  boot.loader.systemd-boot.enable = true;
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
+
+  networking.firewall = {
+    allowedTCPPorts = [ 22 ];
+    allowedUDPPorts = [ ];
+  };
 
   services.openssh = {
     enable = true;
     ports = [
       22
-      30072
     ];
     settings = {
       PasswordAuthentication = true;

@@ -6,15 +6,10 @@
   osConfig,
   ...
 }:
+let
+  md2html = pkgs.callPackage ../scripts/md2html.nix { };
+in
 {
-  programs.poetry = {
-    enable = true;
-    settings = {
-      virtualenvs.create = true;
-      virtualenvs.in-project = true;
-    };
-  };
-
   programs.btop = {
     enable = true;
     settings = {
@@ -93,6 +88,8 @@
       ffmpegthumbnailer
 
       thunderbird
+
+      md2html
     ]
     ++ (
       if osConfig.programs.steam.enable then

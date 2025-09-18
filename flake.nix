@@ -123,10 +123,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # ===== Nvim Plugins ===== #
     marks-nvim = {
       url = "github:chentoast/marks.nvim";
       flake = false;
     };
+    # ======================== #
   };
 
   outputs =
