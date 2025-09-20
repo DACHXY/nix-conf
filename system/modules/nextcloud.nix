@@ -1,9 +1,12 @@
 {
   hostname,
+  adminpassFile,
   datadir ? null,
   dataBackupPath ? null,
   dbBackupPath ? null,
   https ? true,
+  configureACME ? true,
+  trusted ? [ ],
 }:
 {
   config,
@@ -12,6 +15,10 @@
   ...
 }:
 let
+  inherit (lib) mkIf;
+
+  enableBackup = dataBackupPath != null || dbBackupPath != null;
+
   nextcloudPkg = pkgs.nextcloud31.overrideAttrs (oldAttr: rec {
     caBundle = config.security.pki.caBundle;
     postPatch = ''
@@ -77,13 +84,15 @@ in
 
     database.createLocally = true;
     config = {
-      adminpassFile = config.sops.secrets."nextcloud/adminPassword".path;
+      adminpassFile = adminpassFile;
       dbtype = "pgsql";
     };
 
     settings = {
       allow_local_remote_servers = true;
       log_type = "syslog";
+      trusted_proxies = trusted;
+      trusted_domains = trusted;
       enabledPreviewProviders = [
         "OC\\Preview\\BMP"
         "OC\\Preview\\GIF"
@@ -102,7 +111,7 @@ in
     };
   };
 
-  services.nginx.virtualHosts.${hostname} = {
+  services.nginx.virtualHosts.${hostname} = mkIf configureACME {
     enableACME = true;
     forceSSL = true;
   };
@@ -112,7 +121,7 @@ in
   ];
 
   systemd = {
-    timers = lib.mkIf (dataBackupPath != null || dbBackupPath != null) {
+    timers = lib.mkIf enableBackup {
       "nextcloud-backup" = {
         enable = true;
         description = "Nextcloud backup";
@@ -127,7 +136,7 @@ in
       };
     };
 
-    services."nextcloud-backup" = lib.mkIf (dataBackupPath != null || dbBackupPath != null) {
+    services."nextcloud-backup" = lib.mkIf enableBackup {
       enable = true;
       serviceConfig = {
         User = "nextcloud";

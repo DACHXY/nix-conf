@@ -62,6 +62,7 @@ let
       allowedIPs = [ "10.0.0.8/32" ];
     }
   ];
+
   meshRoute = [
     {
       # pre7780.dn
@@ -149,6 +150,12 @@ let
       dns = "skydrive-mesh-phone";
       publicKey = "K6Pd69/Hfu4ceCAp/JbeEL2QQ+/4ohugW1lAOxHFKDA=";
       allowedIPs = [ "10.0.0.147/32" ];
+    }
+    {
+      # GCP
+      dns = "gcp";
+      publicKey = "5th0G9c7vHrhcByvPJAbrn2LXjLPqDEMsHzda0FGUTQ=";
+      allowedIPs = [ "10.0.0.148/32" ];
     }
   ];
 in

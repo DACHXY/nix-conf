@@ -34,7 +34,7 @@ let
 in
 {
   config = mkIf cfg.enable {
-    security.acme.certs = {
+    security.acme.certs = mkIf cfg.configureACME {
       "${config.services.postfix.settings.main.myhostname}" = {
         dnsProvider = null;
         webroot = "/var/lib/acme/acme-challenge";

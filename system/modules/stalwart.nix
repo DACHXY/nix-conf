@@ -1,6 +1,9 @@
 {
   adminPassFile,
   dbPassFile,
+  dkimKey,
+  ldapConf,
+  oidcConf,
   domain ? null,
   acmeConf ? null,
   enableNginx ? true,
@@ -12,6 +15,17 @@
 }:
 let
   inherit (lib) mkIf;
+
+  logFilePath = "${config.services.stalwart-mail.dataDir}/logs";
+  mkCondition = (
+    condition: ithen: ielse: [
+      {
+        "if" = condition;
+        "then" = ithen;
+      }
+      { "else" = ielse; }
+    ]
+  );
 in
 {
   services.postgresql = {
@@ -27,13 +41,23 @@ in
     ];
   };
 
+  systemd.tmpfiles.rules =
+    let
+      inherit (config.users.users.stalwart-mail) name group;
+    in
+    [
+      "d ${logFilePath} 0750 ${name} ${group} - "
+    ];
+
   services.stalwart-mail = {
     enable = true;
     openFirewall = true;
     settings = {
       server = {
         hostname = if (domain != null) then "mx1.${domain}" else config.networking.fqdn;
-        auto-ban.scan.rate = "1000/1d";
+        proxy = {
+          trusted-networks = [ "10.0.0.148" ];
+        };
         tls = {
           enable = true;
           implicit = true;
@@ -42,56 +66,76 @@ in
           smtp = {
             protocol = "smtp";
             bind = "[::]:25";
+            proxy_protocol = true;
+          };
+          submission = {
+            protocol = "smtp";
+            bind = "[::]:587";
+            proxy_protocol = true;
           };
           submissions = {
             protocol = "smtp";
             bind = "[::]:465";
             tls.implicit = true;
+            proxy_protocol = true;
           };
           imaps = {
             protocol = "imap";
             bind = "[::]:993";
             tls.implicit = true;
+            proxy_protocol = true;
           };
           management = {
             protocol = "http";
-            bind = [ "127.0.0.1:8080" ];
+            bind = [
+              "10.0.0.130:8080"
+              "127.0.0.1:8080"
+            ];
+            proxy_protocol = true;
           };
         };
       };
+
       lookup.default = {
         hostname = "mx1.${domain}";
         domain = "${domain}";
       };
-      acme."step-ca" = mkIf (acmeConf != null) acmeConf;
+      acme."letsencrypt" = mkIf (acmeConf != null) acmeConf;
+
       session.auth = {
-        mechanisms = "[plain]";
-        directory = "'in-memory'";
-        require = true;
-        allow-plain-text = true;
+        mechanisms = "[PLAIN LOGIN OAUTHBEARER]";
+        directory = mkCondition "listener != 'smtp'" "'ldap'" false;
+        require = mkCondition "listener != 'smtp'" true false;
       };
-      storage.data = "db";
-      store."db" = {
-        type = "postgresql";
-        host = "localhost";
-        port = 5432;
-        database = "stalwart";
-        user = "stalwart";
-        password = "%{file:${dbPassFile}}%";
+
+      session.rcpt = {
+        relay = mkCondition "!is_empty(authenticated_as)" true false;
+        directory = "'*'";
       };
+
       directory = {
-        "imap".lookup.domains = [ domain ];
         "in-memory" = {
           type = "memory";
           principals = [
             {
-              name = "admin";
-              class = "admin";
+              name = "danny";
+              class = "individual";
               secret = "%{file:${adminPassFile}}%";
-              email = [ "admin@${domain}" ];
+              email = [ "danny@${domain}" ];
+            }
+            {
+              name = "postmaster";
+              class = "individual";
+              secret = "%{file:${adminPassFile}}%";
+              email = [ "postmaster@${domain}" ];
             }
           ];
         };
+        "ldap" = ldapConf;
+        imap.lookup.domains = [
+          domain
+        ];
+        "oidc" = oidcConf;
       };
       authentication.fallback-admin = {
         user = "admin";
@@ -100,7 +144,16 @@ in
       tracer."stdout" = {
         enable = true;
         type = "console";
-        level = "debug";
+        level = "trace";
+      };
+      tracer."file" = {
+        enable = true;
+        type = "log";
+        level = "trace";
+        ansi = true;
+        path = logFilePath;
+        prefix = "stalwart.log";
+        rotate = "daily";
       };
     };
   };

@@ -7,6 +7,11 @@ with lib;
 {
   options.mail-server = {
     enable = mkEnableOption "mail-server";
+
+    configureACME = mkEnableOption "Enable auto configuration of ACME" // {
+      default = false;
+    };
+
     caFile = mkOption {
       type = types.path;
       default = config.security.pki.caBundle;

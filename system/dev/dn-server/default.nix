@@ -56,6 +56,7 @@ in
       hostname = "nextcloud.net.dn";
       dataBackupPath = "/mnt/backup_dn";
       dbBackupPath = "/mnt/backup_dn";
+      adminpassFile = config.sops.secrets."nextcloud/adminPassword".path;
     })
     (import ../../modules/vaultwarden.nix {
       domain = "bitwarden.net.dn";
@@ -95,6 +96,7 @@ in
 
   mail-server = {
     enable = true;
+    configuraACME = true;
     mailDir = "~/Maildir";
     caFile = "" + ../../extra/ca.crt;
     virtualMailDir = "/var/mail/vhosts";
@@ -127,7 +129,7 @@ in
         ../../../home/user/config.nix
         ../../../home/user/direnv.nix
         ../../../home/user/environment.nix
-        ../../../home/user/nvf.nix
+        ../../../home/user/nvf
         ../../../home/user/shell.nix
         ../../../home/user/tmux.nix
         ../../../home/user/yazi.nix
