@@ -138,7 +138,7 @@ in
             #memory,
             #cpu,
             #pulseaudio {
-              font-size: ${toString (osConfig.stylix.fonts.sizes.desktop + 1)}px;
+              font-size: ${toString (osConfig.stylix.fonts.sizes.desktop)}px;
             }
 
             /* Main bar */

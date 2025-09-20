@@ -1,9 +1,15 @@
 { config, lib, ... }:
+let
+  inherit (lib) optionalAttrs;
+in
 {
   sops = {
     secrets = {
       "wireguard/conf" = { };
-      "nextcloud/adminPassword" = { };
+      "nextcloud/adminPassword" = lib.mkIf config.services.nextcloud.enable {
+        owner = "nextcloud";
+        group = "nextcloud";
+      };
       "openldap/adminPassword" = lib.mkIf config.services.openldap.enable {
         owner = config.users.users.openldap.name;
         group = config.users.users.openldap.group;
@@ -16,35 +22,37 @@
         mode = "0660";
       };
 
-      "stalwart/adminPassword" =
-        let
-          inherit (config.users.users.stalwart-mail) name group;
-        in
-        lib.mkIf config.services.stalwart-mail.enable {
-          inherit group;
-          owner = name;
+      # "acme/pdns" = {
+      #   mode = "0660";
+      #   owner = "acme";
+      #   group = "acme";
+      # };
+    }
+    // (optionalAttrs config.services.stalwart-mail.enable (
+      let
+        inherit (config.users.users.stalwart-mail) name group;
+        owner = name;
+      in
+      {
+        "stalwart/adminPassword" = {
+          inherit group owner;
         };
-      "stalwart/tsig" =
-        let
-          inherit (config.users.users.stalwart-mail) name group;
-        in
-        lib.mkIf config.services.stalwart-mail.enable {
-          inherit group;
-          owner = name;
+        "stalwart/tsig" = {
+          inherit group owner;
         };
-      "stalwart/db" =
-        let
-          inherit (config.users.users.stalwart-mail) name group;
-        in
-        lib.mkIf config.services.stalwart-mail.enable {
-          inherit group;
-          owner = name;
+        "stalwart/db" = {
+          inherit group owner;
         };
-      "acme/pdns" = {
-        mode = "0660";
-        owner = "acme";
-        group = "acme";
-      };
-    };
+        "stalwart/dkimKey" = {
+          inherit group owner;
+        };
+        "cloudflare/secret" = {
+          inherit group owner;
+        };
+        "stalwart/ldap" = {
+          inherit group owner;
+        };
+      }
+    ));
   };
 }

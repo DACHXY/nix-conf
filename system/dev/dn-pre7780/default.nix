@@ -32,7 +32,12 @@ in
   hardware.nvidia.open = lib.mkForce true;
 
   imports = [
+    ./boot.nix # Extra Boot Options
+    ./sops-conf.nix # Secret
+    ./nginx.nix
+    ./mail.nix
     ./hardware-configuration.nix
+
     ../../modules/presets/basic.nix
     ../../modules/sunshine.nix
 
@@ -43,8 +48,6 @@ in
       nvidia-bus-id = "PCI:1:0:0";
     })
 
-    ./boot.nix # Extra Boot Options
-    ./sops-conf.nix # Secret
     ../../modules/gaming.nix
     # ../../modules/secure-boot.nix
     ../../modules/virtualization.nix
@@ -59,37 +62,17 @@ in
       ];
     })
 
-    (import ../../modules/stalwart.nix {
-      enableNginx = true;
-      domain = "pre7780.dn";
-      adminPassFile = config.sops.secrets."stalwart/adminPassword".path;
-      dbPassFile = config.sops.secrets."stalwart/db".path;
-      acmeConf = {
-        directory = "https://ca.net.dn/acme/acme/directory";
-        ca_bundle = "${"" + ../../extra/ca.crt}";
-        challenge = "dns-01";
-        origin = "pre7780.dn";
-        contact = "admin@pre7780.dn";
-        domains = [
-          "pre7780.dn"
-          "mx1.pre7780.dn"
-        ];
-        default = true;
-        provider = "rfc2136-tsig";
-        host = "10.0.0.1";
-        renew-before = "1d";
-        port = 5359;
-        cache = "${config.services.stalwart-mail.dataDir}/acme";
-        key = "stalwart";
-        tsig-algorithm = "hmac-sha512";
-        secret = "%{file:${config.sops.secrets."stalwart/tsig".path}}%";
-      };
+    (import ../../modules/nextcloud.nix {
+      hostname = "nextcloud.pre7780.dn";
+      configureACME = false;
+      https = false;
+      adminpassFile = config.sops.secrets."nextcloud/adminPassword".path;
+      trusted = [ "nextcloud.daccc.info" ];
     })
 
     ../../modules/davinci-resolve.nix
     ../../modules/webcam.nix
     ../../modules/postgresql.nix
-    ./nginx.nix
   ];
 
   # Live Sync D
