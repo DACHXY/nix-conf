@@ -600,6 +600,7 @@ in
         autocomplete = {
           blink-cmp = {
             enable = true;
+            friendly-snippets.enable = true;
             setupOpts = {
               completion = {
                 menu.border = "rounded";
@@ -618,7 +619,6 @@ in
             "lsp-signature-nvim"
             "snacks-nvim"
             "render-markdown-nvim"
-            "cmp-path"
           ];
           setupOpts.enable_autosnippets = true;
         };
