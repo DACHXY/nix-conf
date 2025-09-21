@@ -144,16 +144,7 @@ in
       tracer."stdout" = {
         enable = true;
         type = "console";
-        level = "trace";
-      };
-      tracer."file" = {
-        enable = true;
-        type = "log";
-        level = "trace";
-        ansi = true;
-        path = logFilePath;
-        prefix = "stalwart.log";
-        rotate = "daily";
+        level = "info";
       };
     };
   };
