@@ -1,11 +1,13 @@
 { osConfig, pkgs, ... }:
 let
   shellAlias = import ./shellAlias.nix { hostname = osConfig.networking.hostName; };
+  remoteRebuld = pkgs.callPackage ../scripts/remoteRebuild.nix { };
 in
 {
   home.packages = with pkgs; [
     # Shell
     grc
+    remoteRebuld
   ];
 
   programs = {
