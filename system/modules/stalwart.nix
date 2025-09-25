@@ -103,7 +103,7 @@ in
       acme."letsencrypt" = mkIf (acmeConf != null) acmeConf;
 
       session.auth = {
-        mechanisms = "[PLAIN LOGIN OAUTHBEARER]";
+        mechanisms = "[plain login oauthbearer]";
         directory = mkCondition "listener != 'smtp'" "'ldap'" false;
         require = mkCondition "listener != 'smtp'" true false;
       };
@@ -117,12 +117,6 @@ in
         "in-memory" = {
           type = "memory";
           principals = [
-            {
-              name = "danny";
-              class = "individual";
-              secret = "%{file:${adminPassFile}}%";
-              email = [ "danny@${domain}" ];
-            }
             {
               name = "postmaster";
               class = "individual";

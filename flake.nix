@@ -129,6 +129,11 @@
       flake = false;
     };
     # ======================== #
+
+    attic = {
+      url = "github:zhaofengli/attic";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -161,6 +166,7 @@
           inputs.chaotic.nixosModules.default
           inputs.actual-budget-api.nixosModules.default
           inputs.stylix.nixosModules.stylix
+          inputs.attic.nixosModules.atticd
         ];
         args = {
           inherit
@@ -294,6 +300,9 @@
           nixpkgs.lib.nixosSystem {
             modules = [
               {
+                environment.systemPackages = [
+                  inputs.attic.packages.${system}.attic
+                ];
                 system.stateVersion = nix-version;
                 home-manager = {
                   backupFileExtension = "backup-hm";

@@ -63,6 +63,7 @@ in
       "paperless/adminPassword" = mkIf config.services.paperless.enable {
         owner = config.services.paperless.user;
       };
+      "atticd/secret" = mkIf config.services.atticd.enable { };
     };
   };
 }

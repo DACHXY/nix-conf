@@ -13,6 +13,7 @@ in
     ./hardware-configuration.nix
     ./boot.nix
     ./sops-conf.nix
+    ../../modules/printer.nix
     ../../modules/presets/basic.nix
     ../../modules/gaming.nix
     ../../modules/virtualization.nix

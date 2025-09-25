@@ -2,6 +2,8 @@
   pkgs,
   username,
   config,
+  system,
+  inputs,
   lib,
   ...
 }:
@@ -12,9 +14,6 @@ let
     "desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271"
     "desc:Acer Technologies XV272U V3 1322131231233"
   ];
-  memeSelector = pkgs.callPackage ../../../home/scripts/memeSelector.nix {
-    url = "https://nextcloud.net.dn/public.php/dav/files/pygHoPB5LxDZbeY/";
-  };
 in
 {
   networking.firewall.allowedTCPPortRanges = [
@@ -90,7 +89,6 @@ in
   };
 
   environment.systemPackages = with pkgs; [
-    memeSelector
     rustdesk
     ((blender.override { cudaSupport = true; }).overrideAttrs (prev: {
       postInstall = ''
@@ -177,22 +175,7 @@ in
 
         # Hyprland
         (import ../../../home/user/hyprland.nix { inherit monitors; })
-        {
-          wayland.windowManager.hyprland = {
-            settings = {
-              monitor = [
-                ''desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271, 2560x1440@165, 0x0, 1''
-                ''desc:Acer Technologies XV272U V3 1322131231233, 2560x1440@180, -1440x-600, 1, transform, 1''
-              ];
-              misc = {
-                vrr = 0;
-              };
-              bind = [
-                "$mainMod ctrl, M, exec, ${memeSelector}/bin/memeSelector"
-              ];
-            };
-          };
-        }
+        ./hyprland.nix
 
         # Git
         (import ../../../home/user/git.nix {

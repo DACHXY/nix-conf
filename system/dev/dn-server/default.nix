@@ -25,6 +25,7 @@ in
     ./services.nix
     ./nginx.nix
     ./step-ca.nix
+    ./atticd.nix
     ../../modules/presets/minimal.nix
     ../../modules/bluetooth.nix
     ../../modules/gc.nix
@@ -96,7 +97,7 @@ in
 
   mail-server = {
     enable = true;
-    configuraACME = true;
+    configureACME = true;
     mailDir = "~/Maildir";
     caFile = "" + ../../extra/ca.crt;
     virtualMailDir = "/var/mail/vhosts";

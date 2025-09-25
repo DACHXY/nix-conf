@@ -9,8 +9,9 @@ let
   inherit (lib) optionalString;
   geVersion = "10-15";
   faceIcon = pkgs.fetchurl {
-    url = "https://instagram.ftpe7-1.fna.fbcdn.net/v/t51.2885-19/424428026_677208484625994_7040235245478168411_n.jpg?efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDA4LmMyIn0&_nc_ht=instagram.ftpe7-1.fna.fbcdn.net&_nc_cat=106&_nc_oc=Q6cZ2QE3VBo0agfb2uRkv76VZxrXrKy3ZqOgrbVuuGMU_OUraKQBrsxhJCQdBRCwxri_CkI&_nc_ohc=p8gNQ2JIMw8Q7kNvwHo_GSn&_nc_gid=gdlrYsCRM-aXXlo0UnZp9Q&edm=ALGbJPMBAAAA&ccb=7-5&oh=00_AfYdDCxoYilhrom6hx55-j-HgfN-XbizFuIjg52Ci14P8Q&oe=68D0471D&_nc_sid=7d3ac5";
-    hash = "sha256-qea72vVrZJ3DPH0h4i8TORXZjQZMyQnOlM7xi/0Enw0=";
+    url = "https://files.net.dn/skydrive.jpg";
+    hash = "sha256-aMjl6VL1Zy+r3ElfFyhFOlJKWn42JOnAFfBXF+GPB/Q=";
+    curlOpts = "-k";
   };
 
   memeSelector = pkgs.callPackage ../../../home/scripts/memeSelector.nix {
@@ -37,6 +38,7 @@ in
     ./boot.nix # Extra Boot Options
     ./disk.nix
     ./sops-conf.nix
+    ../../modules/printer.nix
     ../../modules/gaming.nix
     ../../modules/wine.nix
     ../../modules/localsend.nix
