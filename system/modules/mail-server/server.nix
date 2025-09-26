@@ -292,7 +292,7 @@ in
           log_path = /dev/stderr
           log_debug = (category=auth-client) OR (event=auth_client_passdb_lookup_started)
 
-          auth_mechanisms = plain login oauthbearer
+          auth_mechanisms = plain login
           ssl = required
 
           service auth {

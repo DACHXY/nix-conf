@@ -18,6 +18,7 @@ in
       intel-bus-id = "PCI:0:2:0";
       nvidia-bus-id = "PCI:1:0:0";
     })
+    ./security.nix
     ./sops-conf.nix
     ./boot.nix
     ./hardware-configuration.nix
@@ -58,6 +59,7 @@ in
       dataBackupPath = "/mnt/backup_dn";
       dbBackupPath = "/mnt/backup_dn";
       adminpassFile = config.sops.secrets."nextcloud/adminPassword".path;
+      trusted = [ "nextcloud.daccc.info" ];
     })
     (import ../../modules/vaultwarden.nix {
       domain = "bitwarden.net.dn";
