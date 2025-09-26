@@ -132,6 +132,7 @@ in
       misc = {
         disable_hyprland_logo = true;
         force_default_wallpaper = 0;
+        disable_splash_rendering = true;
       };
     }
     // (import ./hypr/window.nix { inherit lib; })

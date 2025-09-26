@@ -6,6 +6,7 @@
 }:
 let
   inherit (lib.generators) mkLuaInline;
+  inherit (lib) concatStringsSep;
 
   suda-nvim = pkgs.vimUtils.buildVimPlugin {
     name = "vim-suda";
@@ -47,6 +48,11 @@ in
           transparent = {
             package = transparent-nvim;
             setup =
+              let
+                clearFg = map (x: ''vim.api.nvim_set_hl(0, "${x}", { fg = "NONE", bg = "NONE"})'') [
+                  "TabLineFill"
+                ];
+              in
               # lua
               ''
                 require("transparent").setup({
@@ -70,7 +76,6 @@ in
                     "DiffText",
                     "DiffViewNormal",
                     "CursorColumn",
-                    "ColorColumn",
                     "QuickFixLine",
                     "Error",
                     "NoiceScrollbar"
@@ -78,6 +83,9 @@ in
                 })
                 require("transparent").clear_prefix("NeoTree")
                 require("transparent").clear_prefix("GitGutter")
+                require("transparent").clear_prefix("BufferLine")
+
+                ${concatStringsSep "\n" clearFg}
               '';
           };
           suda = {
@@ -460,7 +468,7 @@ in
             setupOpts = {
               options = {
                 show_close_icon = false;
-                separator_style = "slope";
+                separator_style = "thin";
                 numbers = "none";
                 indicator = {
                   style = "none";
