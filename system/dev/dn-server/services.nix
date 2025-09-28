@@ -386,7 +386,7 @@ in
 
   virtualisation = {
     oci-containers = {
-      backend = "docker";
+      backend = "podman";
       containers = {
         uptime-kuma = {
           extraOptions = [ "--network=host" ];

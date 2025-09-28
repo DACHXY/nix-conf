@@ -541,7 +541,7 @@ in
         };
       };
       oci-containers = {
-        backend = "docker";
+        backend = "podman";
         containers = {
           phpLDAPadmin = {
             extraOptions = [ "--network=host" ];

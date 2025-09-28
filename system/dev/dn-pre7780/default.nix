@@ -35,6 +35,12 @@ in
     ./sops-conf.nix # Secret
     ./nginx.nix
     ./mail.nix
+    # (import ./netbird.nix {
+    #   domain = "pre7780.dn";
+    #   coturnPassFile = config.sops.secrets."netbird/coturn/password".path;
+    #   idpSecret = config.sops.secrets."netbird/oidc/secret".path;
+    #   dataStoreEncryptionKey = config.sops.secrets."netbird/dataStoreKey".path;
+    # })
     ./hardware-configuration.nix
 
     ../../modules/presets/basic.nix
@@ -63,8 +69,8 @@ in
 
     (import ../../modules/nextcloud.nix {
       hostname = "nextcloud.pre7780.dn";
-      configureACME = false;
-      https = false;
+      configureACME = true;
+      https = true;
       adminpassFile = config.sops.secrets."nextcloud/adminPassword".path;
       trusted = [ "nextcloud.daccc.info" ];
     })

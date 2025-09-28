@@ -66,6 +66,7 @@ in
         contacts
         calendar
         tasks
+        whiteboard
         ;
 
       camerarawpreviews = pkgs.fetchNextcloudApp {
@@ -120,74 +121,4 @@ in
     exiftool
   ];
 
-  systemd = {
-    timers = lib.mkIf enableBackup {
-      "nextcloud-backup" = {
-        enable = true;
-        description = "Nextcloud backup";
-        timerConfig = {
-          OnCalendar = "*-*-* 03:00:00";
-          Persistent = true;
-          OnUnitActiveSec = "1d";
-          AccuracySec = "1h";
-          Unit = "nextcloud-backup.service";
-        };
-        wantedBy = [ "timers.target" ];
-      };
-    };
-
-    services."nextcloud-backup" = lib.mkIf enableBackup {
-      enable = true;
-      serviceConfig = {
-        User = "nextcloud";
-        ExecStart =
-          let
-            script = pkgs.writeShellScriptBin "backup" (
-              ''
-                nextcloudPath="${config.services.nextcloud.datadir}"
-
-                if [ ! -d "$nextcloudPath" ]; then
-                  echo "nextcloud path not found: $nextcloudPath"
-                  exit 1
-                fi
-              ''
-              + (
-                if dataBackupPath != null then
-                  ''
-                    backupPath="${dataBackupPath}"
-                    nextcloudBakPath="$backupPath"
-
-                    if [ ! -d "$backupPath" ]; then
-                      echo "Backup device is not mounted: $backupPath"
-                      exit 1
-                    fi
-
-                    echo "Start syncing..."
-                    ${pkgs.rsync}/bin/rsync -rh --delete "$nextcloudPath" "$nextcloudBakPath"
-                    echo "Data dir backup completed."
-                  ''
-                else
-                  ""
-              )
-              + (
-                if dbBackupPath != null then
-                  ''
-                    nextcloudDBBakPath="${dbBackupPath}/nextcloud-db.bak.tar"
-                    if [ ! -d "$nextcloudBakPath" ]; then
-                      mkdir -p "$nextcloudBakPath"
-                    fi
-
-                    echo "Try backing up database (postgresql)"
-                    ${pkgs.postgresql}/bin/pg_dump -F t nextcloud -f "$nextcloudDBBakPath"
-                    echo "Database backup completed."
-                  ''
-                else
-                  ""
-              )
-            );
-          in
-          "${script}/bin/backup";
-      };
-    };
-  };
 }

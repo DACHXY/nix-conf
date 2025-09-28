@@ -3,7 +3,6 @@
   ...
 }:
 {
-
   services.fail2ban = {
     enable = true;
     maxretry = 5;
@@ -18,38 +17,34 @@
       maxtime = "1y";
       overalljails = true;
     };
-    jails =
-      let
-        nginxLogPath = "/var/log/nginx/error.log*";
-      in
-      {
-        sshd.settings = {
-          logPath = "";
-          filter = "sshd";
-          action = ''nftables-multiport[name="sshd", port="ssh,30072"]'';
-          backend = "systemd";
-          findtime = 600;
-          bantime = 600;
-          maxretry = 5;
-        };
-        nginx-error-common.settings = {
-          logPath = nginxLogPath;
-          filter = "nginx-error-common";
-          action = ''nftables-multiport[name=HTTP, port="http,https"]'';
-          backend = "auto";
-          findtime = 600;
-          bantime = 600;
-          maxretry = 5;
-        };
-        nginx-forbidden.settings = {
-          logPath = nginxLogPath;
-          filter = "nginx-forbidden";
-          action = ''nftables-multiport[name=HTTP, port="http,https"]'';
-          backend = "auto";
-          findtime = 600;
-          bantime = 600;
-          maxretry = 5;
-        };
+    jails = {
+      sshd.settings = {
+        logPath = "";
+        filter = "sshd";
+        action = ''nftables-multiport[name="sshd", port="ssh,30072"]'';
+        backend = "systemd";
+        findtime = 600;
+        bantime = 600;
+        maxretry = 5;
       };
+      nginx-error-common.settings = {
+        logPath = "";
+        filter = "nginx-error-common";
+        action = ''nftables-multiport[name=HTTP, port="http,https"]'';
+        backend = "systemd";
+        findtime = 600;
+        bantime = 600;
+        maxretry = 5;
+      };
+      nginx-forbidden.settings = {
+        logPath = "";
+        filter = "nginx-forbidden";
+        action = ''nftables-multiport[name=HTTP, port="http,https"]'';
+        backend = "systemd";
+        findtime = 600;
+        bantime = 600;
+        maxretry = 5;
+      };
+    };
   };
 }
