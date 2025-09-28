@@ -188,6 +188,19 @@ in
           inherit username;
           email = "danny10132024@gmail.com";
         })
+
+        # (import ../../../home/user/wallpaper-engine.nix {
+        #   monitorIdPairs = [
+        #     {
+        #       monitor = "DP-6";
+        #       id = "3050040845";
+        #     }
+        #     {
+        #       monitor = "DP-5";
+        #       id = "2665674743";
+        #     }
+        #   ];
+        # })
       ];
 
       home.file = {
