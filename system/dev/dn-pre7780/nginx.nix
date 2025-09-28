@@ -14,7 +14,7 @@
       email = "danny@net.dn";
       dnsProvider = "pdns";
       dnsPropagationCheck = false;
-      # environmentFile = config.sops.secrets."acme/pdns".path;
+      environmentFile = config.sops.secrets."acme/pdns".path;
     };
   };
 
