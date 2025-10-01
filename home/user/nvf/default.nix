@@ -67,6 +67,7 @@ in
                     "BlinkCmpBorder",
                     "BlinkCmpKind",
                     "WarningMsg",
+                    "ColorColumn",
                     "ErrorMsg",
                     "BlinkCmpMenuBorder",
                     "FzfLuaBackdrop",
@@ -407,7 +408,8 @@ in
           markdown = {
             enable = true;
             extensions = {
-              render-markdown-nvim.enable = true;
+              render-markdown-nvim.enable = false;
+              markview-nvim.enable = true;
             };
           };
           html.enable = true;
@@ -453,7 +455,6 @@ in
             "base16"
             "lsp-signature-nvim"
             "snacks-nvim"
-            "render-markdown-nvim"
           ];
           setupOpts.enable_autosnippets = true;
         };

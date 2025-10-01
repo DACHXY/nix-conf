@@ -1,7 +1,7 @@
 {
   sops = {
     secrets = {
-      "wireguard/conf" = { };
+      "wireguard/wg0.conf" = { };
     };
   };
 }

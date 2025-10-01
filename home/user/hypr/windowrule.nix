@@ -3,10 +3,6 @@ let
   top = "60";
   right = "100%-w-10";
   notransTag = "notrans";
-  noTransList = [
-    "title:(.*)( - YouTube — Mozilla Firefox)"
-    "title:(.*)( - 巴哈姆特動畫瘋 — Mozilla Firefox)"
-  ];
 in
 {
   windowrule = [
@@ -109,13 +105,7 @@ in
     # Disable Tansparent
     "opacity 1.0 override 1.0 override, tag:${notransTag}"
     "noblur, tag: ^(${notransTag})$"
-  ]
-  ++ (concatLists (
-    map (w: [
-      "opacity 1.0 override 1.0 override, ${w}"
-      "noblur, ${w}"
-    ]) noTransList
-  ));
+  ];
 
   layerrule = [
     "blur, waybar"

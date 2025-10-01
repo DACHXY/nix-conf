@@ -7,6 +7,6 @@
     firewall = {
       allowedUDPPorts = [ 51820 ];
     };
-    wg-quick.interfaces.wg0.configFile = config.sops.secrets."wireguard/conf".path;
+    wg-quick.interfaces.wg0.configFile = config.sops.secrets."wireguard/wg0.conf".path;
   };
 }

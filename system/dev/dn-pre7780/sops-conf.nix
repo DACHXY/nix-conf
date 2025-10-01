@@ -5,7 +5,7 @@ in
 {
   sops = {
     secrets = {
-      "wireguard/conf" = { };
+      "wireguard/wg0.conf" = { };
       "nextcloud/adminPassword" = mkIf config.services.nextcloud.enable {
         owner = "nextcloud";
         group = "nextcloud";

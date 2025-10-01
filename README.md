@@ -13,6 +13,7 @@
 - [x] Waybar
 - [x] Hyprlock
 - [x] Hypridle
+- [x] Zen Browser
 - [x] Swaync (Notification Center)
 - [x] Swww (Wallpaper)
 - [x] Ghostty (Terminal)
@@ -20,6 +21,12 @@
 - [x] Fish (shell)
 - [x] Rofi (Application Launcher)
 - [x] Stylix
+
+## Manuals
+
+- [Hyprland](./docs/hyprland.md)
+- [Yazi Extra Shortcuts](./docs/yazi.md)
+- [Fcitx5 Input Method (With Bopomofo Tutorial)](./docs/fcitx.md)
 
 ## 🎮️ Game
 
@@ -38,17 +45,13 @@
 
 ## 🌐 VPN
 
-- Wireguard (You need put your own `wg0.conf` file) .
+- Wireguard (You need put your own `wg0.conf` in sops file) .
 
 > NOTE: If import `wireguard.nix` without config file, the Build will fail.
 
 ## 🧊 CUDA
 
 See [Python Cuda Flake](https://github.com/DACHXY/python-cuda-flake)
-
-## 🧱 Wallpaper Engine
-
-- [Linux Wallpaper Engine](https://github.com/Almamu/linux-wallpaperengine)
 
 ---
 
@@ -60,7 +63,7 @@ See [Python Cuda Flake](https://github.com/DACHXY/python-cuda-flake)
 
 ### Example
 
-```
+```text
 system/dev/
 ├── <your-device-name>
     ├── boot.nix # You can add extra boot options here 

@@ -2,6 +2,7 @@
   inputs,
   system,
   pkgs,
+  lib,
   ...
 }:
 let
@@ -11,6 +12,15 @@ let
     rev = "main";
     hash = "sha256-TUS+yXxBOt6tL/zz10k4ezot8IgVg0/2BbS8wPs9KcE=";
   };
+  md2html = pkgs.callPackage ./../scripts/md2html.nix { };
+  pdfNormalize = pkgs.writeShellScriptBin "normalize-pdf" ''
+    # Nomalize pdf to A4 size
+    ${lib.getExe pkgs.ghostscript} -o "normalized_$1" \
+       -sDEVICE=pdfwrite \
+       -sPAPERSIZE=a4 \
+       -dFIXEDMEDIA \
+       -dPDFFitPage "$1"
+  '';
 in
 {
   programs = {
@@ -62,6 +72,22 @@ in
           player = [
             { run = ''mpv --force-window "$@"''; }
           ];
+
+          open = [
+            {
+              run = ''xdg-open "$@"'';
+              desc = "Open";
+            }
+          ];
+        };
+
+        open = {
+          prepend_rules = [
+            {
+              mime = "application/pdf";
+              use = "open";
+            }
+          ];
         };
       };
 
@@ -107,7 +133,7 @@ in
             {
               on = "T";
               run = "plugin toggle-pane max-preview";
-              desc = "Show or hide the preview pane";
+              desc = "Show or hide the preview panel";
             }
             # Copy selected files to the system clipboard while yanking
             {
@@ -143,6 +169,38 @@ in
               for = "unix";
               run = ''shell "$SHELL" --block'';
               desc = "Open $SHELL here";
+            }
+            # Combine PDF
+            {
+              on = [
+                "F" # file
+                "p" # pdf
+                "c" # combine
+              ];
+              for = "unix";
+              run = ''shell '${lib.getExe pkgs.pdftk} "$@" cat output combined_$(date +%Y%m%d_%H%M%S).pdf 2>/dev/null &' '';
+              desc = "Combine selected pdf";
+            }
+            {
+              on = [
+                "F" # file
+                "p" # pdf
+                "n" # normalize
+              ];
+              for = "unix";
+              run = ''shell -- for path in "$@"; do ${lib.getExe pdfNormalize} "$path"; done'';
+            }
+            {
+              on = [
+                "F" # file
+                "m" # markdown
+                "h" # html
+              ];
+              for = "unix";
+              run = [
+                ''shell -- for path in "$@"; do ${lib.getExe md2html} "$path"; done''
+              ];
+              desc = "Convert Markdown to HTML";
             }
           ];
         };
