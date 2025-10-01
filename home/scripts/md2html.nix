@@ -4,6 +4,17 @@ let
     url = "https://raw.githubusercontent.com/xz/new.css/refs/heads/master/new.css";
     hash = "sha256-Xd3AMZOeThsrupQusSLjqv3hbNmcpeTms0ieI9nyxOk=";
   };
+  inlineHeader =
+    pkgs.writeText "pandoc-inline-header"
+      # html
+      ''
+        <style>
+        h1 { font-size: 1.55em !important; }
+        h2 { font-size: 1.35em !important; }
+        h3 { font-size: 1.2em !important; }
+        h4 { font-size: 1.1em !important; }
+        </style>
+      '';
 in
 pkgs.writeShellScriptBin "md2html" ''
   set -e
@@ -15,7 +26,8 @@ pkgs.writeShellScriptBin "md2html" ''
   HTML_TEMP="''\${BASENAME}.html"
   PDF_OUTPUT="''\${BASENAME}.pdf"
 
-  ${pkgs.pandoc}/bin/pandoc "$INPUT" -s \
+  ${pkgs.pandoc}/bin/pandoc "$INPUT" -f markdown-implicit_figures \
+  --include-in-header=${inlineHeader} -s \
   --to=html5 --embed-resources \
   --css=${cssStyle} -o "$HTML_TEMP" "$@"
 

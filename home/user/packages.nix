@@ -58,13 +58,11 @@ in
       (python3.withPackages (python-pkgs: [
         python-pkgs.pip
         python-pkgs.requests
-        python-pkgs.weasyprint
       ]))
 
       # Work stuff
       libreoffice-qt
       pandoc
-      texliveSmall
 
       # Bluetooth
       blueberry
