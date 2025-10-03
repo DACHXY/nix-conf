@@ -134,6 +134,15 @@
       url = "github:zhaofengli/attic";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    kaiu-font = {
+      url = "https://files.net.dn/kaiu.ttf";
+      flake = false;
+    };
+
+    actual-budget-server = {
+      url = "github:dachxy/actual-budget-flake";
+    };
   };
 
   outputs =
