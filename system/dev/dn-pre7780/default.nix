@@ -2,14 +2,12 @@
   pkgs,
   username,
   config,
-  system,
-  inputs,
   lib,
   ...
 }:
 let
   inherit (lib) optionalString;
-  geVersion = "10-15";
+  protonGEVersion = "10-15";
   monitors = [
     "desc:ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271"
     "desc:Acer Technologies XV272U V3 1322131231233"
@@ -218,9 +216,9 @@ in
         '';
 
         # Proton GE
-        ".steam/root/compatibilitytools.d/GE-Proton${geVersion}" = {
+        ".steam/root/compatibilitytools.d/GE-Proton${protonGEVersion}" = {
           source = fetchTarball {
-            url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton${geVersion}/GE-Proton${geVersion}.tar.gz";
+            url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton${protonGEVersion}/GE-Proton${protonGEVersion}.tar.gz";
             sha256 = "sha256:0iv7vak4a42b5m772gqr6wnarswib6dmybfcdjn3snvwxcb6hbsm";
           };
         };

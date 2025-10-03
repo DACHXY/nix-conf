@@ -15,11 +15,15 @@ let
   md2html = pkgs.callPackage ./../scripts/md2html.nix { };
   pdfNormalize = pkgs.writeShellScriptBin "normalize-pdf" ''
     # Nomalize pdf to A4 size
-    ${lib.getExe pkgs.ghostscript} -o "normalized_$1" \
-       -sDEVICE=pdfwrite \
-       -sPAPERSIZE=a4 \
-       -dFIXEDMEDIA \
-       -dPDFFitPage "$1"
+    for path in "$@"; do
+      output_path="normalized_$(basename "$path")"
+      ${pkgs.ghostscript}/bin/gs \
+         -o "$output_path" \
+         -sDEVICE=pdfwrite \
+         -sPAPERSIZE=a4 \
+         -dFIXEDMEDIA \
+         -dPDFFitPage "$path"
+    done
   '';
 in
 {
@@ -188,13 +192,14 @@ in
                 "n" # normalize
               ];
               for = "unix";
-              run = ''shell -- for path in "$@"; do ${lib.getExe pdfNormalize} "$path"; done'';
+              run = ''shell -- ${lib.getExe pdfNormalize} "$@" 2>/dev/null & '';
+              desc = "Normalize PDF to A4 size";
             }
             {
               on = [
                 "F" # file
                 "m" # markdown
-                "h" # html
+                "H" # html
               ];
               for = "unix";
               run = [
@@ -229,5 +234,6 @@ in
 
   home.packages = with pkgs; [
     ueberzugpp
+    pdfNormalize
   ];
 }

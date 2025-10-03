@@ -2,15 +2,19 @@
   pkgs,
   config,
   username,
+  inputs,
   ...
-}: let
+}:
+let
   caskaydia = {
     name = "CaskaydiaCove Nerd Font Mono";
     package = pkgs.nerd-fonts.caskaydia-cove;
   };
 
-  sf-pro-display-bold = pkgs.callPackage ../../pkgs/fonts/sf-pro-display-bold {};
-in {
+  sf-pro-display-bold = pkgs.callPackage ../../pkgs/fonts/sf-pro-display-bold { };
+  # dfkai-sb = pkgs.callPackage ../../pkgs/fonts/dfkai-sb { src = inputs.kaiu-font; };
+in
+{
   stylix = {
     enable = true;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-material-dark-medium.yaml";
@@ -43,6 +47,8 @@ in {
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
       noto-fonts-emoji
+      liberation_ttf
+      # dfkai-sb
       sf-pro-display-bold
     ];
 
