@@ -1,16 +1,13 @@
 {
-  monitors ? [ ],
-}:
-{
   pkgs,
   lib,
-  config,
   inputs,
   system,
   osConfig,
   ...
 }:
 let
+  inherit (osConfig.systemConf.hyprland) monitors;
   terminal = "ghostty";
 
   execOnceScript = pkgs.writeShellScript "hyprlandExecOnce" ''
@@ -40,6 +37,14 @@ in
     sunsetr
   ];
 
+  imports = [
+    (import ./hypr/bind.nix { inherit mainMod; })
+    ./hypr/workspace.nix
+    ./hypr/window.nix
+    ./hypr/windowrule.nix
+    ./hypr/input.nix
+  ];
+
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
@@ -60,22 +65,12 @@ in
 
     settings = {
       "$mainMod" = mainMod;
+
       debug = {
         disable_logs = true;
       };
 
-      bind = (
-        import ./hypr/bind.nix {
-          inherit
-            mainMod
-            pkgs
-            monitors
-            config
-            lib
-            ;
-          nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
-        }
-      );
+      ecosystem.no_update_news = true;
 
       bindm = [
         # Move/resize windows with mainMod + LMB/RMB and dragging
@@ -102,7 +97,8 @@ in
 
       monitor = [
         ", prefered, 0x0, 1"
-      ];
+      ]
+      ++ (map (x: "desc:${x.desc},${x.props}") osConfig.systemConf.hyprland.monitors);
 
       plugin = {
         hyprwinrap = {
@@ -128,16 +124,12 @@ in
         ''GDK_PIXBUF_MODULE_FILE, ${pkgs.librsvg}/lib/gdk-pixbuf-2.0/2.10.0/loaders.cache''
       ];
 
-      workspace = (import ./hypr/workspace.nix { inherit monitors; });
       misc = {
         disable_hyprland_logo = true;
         force_default_wallpaper = 0;
         disable_splash_rendering = true;
       };
-    }
-    // (import ./hypr/window.nix { inherit lib; })
-    // (import ./hypr/windowrule.nix)
-    // (import ./hypr/input.nix);
+    };
   };
 
   # === Swww === #
@@ -161,7 +153,8 @@ in
       let
         font = "CaskaydiaCove Nerd Font";
         font2 = "SF Pro Display Bold";
-        mainMonitor = if ((builtins.length monitors) > 0) then builtins.elemAt monitors 0 else "";
+        mainMonitor =
+          if ((builtins.length monitors) > 0) then "desc:${(builtins.elemAt monitors 0).desc}" else "";
       in
       {
         background = {
@@ -270,7 +263,6 @@ in
             valign = "center";
           }
         ];
-
       };
   };
 
@@ -546,10 +538,10 @@ in
   # === rofi === #
   programs.rofi = {
     enable = true;
-    package = pkgs.rofi-wayland;
+    package = pkgs.rofi;
     plugins = with pkgs; [
-      rofi-emoji-wayland
-      (rofi-calc.override { rofi-unwrapped = rofi-wayland-unwrapped; })
+      rofi-emoji
+      rofi-calc
     ];
   };
 

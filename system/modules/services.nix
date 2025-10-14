@@ -1,10 +1,12 @@
 {
   lib,
   pkgs,
-  username,
+  config,
   ...
 }:
-
+let
+  inherit (config.systemConf) username;
+in
 {
   networking = {
     firewall = {

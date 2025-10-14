@@ -4,12 +4,23 @@
   smtpDomain,
   domain,
   extraSettings ? { },
+  extraConf ? { },
 }:
 { config, ... }:
 let
   email = "grafana@${smtpDomain}";
 in
 {
+  services.postgresql = {
+    ensureDatabases = [ "grafana" ];
+    ensureUsers = [
+      {
+        name = "grafana";
+        ensureDBOwnership = true;
+      }
+    ];
+  };
+
   services.grafana = {
     enable = true;
     settings = (
@@ -31,11 +42,20 @@ in
         security = {
           admin_email = email;
           admin_password = "$__file{${passFile}}";
+          secret_key = "$__file{${passFile}}";
+        };
+        database = {
+          type = "postgres";
+          user = "grafana";
+          name = "grafana";
+          host = "/var/run/postgresql";
         };
       }
       // extraSettings
     );
-  };
+
+  }
+  // extraConf;
 
   services.nginx.virtualHosts."${domain}" = {
     enableACME = true;

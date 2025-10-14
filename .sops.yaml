@@ -5,20 +5,21 @@ keys:
   - &skydrive_lap age1ar5h06qv72pduau043r04kschwcq0x0lm33wqvxzdh9grmp3cq3sy0ngnz
 
 creation_rules:
-  - path_regex: system/dev/dn-server/secret.yaml
+  - path_regex: system/dev/dn-server/sops/secret.yaml
     key_groups:
       - age:
           - *dn_server
           - *dn_pre7780
-  - path_regex: system/dev/dn-pre7780/secret.yaml
+  - path_regex: system/dev/dn-pre7780/sops/secret.yaml
     key_groups:
       - age:
           - *dn_pre7780
-  - path_regex: system/dev/dn-lap/secret.yaml
+  - path_regex: system/dev/dn-lap/sops/secret.yaml
     key_groups:
       - age:
+          - *dn_server
           - *dn_lap
-  - path_regex: system/dev/skydrive-lap/secret.yaml
+  - path_regex: system/dev/skydrive-lap/sops/secret.yaml
     key_groups:
       - age:
           - *skydrive_lap

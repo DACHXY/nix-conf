@@ -3,7 +3,6 @@
   dbPassFile,
   dkimKey,
   ldapConf,
-  oidcConf,
   domain ? null,
   acmeConf ? null,
   enableNginx ? true,
@@ -102,17 +101,6 @@ in
       };
       acme."letsencrypt" = mkIf (acmeConf != null) acmeConf;
 
-      session.auth = {
-        mechanisms = "[plain login oauthbearer]";
-        directory = mkCondition "listener != 'smtp'" "'ldap'" false;
-        require = mkCondition "listener != 'smtp'" true false;
-      };
-
-      session.rcpt = {
-        relay = mkCondition "!is_empty(authenticated_as)" true false;
-        directory = "'*'";
-      };
-
       directory = {
         "in-memory" = {
           type = "memory";
@@ -129,7 +117,6 @@ in
         imap.lookup.domains = [
           domain
         ];
-        "oidc" = oidcConf;
       };
       authentication.fallback-admin = {
         user = "admin";

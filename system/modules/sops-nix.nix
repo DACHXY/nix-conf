@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  defaultSopsFile = ../.. + "/system/dev/${config.networking.hostName}/secret.yaml";
+  defaultSopsFile = ../.. + "/system/dev/${config.networking.hostName}/sops/secret.yaml";
   ageKeyFile = "/var/lib/sops-nix/key.txt";
 in
 {
