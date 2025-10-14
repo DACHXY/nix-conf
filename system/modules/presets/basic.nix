@@ -7,11 +7,11 @@
     ../bluetooth.nix
     ../display-manager.nix
     ../flatpak.nix
-    ../hyprland.nix
     ../obs-studio.nix
     ../plymouth.nix
     ../polkit.nix
     ../security.nix
+    ../hyprland.nix
   ];
 
   programs.gdk-pixbuf.modulePackages = [ pkgs.librsvg ];

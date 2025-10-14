@@ -1,4 +1,10 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  system,
+  ...
+}:
+{
   environment.systemPackages = with pkgs; [
     file
 
@@ -46,5 +52,8 @@
 
     # Media
     vlc
+
+    # Search nixpkgs util
+    inputs.nix-search-tv.packages.${system}.default
   ];
 }

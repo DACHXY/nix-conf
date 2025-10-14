@@ -1,10 +1,11 @@
 {
   pkgs,
   config,
-  username,
   ...
 }:
-
+let
+  inherit (config.systemConf) username;
+in
 {
   users.users.${username} = {
     isNormalUser = true;

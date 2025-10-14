@@ -1,17 +1,24 @@
 {
   pkgs,
+  config,
   inputs,
+  lib,
   ...
 }:
+let
+  inherit (lib) mkIf;
+
+  hyprlandEnabled = config.programs.hyprland.enable;
+in
 {
   programs.hyprland = {
-    enable = true;
+    enable = config.systemConf.hyprland.enable;
     withUWSM = false;
     package = inputs.hyprland.packages."${pkgs.system}".hyprland;
     portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
   };
 
-  xdg.portal = {
+  xdg.portal = mkIf hyprlandEnabled {
     enable = true;
     xdgOpenUsePortal = true;
     extraPortals = [
@@ -19,29 +26,32 @@
     ];
   };
 
-  environment.sessionVariables = {
+  environment.sessionVariables = mkIf hyprlandEnabled {
     NIXOS_OZONE_WL = "1";
     WLR_NO_HARDWARE_CURSORS = "1";
   };
 
-  environment.systemPackages = with pkgs; [
-    pyprland
-    hyprsunset
-    hyprpicker
-    hyprshot
-    kitty
+  environment.systemPackages = mkIf hyprlandEnabled (
+    with pkgs;
+    [
+      pyprland
+      hyprsunset
+      hyprpicker
+      hyprshot
+      kitty
 
-    qt5.qtwayland
-    qt6.qtwayland
-    wlogout
-    wl-clipboard
+      # qt5.qtwayland
+      # qt6.qtwayland
+      wlogout
+      wl-clipboard
 
-    # Util
-    grim
-    slurp
-  ];
+      # Util
+      grim
+      slurp
+    ]
+  );
 
-  nix = {
+  nix = mkIf hyprlandEnabled {
     settings = {
       substituters = [ "https://hyprland.cachix.org" ];
       trusted-public-keys = [

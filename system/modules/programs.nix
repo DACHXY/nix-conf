@@ -36,7 +36,12 @@
     dconf.enable = true;
     zsh.enable = true;
     mtr.enable = true;
-    fish.enable = true;
+    fish = {
+      enable = true;
+      shellAliases = {
+        "ns" = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history";
+      };
+    };
 
     # Set fish as default shell but not login shell
     bash = {

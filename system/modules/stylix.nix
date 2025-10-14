@@ -1,18 +1,17 @@
 {
   pkgs,
   config,
-  username,
-  inputs,
   ...
 }:
 let
+  inherit (config.systemConf) username;
+
   caskaydia = {
     name = "CaskaydiaCove Nerd Font Mono";
     package = pkgs.nerd-fonts.caskaydia-cove;
   };
 
   sf-pro-display-bold = pkgs.callPackage ../../pkgs/fonts/sf-pro-display-bold { };
-  # dfkai-sb = pkgs.callPackage ../../pkgs/fonts/dfkai-sb { src = inputs.kaiu-font; };
 in
 {
   stylix = {

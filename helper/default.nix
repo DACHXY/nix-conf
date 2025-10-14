@@ -34,7 +34,7 @@ in
             systemctl --user start "$SERVICE_NAME"
             notify-send ${
               optionalString (notify-icon != "") "-i ${notify-icon}"
-            }"${icon} ''\${SERVICE_NAME^}" "starting"
+            } "${icon} ''\${SERVICE_NAME^}" "starting"
         fi
       esac
 
@@ -48,4 +48,47 @@ in
 
       jq -nc --argjson a "$json1" --argjson b "$EXTRA_JSON" '$a + $b'
     '';
+
+  grafana = {
+    mkDashboard =
+      {
+        name,
+        src,
+        templateList,
+        conf ? { },
+      }:
+      let
+        template = toJSON templateList;
+      in
+      pkgs.stdenvNoCC.mkDerivation (
+        {
+          inherit src;
+          pname = "${name}-grafana-dashboard-srouce";
+          version = "1.0";
+          dontBuild = true;
+          nativeBuildInputs = with pkgs; [ jq ];
+
+          installPhase = ''
+            PROM_TEMPLATE='${template}'
+            OUTPUT_PATH="$out"
+
+            mkdir -p $out
+
+            if [ -f "$src" ]; then
+              echo "adding template filename: $(basename $src)"
+              jq --argjson TEMPLATE "$PROM_TEMPLATE" '.templating.list += $TEMPLATE' \
+              "$src" > "$OUTPUT_PATH/$(basename $src)"
+            else
+              find . -name "*.json" | while read DASHBOARD_FILE; do
+                echo "adding template filename: $DASHBOARD_FILE"
+                jq --argjson TEMPLATE "$PROM_TEMPLATE" '
+                  .templating.list += $TEMPLATE
+                ' "$DASHBOARD_FILE" > "$OUTPUT_PATH/$DASHBOARD_FILE"
+              done
+            fi
+          '';
+        }
+        // conf
+      );
+  };
 }

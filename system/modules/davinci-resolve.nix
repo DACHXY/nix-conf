@@ -1,6 +1,6 @@
 {
   pkgs,
-  username,
+  config,
   ...
 }:
 let
@@ -13,7 +13,7 @@ in
     scriptBin
   ];
 
-  home-manager.users."${username}" = {
+  home-manager.users."${config.systemConf.username}" = {
     xdg.desktopEntries."davindi-resolve" = {
       name = "Davinci Resolve";
       genericName = "Video Editor";
