@@ -13,7 +13,7 @@ let
 
   notransTag = "notrans";
 
-  browser-bin = "zen";
+  browser-bin = "$BROWSER";
   prefix = if nvidia-offload-enabled then "nvidia-offload " else "";
   browser = "${prefix}${browser-bin}";
   terminal = "${prefix}ghostty";

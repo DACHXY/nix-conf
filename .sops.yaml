@@ -8,6 +8,7 @@ creation_rules:
   - path_regex: system/dev/dn-server/sops/secret.yaml
     key_groups:
       - age:
+          - *dn_lap
           - *dn_server
           - *dn_pre7780
   - path_regex: system/dev/dn-pre7780/sops/secret.yaml

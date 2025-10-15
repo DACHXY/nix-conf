@@ -439,6 +439,7 @@ in
                 on-click-middle = "close";
                 ignore-list = [
                   "rofi"
+                  "chromium"
                   "firefox"
                   "firefox-nightly"
                   "zen"

@@ -1,8 +1,12 @@
 {
   domain ? "localhost",
+  configureNginx ? true,
   passwordFile,
 }:
-{ config, ... }:
+{ config, lib, ... }:
+let
+  inherit (lib) mkIf optionalString;
+in
 {
   services.paperless = {
     enable = true;
@@ -18,13 +22,13 @@
         optimize = 1;
         pdfa_image_compression = "lossless";
       };
-      PAPERLESS_URL = "https://${domain}";
+      PAPERLESS_URL = "http${optionalString configureNginx "s"}://${domain}";
     };
     configureTika = true;
     database.createLocally = true;
   };
 
-  services.nginx.virtualHosts."${domain}" = {
+  services.nginx.virtualHosts."${domain}" = mkIf configureNginx {
     enableACME = true;
     forceSSL = true;
     locations."/".proxyPass = "http://localhost:${toString config.services.paperless.port}";

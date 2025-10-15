@@ -6,6 +6,9 @@ in
   sops.secrets = {
     "wireguard/privateKey" = { };
     "nextcloud/adminPassword" = { };
+    "nextcloud/whiteboard" = {
+      owner = "nextcloud";
+    };
     "step_ca/password" = { };
     vaultwarden = { };
     "oauth/password" = { };
@@ -65,6 +68,9 @@ in
       group = config.users.users.prometheus.group;
     };
     "paperless/adminPassword" = mkIf config.services.paperless.enable {
+      owner = config.services.paperless.user;
+    };
+    "paperless/envFile" = mkIf config.services.paperless.enable {
       owner = config.services.paperless.user;
     };
     "atticd/secret" = mkIf config.services.atticd.enable { };
