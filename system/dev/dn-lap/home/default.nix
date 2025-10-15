@@ -1,14 +1,45 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  ...
+}:
 let
+  inherit (lib) mkForce;
   inherit (config.systemConf) username;
 in
 {
   home-manager = {
     users."${username}" = {
+      home.sessionVariables = {
+        BROWSER = mkForce "chromium";
+      };
+
+      programs.chromium = {
+        enable = true;
+        extensions = [
+          # Bitwarden
+          {
+            id = "nngceckbapebfimnlniiiahkandclblb";
+          }
+          # Vimium
+          {
+            id = "dbepggeogbaibhgnhhndojpepiihcmeb";
+          }
+          # Dark Reader
+          {
+            id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";
+          }
+          # Vertical Tabs
+          {
+            id = "efobhjmgoddhfdhaflheioeagkcknoji";
+          }
+        ];
+      };
+
       imports = [
         ../../../../home/presets/basic.nix
         (import ../../../../home/user/bitwarden.nix {
-          email = "danny@dn-server.net.dn";
+          email = "danny@net.dn";
           baseUrl = "https://bitwarden.net.dn";
         })
 

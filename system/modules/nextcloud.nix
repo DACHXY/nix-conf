@@ -6,6 +6,7 @@
   configureACME ? true,
   trusted-domains ? [ ],
   trusted-proxies ? [ ],
+  whiteboardSecrets ? [ ],
 }:
 {
   config,
@@ -14,7 +15,7 @@
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf optionalString;
 
   nextcloudPkg = pkgs.nextcloud32.overrideAttrs (oldAttr: rec {
     caBundle = config.security.pki.caBundle;
@@ -22,6 +23,28 @@ let
       cp ${caBundle} resources/config/ca-bundle.crt
     '';
   });
+
+  # Patch for downloading models. Hardcoded to `/var/lib/nextcloud/models`
+  recognize = pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
+    pname = "recognize-patched";
+    version = "10.0.4";
+
+    src = pkgs.fetchNextcloudApp {
+      url = "https://github.com/nextcloud/recognize/releases/download/v10.0.4/recognize-10.0.4.tar.gz";
+      sha256 = "sha256-/RHnnvGJMcxe4EuceYc20xh3qkYy1ZzGsyvp0h03eLk=";
+      license = "agpl3Plus";
+    };
+
+    patches = [
+      ../../pkgs/patches/nextcloud_recognize_models_path.patch
+    ];
+
+    installPhase = ''
+      mkdir -p $out
+      cp -r . $out/
+    '';
+  });
+
 in
 {
   imports = [
@@ -64,7 +87,10 @@ in
         calendar
         whiteboard
         user_oidc
+        memories
         ;
+
+      inherit recognize;
 
       camerarawpreviews = pkgs.fetchNextcloudApp {
         url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v0.8.8/camerarawpreviews_nextcloud.tar.gz";
@@ -103,9 +129,22 @@ in
     };
   };
 
+  services.nextcloud-whiteboard-server = {
+    enable = true;
+    settings = {
+      NEXTCLOUD_URL = "http${optionalString configureACME "s"}://${hostname}";
+      PORT = "3002";
+    };
+    secrets = whiteboardSecrets;
+  };
+
   services.nginx.virtualHosts.${hostname} = mkIf configureACME {
     enableACME = true;
     forceSSL = true;
+    locations."/whiteboard/" = {
+      proxyWebsockets = true;
+      proxyPass = "http://127.0.0.1:${config.services.nextcloud-whiteboard-server.settings.PORT}/";
+    };
   };
 
   environment.systemPackages = with pkgs; [

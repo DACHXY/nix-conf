@@ -1,0 +1,35 @@
+diff --git a/lib/Service/DownloadModelsService.php b/lib/Service/DownloadModelsService.php
+index 64e4223..ac939a3 100755
+--- a/lib/Service/DownloadModelsService.php
++++ b/lib/Service/DownloadModelsService.php
+@@ -27,7 +27,7 @@ final class DownloadModelsService {
+ 	 * @throws \Exception
+ 	 */
+ 	public function download() : void {
+-		$targetPath = __DIR__ . '/../../models';
++		$targetPath = "/var/lib/nextcloud/models";
+ 		if (file_exists($targetPath)) {
+ 			// remove models directory
+ 			$it = new RecursiveDirectoryIterator($targetPath, FilesystemIterator::SKIP_DOTS);
+@@ -44,7 +44,7 @@ final class DownloadModelsService {
+ 		}
+ 
+ 		$archiveUrl = $this->getArchiveUrl($this->getNeededArchiveRef());
+-		$archivePath = __DIR__ . '/../../models.tar.gz';
++		$archivePath = "/var/lib/nextcloud/models.tar.gz";
+ 		$timeout = $this->isCLI ? 0 : 480;
+ 		$this->clientService->newClient()->get($archiveUrl, ['sink' => $archivePath, 'timeout' => $timeout]);
+ 		$tarManager = new TAR($archivePath);
+diff --git a/lib/Settings/AdminSettings.php b/lib/Settings/AdminSettings.php
+index 83f8a76..ac73d29 100755
+--- a/lib/Settings/AdminSettings.php
++++ b/lib/Settings/AdminSettings.php
+@@ -28,7 +28,7 @@ final class AdminSettings implements ISettings {
+ 		$settings = $this->settingsService->getAll();
+ 		$this->initialState->provideInitialState('settings', $settings);
+ 
+-		$modelsPath = __DIR__ . '/../../models';
++		$modelsPath = "/var/lib/nextcloud/models";
+ 		$modelsDownloaded = file_exists($modelsPath);
+ 		$this->initialState->provideInitialState('modelsDownloaded', $modelsDownloaded);
+ 
