@@ -1,22 +1,27 @@
 {
   pkgs,
+  osConfig,
+  helper,
   ...
 }:
 let
+  inherit (osConfig.systemConf) username;
+  inherit (helper) capitalize;
   zenNebula = pkgs.fetchFromGitHub {
     owner = "justadumbprsn";
     repo = "zen-nebula";
     rev = "main";
     sha256 = "sha256-f4J5ob/apKhxERUSvXE8QHMMsKJCQFRoMSo/Pw4LgTg=";
   };
+  profileName = capitalize username;
 in
 {
   programs.zen-browser = {
     enable = true;
     profiles = {
-      "Danny Profile" = {
+      "${profileName} Profile" = {
         default = true;
-        name = "Danny";
+        name = username;
         settings = {
           "zen.view.compact.should-enable-at-startup" = true;
           "zen.widget.linux.transparency" = true;

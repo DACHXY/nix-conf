@@ -2,6 +2,7 @@
 let
   inherit (lib) optionalString;
   inherit (config.systemConf) username;
+  inherit (config.systemConf.hyprland) monitors;
 in
 {
   home-manager.users."${username}" = {
@@ -20,7 +21,7 @@ in
         settings = [
           # monitor 1
           {
-            output = "DP-6";
+            output = "${(builtins.elemAt monitors 0).output}";
             height = 48;
             modules-left = [
               "custom/os"
@@ -47,7 +48,7 @@ in
           }
           # monitor 2
           {
-            output = "DP-5";
+            output = "${(builtins.elemAt monitors 1).output}";
             height = 54;
             modules-left = [
               "clock"

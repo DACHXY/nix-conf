@@ -4,10 +4,12 @@
   inputs,
   pkgs,
   config,
+  helper,
   lib,
   ...
 }:
 let
+  inherit (helper) capitalize;
   username = "danny";
 in
 {
@@ -20,16 +22,27 @@ in
       monitors = [
         {
           desc = "ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271";
-          output = "DP-6";
+          output = "DP-5";
           props = "2560x1440@165, 0x0, 1";
         }
         {
           desc = "Acer Technologies XV272U V3 1322131231233";
-          output = "DP-5";
+          output = "DP-6";
           props = "2560x1440@180, -1440x-600, 1, transform, 1";
         }
       ];
     };
+    sddm.package = (
+      pkgs.sddm-astronaut.override {
+        embeddedTheme = "purple_leaves";
+        themeConfig = {
+          ScreenWidth = "2560";
+          ScreenHeight = "1440";
+          Font = "SF Pro Display Bold";
+          HeaderText = "Welcome, ${capitalize username}";
+        };
+      }
+    );
   };
 
   networking.firewall.allowedTCPPortRanges = [
