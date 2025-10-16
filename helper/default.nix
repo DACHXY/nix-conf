@@ -4,7 +4,12 @@
 }:
 let
   inherit (pkgs) writeShellScript;
-  inherit (lib) replaceString optionalString;
+  inherit (lib)
+    replaceString
+    optionalString
+    toUpper
+    substring
+    ;
   inherit (builtins) toJSON;
 in
 {
@@ -91,4 +96,6 @@ in
         // conf
       );
   };
+
+  capitalize = text: "${toUpper (substring 0 1 text)}${substring 1 (-1) text}";
 }

@@ -2,6 +2,7 @@
   inputs,
   system,
   config,
+  pkgs,
   helper,
   lib,
   ...
@@ -40,6 +41,12 @@ let
         };
       };
     };
+
+  defaultSddmTheme = (
+    pkgs.sddm-astronaut.override {
+      embeddedTheme = "purple_leaves.conf";
+    }
+  );
 in
 {
   options.systemConf = {
@@ -57,6 +64,19 @@ in
     username = mkOption {
       type = types.str;
       description = "Main username";
+    };
+
+    sddm = {
+      theme = mkOption {
+        type = types.str;
+        description = "sddm theme name";
+        default = "sddm-astronaut-theme";
+      };
+      package = mkOption {
+        type = types.package;
+        default = defaultSddmTheme;
+        description = "sddm theme package";
+      };
     };
 
     hyprland = {
