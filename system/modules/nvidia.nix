@@ -46,7 +46,7 @@ lib.checkListOfEnum "Nvidia Prime Mode" validModes [ nvidia-mode ] {
   ];
 
   hardware = {
-    nvidia.open = false;
+    nvidia.open = true;
     nvidia.modesetting.enable = true;
 
     nvidia.powerManagement.enable = true;

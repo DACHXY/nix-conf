@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   memeSelector = pkgs.callPackage ../../../../../home/scripts/memeSelector.nix {
     url = "https://nextcloud.net.dn/public.php/dav/files/pygHoPB5LxDZbeY/";
@@ -11,6 +11,7 @@ in
 
   wayland.windowManager.hyprland = {
     settings = {
+      debug.disable_logs = lib.mkForce false;
       misc = {
         vrr = 0;
       };
