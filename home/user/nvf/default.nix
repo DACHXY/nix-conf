@@ -1,4 +1,5 @@
 {
+  osConfig,
   pkgs,
   lib,
   inputs,
@@ -27,6 +28,7 @@ in
   imports = [
     ./plugins/snacks-nvim
     ./plugins/lualine
+    ./extra-lsp.nix
   ];
 
   programs.nvf = {
@@ -35,6 +37,7 @@ in
       vim = {
         enableLuaLoader = true;
         vimAlias = true;
+        extraPackages = with pkgs; [ nixfmt ];
 
         clipboard = {
           enable = true;
@@ -236,6 +239,7 @@ in
             nowait = true;
             desc = "Select terminal";
           }
+
           # Send current selection to Term
           {
             key = "<Leader>ts";
@@ -316,9 +320,13 @@ in
         lsp = {
           enable = true;
           formatOnSave = true;
-          otter-nvim.enable = true;
+          otter-nvim = {
+            enable = true;
+            setupOpts.handle_leading_whitespace = true;
+          };
           nvim-docs-view.enable = true;
           lspkind.enable = true;
+          null-ls.enable = false;
           trouble = {
             enable = true;
             mappings = {
@@ -331,6 +339,15 @@ in
           nvim-dap = {
             enable = true;
             ui.enable = true;
+          };
+        };
+
+        formatter = {
+          conform-nvim = {
+            enable = true;
+            setupOpts.formatters_by_ft = {
+              nix = [ "nixfmt" ];
+            };
           };
         };
 
@@ -358,6 +375,7 @@ in
 
           bash.enable = true;
           css.enable = true;
+          yaml.enable = true;
           rust = {
             enable = true;
             lsp = {
@@ -379,20 +397,17 @@ in
           nix = {
             enable = true;
             extraDiagnostics.enable = false;
-            format.type = "nixfmt";
+            format.enable = false; # Manually configured in conform-nvim
             lsp = {
-              server = "nil";
+              server = "nixd";
               options = {
-                nix.flake.autoArchive = true;
+                nixos.expr =
+                  # nix
+                  ''(builtins.getFlake "/etc/nixos").nixosConfigurations.${osConfig.networking.hostName}.options'';
+                home_manager.expr =
+                  # nix
+                  ''(builtins.getFlake "/etc/nixos").nixosConfigurations.${osConfig.networking.hostName}.options.home-manager.users.type.getSubOptions []'';
               };
-              # options = {
-              #   nixos.expr =
-              #     # nix
-              #     ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options'';
-              #   home_manager.expr =
-              #     # nix
-              #     ''(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.${osConfig.networking.hostName}.options.home-manager.users.type.getSubOptions []'';
-              # };
             };
           };
           sql.enable = true;
@@ -513,6 +528,7 @@ in
 
           yazi-nvim = {
             enable = true;
+            mappings.openYaziDir = "<leader>e";
           };
 
           images = {

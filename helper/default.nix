@@ -9,6 +9,7 @@ let
     optionalString
     toUpper
     substring
+    concatStringsSep
     ;
   inherit (builtins) toJSON;
 in
@@ -98,4 +99,10 @@ in
   };
 
   capitalize = text: "${toUpper (substring 0 1 text)}${substring 1 (-1) text}";
+
+  nftables = {
+    mkElementsStatement =
+      elements:
+      optionalString (builtins.length elements > 0) "elements = { ${concatStringsSep "," elements} }";
+  };
 }

@@ -5,6 +5,7 @@
   cat = "bat";
   g = "git";
   t = "tmux";
+  zl = "zellij";
 
   # Nixos
   rebuild = "sudo nixos-rebuild switch --flake /etc/nixos#${hostname}";

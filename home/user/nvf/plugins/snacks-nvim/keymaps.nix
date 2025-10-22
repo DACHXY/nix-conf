@@ -1,11 +1,6 @@
 let
   keyList = [
     {
-      key = "<leader>e";
-      action = "explorer()";
-      desc = "Toggle explorer";
-    }
-    {
       key = "<leader><space>";
       action = "picker.smart()";
       desc = "Smart Find Files";
