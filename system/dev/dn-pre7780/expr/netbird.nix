@@ -9,7 +9,6 @@ let
   port = 51820;
 in
 {
-
   services.netbird = {
     server = {
       enable = true;

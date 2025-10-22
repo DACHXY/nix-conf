@@ -8,6 +8,7 @@ in
   home-manager.users."${username}" = {
     imports = [
       ../../../../home/presets/basic.nix
+      ./expr
       ./wm
 
       # Bitwarden client

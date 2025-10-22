@@ -1,10 +1,12 @@
 {
   pkgs,
   config,
+  lib,
   ...
 }:
 let
   inherit (config.systemConf) username;
+  inherit (lib) mkForce;
 
   caskaydia = {
     name = "CaskaydiaCove Nerd Font Mono";
@@ -70,6 +72,10 @@ in
       nvf = {
         enable = true;
         transparentBackground = true;
+      };
+      helix = {
+        enable = true;
+        transparent = mkForce true;
       };
     };
   };

@@ -70,7 +70,7 @@ in
         enabled = false;
       };
       explorer = {
-        enabled = true;
+        enabled = false;
       };
       indent = {
         enabled = true;

@@ -166,65 +166,67 @@
     in
     {
       # ==== NixOS Configuration ==== #
-      nixosConfigurations = mapAttrs (
-        hostname: conf:
-        let
-          inherit (conf) path system;
-          pkgs = import nixpkgs {
-            inherit system;
-          };
-          pkgs-stable = import nixpkgs-stable {
-            inherit system;
-          };
-          helper = import ./helper {
-            inherit
-              pkgs
-              ;
-            lib = pkgs.lib;
-          };
-        in
-        nixpkgs.lib.nixosSystem {
-          specialArgs = {
-            inherit (conf) system;
-            inherit
-              helper
-              inputs
-              self
-              pkgs-stable
-              ;
-          };
-          modules = [
-            # ==== Common Configuration ==== #
-            {
-              nixpkgs.hostPlatform = system;
-              nixpkgs.config.allowUnfree = true;
-              nixpkgs.overlays = [
-                inputs.mail-server.overlay
-                inputs.nix-minecraft.overlay
-                inputs.nix-tmodloader.overlay
-              ]
-              ++ (import ./pkgs/overlays);
-            }
+      nixosConfigurations = (
+        mapAttrs (
+          hostname: conf:
+          let
+            inherit (conf) path system;
+            pkgs = import nixpkgs {
+              inherit system;
+            };
+            pkgs-stable = import nixpkgs-stable {
+              inherit system;
+            };
+            helper = import ./helper {
+              inherit
+                pkgs
+                ;
+              lib = pkgs.lib;
+            };
+          in
+          nixpkgs.lib.nixosSystem {
+            specialArgs = {
+              inherit (conf) system;
+              inherit
+                helper
+                inputs
+                self
+                pkgs-stable
+                ;
+            };
+            modules = [
+              # ==== Common Configuration ==== #
+              {
+                nixpkgs.hostPlatform = system;
+                nixpkgs.config.allowUnfree = true;
+                nixpkgs.overlays = [
+                  inputs.mail-server.overlay
+                  inputs.nix-minecraft.overlay
+                  inputs.nix-tmodloader.overlay
+                ]
+                ++ (import ./pkgs/overlays);
+              }
 
-            # ==== Common Modules ==== #
-            inputs.home-manager.nixosModules.default
-            inputs.nix-index-database.nixosModules.nix-index
-            inputs.disko.nixosModules.disko
-            inputs.sops-nix.nixosModules.sops
-            inputs.nix-minecraft.nixosModules.minecraft-servers
-            inputs.nix-tmodloader.nixosModules.tmodloader
-            inputs.chaotic.nixosModules.default
-            inputs.actual-budget-api.nixosModules.default
-            inputs.stylix.nixosModules.stylix
-            inputs.attic.nixosModules.atticd
-            inputs.mail-server.nixosModules.default
-            ./options
+              # ==== Common Modules ==== #
+              inputs.home-manager.nixosModules.default
+              inputs.nix-index-database.nixosModules.nix-index
+              inputs.disko.nixosModules.disko
+              inputs.sops-nix.nixosModules.sops
+              inputs.nix-minecraft.nixosModules.minecraft-servers
+              inputs.nix-tmodloader.nixosModules.tmodloader
+              inputs.chaotic.nixosModules.default
+              inputs.actual-budget-api.nixosModules.default
+              inputs.stylix.nixosModules.stylix
+              inputs.attic.nixosModules.atticd
+              inputs.mail-server.nixosModules.default
+              ./options
 
-            # ==== Private Configuration ==== #
-            (import path { inherit hostname; })
-          ];
-        }
-      ) hosts;
+              # ==== Private Configuration ==== #
+              (import path { inherit hostname; })
+            ];
+          }
+        ) hosts
+      );
 
       # ==== MicroVM Packages ==== #
       # packages."${system}" = {

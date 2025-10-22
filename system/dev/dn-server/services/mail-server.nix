@@ -36,7 +36,7 @@ in
         adminAccountFile = config.sops.secrets."oauth/adminEnv".path;
       };
       ldap = {
-        filter = "(&(objectClass=inetOrgPerson)(objectClass=mailRoutingObject)(uid=%{user | username}))";
+        filter = "(&(objectClass=inetOrgPerson)(objectClass=inetMailRoutingObject)(uid=%{user | username}))";
         extraAuthConf = ''
           auth_username_format = %{user | lower}
           fields {

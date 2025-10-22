@@ -1,14 +1,17 @@
 {
   config,
   lib,
+  helper,
   ...
 }:
 let
-  inherit (config.systemConf) username;
+  inherit (config.systemConf) username security;
+  inherit (lib) concatStringsSep;
+  inherit (helper.nftables) mkElementsStatement;
 
   ethInterface = "enp0s31f6";
   sshPorts = [ 30072 ];
-  sshPortsString = builtins.concatStringsSep ", " (builtins.map (p: builtins.toString p) sshPorts);
+  sshPortsString = concatStringsSep ", " (map (p: toString p) sshPorts);
 
   personal = {
     inherit (config.networking) domain;
@@ -30,7 +33,7 @@ let
     masterAPIServerPort = 6443;
   };
 
-  allowedSSHIPs = builtins.concatStringsSep ", " [
+  allowedSSHIPs = concatStringsSep ", " [
     "122.117.215.55"
     "192.168.100.1/24"
     personal.range
@@ -189,63 +192,104 @@ in
 
     nftables = {
       enable = true;
-      ruleset = ''
-        table inet wg-filter {
-          chain input {
-            type filter hook input priority 0; policy drop;
+      tables = {
+        filter = {
+          family = "inet";
+          content = ''
+            set restrict_source_ips {
+              type ipv4_addr
+              flags interval
+              ${mkElementsStatement security.sourceIPs}
+            }
 
-            iif lo accept
+            set ${security.rules.setName} {
+              type ipv4_addr
+              flags interval
+              ${mkElementsStatement security.allowedIPs}
+            }
 
-            meta nftrace set 1
-            meta l4proto { icmp, ipv6-icmp } accept
+            set ${security.rules.setNameV6} {
+              type ipv6_addr
+              flags interval
+              ${mkElementsStatement security.allowedIPv6}
+            }
 
-            ct state vmap { invalid : drop, established : accept, related : accept }
+            chain input {
+              type filter hook input priority 0; policy drop;
 
-            udp dport 53 accept
-            tcp dport 53 accept
+              iif lo accept
 
-            tcp dport { ${sshPortsString} } jump ssh-filter
+              meta nftrace set 1
+              meta l4proto { icmp, ipv6-icmp } accept
 
-            iifname { ${ethInterface}, ${personal.interface}, ${kube.interface} } udp dport { ${builtins.toString personal.port}, ${builtins.toString kube.port} } accept
-            iifname ${personal.interface} ip saddr ${personal.ip} jump wg-subnet
-            iifname ${kube.interface} ip saddr ${kube.ip} jump kube-filter
+              ct state vmap { invalid : drop, established : accept, related : accept }
 
-            counter reject
-          }
+              udp dport 53 accept
+              tcp dport 53 accept
 
-          chain ssh-filter {
-            ip saddr { ${allowedSSHIPs} } accept
-            counter reject
-          }
+              tcp dport { ${sshPortsString} } jump ssh-filter
 
-          chain forward {
-            type filter hook forward priority 0; policy drop;
+              iifname { ${ethInterface}, ${personal.interface}, ${kube.interface} } udp dport { ${toString personal.port}, ${toString kube.port} } accept
+              iifname ${personal.interface} ip saddr ${personal.ip} jump wg-subnet
+              iifname ${kube.interface} ip saddr ${kube.ip} jump kube-filter
 
-            meta l4proto { icmp, ipv6-icmp } accept
+              drop
+            }
 
-            iifname ${personal.interface} ip saddr ${personal.ip} jump wg-subnet
-            iifname ${kube.interface} ip saddr ${kube.ip} jump kube-filter
+            chain output {
+              type filter hook output priority 0; policy drop;
 
-            counter
-          }
+              iif lo accept
 
-          chain kube-filter {
-            ip saddr ${kube.ip} ip daddr ${kube.ip} accept
-            counter drop
-          }
+              # Allow DNS qeury
+              udp dport 53 accept
+              tcp dport 53 accept
 
-          chain wg-subnet {
-            ip saddr ${personal.full} accept
-            ip saddr ${personal.restrict} ip daddr ${personal.range} accept
-            counter drop
-          }
+              meta skuid ${toString config.users.users.systemd-timesync.uid} accept
 
-          chain postrouting {
-            type nat hook postrouting priority 100; policy accept;
-            oifname ${ethInterface} masquerade
-          }
-        }
-      '';
+              ct state vmap { invalid : drop, established : accept, related : accept }
+              ip saddr != @restrict_source_ips accept
+
+              ip daddr @${security.rules.setName} accept
+              ip6 daddr @${security.rules.setNameV6} accept
+
+              counter log prefix "OUTPUT-DROP: " flags all drop
+            }
+
+            chain ssh-filter {
+              ip saddr { ${allowedSSHIPs} } accept
+              counter reject
+            }
+
+            chain forward {
+              type filter hook forward priority 0; policy drop;
+
+              meta l4proto { icmp, ipv6-icmp } accept
+
+              iifname ${personal.interface} ip saddr ${personal.ip} jump wg-subnet
+              iifname ${kube.interface} ip saddr ${kube.ip} jump kube-filter
+
+              counter
+            }
+
+            chain kube-filter {
+              ip saddr ${kube.ip} ip daddr ${kube.ip} accept
+              counter drop
+            }
+
+            chain wg-subnet {
+              ip saddr ${personal.full} accept
+              ip saddr ${personal.restrict} ip daddr ${personal.range} accept
+              counter drop
+            }
+
+            chain postrouting {
+              type nat hook postrouting priority 100; policy accept;
+              oifname ${ethInterface} masquerade
+            }
+          '';
+        };
+      };
     };
 
     wireguard = {
@@ -323,7 +367,11 @@ in
         webserver-port=8081
         local-port=5359
         dnsupdate=yes
+        primary=yes
+        secondary=no
         allow-dnsupdate-from=10.0.0.0/24
+        allow-axfr-ips=10.0.0.0/24
+        also-notify=10.0.0.148:53
       '';
       secretFile = config.sops.secrets.powerdns.path;
     };
@@ -333,6 +381,7 @@ in
       forwardZones = {
         "${config.networking.domain}." = "127.0.0.1:5359";
         "pre7780.dn." = "127.0.0.1:5359";
+        "test.local." = "127.0.0.1:5359";
       };
       forwardZonesRecurse = {
         "." = "8.8.8.8";
@@ -342,9 +391,6 @@ in
         "127.0.0.0/8"
         "10.0.0.0/24"
         "192.168.100.0/24"
-        "::1/128"
-        "fc00::/7"
-        "fe80::/10"
       ];
       yaml-settings = {
         webservice.webserver = true;
