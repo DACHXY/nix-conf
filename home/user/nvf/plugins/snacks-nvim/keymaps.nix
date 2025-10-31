@@ -2,7 +2,7 @@ let
   keyList = [
     {
       key = "<leader><space>";
-      action = "picker.smart()";
+      action = "picker.files()";
       desc = "Smart Find Files";
     }
     {

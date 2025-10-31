@@ -1,10 +1,6 @@
 { hostname }:
 {
   pkgs,
-  lib,
-  inputs,
-  system,
-  config,
   ...
 }:
 let
@@ -39,6 +35,12 @@ in
       ];
     };
   };
+
+  services.journald.extraConfig = ''
+    SystemMaxUse=10G
+    SystemKeepFree=100M
+    MaxFileSec=1month
+  '';
 
   imports = [
     ./common

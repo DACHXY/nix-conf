@@ -39,7 +39,7 @@ in
         base-dn = "ou=people,dc=net,dc=dn";
         attributes = {
           name = "uid";
-          email = "mail";
+          email = "mailRoutingAddress";
           secret = "userPassword";
           description = [
             "cn"
@@ -48,8 +48,8 @@ in
           class = "objectClass";
         };
         filter = {
-          name = "(&(objectClass=inetOrgPerson)(|(uid=?)(mail=?)))";
-          email = "(&(objectClass=inetOrgPerson)(mail=?))";
+          name = "(&(objectClass=inetOrgPerson)(|(uid=?)(mail=?)(mailRoutingAddress=?)))";
+          email = "(&(objectClass=inetOrgPerson)(mailRoutingAddress=?))";
         };
         bind = {
           dn = "cn=admin,dc=net,dc=dn";

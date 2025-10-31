@@ -1,34 +1,91 @@
 {
   pkgs,
+  lib,
   config,
   ...
 }:
 let
   inherit (builtins) fetchurl;
   inherit (config.lib.stylix) colors;
+  inherit (lib) getExe;
 
   zjstatus = fetchurl {
     url = "https://github.com/dj95/zjstatus/releases/download/v0.21.1/zjstatus.wasm";
     sha256 = "sha256:06mfcijmsmvb2gdzsql6w8axpaxizdc190b93s3nczy212i846fw";
   };
+
+  zellij-switch = fetchurl {
+    url = "https://github.com/mostafaqanbaryan/zellij-switch/releases/download/0.2.1/zellij-switch.wasm";
+    sha256 = "sha256:1bi219dh9dfs1h7ifn4g5p8n6ini8ack1bfys5z36wzbzx0pw9gg";
+  };
+
+  zellij-sessionizer-src = fetchurl {
+    url = "https://raw.githubusercontent.com/dachxy/zellij-sessionizer/refs/heads/main/zellij-sessionizer";
+    sha256 = "sha256:01az9blb86mc3lxaxnrfcj23jaxhagsbs31qjn6pj5wm1wgb2mrf";
+  };
+
+  zellij-sessionizer = pkgs.writeShellScriptBin "zellij-sessionizer" ''
+    export PATH="$PATH:${pkgs.fzf}/bin"
+    export ZELLIJ_SESSIONIZER_SEARCH_PATHS="$HOME/projects $HOME/notes $HOME/expr"
+    export ZELLIJ_SESSIONIZER_SPECIFIC_PATHS="/etc/nixos"
+    export ZELLIJ_SESSIONIZER_SWITCH_PLUGIN="file:${zellij-switch}"
+
+    bash ${zellij-sessionizer-src}
+  '';
 in
 {
+  home.packages = [
+    zellij-sessionizer
+  ];
+
+  programs.fish.shellAliases = {
+    al = "zellij";
+    aa = "zellij a --index 0";
+    zs = "zellij-sessionizer";
+  };
+
   programs.zellij = {
     enable = true;
     attachExistingSession = true;
     enableFishIntegration = true;
     enableBashIntegration = true;
+
+    settings = {
+      pane_frames = false;
+      show_startup_tips = false;
+      session_serialization = false;
+      default_layout = "default";
+    };
+
     extraConfig = ''
       keybinds clear-defaults=true {
+        shared {
+          bind "Ctrl /" { ToggleFloatingPanes; SwitchToMode "Normal"; }
+        }
         normal {
           bind "Ctrl n" { SwitchToMode "Resize"; }
           bind "Ctrl p" { SwitchToMode "Pane"; }
+          bind "Ctrl [" { SwitchToMode "Scroll"; }
           bind "Ctrl m" { SwitchToMode "Move"; }
           bind "Ctrl t" { SwitchToMode "Tab"; }
+          bind "Ctrl Space" {
+            LaunchOrFocusPlugin "session-manager" {
+              floating true
+              move_to_focused_tab true
+            };
+            SwitchToMode "Normal"
+          }
+          bind "Ctrl f" { Run "${getExe zellij-sessionizer}" {
+            close_on_exit true
+            floating true
+            x "30%"
+            y "10%"
+            width "40%"
+            height "80%"
+          }; SwitchToMode "locked"; }
           bind "Alt Shift h" { GoToPreviousTab; }
           bind "Alt Shift l" { GoToNextTab; }
-          bind "Ctrl o" { SwitchToMode "Session"; }
-          bind "Ctrl /" { ToggleFloatingPanes; SwitchToMode "Normal"; }
+          bind "Ctrl Shift o" { SwitchToMode "Session"; }
           bind "Ctrl Shift -" { Run "yazi" {
             floating true
             close_on_exit true
@@ -112,7 +169,7 @@ in
           bind "Tab" { ToggleTab; }
         }
         scroll {
-          bind "Ctrl s" { SwitchToMode "Normal"; }
+          bind "Ctrl [" { SwitchToMode "Normal"; }
           bind "e" { EditScrollback; SwitchToMode "Normal"; }
           bind "s" { SwitchToMode "EnterSearch"; SearchInput 0; }
           bind "Ctrl c" { ScrollToBottom; SwitchToMode "Normal"; }
@@ -133,7 +190,7 @@ in
           bind "d" { HalfPageScrollDown; }
           bind "u" { HalfPageScrollUp; }
           bind "n" { Search "down"; }
-          bind "p" { Search "up"; }
+          bind "shift n" { Search "up"; }
           bind "c" { SearchToggleOption "CaseSensitivity"; }
           bind "w" { SearchToggleOption "Wrap"; }
           bind "o" { SearchToggleOption "WholeWord"; }
@@ -211,13 +268,8 @@ in
         font "monospace"
       }
     '';
-    settings = {
-      pane_frames = false;
-      show_startup_tips = false;
-      default_layout = "compact-top-bar";
-    };
     layouts = {
-      compact-top-bar = {
+      default = {
         layout = {
           _children = [
             {
