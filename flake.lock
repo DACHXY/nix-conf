@@ -1416,17 +1416,14 @@
         ]
       },
       "locked": {
-        "lastModified": 1760422027,
-        "narHash": "sha256-UAuVT+mL9Q6hABWWlRhFfJ51DMrG3L/xdJTT3+FgCjM=",
-        "owner": "dachxy",
-        "repo": "nix-mail-server",
-        "rev": "a9df5bb2406f45b1d878f8b5681d8710a5cf40fb",
-        "type": "github"
+        "lastModified": 1761409875,
+        "narHash": "sha256-tTVQsRHO1c/c3rpeHXuYV+HLulv2J3ZLR3c32nSWyas=",
+        "path": "/home/danny/projects/nix-mail-server",
+        "type": "path"
       },
       "original": {
-        "owner": "dachxy",
-        "repo": "nix-mail-server",
-        "type": "github"
+        "path": "/home/danny/projects/nix-mail-server",
+        "type": "path"
       }
     },
     "marks-nvim": {

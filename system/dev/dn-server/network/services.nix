@@ -392,9 +392,19 @@ in
         "10.0.0.0/24"
         "192.168.100.0/24"
       ];
+      dns.port = 5300;
       yaml-settings = {
         webservice.webserver = true;
       };
+    };
+
+    dnsdist = {
+      enable = true;
+      extraConfig = ''
+        newServer("127.0.0.1:${toString config.services.pdns-recursor.dns.port}")
+        addDOHLocal("0.0.0.0:8053", nil, nil, "/", { reusePort = true })
+        getPool(""):setCache(newPacketCache(65535, {maxTTL=86400, minTTL=0, temporaryFailureTTL=60, staleTTL=60, dontAge=false}))
+      '';
     };
 
     powerdns-admin = {
@@ -457,13 +467,29 @@ in
   };
 
   services.nginx.virtualHosts = {
+    "dns.${config.networking.domain}" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/dns-query" = {
+        extraConfig = ''
+          grpc_pass grpc://127.0.0.1:${toString 8053};
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-Host $host;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Forwarded-Protocol $scheme;
+          proxy_set_header Range $http_range;
+          proxy_set_header If-Range $http_if_range;
+        '';
+      };
+    };
     "powerdns.${config.networking.domain}" = {
       enableACME = true;
       forceSSL = true;
       locations."/api".proxyPass = "http://127.0.0.1:8081";
       locations."/".proxyPass = "http://127.0.0.1:8000";
     };
-
     "uptime.${config.networking.domain}" = {
       enableACME = true;
       forceSSL = true;

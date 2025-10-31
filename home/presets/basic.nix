@@ -14,7 +14,6 @@
     ../user/virtualization.nix
     ../user/vscode.nix
     ../user/yazi.nix
-    ../user/zellij.nix
     ../user/nvf
   ];
 }

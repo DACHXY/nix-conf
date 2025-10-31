@@ -16,6 +16,8 @@ let
     optionals
     ;
 
+  inherit (helper) capitalize;
+
   stateVersion = "25.05";
 
   cfg = config.systemConf;
@@ -44,7 +46,13 @@ let
 
   defaultSddmTheme = (
     pkgs.sddm-astronaut.override {
-      embeddedTheme = "purple_leaves.conf";
+      embeddedTheme = "purple_leaves";
+      themeConfig = {
+        ScreenWidth = "1920";
+        ScreenHeight = "1080";
+        Font = "SF Pro Display Bold";
+        HeaderText = "Welcome, ${capitalize cfg.username}";
+      };
     }
   );
 in

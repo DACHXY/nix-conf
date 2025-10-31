@@ -1,11 +1,7 @@
 { hostname }:
 {
-  self,
-  inputs,
   pkgs,
-  config,
   helper,
-  lib,
   ...
 }:
 let

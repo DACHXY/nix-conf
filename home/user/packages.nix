@@ -8,6 +8,12 @@
 }:
 let
   md2html = pkgs.callPackage ../scripts/md2html.nix { };
+  ghosttyShaders = pkgs.fetchFromGitHub {
+    owner = "sahaj-b";
+    repo = "ghostty-cursor-shaders";
+    rev = "main";
+    hash = "sha256-ruhEqXnWRCYdX5mRczpY3rj1DTdxyY3BoN9pdlDOKrE=";
+  };
 in
 {
   programs.btop = {
@@ -24,6 +30,11 @@ in
     enableFishIntegration = true;
     package = inputs.ghostty.packages.${system}.default;
     settings = {
+      custom-shader = [
+        "${ghosttyShaders}/cursor_sweep.glsl"
+        "${ghosttyShaders}/ripple_cursor.glsl"
+      ];
+
       unfocused-split-opacity = 0.85;
       desktop-notifications = false;
       background-opacity = 0.4;
@@ -38,7 +49,11 @@ in
 
       mouse-hide-while-typing = true;
 
-      keybind = [ "ctrl+shift+zero=toggle_tab_overview" ];
+      keybind = [
+        "ctrl+shift+zero=toggle_tab_overview"
+        "ctrl+shift+e=unbind"
+        "ctrl+shift+o=unbind"
+      ];
 
       clipboard-read = "allow";
       clipboard-write = "allow";
