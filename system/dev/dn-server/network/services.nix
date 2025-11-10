@@ -384,7 +384,7 @@ in
         "test.local." = "127.0.0.1:5359";
       };
       forwardZonesRecurse = {
-        "." = "8.8.8.8";
+        "." = "168.95.1.1";
       };
       dnssecValidation = "off";
       dns.allowFrom = [
@@ -443,13 +443,19 @@ in
     ];
   };
 
+  systemConf.security = {
+    allowedDomains = [
+      "registry-1.docker.io"
+    ];
+  };
+
   virtualisation = {
     oci-containers = {
       backend = "docker";
       containers = {
         uptime-kuma = {
           extraOptions = [ "--network=host" ];
-          image = "louislam/uptime-kuma:1";
+          image = "louislam/uptime-kuma:2";
           volumes = [
             "/var/lib/uptime-kuma:/app/data"
             "${config.security.pki.caBundle}:/etc/ca.crt:ro"

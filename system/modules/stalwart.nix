@@ -84,6 +84,11 @@ in
             tls.implicit = true;
             proxy_protocol = true;
           };
+          jmap = {
+            bind = [ "10.0.0.130:31004" ];
+            protocol = "http";
+            proxy_protocol = true;
+          };
           management = {
             protocol = "http";
             bind = [
@@ -135,6 +140,7 @@ in
     virtualHosts = {
       "mail.${domain}" = {
         locations."/".proxyPass = "http://127.0.0.1:8080";
+        locations."/jmap".proxyPass = "http://127.0.0.1:31004";
         enableACME = true;
         forceSSL = true;
       };

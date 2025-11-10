@@ -87,5 +87,10 @@ in
       owner = "crowdsec";
       mode = "0600";
     };
+    "opencloud" = mkIf config.services.opencloud.enable {
+      owner = config.services.opencloud.user;
+      group = config.services.opencloud.group;
+      mode = "0600";
+    };
   };
 }

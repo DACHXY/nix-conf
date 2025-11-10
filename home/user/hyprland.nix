@@ -2,11 +2,13 @@
   pkgs,
   lib,
   inputs,
+  config,
   system,
   osConfig,
   ...
 }:
 let
+  inherit (osConfig.systemConf) username;
   inherit (osConfig.systemConf.hyprland) monitors;
   terminal = "ghostty";
 
@@ -35,6 +37,10 @@ in
     hyprcursor
     libnotify
     sunsetr
+  ];
+
+  systemd.user.tmpfiles.rules = [
+    "d ${config.home.homeDirectory}/Pictures/Wallpapers 0744 ${username} users -"
   ];
 
   imports = [

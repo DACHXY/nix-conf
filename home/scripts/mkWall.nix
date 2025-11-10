@@ -2,9 +2,11 @@
 let
   mkWall = pkgs.writeShellScriptBin "setWall" ''
     url="$1"
-    filepath="/tmp/wall_cache/$(echo -n "$url" | base64 | tr -d '\n')"
+    DIR="$HOME/Pictures/Wallpapers"
+    filepath="$DIR/$(echo -n "$url" | sha256sum | awk '{print $1}' | tr -d '\n').jpg"
 
     if [[ ! -f "$filepath" ]]; then
+        ${pkgs.libnotify}/bin/notify-send " Wallpaper" "$filepath\nDownloading..."
         curl -sL "$url" -o "$filepath"
     fi
 

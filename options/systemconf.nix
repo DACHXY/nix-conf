@@ -110,7 +110,9 @@ in
     };
 
     nvidia = {
-      enable = true;
+      enable = (mkEnableOption "Enable nvidia configuration") // {
+        default = false;
+      };
     };
   };
 
