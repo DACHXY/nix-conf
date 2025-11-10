@@ -59,7 +59,8 @@ let
 
   # Change Wallpaper
   wallRand = pkgs.writeShellScript "wallRand" ''
-    mapfile -t wallpapers < <(find /tmp/wall_cache -type f)
+    WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+    mapfile -t wallpapers < <(find "$WALLPAPER_DIR" -type f)
 
     count="''${#wallpapers[@]}"
 
@@ -71,7 +72,7 @@ let
       exit 1
     fi
 
-    ${config.services.swww.package}/bin/swww img $selected --transition-fps 45 --transition-duration 1 --transition-type random
+    ${config.services.swww.package}/bin/swww img "$selected" --transition-fps 45 --transition-duration 1 --transition-type random
   '';
 
   rbwSelector = import ../scripts/rbwSelector.nix { inherit pkgs; };
@@ -439,7 +440,7 @@ in
                 on-click-middle = "close";
                 ignore-list = [
                   "rofi"
-                  "chromium"
+                  "chromium-browser"
                   "firefox"
                   "firefox-nightly"
                   "zen"

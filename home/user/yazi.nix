@@ -61,6 +61,13 @@ in
         };
 
         opener = {
+          set-wallpaper = [
+            {
+              run = ''${pkgs.swww}/bin/swww img "$1" --transition-fps 45 --transition-duration 1 --transition-type random'';
+              for = "linux";
+              desc = "Set as wallpaper";
+            }
+          ];
           edit = [
             {
               run = ''''\${EDITOR:=nvim} "$@"'';
@@ -98,6 +105,15 @@ in
       keymap = {
         mgr = {
           prepend_keymap = [
+            # Set Wallpaper
+            {
+              on = [
+                "g"
+                "w"
+              ];
+              run = ''shell -- ${pkgs.swww}/bin/swww img "$1" --transition-fps 45 --transition-duration 1 --transition-type random'';
+              desc = "Set as wallpaper";
+            }
             # Git Changes
             {
               on = [

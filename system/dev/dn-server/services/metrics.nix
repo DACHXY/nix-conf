@@ -154,4 +154,39 @@ in
       };
     })
   ];
+
+  services.prometheus.alertmanager-ntfy = {
+    settings = {
+      http = {
+        addr = ":31006";
+      };
+      ntfy = {
+        baseurl = config.services.ntfy-sh.settings.base-url;
+        notification = {
+          topic = "alertmgr";
+          priority = ''
+            status == "firing" ? "urgent" : "default"
+          '';
+          tags = [
+            {
+              tag = "+1";
+              condition = ''status == "resolved"'';
+            }
+          ];
+          templates = {
+            title = ''
+              {{ if eq .Status "resolved" }}Resolved: {{ end }}{{ index .Annotations "summary" }}
+            '';
+            description = ''
+              {{ index .Annotations "description" }}
+            '';
+            headers.X-Click = ''
+              {{ .GeneratorURL }}
+            '';
+          };
+        };
+      };
+    };
+    enable = true;
+  };
 }

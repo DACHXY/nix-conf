@@ -13,6 +13,7 @@ in
     inherit hostname username;
     domain = "net.dn";
     enableHomeManager = true;
+    nvidia.enable = true;
     hyprland = {
       enable = true;
       monitors = [

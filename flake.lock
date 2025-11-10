@@ -29,11 +29,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1759471829,
-        "narHash": "sha256-aMBGX6xlDAH02mFJ7FHGMbntfaBkJ/izinIPPoARar4=",
+        "lastModified": 1762440797,
+        "narHash": "sha256-Gl9i+siUDwjAdJ7zUurThP6XhtxV58xVgS0ztsLh7bI=",
         "owner": "dachxy",
         "repo": "actual-budget-flake",
-        "rev": "aba51d40a8fa3f0da8400bb100f0802bfeca728b",
+        "rev": "721d97809077c90d895cadbe2002e20e60d182af",
         "type": "github"
       },
       "original": {
@@ -1416,14 +1416,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1761409875,
-        "narHash": "sha256-tTVQsRHO1c/c3rpeHXuYV+HLulv2J3ZLR3c32nSWyas=",
-        "path": "/home/danny/projects/nix-mail-server",
-        "type": "path"
+        "lastModified": 1761893234,
+        "narHash": "sha256-ePHBF/6fyfTSAMvAaES+LxaBIeW6weooAOXxqN1em0s=",
+        "owner": "dachxy",
+        "repo": "nix-mail-server",
+        "rev": "b8c26c666a14fcdf4d514c17a2362fc5d33c7358",
+        "type": "github"
       },
       "original": {
-        "path": "/home/danny/projects/nix-mail-server",
-        "type": "path"
+        "owner": "dachxy",
+        "repo": "nix-mail-server",
+        "type": "github"
       }
     },
     "marks-nvim": {

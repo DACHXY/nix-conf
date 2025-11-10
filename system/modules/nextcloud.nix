@@ -69,6 +69,11 @@ in
     ];
   };
 
+  systemd.services."phpfpm-nextcloud".postStart = ''
+    ${config.services.nextcloud.occ}/bin/nextcloud-occ config:app:set recognize node_binary --value '${lib.getExe pkgs.nodejs_22}'
+    ${config.services.nextcloud.occ}/bin/nextcloud-occ config:app:set recognize tensorflow.purejs --value 'true'
+  '';
+
   services.nextcloud = {
     enable = true;
     package = nextcloudPkg;
@@ -88,9 +93,10 @@ in
         whiteboard
         user_oidc
         memories
+        recognize # May break
         ;
 
-      inherit recognize;
+      # inherit recognize;
 
       camerarawpreviews = pkgs.fetchNextcloudApp {
         url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v0.8.8/camerarawpreviews_nextcloud.tar.gz";
