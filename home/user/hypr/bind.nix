@@ -2,7 +2,6 @@
 {
   osConfig,
   config,
-  lib,
   pkgs,
   ...
 }:
@@ -18,6 +17,7 @@ let
   browser = "${prefix}${browser-bin}";
   terminal = "${prefix}ghostty";
   filemanager = "${terminal} -e yazi";
+  mailClient = "${prefix}thunderbird";
 
   screenshotFolder = "--output-folder ~/Pictures/Screenshots";
   clipboardOnly = "${screenshotFolder}";
@@ -49,7 +49,8 @@ in
     ''CTRL ALT, T, exec, ${terminal}''
     ''${mainMod}, Q, killactive, ''
 
-    ''${mainMod}, M, exec, ${toggleWlogout}''
+    ''${mainMod} SHIFT, M, exec, ${toggleWlogout}''
+    ''${mainMod}, M, exec, ${mailClient}''
     ''${mainMod}, E, exec, ${filemanager}''
     ''${mainMod}, V, togglefloating, ''
     ''ALT, SPACE, exec, rofi -config ~/.config/rofi/apps.rasi -show drun''

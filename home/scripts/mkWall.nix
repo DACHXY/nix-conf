@@ -10,7 +10,7 @@ let
         curl -sL "$url" -o "$filepath"
     fi
 
-    ${config.services.swww.package}/bin/swww img "$filepath" \
+    ${config.services.swww.package}/bin/awww img "$filepath" \
       --transition-fps 45 \
       --transition-duration 1 \
       --transition-type random

@@ -19,7 +19,11 @@ in
       upstream-base-url = "https://ntfy.sh";
       behind-proxy = true;
       proxy-trusted-hosts = "127.0.0.1";
+      auth-default-access = "deny-all";
+      enable-login = true;
+      auth-file = "/var/lib/ntfy-sh/user.db";
     };
+    environmentFile = config.sops.secrets."ntfy".path;
   };
 
   services.nginx.virtualHosts = {

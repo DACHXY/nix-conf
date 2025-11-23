@@ -18,10 +18,23 @@ creation_rules:
   - path_regex: system/dev/dn-lap/sops/secret.yaml
     key_groups:
       - age:
-          - *dn_server
+          - *dn_pre7780
           - *dn_lap
   - path_regex: system/dev/skydrive-lap/sops/secret.yaml
     key_groups:
       - age:
           - *skydrive_lap
           - *dn_pre7780
+  - path_regex: system/dev/public/sops/dn-secret.yaml
+    key_groups:
+      - age:
+          - *dn_pre7780
+          - *dn_server
+          - *dn_lap
+  - path_regex: system/dev/public/sops/secret.yaml
+    key_groups:
+      - age:
+          - *dn_pre7780
+          - *dn_server
+          - *skydrive_lap
+          - *dn_lap

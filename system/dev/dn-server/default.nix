@@ -19,6 +19,8 @@ in
         "maps.rspamd.com"
         "cdn-hub.crowdsec.net"
         "api.crowdsec.net"
+        "mx1.daccc.info"
+        "mx1.dnywe.com"
       ];
       allowedIPs = [
         "10.0.0.0/24"
@@ -43,6 +45,7 @@ in
   '';
 
   imports = [
+    ../public/dn/default.nix
     ./common
     ./home
     ./network

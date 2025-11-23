@@ -33,7 +33,9 @@
   services.nginx.virtualHosts.${domain} = {
     enableACME = true;
     forceSSL = true;
-    locations."/".proxyPass =
-      "http://localhost:${toString config.services.vaultwarden.config.ROCKET_PORT}/";
+    locations."/" = {
+      proxyPass = "http://localhost:${toString config.services.vaultwarden.config.ROCKET_PORT}/";
+      proxyWebsockets = true;
+    };
   };
 }

@@ -92,5 +92,9 @@ in
       group = config.services.opencloud.group;
       mode = "0600";
     };
+    "ntfy" = mkIf config.services.ntfy-sh.enable {
+      owner = config.services.ntfy-sh.user;
+      mode = "0600";
+    };
   };
 }

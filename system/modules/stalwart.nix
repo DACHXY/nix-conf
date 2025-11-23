@@ -1,10 +1,9 @@
 {
   adminPassFile,
-  dbPassFile,
-  dkimKey,
   ldapConf,
   domain ? null,
-  acmeConf ? null,
+  acmeConfs ? null,
+  certs ? null,
   enableNginx ? true,
 }:
 {
@@ -16,15 +15,6 @@ let
   inherit (lib) mkIf;
 
   logFilePath = "${config.services.stalwart-mail.dataDir}/logs";
-  mkCondition = (
-    condition: ithen: ielse: [
-      {
-        "if" = condition;
-        "then" = ithen;
-      }
-      { "else" = ielse; }
-    ]
-  );
 in
 {
   services.postgresql = {
@@ -104,7 +94,8 @@ in
         hostname = "mx1.${domain}";
         domain = "${domain}";
       };
-      acme."letsencrypt" = mkIf (acmeConf != null) acmeConf;
+      acme = mkIf (acmeConfs != null) acmeConfs;
+      certificate = mkIf (certs != null) certs;
 
       directory = {
         "in-memory" = {
@@ -120,9 +111,10 @@ in
         };
         "ldap" = ldapConf;
         imap.lookup.domains = [
-          domain
+          "mx1.${domain}"
         ];
       };
+
       authentication.fallback-admin = {
         user = "admin";
         secret = "%{file:${adminPassFile}}%";

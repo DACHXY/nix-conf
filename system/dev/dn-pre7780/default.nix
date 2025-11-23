@@ -55,6 +55,9 @@ in
 
   imports = [
     ../../modules/presets/basic.nix
+    ../public/dn
+    ../public/dn/ntfy.nix
+    ./expr
     ./common
     ./games
     ./home

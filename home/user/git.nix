@@ -6,9 +6,9 @@
 {
   programs.git = {
     enable = true;
-    userName = username;
-    userEmail = email;
-    extraConfig = {
+    settings = {
+      user.name = username;
+      user.email = email;
       safe.directory = [ "/etc/nixos" ];
       init.defaultBranch = "main";
       pull.rebase = true;

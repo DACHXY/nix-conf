@@ -3,11 +3,12 @@
   lib,
   inputs,
   config,
-  system,
   osConfig,
   ...
 }:
 let
+  inherit (lib) mkForce escapeShellArgs getExe';
+  inherit (pkgs.stdenv.hostPlatform) system;
   inherit (osConfig.systemConf) username;
   inherit (osConfig.systemConf.hyprland) monitors;
   terminal = "ghostty";
@@ -64,7 +65,6 @@ in
     plugins = (
       with inputs.hyprland-plugins.packages.${system};
       [
-        xtra-dispatchers
         hyprwinwrap
       ]
     );
@@ -138,11 +138,14 @@ in
     };
   };
 
-  # === Swww === #
+  # === Awww === #
   services.swww = {
     enable = true;
-    package = inputs.swww.packages.${system}.swww;
+    package = inputs.awww.packages.${system}.awww;
   };
+
+  systemd.user.services.swww.Service.ExecStart =
+    mkForce "${getExe' config.services.swww.package "awww-daemon"} ${escapeShellArgs config.services.swww.extraArgs}";
 
   # === hyprlock === #
   programs.hyprlock = {

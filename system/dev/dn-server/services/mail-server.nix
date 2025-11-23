@@ -1,5 +1,6 @@
-{ config, ... }:
+{ config, lib, ... }:
 let
+  inherit (lib) mkForce;
   inherit (config.systemConf) username;
 in
 {
@@ -46,6 +47,30 @@ in
         '';
         secretFile = config.sops.secrets."ldap/password".path;
         webSecretFile = config.sops.secrets."ldap/env".path;
+        olcAccess =
+          let
+            olcDN = "dc=net,dc=dn";
+          in
+          [
+            ''
+              {0}to attrs=userPassword
+                  by peername="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage
+                  by dn.exact="cn=admin,${olcDN}" manage
+                  by dn.exact="uid=admin,ou=people,${olcDN}" manage
+                  by self write
+                  by anonymous auth
+                  by * none
+            ''
+            ''
+              {1}to *
+                  by peername="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage
+                  by dn.exact="cn=admin,${olcDN}" manage
+                  by dn.exact="uid=admin,ou=people,${olcDN}" manage
+                  by self read
+                  by anonymous auth
+                  by * none
+            ''
+          ];
       };
       rspamd = {
         secretFile = config.sops.secrets."rspamd".path;
@@ -55,4 +80,30 @@ in
         enable = true;
       };
     };
+
+  services.openldap.settings.attrs.olcLogLevel = mkForce "config";
+
+  services.postfix.settings.main = {
+    # internal_mail_filter_classes = [ "bounce" ];
+  };
+
+  services.rspamd = {
+    locals."logging.conf".text = ''
+      level = "debug";
+    '';
+    locals."settings.conf".text = ''
+      bounce {
+        id = "bounce";
+        priority = high;
+        ip = "127.0.0.1";
+        selector = 'smtp_from.regexp("/^$/").last';
+
+        apply {
+          BOUNCE = -25.0;
+        }
+
+        symbols [ "BOUNCE" ]
+      }
+    '';
+  };
 }

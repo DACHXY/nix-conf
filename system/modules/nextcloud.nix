@@ -23,28 +23,6 @@ let
       cp ${caBundle} resources/config/ca-bundle.crt
     '';
   });
-
-  # Patch for downloading models. Hardcoded to `/var/lib/nextcloud/models`
-  recognize = pkgs.stdenvNoCC.mkDerivation (finalAttrs: {
-    pname = "recognize-patched";
-    version = "10.0.4";
-
-    src = pkgs.fetchNextcloudApp {
-      url = "https://github.com/nextcloud/recognize/releases/download/v10.0.4/recognize-10.0.4.tar.gz";
-      sha256 = "sha256-/RHnnvGJMcxe4EuceYc20xh3qkYy1ZzGsyvp0h03eLk=";
-      license = "agpl3Plus";
-    };
-
-    patches = [
-      ../../pkgs/patches/nextcloud_recognize_models_path.patch
-    ];
-
-    installPhase = ''
-      mkdir -p $out
-      cp -r . $out/
-    '';
-  });
-
 in
 {
   imports = [
@@ -90,13 +68,12 @@ in
       inherit (config.services.nextcloud.package.packages.apps)
         contacts
         calendar
+        tasks
         whiteboard
         user_oidc
         memories
-        recognize # May break
+        recognize
         ;
-
-      # inherit recognize;
 
       camerarawpreviews = pkgs.fetchNextcloudApp {
         url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v0.8.8/camerarawpreviews_nextcloud.tar.gz";
@@ -138,7 +115,7 @@ in
   services.nextcloud-whiteboard-server = {
     enable = true;
     settings = {
-      NEXTCLOUD_URL = "http${optionalString configureACME "s"}://${hostname}";
+      NEXTCLOUD_URL = "http${optionalString https "s"}://${hostname}";
       PORT = "3002";
     };
     secrets = whiteboardSecrets;

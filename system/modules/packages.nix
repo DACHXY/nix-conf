@@ -1,9 +1,11 @@
 {
   pkgs,
   inputs,
-  system,
   ...
 }:
+let
+  inherit (pkgs.stdenv.hostPlatform) system;
+in
 {
   environment.systemPackages = with pkgs; [
     file
@@ -31,7 +33,7 @@
     p7zip
     killall
     zip
-    glxinfo # OpenGL info
+    mesa-demos # OpenGL info
     pciutils # PCI info
     xdotool # Keyboard input simulation
     ffmpeg # Video encoding

@@ -4,7 +4,6 @@
 {
   osConfig,
   config,
-  username,
   lib,
   pkgs,
   helper,
@@ -72,7 +71,7 @@ let
       exit 1
     fi
 
-    ${config.services.swww.package}/bin/swww img "$selected" --transition-fps 45 --transition-duration 1 --transition-type random
+    ${config.services.swww.package}/bin/awww img "$selected" --transition-fps 45 --transition-duration 1 --transition-type random
   '';
 
   rbwSelector = import ../scripts/rbwSelector.nix { inherit pkgs; };
@@ -82,11 +81,6 @@ in
 {
   home.packages = [
     mkWall
-  ];
-
-  # For wallpapers
-  systemd.user.tmpfiles.rules = [
-    "d /tmp/wall_cache 700 ${username} -"
   ];
 
   # === gamemoded -r === #

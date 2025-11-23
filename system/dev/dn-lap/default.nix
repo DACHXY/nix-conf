@@ -8,6 +8,7 @@ in
 {
   systemConf = {
     inherit hostname username;
+    face = ../../../home/config/.face;
     domain = "net.dn";
     hyprland = {
       enable = true;
@@ -23,6 +24,8 @@ in
 
   imports = [
     ../../modules/presets/basic.nix
+    ../public/dn
+    ../public/dn/ntfy.nix
     ./common
     ./games
     ./home

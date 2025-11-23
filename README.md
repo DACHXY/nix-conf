@@ -15,7 +15,7 @@
 - [x] Hypridle
 - [x] Zen Browser
 - [x] Swaync (Notification Center)
-- [x] Swww (Wallpaper)
+- [x] Awww (Wallpaper)
 - [x] Ghostty (Terminal)
 - [x] SDDM (Display Manager)
 - [x] Fish (shell)

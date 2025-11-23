@@ -28,7 +28,14 @@ in
   imports = [
     ./plugins/snacks-nvim
     ./plugins/lualine
+    ./plugins/leetcode
     ./extra-lsp.nix
+  ];
+
+  home.packages = with pkgs; [
+    (rust-bin.stable.latest.default.override {
+      extensions = [ "rust-src" ];
+    })
   ];
 
   programs.nvf = {
@@ -37,7 +44,9 @@ in
       vim = {
         enableLuaLoader = true;
         vimAlias = true;
-        extraPackages = with pkgs; [ nixfmt ];
+        extraPackages = with pkgs; [
+          nixfmt
+        ];
 
         clipboard = {
           enable = true;
@@ -380,12 +389,9 @@ in
             enable = true;
             lsp = {
               enable = true;
-              package = [
-                "rust-analyzer"
-              ];
               opts = ''
                 ['rust-analyzer'] = {
-                  cargo = {allFeature = true},
+                  cargo = { allFeature = true },
                   checkOnSave = true,
                   procMacro = {
                     enable = true,
@@ -528,7 +534,8 @@ in
 
           yazi-nvim = {
             enable = true;
-            mappings.openYaziDir = "<leader>e";
+            mappings.openYaziDir = "<leader>-";
+            mappings.openYazi = "<leader>e";
           };
 
           images = {

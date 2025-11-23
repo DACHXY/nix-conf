@@ -1,12 +1,10 @@
 {
   pkgs,
-  lib,
   inputs,
-  system,
-  osConfig,
   ...
 }:
 let
+  inherit (pkgs.stdenv.hostPlatform) system;
   md2html = pkgs.callPackage ../scripts/md2html.nix { };
   ghosttyShaders = pkgs.fetchFromGitHub {
     owner = "sahaj-b";
@@ -60,61 +58,46 @@ in
     };
   };
 
-  home.packages =
-    with pkgs;
-    [
-      obsidian
+  home.packages = with pkgs; [
+    obsidian
 
-      # Discord
-      # vesktop
-      discord
+    # Discord
+    # vesktop
+    discord
 
-      # Dev stuff
-      (python3.withPackages (python-pkgs: [
-        python-pkgs.pip
-        python-pkgs.requests
-      ]))
+    # Dev stuff
+    (python3.withPackages (python-pkgs: [
+      python-pkgs.pip
+      python-pkgs.requests
+    ]))
 
-      # Work stuff
-      libreoffice-qt
-      pandoc
+    # Work stuff
+    libreoffice-qt
+    pandoc
 
-      # Bluetooth
-      blueberry
+    # Bluetooth
+    blueberry
 
-      # Downloads
-      qbittorrent
+    # Downloads
+    qbittorrent
 
-      # Utils
-      cava
-      papirus-folders
-      inkscape
+    # Utils
+    cava
+    papirus-folders
+    inkscape
 
-      # PDF Preview
-      poppler
-      trash-cli
+    # PDF Preview
+    poppler
+    trash-cli
 
-      # File Manager
-      nemo
+    # File Manager
+    nemo
 
-      # Thumbnail
-      ffmpegthumbnailer
+    thunderbird
 
-      thunderbird
+    # Thumbnail
+    ffmpegthumbnailer
 
-      md2html
-    ]
-    ++ (
-      if osConfig.programs.steam.enable then
-        [
-          steam-run
-          protonup
-        ]
-      else
-        [ ]
-    );
-
-  home.sessionVariables = lib.mkIf osConfig.programs.steam.enable {
-    STEAM_EXTRA_COMPAT_TOOLS_PATHS = "\${HOME}/.steam/root/compatibilitytools.d";
-  };
+    md2html
+  ];
 }

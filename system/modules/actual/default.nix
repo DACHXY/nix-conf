@@ -3,13 +3,14 @@
   proxy ? true,
 }:
 {
+  pkgs,
   config,
   lib,
   inputs,
-  system,
   ...
 }:
 let
+  inherit (pkgs.stdenv.hostPlatform) system;
   inherit (builtins) toString;
   inherit (lib) mkIf;
 
