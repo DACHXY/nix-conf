@@ -24,7 +24,7 @@ in
       };
       PAPERLESS_URL = "http${optionalString configureNginx "s"}://${domain}";
     };
-    configureTika = true;
+    configureTika = false;
     database.createLocally = true;
   };
 

@@ -1,11 +1,11 @@
 {
   pkgs,
   inputs,
-  system,
   ...
 }:
 
 let
+  inherit (pkgs.stdenv.hostPlatform) system;
   pkgs-hyprland = inputs.hyprland.inputs.nixpkgs.legacyPackages.${system};
 in
 {
@@ -17,8 +17,8 @@ in
       package = pkgs-hyprland.mesa;
       extraPackages = with pkgs; [
         intel-media-driver # LIBVA_DRIVER_NAME=iHD
-        vaapiVdpau
-        (vaapiIntel.override {
+        libva-vdpau-driver
+        (intel-vaapi-driver.override {
           enableHybridCodec = true;
         })
         libvdpau-va-gl

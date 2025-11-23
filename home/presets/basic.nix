@@ -1,6 +1,7 @@
 { ... }:
 {
   imports = [
+    ../options
     ../user/internationalisation.nix
     ../user/config.nix
     ../user/direnv.nix

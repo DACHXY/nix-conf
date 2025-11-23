@@ -7,11 +7,16 @@
     };
 
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixpkgs-unstable";
+      url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
     home-manager = {
       url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -69,8 +74,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    swww = {
-      url = "github:LGFae/swww";
+    awww = {
+      url = "git+https://codeberg.org/LGFae/awww";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -186,7 +191,6 @@
           in
           nixpkgs.lib.nixosSystem {
             specialArgs = {
-              inherit (conf) system;
               inherit
                 helper
                 inputs
@@ -203,6 +207,7 @@
                   inputs.mail-server.overlay
                   inputs.nix-minecraft.overlay
                   inputs.nix-tmodloader.overlay
+                  inputs.rust-overlay.overlays.default
                 ]
                 ++ (import ./pkgs/overlays);
               }

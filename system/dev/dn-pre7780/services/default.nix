@@ -4,6 +4,7 @@
     ./mail.nix
     ./nginx.nix
     ./wireguard.nix
+    ./nextcloud.nix
     # ./netbird.nix
   ];
 }

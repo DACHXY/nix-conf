@@ -58,7 +58,7 @@ in
       wantedBy = [ "timers.target" ];
       timerConfig = {
         OnBootSec = 10;
-        OnUnitActiveSec = 60;
+        OnUnitActiveSec = 360;
       };
     };
 

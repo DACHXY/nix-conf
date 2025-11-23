@@ -8,8 +8,6 @@ let
   inherit (config.systemConf) username;
   inherit (lib) mkForce optionalString;
 
-  geVersion = "10-15";
-
   memeSelector = pkgs.callPackage ../../../../home/scripts/memeSelector.nix {
     url = "https://nextcloud.net.dn/public.php/dav/files/pygHoPB5LxDZbeY/";
   };
@@ -97,22 +95,6 @@ in
           ];
         })
       ];
-
-      home.file = {
-        # Proton GE
-        ".steam/root/compatibilitytools.d/GE-Proton${geVersion}" = {
-          source = fetchTarball {
-            url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton${geVersion}/GE-Proton${geVersion}.tar.gz";
-            sha256 = "sha256:0iv7vak4a42b5m772gqr6wnarswib6dmybfcdjn3snvwxcb6hbsm";
-          };
-        };
-        ".steam/root/compatibilitytools.d/CachyOS-Proton10-0_v3" = {
-          source = fetchTarball {
-            url = "https://github.com/CachyOS/proton-cachyos/releases/download/cachyos-10.0-20250714-slr/proton-cachyos-10.0-20250714-slr-x86_64_v3.tar.xz";
-            sha256 = "sha256:0hp22hkfv3f1p75im3xpif0pmixkq2i3hq3dhllzr2r7l1qx16iz";
-          };
-        };
-      };
     };
   };
 }

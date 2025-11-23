@@ -1,6 +1,5 @@
 {
   inputs,
-  system,
   config,
   pkgs,
   helper,
@@ -8,6 +7,7 @@
   ...
 }:
 let
+  inherit (pkgs.stdenv.hostPlatform) system;
   inherit (lib)
     mkOption
     mkEnableOption
@@ -61,6 +61,12 @@ in
     hostname = mkOption {
       type = types.str;
       description = "Hostname for system";
+    };
+
+    face = mkOption {
+      type = with types; nullOr path;
+      description = "User avatar";
+      default = null;
     };
 
     domain = mkOption {
@@ -140,6 +146,7 @@ in
         imports = [
           inputs.hyprland.homeManagerModules.default
           inputs.caelestia-shell.homeManagerModules.default
+          inputs.sops-nix.homeManagerModules.default
           inputs.zen-browser.homeManagerModules.${system}.default
           inputs.nvf.homeManagerModules.default
           {
@@ -148,6 +155,10 @@ in
               stateVersion = stateVersion;
             };
             programs.home-manager.enable = true;
+
+            home.file.".face" = mkIf (cfg.face != null) {
+              source = cfg.face;
+            };
           }
         ]
         ++ (optionals cfg.hyprland.enable [

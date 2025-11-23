@@ -384,7 +384,15 @@ in
         "test.local." = "127.0.0.1:5359";
       };
       forwardZonesRecurse = {
-        "." = "168.95.1.1";
+        # ==== Rspamd DNS ==== #
+        "multi.uribl.com." = "168.95.1.1";
+        "score.senderscore.com." = "168.95.1.1";
+        "list.dnswl.org." = "168.95.1.1";
+        "dwl.dnswl.org." = "168.95.1.1";
+
+        # ==== Others ==== #
+        "tw." = "168.95.1.1";
+        "." = "8.8.8.8";
       };
       dnssecValidation = "off";
       dns.allowFrom = [
@@ -395,6 +403,7 @@ in
       dns.port = 5300;
       yaml-settings = {
         webservice.webserver = true;
+        recordcache.max_negative_ttl = 60;
       };
     };
 
@@ -451,7 +460,6 @@ in
 
   virtualisation = {
     oci-containers = {
-      backend = "docker";
       containers = {
         uptime-kuma = {
           extraOptions = [ "--network=host" ];

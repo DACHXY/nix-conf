@@ -15,7 +15,6 @@ in
       recursive = true;
       source = "${configDir}/gh";
     };
-    ".face".source = "${configDir}/.face";
   };
 
   xdg.mimeApps = {

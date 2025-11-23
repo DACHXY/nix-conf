@@ -1,9 +1,17 @@
-{ osConfig, pkgs, ... }:
+{
+  osConfig,
+  config,
+  pkgs,
+  ...
+}:
 let
-  shellAlias = import ./shellAlias.nix { hostname = osConfig.networking.hostName; };
-  remoteRebuld = pkgs.callPackage ../scripts/remoteRebuild.nix { };
+  remoteRebuld = import ../scripts/remoteRebuild.nix { inherit osConfig config pkgs; };
 in
 {
+  imports = [
+    ./shellAlias.nix
+  ];
+
   home.packages = with pkgs; [
     # Shell
     grc
@@ -34,7 +42,6 @@ in
           src = pkgs.fishPlugins.hydro.src;
         }
       ];
-      shellAliases = shellAlias;
     };
 
     bash = {

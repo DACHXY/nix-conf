@@ -10,6 +10,14 @@ in
         owner = "nextcloud";
         group = "nextcloud";
       };
+      "nextcloud/signaling.conf" = mkIf config.services.nextcloud.enable {
+        owner = "signaling";
+        group = "signaling";
+        mode = "0640";
+      };
+      "nextcloud/whiteboard" = mkIf config.services.nextcloud.enable {
+        owner = "nextcloud";
+      };
 
       "lam/env" = { };
 
@@ -39,6 +47,15 @@ in
         owner = "crowdsec";
         mode = "0600";
       };
+      "cloudflare/secret" = mkIf (hasAttr "acme" config.users.users) {
+        owner = "acme";
+        mode = "0600";
+      };
+      "rspamd" = mkIf config.services.rspamd.enable {
+        owner = config.services.rspamd.user;
+        group = config.services.rspamd.group;
+        mode = "0660";
+      };
     }
     // (optionalAttrs config.services.stalwart-mail.enable (
       let
@@ -50,15 +67,6 @@ in
           inherit group owner;
         };
         "stalwart/tsig" = {
-          inherit group owner;
-        };
-        "stalwart/db" = {
-          inherit group owner;
-        };
-        "stalwart/dkimKey" = {
-          inherit group owner;
-        };
-        "cloudflare/secret" = {
           inherit group owner;
         };
         "stalwart/ldap" = {

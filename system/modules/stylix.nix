@@ -29,7 +29,7 @@ in
       monospace = caskaydia;
 
       emoji = {
-        package = pkgs.noto-fonts-emoji;
+        package = pkgs.noto-fonts-color-emoji;
         name = "Noto Color Emoji";
       };
 
@@ -47,7 +47,7 @@ in
       jetbrains-mono
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       liberation_ttf
       # dfkai-sb
       sf-pro-display-bold

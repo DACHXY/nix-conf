@@ -1,4 +1,8 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  ...
+}:
 let
   inherit (lib) optionalString;
   inherit (config.systemConf) username;

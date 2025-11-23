@@ -1,11 +1,12 @@
 {
   inputs,
-  system,
+  config,
   pkgs,
   lib,
   ...
 }:
 let
+  inherit (pkgs.stdenv.hostPlatform) system;
   yaziPlugins = pkgs.fetchFromGitHub {
     owner = "yazi-rs";
     repo = "plugins";
@@ -63,7 +64,7 @@ in
         opener = {
           set-wallpaper = [
             {
-              run = ''${pkgs.swww}/bin/swww img "$1" --transition-fps 45 --transition-duration 1 --transition-type random'';
+              run = ''${config.services.swww.package}/bin/awww img "$1" --transition-fps 45 --transition-duration 1 --transition-type random'';
               for = "linux";
               desc = "Set as wallpaper";
             }
@@ -111,7 +112,7 @@ in
                 "g"
                 "w"
               ];
-              run = ''shell -- ${pkgs.swww}/bin/swww img "$1" --transition-fps 45 --transition-duration 1 --transition-type random'';
+              run = ''shell -- ${config.services.swww.package}/bin/awww img "$1" --transition-fps 45 --transition-duration 1 --transition-type random'';
               desc = "Set as wallpaper";
             }
             # Git Changes
@@ -178,9 +179,7 @@ in
                 "c"
                 "D"
               ];
-              run = ''
-                shell '${pkgs.ripdrag.out}/bin/ripdrag "$@" -x 2>/dev/null &' --confirm
-              '';
+              run = ''shell 'ripdrag "$0" "$@" -x 2>/dev/null &' --confirm'';
               desc = "Drag the file";
             }
             # Start terminal
@@ -214,7 +213,7 @@ in
             {
               on = [
                 "F" # file
-                "m" # markdown
+                "M" # markdown
                 "H" # html
               ];
               for = "unix";
@@ -251,5 +250,6 @@ in
   home.packages = with pkgs; [
     ueberzugpp
     pdfNormalize
+    ripdrag
   ];
 }

@@ -12,13 +12,6 @@
   ];
 
   programs = {
-    gnupg = {
-      agent = {
-        enable = true;
-        enableSSHSupport = true;
-      };
-    };
-
     neovim = {
       enable = true;
       configure = {

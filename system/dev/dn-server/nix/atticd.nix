@@ -1,10 +1,11 @@
 {
+  pkgs,
   config,
   inputs,
-  system,
   ...
 }:
 let
+  inherit (pkgs.stdenv.hostPlatform) system;
   listenPort = 30098;
 in
 {

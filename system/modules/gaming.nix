@@ -4,7 +4,9 @@
   lib,
   ...
 }:
-
+let
+  inherit (config.systemConf) username;
+in
 {
   nix = {
     settings = {
@@ -17,12 +19,17 @@
 
   programs.gamescope.enable = lib.mkDefault true;
 
+  users.users.${username}.extraGroups = [ "gamemode" ];
+
   programs = {
     steam = {
       enable = true;
       protontricks.enable = true;
       gamescopeSession.enable = true;
       extest.enable = true;
+      extraCompatPackages = with pkgs; [
+        proton-ge-bin
+      ];
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
       localNetworkGameTransfers.openFirewall = true;

@@ -2,9 +2,10 @@
   pkgs,
   lib,
   inputs,
-  system,
 }:
 let
+  inherit (pkgs.stdenv.hostPlatform) system;
+
   vmList =
     let
       kubeMasterIP = "192.168.0.6";
