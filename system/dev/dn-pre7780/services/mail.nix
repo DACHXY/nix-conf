@@ -202,4 +202,18 @@ in
       '';
     };
   };
+
+  services.mail-ntfy-server = {
+    enable = true;
+    settings = {
+      NTFY_URL = "https://ntfy.net.dn";
+      NTFY_TOPIC = "dachxy-mail";
+      NTFY_RCPTS = [ "dachxy@dnywe.com" ];
+      HOST = "127.0.0.1";
+      PORT = 31010;
+    };
+    environmentFiles = [
+      config.sops.secrets."ntfy".path
+    ];
+  };
 }

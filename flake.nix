@@ -35,7 +35,7 @@
     };
 
     hyprland = {
-      url = "git+https://github.com/hyprwm/Hyprland?submodules=1&ref=refs/tags/v0.51.1";
+      url = "github:hyprwm/Hyprland";
     };
 
     hyprland-plugins = {
@@ -137,6 +137,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    mail-ntfy-server = {
+      url = "github:dachxy/mail-ntfy-server";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
   };
 
@@ -214,6 +219,7 @@
 
               # ==== Common Modules ==== #
               inputs.home-manager.nixosModules.default
+              inputs.mail-ntfy-server.nixosModules.default
               inputs.nix-index-database.nixosModules.nix-index
               inputs.disko.nixosModules.disko
               inputs.sops-nix.nixosModules.sops
