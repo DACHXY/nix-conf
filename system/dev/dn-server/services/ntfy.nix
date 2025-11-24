@@ -9,6 +9,7 @@ in
 {
   systemConf.security.allowedDomains = [
     "ntfy.sh"
+    "web.push.apple.com"
   ];
 
   services.ntfy-sh = {
@@ -22,6 +23,8 @@ in
       auth-default-access = "deny-all";
       enable-login = true;
       auth-file = "/var/lib/ntfy-sh/user.db";
+      web-push-public-key = "BHN3E5Mwckakf6gOf2uAaiTueB-2L6i96QA1l0r1rSTX_N4qGtMgobmIgEfdY6LAFxradYLtRmwEzTzEnp_Xs5w";
+      web-push-file = "/var/lib/ntfy-sh/webpush.db";
     };
     environmentFile = config.sops.secrets."ntfy".path;
   };

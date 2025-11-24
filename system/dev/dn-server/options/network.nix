@@ -62,14 +62,9 @@ in
       };
     };
 
-    systemd.services.fetch-allowed-domains = {
-      path = with pkgs; [
-        nftables
-        dig.dnsutils
-      ];
-      after = [ "network.target" ];
-      serviceConfig = {
-        ExecStart = "${pkgs.writeShellScript "fetch-allowed-domains" ''
+    systemd.services.fetch-allowed-domains =
+      let
+        script = pkgs.writeShellScript "fetch-allowed-domains" ''
           DOMAINS=(${toString (map (x: ''"${x}"'') cfg.allowedDomains)})
           SETNAME="inet filter ${cfg.rules.setName}"
 
@@ -83,9 +78,19 @@ in
               echo "Added $ip for $domain"
             done
           done
-        ''}";
-        Type = "oneshot";
+        '';
+      in
+      {
+        path = with pkgs; [
+          nftables
+          dig.dnsutils
+        ];
+        after = [ "network.target" ];
+        serviceConfig = {
+          ExecStart = "${script}";
+          Type = "oneshot";
+        };
+        restartTriggers = [ script ];
       };
-    };
   };
 }
