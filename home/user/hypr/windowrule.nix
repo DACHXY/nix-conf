@@ -1,120 +1,144 @@
-{ ... }:
+{ lib, ... }:
 let
+  inherit (lib) mapAttrsToList flatten;
   top = "60";
-  right = "100%-w-10";
+  right = "(monitor_w-(window_w)-10)";
+  vMid = "((monitor_h*0.5)-(window_h*0.5))";
   notransTag = "notrans";
+
+  windowRulesMap = {
+    # Audio Control
+    "match:class ^(org.pulseaudio.pavucontrol)$" = [
+      "min_size 700 420"
+      "size (monitor_w*0.3) (monitor_h*0.33)"
+      "move ${right} ${top}"
+      "float on"
+      "pin on"
+      "animation slide top 20%"
+    ];
+
+    # Local Send (File Sharing)
+    "match:class ^(localsend_app)$" = [
+      "move ${right} ${vMid}"
+      "size (monitor_w*0.2) (monitor_h*0.8)"
+      "float on"
+      "pin on"
+      "animation slide right 20%"
+    ];
+
+    # Airplay
+    "match:class ^(GStreamer)$" =
+      let
+        scale = "0.21";
+        ratio = "2.14";
+      in
+      [
+        "move ${right} ${vMid}"
+        "size (monitor_w*${scale}) (${ratio}*monitor_w*${scale})"
+        "pin on"
+        "float on"
+        "opacity 1.0 override 1.0 override"
+        "no_blur on"
+        "animation slide right 20%"
+        "keep_aspect_ratio true"
+      ];
+
+    # Bluetooth
+    "match:class ^(blueberry.py)$" = [
+      "move ${right} ${top}"
+      "size (monitor_w*0.25) (monitor_h*0.45)"
+      "min_size 540 640"
+      "float on"
+      "pin on"
+      "animation slide top 20%"
+    ];
+
+    # float
+    "float true" = [
+      "match:class file_progress"
+      "match:class confirm"
+      "match:class dialog"
+      "match:class download"
+      "match:class notification"
+      "match:class error"
+      "match:class splash"
+      "match:class confirmreset"
+      "match:class pavucontrol-qt"
+      "match:class pavucontrol"
+      "match:class file-roller"
+      "match:class ^(it.mijorus.smile)"
+      "match:class ^(xdg-desktop-portal-gtk)$"
+      "match:class ^(vesktop)$, match:title ^(Discord Popout)$"
+      "match:class ^(steam)$, match:title ^(Friends List)$"
+      "match:title Open File"
+      "match:title branchdialog"
+      "match:title wlogout"
+      "match:title ^(Media viewer)$"
+      "match:title ^(File Operation Progress)$"
+      "match:title ^(Steam Settings)$"
+      "match:title ^(Picture-in-Picture)$"
+    ];
+
+    # Fullscreen
+    "fullscreen true" = [
+      "match:title wlogout"
+      "match:initial_class ^(cs2)$"
+    ];
+
+    # Disable Tansparent
+    "match:tag ${notransTag}" = [
+      "opacity 1.0 override 1.0 override"
+      "no_blur true"
+    ];
+
+    # Steam
+    "match:class ^(steam)$" = [
+      "workspace 7 silent"
+      "workspace unset, match:float true"
+    ];
+  };
+
+  windowRules = flatten (
+    mapAttrsToList (name: values: (map (value: "${name}, ${value}") values)) windowRulesMap
+  );
 in
 {
   wayland.windowManager.hyprland.settings = {
     windowrule = [
       "match:class ^(org.fcitx.), pseudo true"
-      "match:class file_progress, float true"
-      "match:class confirm, float true"
-      "match:class dialog, float true"
-      "match:class download, float true"
-      "match:class notification, float true"
-      "match:class error, float true"
-      "match:class splash, float true"
-      "match:class confirmreset, float true"
-      "match:title Open File, float true"
-      "match:title branchdialog, float true"
-      "match:class pavucontrol-qt, float true"
-      "match:class pavucontrol, float true"
-      "match:class file-roller, float true"
-      "match:title wlogout, fullscreen true"
-      "match:title wlogout, float true"
-      "match:title wlogout, fullscreen true"
-
-      "match:title ^(Media viewer)$, float true"
-      "match:title ^(File Operation Progress)$, float true"
-      "match:class ^(it.mijorus.smile), float true"
-      "match:class ^(xdg-desktop-portal-gtk)$, float true"
-      "match:title ^(Steam Settings)$, float true"
-
-      "fullscreen true, match:initial_class ^(cs2)$"
-
       # Zen browser
       "opacity 0.9999 override, match:initial_class ^(zen)(.*)"
-
       # Ghostty
       "opacity 0.9999 override, match:initial_class ^(com.mitchellh.ghostty)$"
-
       # Picture in picture windows
-      "float true, match:title ^(Picture-in-Picture)$"
       "pin true, match:title ^(Picture-in-Picture)$"
-      "float true, match:class ^(vesktop)$, match:title ^(Discord Popout)$"
       "pin true, match:class ^(vesktop)$, match:title ^(Discord Popout)$"
-      "float true, match:class ^(steam)$, match:title ^(Friends List)$"
-
-      # Meidia control
-      "move ${right} ${top}, match:class ^(org.pulseaudio.pavucontrol)$"
-      "size 30% 33%, match:class ^(org.pulseaudio.pavucontrol)$"
-
-      # Local Send (File Sharing)
-      "move ${right} 8%, match:class ^(localsend_app)$"
-      "size 20% 80%, match:class ^(localsend_app)$"
-
-      # Bluetooth
-      "move ${right} ${top}, match:class ^(blueberry.py)$"
-      "size 25% 45%, match:class ^(blueberry.py)$"
-
-      # Media Control
-      "float true, match:class ^(org.pulseaudio.pavucontrol)$"
-      "pin true, match:class ^(org.pulseaudio.pavucontrol)$"
-      "animation slide top 20%, match:class ^(org.pulseaudio.pavucontrol)$"
-
-      # Local Send (File Sharing)
-      "float true, match:class ^(localsend_app)$"
-      "pin true, match:class ^(localsend_app)$"
-      "animation slide right 20%, match:class ^(localsend_app)$"
-
-      # Airplay
-      "move ${right} 10%, match:class ^(GStreamer)$"
-      "size 21% 80%, match:class ^(GStreamer)$"
-      "pin true, match:class ^(GStreamer)$"
-      "float true, match:class ^(GStreamer)$"
-      "opacity 1.0 override 1.0 override, match:class ^(GStreamer)$"
-      "no_blur true, match:class ^(GStreamer)$"
-      "animation slide right 20%, match:class ^(GStreamer)$"
-      "keep_aspect_ratio true, match:class ^(GStreamer)$"
-
-      # Bluetooth
-      "float true, match:class ^(blueberry.py)$"
-      "pin true, match:class ^(blueberry.py)$"
-      "animation slide top 20%, match:class ^(blueberry.py)$"
-
-      # Steam
-      "workspace 7 silent, match:class ^(steam)$"
-      "workspace unset, match:class ^(steam)$, match:float true"
-
       # steam game
       "workspace 7 silent, match:class ^(steam_app_)(.*)"
-
       # VLC
       "workspace 3, match:initial_class ^(vlc), match:float false"
-
       # discord
       "workspace 4 silent, match:initial_class ^(discord), match:float false"
-
       # Davinci resolve
       "center 1, match:initial_class ^(resolve), match:float true"
+    ]
+    ++ windowRules;
 
-      # Disable Tansparent
-      "opacity 1.0 override 1.0 override, match:tag ${notransTag}"
-      "no_blur true, match:tag ^(${notransTag})$"
-    ];
-
-    layerrule = [
-      "match:namespace waybar, blur on"
-      "match:namespace logout_dialog, blur on"
-      "match:namespace rofi, blur on"
-      "match:namespace rofi, ignore_alpha 0"
-      "match:namespace swaync-control-center, blur on"
-      "match:namespace swaync-notification-window, blur on"
-      "match:namespace swaync-control-center, ignore_alpha 0"
-      "match:namespace swaync-notification-window, ignore_alpha 0"
-      "match:namespace swaync-control-center, ignore_alpha 0.1"
-      "match:namespace swaync-notification-window, ignore_alpha 0.1"
-    ];
+    layerrule =
+      let
+        matchPrefix = "match:namespace";
+      in
+      map (value: "${matchPrefix} ${value}") [
+        "waybar, blur on"
+        "logout_dialog, blur on"
+        "rofi, blur on"
+        "rofi, ignore_alpha 0"
+        "swaync-control-center, blur on"
+        "swaync-notification-window, blur on"
+        "swaync-control-center, ignore_alpha 0"
+        "swaync-notification-window, ignore_alpha 0"
+        "swaync-control-center, ignore_alpha 0.1"
+        "swaync-notification-window, ignore_alpha 0.1"
+      ];
   };
 }

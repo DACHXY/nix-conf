@@ -27,10 +27,12 @@ in
   systemd.user.services.uxplay = {
     wantedBy = [ "default.target" ];
     serviceConfig = {
+      Restart = "on-failure";
+      RestartSec = 5;
       Type = "simple";
       ExecStart = "${pkgs.uxplay}/bin/uxplay ${
-        optionalString (hostname != null) "-n ${hostname} -fs -fps 60 -nh"
-      } -p";
+        optionalString (hostname != null) "-n ${hostname}"
+      } -fps 60 -nh -p";
     };
   };
 
