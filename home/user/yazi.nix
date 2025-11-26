@@ -26,6 +26,10 @@ let
          -dPDFFitPage "$path"
     done
   '';
+
+  pdfCombine = pkgs.writeShellScriptBin "combine-pdf" ''
+    ${lib.getExe pkgs.pdftk} "$@" cat output combined_$(date +%Y%m%d_%H%M%S).pdf
+  '';
 in
 {
   programs = {
@@ -50,11 +54,6 @@ in
             name = "*";
             run = "git";
           }
-          {
-            id = "git";
-            name = "*/";
-            run = "git";
-          }
         ];
 
         input = {
@@ -62,32 +61,25 @@ in
         };
 
         opener = {
-          set-wallpaper = [
-            {
-              run = ''${config.services.swww.package}/bin/awww img "$1" --transition-fps 45 --transition-duration 1 --transition-type random'';
-              for = "linux";
-              desc = "Set as wallpaper";
-            }
-          ];
           edit = [
             {
-              run = ''''\${EDITOR:=nvim} "$@"'';
+              run = ''''\${EDITOR:=nvim} "$0"'';
               desc = "$EDITOR";
               block = true;
             }
             {
-              run = ''code "$@"'';
+              run = ''code "$0"'';
               orphan = true;
             }
           ];
 
           player = [
-            { run = ''mpv --force-window "$@"''; }
+            { run = ''mpv --force-window "$0"''; }
           ];
 
           open = [
             {
-              run = ''xdg-open "$@"'';
+              run = ''xdg-open "$0"'';
               desc = "Open";
             }
           ];
@@ -104,126 +96,123 @@ in
       };
 
       keymap = {
-        mgr = {
-          prepend_keymap = [
-            # Set Wallpaper
-            {
-              on = [
-                "g"
-                "w"
-              ];
-              run = ''shell -- ${config.services.swww.package}/bin/awww img "$1" --transition-fps 45 --transition-duration 1 --transition-type random'';
-              desc = "Set as wallpaper";
-            }
-            # Git Changes
-            {
-              on = [
-                "g"
-                "c"
-              ];
-              run = "plugin vcs-files";
-              desc = "Show Git file changes";
-            }
-            # Image zoom
-            {
-              on = "+";
-              run = "plugin zoom 1";
-              desc = "Zoom in hovered file";
-            }
-            {
-              on = "-";
-              run = "plugin zoom -1";
-              desc = "Zoom out hovered file";
-            }
-            # Mount Manager
-            {
-              on = "M";
-              run = "plugin mount";
-              desc = "Launch mount manager";
-              # Usage
-              # Key binding 	Alternate key 	Action
-              # q 	- 	Quit the plugin
-              # k 	↑ 	Move up
-              # j 	↓ 	Move down
-              # l 	→ 	Enter the mount point
-              # m 	- 	Mount the partition
-              # u 	- 	Unmount the partition
-              # e 	- 	Eject the disk
-            }
-            # Toggle Maximize Preview
-            {
-              on = "T";
-              run = "plugin toggle-pane max-preview";
-              desc = "Show or hide the preview panel";
-            }
-            # Copy selected files to the system clipboard while yanking
-            {
-              on = "y";
-              run = [
-                ''shell -- for path in "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list''
-                "yank"
-              ];
-            }
-            # cd back to the root of the current Git repository
-            {
-              on = [
-                "g"
-                "r"
-              ];
-              run = ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
-              desc = "Go to git root";
-            }
-            # Drag and Drop
-            {
-              on = [
-                "c"
-                "D"
-              ];
-              run = ''shell 'ripdrag "$0" "$@" -x 2>/dev/null &' --confirm'';
-              desc = "Drag the file";
-            }
-            # Start terminal
-            {
-              on = [ "!" ];
-              for = "unix";
-              run = ''shell "$SHELL" --block'';
-              desc = "Open $SHELL here";
-            }
-            # Combine PDF
-            {
-              on = [
-                "F" # file
-                "p" # pdf
-                "c" # combine
-              ];
-              for = "unix";
-              run = ''shell '${lib.getExe pkgs.pdftk} "$@" cat output combined_$(date +%Y%m%d_%H%M%S).pdf 2>/dev/null &' '';
-              desc = "Combine selected pdf";
-            }
-            {
-              on = [
-                "F" # file
-                "p" # pdf
-                "n" # normalize
-              ];
-              for = "unix";
-              run = ''shell -- ${lib.getExe pdfNormalize} "$@" 2>/dev/null & '';
-              desc = "Normalize PDF to A4 size";
-            }
-            {
-              on = [
-                "F" # file
-                "M" # markdown
-                "H" # html
-              ];
-              for = "unix";
-              run = [
-                ''shell -- for path in "$@"; do ${lib.getExe md2html} "$path"; done''
-              ];
-              desc = "Convert Markdown to HTML";
-            }
-          ];
-        };
+        mgr.prepend_keymap = [
+          # Set Wallpaper
+          {
+            on = [
+              "g"
+              "w"
+            ];
+            run = ''shell -- ${config.services.swww.package}/bin/awww img "$0" --transition-fps 45 --transition-duration 1 --transition-type random'';
+            desc = "Set as wallpaper";
+          }
+          # Git Changes
+          {
+            on = [
+              "g"
+              "c"
+            ];
+            run = "plugin vcs-files";
+            desc = "Show Git file changes";
+          }
+          # Image zoom
+          {
+            on = "+";
+            run = "plugin zoom 1";
+            desc = "Zoom in hovered file";
+          }
+          {
+            on = "-";
+            run = "plugin zoom -1";
+            desc = "Zoom out hovered file";
+          }
+          # Mount Manager
+          {
+            on = "M";
+            run = "plugin mount";
+            desc = "Launch mount manager";
+            # Usage
+            # Key binding 	Alternate key 	Action
+            # q 	- 	Quit the plugin
+            # k 	↑ 	Move up
+            # j 	↓ 	Move down
+            # l 	→ 	Enter the mount point
+            # m 	- 	Mount the partition
+            # u 	- 	Unmount the partition
+            # e 	- 	Eject the disk
+          }
+          # Toggle Maximize Preview
+          {
+            on = "T";
+            run = "plugin toggle-pane max-preview";
+            desc = "Show or hide the preview panel";
+          }
+          # Copy selected files to the system clipboard while yanking
+          {
+            on = "y";
+            run = [
+              ''shell -- for path in "$0" "$@"; do echo "file://$path"; done | wl-copy -t text/uri-list''
+              "yank"
+            ];
+          }
+          # cd back to the root of the current Git repository
+          {
+            on = [
+              "g"
+              "r"
+            ];
+            run = ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
+            desc = "Go to git root";
+          }
+          # Drag and Drop
+          {
+            on = [
+              "c"
+              "D"
+            ];
+            run = ''shell 'ripdrag "$0" "$@" -x 2>/dev/null &' --confirm'';
+            desc = "Drag the file";
+          }
+          # Start terminal
+          {
+            on = [ "!" ];
+            for = "unix";
+            run = ''shell "$SHELL" --block'';
+            desc = "Open $SHELL here";
+          }
+          # Combine PDF
+          {
+            on = [
+              "F" # file
+              "p" # pdf
+              "c" # combine
+            ];
+            for = "unix";
+            run = ''shell -- ${lib.getExe pdfCombine} "$0" "$@"'';
+            desc = "Combine selected pdf";
+          }
+          {
+            on = [
+              "F" # file
+              "p" # pdf
+              "n" # normalize
+            ];
+            for = "unix";
+            run = ''shell -- ${lib.getExe pdfNormalize} "$0" "$@" 2>/dev/null'';
+            desc = "Normalize PDF to A4 size";
+          }
+          {
+            on = [
+              "F" # file
+              "H" # html
+            ];
+            for = "unix";
+            run = [
+              ''shell -- for path in "$0" "$@"; do ${lib.getExe md2html} "$path"; done''
+            ];
+            desc = "Convert Markdown to HTML";
+          }
+        ];
       };
 
       initLua =
