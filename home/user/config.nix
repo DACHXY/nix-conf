@@ -1,4 +1,8 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  ...
+}:
 let
   configDir = ../config;
   browser = "zen.desktop";

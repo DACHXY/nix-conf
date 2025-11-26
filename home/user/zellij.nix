@@ -54,7 +54,7 @@ in
       pane_frames = false;
       show_startup_tips = false;
       session_serialization = false;
-      default_layout = "default";
+      default_layout = "default-com";
     };
 
     extraConfig = ''
@@ -269,7 +269,7 @@ in
       }
     '';
     layouts = {
-      default = {
+      default-com = {
         layout = {
           _children = [
             {
