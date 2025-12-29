@@ -1,7 +1,5 @@
 { hostname }:
 {
-  config,
-  lib,
   pkgs,
   ...
 }:
@@ -12,20 +10,11 @@ in
   systemConf = {
     inherit hostname username;
     domain = "net.dn";
-    hyprland = {
-      enable = true;
-      monitors = [
-        {
-          desc = "AU Optronics 0x82ED";
-          props = "prefered, 0x0, 1";
-          output = "eDP-1";
-        }
-        {
-          desc = "AOC 24B30HM2 27ZQ4HA00101";
-          props = "prefered, 1920x540, 1";
-          output = "HDMI-A-2";
-        }
-      ];
+    hyprland.enable = true;
+    face = pkgs.fetchurl {
+      url = "https://files.net.dn/skydrive.jpg";
+      hash = "sha256-aMjl6VL1Zy+r3ElfFyhFOlJKWn42JOnAFfBXF+GPB/Q=";
+      curlOpts = "-k";
     };
   };
 

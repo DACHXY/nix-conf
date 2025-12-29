@@ -16,6 +16,11 @@ let
       --sudo --ask-sudo-password $@'';
 
   rebuild = pkgs.writeShellScriptBin "rebuild" ''
+    ${rebuildCommand}
+  '';
+
+  # Notification
+  nrebuild = pkgs.writeShellScriptBin "nrebuild" ''
     ${
       if shouldNotify then
         ''
@@ -36,6 +41,7 @@ let
 in
 {
   home.packages = [
+    nrebuild
     rebuild
   ];
 

@@ -5,10 +5,26 @@
   ...
 }:
 let
+  inherit (lib) mkIf mkForce;
   hostname = "drive.dnywe.com";
   port = 31007;
 in
 {
+  sops.secrets = {
+    "nextcloud/adminPassword" = mkIf config.services.nextcloud.enable {
+      owner = "nextcloud";
+      group = "nextcloud";
+    };
+    "nextcloud/signaling.conf" = mkIf config.services.nextcloud.enable {
+      owner = "signaling";
+      group = "signaling";
+      mode = "0640";
+    };
+    "nextcloud/whiteboard" = mkIf config.services.nextcloud.enable {
+      owner = "nextcloud";
+    };
+  };
+
   imports = [
     (import ../../../modules/nextcloud.nix {
       configureACME = false;
@@ -25,10 +41,10 @@ in
   ];
 
   services.nextcloud = {
-    https = lib.mkForce false;
+    # enable = mkForce false;
+    https = mkForce false;
     extraApps = {
       inherit (config.services.nextcloud.package.packages.apps) spreed;
-
       twofactor_totp = pkgs.fetchNextcloudApp {
         url = "https://github.com/nextcloud-releases/twofactor_totp/releases/download/v6.4.1/twofactor_totp-v6.4.1.tar.gz";
         sha256 = "sha256-Wa2P6tpp75IxCsTG4B5DQ8+iTzR7yjKBi4ZDBcv+AOI=";
@@ -49,15 +65,15 @@ in
     };
   };
 
-  users.groups.signaling = {
+  users.groups.signaling = mkIf config.services.nextcloud.enable {
   };
 
-  users.users.signaling = {
+  users.users.signaling = mkIf config.services.nextcloud.enable {
     isSystemUser = true;
     group = "signaling";
   };
 
-  systemd.services.nextcloud-spreed-signaling = {
+  systemd.services.nextcloud-spreed-signaling = mkIf config.services.nextcloud.enable {
     requiredBy = [
       "multi-users.target"
       "phpfpm-nextcloud.service"
@@ -71,7 +87,7 @@ in
     };
   };
 
-  services.nats = {
+  services.nats = mkIf config.services.nextcloud.enable {
     enable = true;
     settings = {
       host = "127.0.0.1";

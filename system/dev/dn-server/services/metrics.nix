@@ -7,7 +7,7 @@
 }:
 let
   inherit (helper.grafana) mkDashboard;
-  inherit (lib) optionalAttrs;
+  inherit (lib) optionalAttrs optional;
   inherit (config.networking) hostName;
 
   datasourceTemplate = [
@@ -78,28 +78,33 @@ in
             }
           ];
         })
-        (optionalAttrs config.services.crowdsec.settings.general.prometheus.enabled {
-          job_name = "crowdsec";
-          static_configs = [
-            {
-              targets = [
-                "localhost:${toString config.services.crowdsec.settings.general.prometheus.listen_port}"
-              ];
-              labels = {
-                machine = "${hostName}";
-              };
-            }
-          ];
-          relabel_configs = [
-            {
-              source_labels = [ "__address__" ];
-              target_label = "instance";
-              regex = "(.*):[0-9]+";
-              replacement = "CrowdSec - \${1}";
-            }
-          ];
-        })
-      ];
+      ]
+      ++ (optional
+        (config.services.crowdsec.enable && config.services.crowdsec.settings.general.prometheus.enabled)
+        [
+          {
+            job_name = "crowdsec";
+            static_configs = [
+              {
+                targets = [
+                  "localhost:${toString config.services.crowdsec.settings.general.prometheus.listen_port}"
+                ];
+                labels = {
+                  machine = "${hostName}";
+                };
+              }
+            ];
+            relabel_configs = [
+              {
+                source_labels = [ "__address__" ];
+                target_label = "instance";
+                regex = "(.*):[0-9]+";
+                replacement = "CrowdSec - \${1}";
+              }
+            ];
+          }
+        ]
+      );
     })
 
     (import ../../../modules/grafana.nix {

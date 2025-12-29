@@ -23,6 +23,12 @@ in
       enable = true;
       interactiveShellInit = ''
         set fish_greeting # Disable greeting
+
+        # ==== Prevent Running Everything on GPU ==== #
+        set -e __NV_PRIME_RENDER_OFFLOAD
+        set -e __NV_PRIME_RENDER_OFFLOAD_PROVIDER
+        set -e __GLX_VENDOR_LIBRARY_NAME
+        set -e __VK_LAYER_NV_optimus
       '';
       plugins = [
         {

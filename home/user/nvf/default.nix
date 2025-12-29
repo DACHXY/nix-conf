@@ -342,6 +342,15 @@ in
               documentDiagnostics = "<Leader>xx";
             };
           };
+
+          servers.nix.init_options = {
+            nixos.expr =
+              # nix
+              ''(builtins.getFlake "/etc/nixos").nixosConfigurations.${osConfig.networking.hostName}.options'';
+            home_manager.expr =
+              # nix
+              ''(builtins.getFlake "/etc/nixos").nixosConfigurations.${osConfig.networking.hostName}.options.home-manager.users.type.getSubOptions []'';
+          };
         };
 
         debugger = {
@@ -354,8 +363,10 @@ in
         formatter = {
           conform-nvim = {
             enable = true;
-            setupOpts.formatters_by_ft = {
-              nix = [ "nixfmt" ];
+            setupOpts = {
+              formatters_by_ft = {
+                nix = [ "nixfmt" ];
+              };
             };
           };
         };
@@ -404,23 +415,13 @@ in
             enable = true;
             extraDiagnostics.enable = false;
             format.enable = false; # Manually configured in conform-nvim
-            lsp = {
-              server = "nixd";
-              options = {
-                nixos.expr =
-                  # nix
-                  ''(builtins.getFlake "/etc/nixos").nixosConfigurations.${osConfig.networking.hostName}.options'';
-                home_manager.expr =
-                  # nix
-                  ''(builtins.getFlake "/etc/nixos").nixosConfigurations.${osConfig.networking.hostName}.options.home-manager.users.type.getSubOptions []'';
-              };
-            };
+            lsp.servers = [ "nixd" ];
           };
           sql.enable = true;
           clang.enable = true;
           ts = {
             enable = true;
-            format.type = "prettierd";
+            format.type = [ "prettierd" ];
             extensions = {
               ts-error-translator.enable = true;
             };

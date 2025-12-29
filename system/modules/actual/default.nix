@@ -3,14 +3,11 @@
   proxy ? true,
 }:
 {
-  pkgs,
   config,
   lib,
-  inputs,
   ...
 }:
 let
-  inherit (pkgs.stdenv.hostPlatform) system;
   inherit (builtins) toString;
   inherit (lib) mkIf;
 
@@ -20,7 +17,6 @@ in
   services = {
     actual = {
       enable = true;
-      package = inputs.actual-budget-server.packages.${system}.default;
       settings = {
         port = 31000;
         hostname = "127.0.0.1";

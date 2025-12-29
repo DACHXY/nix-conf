@@ -7,6 +7,7 @@
 }:
 let
   inherit (lib) mkIf;
+  inherit (config.systemConf) username;
 
   hyprlandEnabled = config.programs.hyprland.enable;
 in
@@ -16,14 +17,6 @@ in
     withUWSM = false;
     package = inputs.hyprland.packages."${pkgs.system}".hyprland;
     portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
-  };
-
-  xdg.portal = mkIf hyprlandEnabled {
-    enable = true;
-    xdgOpenUsePortal = true;
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-    ];
   };
 
   environment.sessionVariables = mkIf hyprlandEnabled {
@@ -39,15 +32,6 @@ in
       hyprpicker
       hyprshot
       kitty
-
-      # qt5.qtwayland
-      # qt6.qtwayland
-      wlogout
-      wl-clipboard
-
-      # Util
-      grim
-      slurp
     ]
   );
 
@@ -58,5 +42,9 @@ in
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       ];
     };
+  };
+
+  home-manager.users."${username}" = mkIf hyprlandEnabled {
+    imports = [ ../../home/user/hyprland.nix ];
   };
 }

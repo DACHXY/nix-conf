@@ -13,37 +13,13 @@ let
     mkEnableOption
     types
     mkIf
-    optionals
     ;
 
   inherit (helper) capitalize;
 
-  stateVersion = "25.05";
+  stateVersion = "25.11";
 
   cfg = config.systemConf;
-  monitorType =
-    with types;
-    submodule {
-      options = {
-        desc = mkOption {
-          type = str;
-          description = "Hyprland monitor description";
-          example = "ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271";
-        };
-        output = mkOption {
-          type = str;
-          description = "Hyprland monitor output";
-          example = "DP-6";
-        };
-        props = mkOption {
-          type = str;
-          description = "Hyprland monitor properties";
-          default = "prefered, 0x0, 1";
-          example = "2560x1440@180, -1440x-600, 1, transform, 1";
-        };
-      };
-    };
-
   defaultSddmTheme = (
     pkgs.sddm-astronaut.override {
       embeddedTheme = "purple_leaves";
@@ -67,6 +43,21 @@ in
       type = with types; nullOr path;
       description = "User avatar";
       default = null;
+      apply =
+        img:
+        (
+          if img != null then
+            pkgs.runCommand "user-face"
+              {
+                buildInputs = with pkgs; [ imagemagick ];
+              }
+              ''
+                size=$(identify -format "%[fx:min(w,h)]" ${img})
+                magick ${img} -gravity center -crop "''\${size}x''\${size}+0+0" -resize 512x512 $out
+              ''
+          else
+            null
+        );
     };
 
     domain = mkOption {
@@ -97,17 +88,11 @@ in
       enable = (mkEnableOption "Enable hyprland") // {
         default = false;
       };
-      monitors = mkOption {
-        type = with types; listOf monitorType;
-        default = [ ];
-        example = [
-          {
-            desc = "ASUSTek COMPUTER INC ASUS VG32VQ1B 0x00002271";
-            output = "DP-6";
-            props = "2560x1440@165, 0x0, 1";
-          }
-        ];
-        description = "Monitors used for hyprland and waybar";
+    };
+
+    niri = {
+      enable = (mkEnableOption "Enable niri") // {
+        default = false;
       };
     };
 
@@ -128,10 +113,10 @@ in
       inherit (cfg) domain;
       hostName = cfg.hostname;
     };
-    environment.systemPackages = [
-      inputs.attic.packages.${system}.attic
-    ];
+
     system.stateVersion = stateVersion;
+
+    programs.hyprland.enable = if (cfg.hyprland.enable && (!cfg.niri.enable)) then true else false;
 
     # ==== Home Manager ==== #
     home-manager = mkIf cfg.enableHomeManager {
@@ -140,30 +125,27 @@ in
       useGlobalPkgs = true;
       extraSpecialArgs = {
         inherit helper inputs system;
-        inherit (cfg) username;
+        inherit (cfg) username hostname;
       };
-      users."${cfg.username}" = {
-        imports = [
-          inputs.hyprland.homeManagerModules.default
-          inputs.caelestia-shell.homeManagerModules.default
-          inputs.sops-nix.homeManagerModules.default
-          inputs.zen-browser.homeManagerModules.${system}.default
-          inputs.nvf.homeManagerModules.default
-          {
-            home = {
-              homeDirectory = "/home/${cfg.username}";
-              stateVersion = stateVersion;
-            };
-            programs.home-manager.enable = true;
+      sharedModules = [
+        inputs.hyprland.homeManagerModules.default
+        inputs.caelestia-shell.homeManagerModules.default
+        inputs.sops-nix.homeManagerModules.default
+        inputs.zen-browser.homeModules.twilight
+        inputs.nvf.homeManagerModules.default
+        inputs.noctalia.homeModules.default
+        inputs.niri-nfsm.homeModules.default
+      ];
+      users.${cfg.username} = {
+        home = {
+          homeDirectory = "/home/${cfg.username}";
+          stateVersion = stateVersion;
+        };
+        programs.home-manager.enable = true;
 
-            home.file.".face" = mkIf (cfg.face != null) {
-              source = cfg.face;
-            };
-          }
-        ]
-        ++ (optionals cfg.hyprland.enable [
-          ../home/user/hyprland.nix
-        ]);
+        home.file.".face" = mkIf (cfg.face != null) {
+          source = cfg.face;
+        };
       };
     };
   };

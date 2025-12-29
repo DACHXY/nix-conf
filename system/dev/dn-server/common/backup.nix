@@ -61,6 +61,12 @@ in
       "nextcloud"
       "vaultwarden"
       "paperless"
+      "keycloak"
+      "pdns"
+      "powerdnsadmin"
+      "roundcube"
+      "grafana"
+      "crowdsec"
     ];
     location = "${backupPath}/postgresql";
   };

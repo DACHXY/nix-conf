@@ -1,6 +1,5 @@
 {
   pkgs,
-  pkgs-stable,
   config,
   ...
 }:
@@ -18,8 +17,8 @@ let
   });
 in
 {
-  environment.systemPackages = [
-    pkgs-stable.shadps4
+  environment.systemPackages = with pkgs; [
+    shadps4
   ];
 
   home-manager = {

@@ -2,12 +2,8 @@
   description = "DACHXY's NixOS with hyprland";
 
   inputs = {
-    nixpkgs-stable = {
-      url = "github:nixos/nixpkgs/nixos-25.05";
-    };
-
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
+      url = "github:nixos/nixpkgs/nixpkgs-unstable";
     };
 
     home-manager = {
@@ -27,7 +23,6 @@
 
     ghostty = {
       url = "github:ghostty-org/ghostty";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     yazi = {
@@ -69,29 +64,19 @@
       url = "github:Mic92/sops-nix";
     };
 
-    hyprlock = {
-      url = "github:hyprwm/hyprlock";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     awww = {
       url = "git+https://codeberg.org/LGFae/awww";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     zen-browser = {
-      url = "github:dachxy/zen-browser-flake";
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
     };
-
-    chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     actual-budget-api = {
       url = "github:DACHXY/actual-budget-api";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    caelestia-shell = {
-      url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -106,7 +91,7 @@
     };
 
     nvf = {
-      url = "github:NotAShelf/nvf";
+      url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -124,11 +109,12 @@
 
     attic = {
       url = "github:zhaofengli/attic";
-      inputs.nixpkgs.follows = "nixpkgs-stable";
+      inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     };
 
     actual-budget-server = {
-      url = "github:dachxy/actual-budget-flake";
+      url = "git+file:///home/danny/projects/actual-budget-flake";
+      # url = "github:dachxy/actual-budget-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -143,13 +129,34 @@
     };
 
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
+
+    niri = {
+      url = "github:sodiboo/niri-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    niri-nfsm = {
+      url = "github:dachxy/nfsm/feat/hm-module";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # ==== Shell ==== #
+    caelestia-shell = {
+      url = "github:caelestia-dots/shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      nixpkgs-stable,
       ...
     }@inputs:
     let
@@ -184,9 +191,6 @@
             pkgs = import nixpkgs {
               inherit system;
             };
-            pkgs-stable = import nixpkgs-stable {
-              inherit system;
-            };
             helper = import ./helper {
               inherit
                 pkgs
@@ -200,7 +204,6 @@
                 helper
                 inputs
                 self
-                pkgs-stable
                 ;
             };
             modules = [
@@ -209,6 +212,7 @@
                 nixpkgs.hostPlatform = system;
                 nixpkgs.config.allowUnfree = true;
                 nixpkgs.overlays = [
+                  inputs.niri.overlays.niri
                   inputs.mail-server.overlay
                   inputs.nix-minecraft.overlay
                   inputs.nix-tmodloader.overlay
@@ -225,11 +229,11 @@
               inputs.sops-nix.nixosModules.sops
               inputs.nix-minecraft.nixosModules.minecraft-servers
               inputs.nix-tmodloader.nixosModules.tmodloader
-              inputs.chaotic.nixosModules.default
               inputs.actual-budget-api.nixosModules.default
               inputs.stylix.nixosModules.stylix
               inputs.attic.nixosModules.atticd
               inputs.mail-server.nixosModules.default
+              inputs.niri.nixosModules.niri
               ./options
 
               # ==== Private Configuration ==== #
