@@ -47,7 +47,7 @@ in
     ];
   };
 
-  systemd.services."phpfpm-nextcloud".postStart = ''
+  systemd.services."phpfpm-nextcloud".postStart = mkIf config.services.nextcloud.enable ''
     ${config.services.nextcloud.occ}/bin/nextcloud-occ config:app:set recognize node_binary --value '${lib.getExe pkgs.nodejs_22}'
     ${config.services.nextcloud.occ}/bin/nextcloud-occ config:app:set recognize tensorflow.purejs --value 'true'
   '';
@@ -112,7 +112,7 @@ in
     };
   };
 
-  services.nextcloud-whiteboard-server = {
+  services.nextcloud-whiteboard-server = mkIf config.services.nextcloud.enable {
     enable = true;
     settings = {
       NEXTCLOUD_URL = "http${optionalString https "s"}://${hostname}";

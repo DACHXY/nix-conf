@@ -21,7 +21,7 @@ let
 
   zellij-sessionizer-src = fetchurl {
     url = "https://raw.githubusercontent.com/dachxy/zellij-sessionizer/refs/heads/main/zellij-sessionizer";
-    sha256 = "sha256:01az9blb86mc3lxaxnrfcj23jaxhagsbs31qjn6pj5wm1wgb2mrf";
+    sha256 = "sha256:12kbni75x9g424bymky8cy84i354j654rfmz9bffnabbblccfbpn";
   };
 
   zellij-sessionizer = pkgs.writeShellScriptBin "zellij-sessionizer" ''
@@ -29,6 +29,7 @@ let
     export ZELLIJ_SESSIONIZER_SEARCH_PATHS="$HOME/projects $HOME/notes $HOME/expr"
     export ZELLIJ_SESSIONIZER_SPECIFIC_PATHS="/etc/nixos"
     export ZELLIJ_SESSIONIZER_SWITCH_PLUGIN="file:${zellij-switch}"
+    export ZELLIJ_SESSIONIZER_SWITCH_PLUGIN_EXTRA_COMMAND="--layout ${config.programs.zellij.settings.default_layout}"
 
     bash ${zellij-sessionizer-src}
   '';
@@ -40,15 +41,15 @@ in
 
   programs.fish.shellAliases = {
     al = "zellij";
-    aa = "zellij a --index 0";
+    aa = "zellij a --index 0 || cd /etc/nixos && zellij -s nixos";
     zs = "zellij-sessionizer";
   };
 
   programs.zellij = {
     enable = true;
-    attachExistingSession = true;
-    enableFishIntegration = true;
-    enableBashIntegration = true;
+    attachExistingSession = false;
+    enableFishIntegration = false;
+    enableBashIntegration = false;
 
     settings = {
       pane_frames = false;
@@ -208,7 +209,7 @@ in
           bind "Esc" { UndoRenamePane; SwitchToMode "Pane"; }
         }
         session {
-          bind "Ctrl o" "Ctrl c" { SwitchToMode "Normal"; }
+          bind "Ctrl shift o" "Ctrl c" { SwitchToMode "Normal"; }
           bind "Ctrl s" { SwitchToMode "Scroll"; }
           bind "d" { Detach; }
           bind "w" {

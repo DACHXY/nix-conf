@@ -3,11 +3,15 @@
   osConfig,
   config,
   pkgs,
+  helper,
   ...
 }:
 with builtins;
 let
-  inherit (osConfig.systemConf.hyprland) monitors;
+  inherit (helper) getMonitors;
+  inherit (osConfig.networking) hostName;
+  monitors = getMonitors hostName config;
+
   nvidia-offload-enabled = osConfig.hardware.nvidia.prime.offload.enableOffloadCmd;
 
   notransTag = "notrans";

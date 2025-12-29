@@ -67,13 +67,11 @@ let
       "match:class ^(it.mijorus.smile)"
       "match:class ^(xdg-desktop-portal-gtk)$"
       "match:class ^(vesktop)$, match:title ^(Discord Popout)$"
-      "match:class ^(steam)$, match:title ^(Friends List)$"
       "match:title (Open File)"
       "match:title branchdialog"
       "match:title wlogout"
       "match:title ^(Media viewer)$"
       "match:title ^(File Operation Progress)$"
-      "match:title ^(Steam Settings)$"
       "match:title ^(Picture-in-Picture)$"
     ];
 
@@ -91,8 +89,11 @@ let
 
     # Steam
     "match:class ^(steam)$" = [
-      "workspace 7 silent"
       "workspace unset, match:float true"
+      "workspace 7 silent"
+      "float true, match:title ^(Friends List)$"
+      "float true, match:title ^(Steam Settings)$"
+      "center true, match:float true"
     ];
   };
 
@@ -113,6 +114,7 @@ in
       "pin true, match:class ^(vesktop)$, match:title ^(Discord Popout)$"
       # steam game
       "workspace 7 silent, match:class ^(steam_app_)(.*)"
+      "fullscreen true, match:class ^(steam_app_)(.*)"
       # VLC
       "workspace 3, match:initial_class ^(vlc), match:float false"
       # discord

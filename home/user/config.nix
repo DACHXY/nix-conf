@@ -5,7 +5,6 @@
 }:
 let
   configDir = ../config;
-  browser = "zen.desktop";
 in
 {
   home.file."${config.home.homeDirectory}/.config/starship.toml".source =
@@ -21,20 +20,5 @@ in
     };
   };
 
-  xdg.mimeApps = {
-    enable = true;
-    associations.added = {
-      "application/pdf" = [ browser ];
-      "image/jpeg" = [ browser ];
-      "image/png" = [ browser ];
-    };
-    defaultApplications = {
-      "text/html" = browser;
-      "application/pdf" = [ browser ];
-      "image/jpeg" = [ browser ];
-      "image/png" = [ browser ];
-      "x-scheme-handler/http" = browser;
-      "x-scheme-handler/https" = browser;
-    };
-  };
+  xdg.mimeApps.enable = true;
 }

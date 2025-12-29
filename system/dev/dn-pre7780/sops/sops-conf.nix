@@ -6,18 +6,6 @@ in
   sops = {
     secrets = {
       "wireguard/wg0.conf" = { };
-      "nextcloud/adminPassword" = mkIf config.services.nextcloud.enable {
-        owner = "nextcloud";
-        group = "nextcloud";
-      };
-      "nextcloud/signaling.conf" = mkIf config.services.nextcloud.enable {
-        owner = "signaling";
-        group = "signaling";
-        mode = "0640";
-      };
-      "nextcloud/whiteboard" = mkIf config.services.nextcloud.enable {
-        owner = "nextcloud";
-      };
 
       "lam/env" = { };
 

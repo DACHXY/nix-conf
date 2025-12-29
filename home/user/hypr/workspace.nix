@@ -1,12 +1,21 @@
-{ osConfig, ... }:
+{
+  osConfig,
+  helper,
+  config,
+  ...
+}:
 let
-  inherit (osConfig.systemConf.hyprland) monitors;
+  inherit (helper) getMonitors;
+  inherit (osConfig.networking) hostName;
+  monitors = getMonitors hostName config;
+
   inherit (builtins)
     length
     genList
     toString
     elemAt
     ;
+
   monitorNum = length monitors;
   workspaceNum = 10;
   workspaceList = genList (
@@ -15,7 +24,7 @@ let
       currentNum = index - (monitorNum * (index / monitorNum));
       default = if index < monitorNum then "true" else "false";
     in
-    "${toString (index + 1)}, monitor:desc:${(elemAt monitors currentNum).desc}, default:${default}"
+    "${toString (index + 1)}, monitor:desc:${(elemAt monitors currentNum).criteria}, default:${default}"
   ) workspaceNum;
 in
 {

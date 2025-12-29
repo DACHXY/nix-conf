@@ -27,9 +27,27 @@ in
       protontricks.enable = true;
       gamescopeSession.enable = true;
       extest.enable = true;
-      extraCompatPackages = with pkgs; [
-        proton-ge-bin
-      ];
+      extraCompatPackages =
+        with pkgs;
+        let
+          proton-ge-10-25 =
+            (proton-ge-bin.overrideAttrs (
+              _: finalAttrs: {
+                pname = "proton-ge-bin";
+                version = "GE-Proton10-25";
+
+                src = fetchzip {
+                  url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/${finalAttrs.version}/${finalAttrs.version}.tar.gz";
+                  hash = "sha256-RKko4QMxtnuC1SAHTSEQGBzVyl3ywnirFSYJ1WKSY0k=";
+                };
+              }
+            )).override
+              { steamDisplayName = "GE-Proton10-25"; };
+        in
+        [
+          proton-ge-bin
+          proton-ge-10-25
+        ];
       remotePlay.openFirewall = true;
       dedicatedServer.openFirewall = true;
       localNetworkGameTransfers.openFirewall = true;

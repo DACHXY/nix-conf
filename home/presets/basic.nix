@@ -16,5 +16,8 @@
     ../user/vscode.nix
     ../user/yazi.nix
     ../user/nvf
+    ../user/wm-service.nix
+    ../user/ghostty.nix
+    ../user/podman.nix
   ];
 }

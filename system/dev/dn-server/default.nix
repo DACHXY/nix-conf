@@ -9,8 +9,6 @@ in
 {
   systemConf = {
     inherit hostname username;
-    domain = "net.dn";
-    hyprland.enable = false;
     security = {
       allowedDomains = [
         "github.com"
@@ -25,6 +23,9 @@ in
       allowedIPs = [
         "10.0.0.0/24"
         "127.0.0.1"
+        # CrowdSec
+        "52.51.161.146"
+        "34.250.8.127"
       ];
       allowedIPv6 = [
         "ff02::/16"
@@ -45,7 +46,7 @@ in
   '';
 
   imports = [
-    ../public/dn/default.nix
+    ../public/dn
     ./common
     ./home
     ./network

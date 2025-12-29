@@ -20,6 +20,7 @@ in
     enable = true;
     base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-material-dark-medium.yaml";
     polarity = "dark";
+    enableReleaseChecks = false;
 
     fonts = {
       serif = config.stylix.fonts.monospace;
@@ -49,7 +50,6 @@ in
       noto-fonts-cjk-serif
       noto-fonts-color-emoji
       liberation_ttf
-      # dfkai-sb
       sf-pro-display-bold
     ];
 
@@ -57,6 +57,8 @@ in
   };
 
   home-manager.users."${username}" = {
+    stylix.enableReleaseChecks = false;
+
     stylix.targets.neovim.transparentBackground = {
       main = true;
       numberLine = true;

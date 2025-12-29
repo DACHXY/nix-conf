@@ -8,18 +8,7 @@ in
 {
   systemConf = {
     inherit hostname username;
-    face = ../../../home/config/.face;
-    domain = "net.dn";
-    hyprland = {
-      enable = true;
-      monitors = [
-        {
-          desc = "LG Display 0x0665";
-          output = "eDP-1";
-          props = "preferred, 0x0, 1.25";
-        }
-      ];
-    };
+    niri.enable = true;
   };
 
   imports = [

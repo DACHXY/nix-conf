@@ -105,4 +105,20 @@ in
       elements:
       optionalString (builtins.length elements > 0) "elements = { ${concatStringsSep "," elements} }";
   };
+
+  getMonitors =
+    profileName: config:
+    let
+      inherit (lib)
+        pipe
+        filter
+        elemAt
+        length
+        ;
+    in
+    (pipe config.services.kanshi.settings [
+      (x: filter (p: p.profile.name == profileName) x)
+      (x: if (length x > 0) then elemAt x 0 else { profile.outputs = [ ]; })
+      (x: x.profile.outputs)
+    ]);
 }

@@ -1,5 +1,5 @@
 {
   imports = [
-    ./atticd.nix
+    # ./atticd.nix
   ];
 }

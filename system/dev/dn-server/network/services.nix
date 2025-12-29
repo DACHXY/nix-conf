@@ -159,6 +159,12 @@ let
       publicKey = "5th0G9c7vHrhcByvPJAbrn2LXjLPqDEMsHzda0FGUTQ=";
       allowedIPs = [ "10.0.0.148/32" ];
     }
+    # DN Win
+    {
+      dns = "win";
+      publicKey = "LuKw1w879a3kRaBK+faToVmb9uLhbj6tf/DstgMMJzQ=";
+      allowedIPs = [ "10.0.0.149/32" ];
+    }
   ];
 in
 {
@@ -424,7 +430,8 @@ in
         # python
         ''
           import cachelib
-
+          BIND_ADDRESS = "127.0.0.1"
+          PORT = 8081
           SESSION_TYPE = 'cachelib'
           SESSION_CACHELIB = cachelib.simple.SimpleCache()
           SQLALCHEMY_DATABASE_URI = 'postgresql://powerdnsadmin@/powerdnsadmin?host=localhost'

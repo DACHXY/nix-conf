@@ -1,6 +1,6 @@
 {
   imports = [
     # ./netbird.nix
-    ./osx-kvm.nix
+    # ./osx-kvm.nix
   ];
 }

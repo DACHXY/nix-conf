@@ -10,6 +10,7 @@
     ../plymouth.nix
     ../polkit.nix
     ../hyprland.nix
+    ../niri.nix
   ];
 
   programs.gdk-pixbuf.modulePackages = [ pkgs.librsvg ];
