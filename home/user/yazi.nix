@@ -66,7 +66,7 @@ in
       opener = {
         edit = [
           {
-            run = ''''\${EDITOR:=nvim} "$0"'';
+            run = ''''\${EDITOR:=nvim} "$1"'';
             desc = "$EDITOR";
             block = true;
           }
@@ -77,12 +77,12 @@ in
         ];
 
         player = [
-          { run = ''mpv --force-window "$0"''; }
+          { run = ''mpv --force-window "$1"''; }
         ];
 
         open = [
           {
-            run = ''xdg-open "$0"'';
+            run = ''xdg-open "$1"'';
             desc = "Open";
           }
         ];

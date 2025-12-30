@@ -171,8 +171,9 @@ in
             "application/xhtml+xml"
             "application/json"
             "application/pdf"
-            "text/plain"
             "text/html"
+            "image/png"
+            "image/jpeg"
           ]
       );
     in

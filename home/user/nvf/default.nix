@@ -1,5 +1,6 @@
 {
   osConfig,
+  config,
   pkgs,
   lib,
   inputs,
@@ -7,7 +8,7 @@
 }:
 let
   inherit (lib.generators) mkLuaInline;
-  inherit (lib) concatStringsSep;
+  inherit (lib) concatStringsSep optionalString;
 
   suda-nvim = pkgs.vimUtils.buildVimPlugin {
     name = "vim-suda";
@@ -23,6 +24,8 @@ let
     name = "marks-nvim";
     src = inputs.marks-nvim;
   };
+
+  yaziOpenDir = config.programs.nvf.settings.vim.utility.yazi-nvim.setupOpts.open_for_directories;
 in
 {
   imports = [
@@ -44,6 +47,9 @@ in
       vim = {
         enableLuaLoader = true;
         vimAlias = true;
+        luaConfigPre = ''
+          ${optionalString yaziOpenDir "vim.g.loaded_netrwPlugin = 1"}
+        '';
         extraPackages = with pkgs; [
           nixfmt
         ];
@@ -535,6 +541,7 @@ in
 
           yazi-nvim = {
             enable = true;
+            setupOpts.open_for_directories = true;
             mappings.openYaziDir = "<leader>-";
             mappings.openYazi = "<leader>e";
           };
