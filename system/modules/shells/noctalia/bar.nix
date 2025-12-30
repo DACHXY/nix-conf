@@ -1,13 +1,13 @@
 {
-  backgroundOpacity = 1;
-  capsuleOpacity = 1;
+  backgroundOpacity = 0.25;
+  capsuleOpacity = 0;
   density = "comfortable";
   exclusive = true;
   floating = true;
   marginHorizontal = 0.25;
   marginVertical = 0.25;
   outerCorners = false;
-  postition = "top";
+  position = "top";
   showCapsule = true;
   widgets = {
     center = [
