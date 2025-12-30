@@ -5,8 +5,6 @@ in
 {
   sops = {
     secrets = {
-      "wireguard/wg0.conf" = { };
-
       "lam/env" = { };
 
       "netbird/oidc/secret" = mkIf config.services.netbird.server.dashboard.enable {

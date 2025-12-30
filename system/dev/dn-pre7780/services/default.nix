@@ -1,7 +1,7 @@
 {
   imports = [
     ../../../modules/postgresql.nix
-    ./mail.nix
+    # ./mail.nix
     ./nginx.nix
     ./wireguard.nix
     # ./nextcloud.nix

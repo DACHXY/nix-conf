@@ -32,7 +32,7 @@ in
         enable = true;
         systemd.enable = true;
         settings = {
-          settingsVersion = 25;
+          settingsVersion = 26;
           appLauncher = {
             customLaunchPrefix = "";
             customLaunchPrefixEnabled = false;
@@ -61,18 +61,10 @@ in
           brightness = {
             brightnessStep = 5;
             enableDdcSupport = false;
-            enforceMinium = true;
+            enforceMinimum = true;
           };
           calendar = {
             cards = [
-              {
-                enabled = true;
-                id = "banner-card";
-              }
-              {
-                enabled = true;
-                id = "calendar-card";
-              }
               {
                 enabled = true;
                 id = "timer-card";
@@ -80,6 +72,14 @@ in
               {
                 enabled = true;
                 id = "weather-card";
+              }
+              {
+                enabled = true;
+                id = "calendar-header-card";
+              }
+              {
+                enabled = true;
+                id = "calendar-month-card";
               }
             ];
           };
@@ -101,14 +101,13 @@ in
             backgroundOpacity = 1;
             colorizeIcons = false;
             displayMode = "auto_hide";
-            enabled = true;
+            enabled = false;
             floatingRatio = 1;
             monitors = [
             ];
             onlySameOutput = true;
             pinnedApps = [
             ];
-            radiusRatio = 0.68;
             size = 1;
           };
           general = {
@@ -116,6 +115,8 @@ in
             animationDisabled = false;
             animationSpeed = 1.5;
             avatarImage = "${config.home.homeDirectory}/.face";
+            boxRadiusRatio = 0.68;
+            iRadiusRatio = 0.68;
             compactLockScreen = false;
             dimmerOpacity = 0.4;
             enableShadows = true;
@@ -206,7 +207,7 @@ in
             fontDefaultScale = 1;
             fontFixed = config.stylix.fonts.monospace.name;
             fontFixedScale = 1;
-            panelBackgroundOpacity = 1;
+            panelBackgroundOpacity = 0.25;
             panelsAttachedToBar = true;
             settingsPanelAttachToBar = true;
             tooltipsEnabled = true;
