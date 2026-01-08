@@ -69,9 +69,6 @@ in
 
     # Xbox controller
     xpadneo.enable = true;
-
-    # Xbox USB dongle
-    xone.enable = true;
   };
 
   boot.extraModulePackages = with config.boot.kernelPackages; [

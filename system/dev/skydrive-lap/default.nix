@@ -20,6 +20,7 @@ in
 
   imports = [
     ../../modules/presets/basic.nix
+    ../../modules/virtualization.nix
     ./common
     ./games
     ./sops
