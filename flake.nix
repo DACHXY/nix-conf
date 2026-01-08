@@ -41,7 +41,7 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v0.4.2";
+      url = "github:nix-community/lanzaboote/v1.0.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -110,12 +110,6 @@
     attic = {
       url = "github:zhaofengli/attic";
       inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    };
-
-    actual-budget-server = {
-      url = "git+file:///home/danny/projects/actual-budget-flake";
-      # url = "github:dachxy/actual-budget-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     mail-server = {
@@ -234,6 +228,7 @@
               inputs.attic.nixosModules.atticd
               inputs.mail-server.nixosModules.default
               inputs.niri.nixosModules.niri
+              inputs.lanzaboote.nixosModules.lanzaboote
               ./options
 
               # ==== Private Configuration ==== #

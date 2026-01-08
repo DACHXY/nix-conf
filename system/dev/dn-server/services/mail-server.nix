@@ -1,9 +1,25 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  ...
+}:
 let
   inherit (lib) mkForce;
   inherit (config.systemConf) username;
 in
 {
+  systemConf.security.allowedDomains = [
+    "registry-1.docker.io"
+    "auth.docker.io"
+    "login.docker.com"
+    "auth.docker.com"
+    "production.cloudflare.docker.com"
+    "docker-images-prod.6aa30f8b08e16409b46e0173d6de2f56.r2.cloudflarestorage"
+    "api.docker.com"
+    "cdn.segment.com"
+    "api.segment.io"
+  ];
+
   mail-server =
     let
       domain = "net.dn";
@@ -81,29 +97,16 @@ in
       };
     };
 
-  services.openldap.settings.attrs.olcLogLevel = mkForce "config";
-
-  services.postfix.settings.main = {
-    # internal_mail_filter_classes = [ "bounce" ];
+  virtualisation.oci-containers.containers.phpLDAPadmin = {
+    environment = {
+      LDAP_ALLOW_GUEST = "true";
+      LOG_LEVEL = "debug";
+      LDAP_LOGGING = "true";
+    };
   };
 
-  services.rspamd = {
-    locals."logging.conf".text = ''
-      level = "debug";
-    '';
-    locals."settings.conf".text = ''
-      bounce {
-        id = "bounce";
-        priority = high;
-        ip = "127.0.0.1";
-        selector = 'smtp_from.regexp("/^$/").last';
-
-        apply {
-          BOUNCE = -25.0;
-        }
-
-        symbols [ "BOUNCE" ]
-      }
-    '';
+  services.openldap.settings = {
+    attrs.olcLogLevel = mkForce "config";
+    # children."cn=schema".includes = extraSchemas;
   };
 }

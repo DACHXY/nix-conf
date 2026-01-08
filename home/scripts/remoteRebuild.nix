@@ -13,17 +13,24 @@ let
       --sudo --ask-sudo-password $@'';
 in
 pkgs.writeShellScriptBin "rRebuild" ''
+  NOTIFY="''\${NOTIFY:-0}"
   TARGET=$1
   BUILD=$2
 
-  shift
-  shift
+  set -euo pipefail
+
+  shift 2
 
   ${
     if shouldNotify then
       ''
         export NTFY_TITLE="🎯 $TARGET built by 🏗️ ''\${BUILD:-${hostName}}" 
         export NTFY_TAGS="gear"
+
+        if [ "$NOTIFY" -eq 0 ] ; then
+          ${rebuildCommand}
+          exit 0
+        fi
 
         if ${rebuildCommand}
         then

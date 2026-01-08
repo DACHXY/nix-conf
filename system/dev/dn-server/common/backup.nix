@@ -67,6 +67,7 @@ in
       "roundcube"
       "grafana"
       "crowdsec"
+      "netbird"
     ];
     location = "${backupPath}/postgresql";
   };

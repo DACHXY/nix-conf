@@ -47,10 +47,42 @@ in
     ];
   };
 
-  systemd.services."phpfpm-nextcloud".postStart = mkIf config.services.nextcloud.enable ''
-    ${config.services.nextcloud.occ}/bin/nextcloud-occ config:app:set recognize node_binary --value '${lib.getExe pkgs.nodejs_22}'
-    ${config.services.nextcloud.occ}/bin/nextcloud-occ config:app:set recognize tensorflow.purejs --value 'true'
-  '';
+  systemd.services.nextcloud-config-recognize =
+    let
+      inherit (config.services.nextcloud) occ;
+    in
+    {
+      wantedBy = [ "multi-user.target" ];
+      after = [
+        "nextcloud-setup.service"
+      ];
+      script = ''
+        ${occ}/bin/nextcloud-occ config:app:set recognize node_binary --value '${lib.getExe pkgs.nodejs_22}'
+        ${occ}/bin/nextcloud-occ config:app:set recognize tensorflow.purejs --value 'true'
+      '';
+      serviceConfig = {
+        Type = "oneshot";
+      };
+    };
+
+  # Disable Other login method for nextcloud
+  # Admin can login through adding `?direct=1` to url param
+  systemd.services.nextcloud-config-oidc =
+    let
+      inherit (config.services.nextcloud) occ;
+    in
+    {
+      wantedBy = [ "multi-user.target" ];
+      after = [
+        "nextcloud-setup.service"
+      ];
+      script = ''
+        ${occ}/bin/nextcloud-occ config:app:set --type=string --value=0 user_oidc allow_multiple_user_backends
+      '';
+      serviceConfig = {
+        Type = "oneshot";
+      };
+    };
 
   services.nextcloud = {
     enable = true;

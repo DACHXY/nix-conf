@@ -1,5 +1,5 @@
 {
-  extreAllowList ? [ ],
+  extraAllowList ? [ ],
   ...
 }:
 {
@@ -9,7 +9,7 @@
     ignoreIP = [
       "192.168.0.0/16"
     ]
-    ++ extreAllowList;
+    ++ extraAllowList;
     bantime = "24h";
     bantime-increment = {
       enable = true;

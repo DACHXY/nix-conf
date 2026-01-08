@@ -3,7 +3,7 @@
   ...
 }:
 {
-  boot.kernelPackages = pkgs.linuxPackages_6_17;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
 
   fileSystems."/mnt/ssd" = {
     device = "/dev/disk/by-label/DN-SSD";
@@ -19,6 +19,7 @@
       "uid=1000"
       "dmask=000"
       "fmask=000"
+      "exec"
     ];
   };
 

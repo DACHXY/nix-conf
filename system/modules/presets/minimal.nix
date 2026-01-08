@@ -1,4 +1,7 @@
-{ ... }:
+{ lib, ... }:
+let
+  inherit (lib) mkForce;
+in
 {
   imports = [
     ../environment.nix
@@ -18,5 +21,9 @@
     ../sops-nix.nix
     ../gc.nix
     ../security.nix
+    ../systemd-resolv.nix
   ];
+
+  # Disable man cache
+  documentation.man.generateCaches = mkForce false;
 }

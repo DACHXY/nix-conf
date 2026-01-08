@@ -33,7 +33,7 @@ in
           job_name = "master-server";
           static_configs = [
             (optionalAttrs selfMonitor {
-              targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
+              targets = [ "127.0.0.1:${toString config.services.prometheus.exporters.node.port}" ];
             })
           ];
         }
@@ -47,7 +47,7 @@ in
     forceSSL = true;
 
     locations."/" = {
-      proxyPass = "http://localhost:${toString config.services.prometheus.port}";
+      proxyPass = "http://127.0.0.1:${toString config.services.prometheus.port}";
     };
   };
 }

@@ -80,4 +80,12 @@ Bq-3sY8n13Dv0E6yx2hVIAlzLj3aE29LC4A2j81vW5MtpaM27lMpg.cwlqZ-8l1iZNeeS9.idRpRJ9zB
     openFirewall = true;
     intermediatePasswordFile = config.sops.secrets."step_ca/password".path;
   };
+
+  services.nginx.virtualHosts."ca.net.dn" = {
+    enableACME = true;
+    forceSSL = true;
+    locations."/" = {
+      proxyPass = "https://10.0.0.1:8443/";
+    };
+  };
 }

@@ -5,7 +5,12 @@
   ...
 }:
 let
-  inherit (lib) mkOption types concatStringsSep;
+  inherit (lib)
+    mkOption
+    types
+    concatStringsSep
+    unique
+    ;
   cfg = config.systemConf.security;
 in
 {
@@ -14,6 +19,7 @@ in
       type = with types; listOf str;
       description = "Domains that allowed to query dns.";
       default = [ ];
+      apply = v: unique v;
     };
     rules = {
       setName = mkOption {

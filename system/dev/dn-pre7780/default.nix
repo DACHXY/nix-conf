@@ -44,6 +44,7 @@ in
     ../public/dn
     ../public/dn/ntfy.nix
     ./expr
+    ./network
     ./common
     ./games
     ./home
@@ -53,6 +54,7 @@ in
     ./virtualisation
     ../../modules/shells/noctalia
     ../../modules/sunshine.nix
+    ../../modules/secure-boot.nix
   ];
 
   # Live Sync D

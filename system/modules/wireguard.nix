@@ -22,8 +22,8 @@ let
 
   watchDog = pkgs.writeShellScriptBin "wg0-watchdog" ''
     TARGET_CONF="$1"
-    PING_INTERVAL=1
-    PING_TIMEOUT=1
+    PING_INTERVAL=10
+    PING_TIMEOUT=10
     PING_COUNT=1
 
     set -euo pipefail
@@ -37,7 +37,7 @@ let
     notify() {
       users=$(loginctl list-users --json=short | jq -r '.[].user')
       for user in $users; do
-        systemctl --machine=danny@.host --user start wg0-notify-user
+        systemctl --machine="$user@.host" --user start wg0-notify-user
       done
     }
 
@@ -46,13 +46,11 @@ let
     }
 
     check_health() {
-      ping -c "$PING_COUNT" -W "$PING_TIMEOUT" $1 >/dev/null 2>&1
-      return $?
+      ping -c "$PING_COUNT" -W "$PING_TIMEOUT" "$1" >/dev/null 2>&1
     }
 
     is_wg_active() {
       systemctl is-active wg-quick-wg0.service >/dev/null 2>&1
-      return $?
     }
 
     start_wg() {
@@ -105,15 +103,17 @@ in
   };
 
   systemd.services.wg0-watchdog = {
-    wantedBy = [ "wg-quick-wg0.service" ];
-    after = [ "wg-quick-wg0.service" ];
+    wantedBy = [ "multi-user.target" ];
     path = with pkgs; [
       jq
+      iputils
     ];
     serviceConfig = {
       ExecStart = "${getExe watchDog} \"${config.sops.secrets."wireguard/wg0.conf".path}\"";
       RestartSec = 5;
       TimeoutStopSec = 0;
+      CapabilityBoundingSet = "CAP_NET_RAW";
+      AmbientCapabilities = "CAP_NET_RAW";
     };
   };
 
