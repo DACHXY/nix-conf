@@ -63,7 +63,7 @@ in
           job_name = "powerdns_recursor";
           static_configs = [
             {
-              targets = [ "localhost:${toString config.services.pdns-recursor.api.port}" ];
+              targets = [ "127.0.0.1:${toString config.services.pdns-recursor.api.port}" ];
               labels = {
                 machine = "${hostName}";
               };
@@ -87,7 +87,7 @@ in
             static_configs = [
               {
                 targets = [
-                  "localhost:${toString config.services.crowdsec.settings.general.prometheus.listen_port}"
+                  "127.0.0.1:${toString config.services.crowdsec.settings.general.prometheus.listen_port}"
                 ];
                 labels = {
                   machine = "${hostName}";

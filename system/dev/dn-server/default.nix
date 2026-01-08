@@ -17,11 +17,9 @@ in
         "maps.rspamd.com"
         "cdn-hub.crowdsec.net"
         "api.crowdsec.net"
-        "mx1.daccc.info"
         "mx1.dnywe.com"
       ];
       allowedIPs = [
-        "10.0.0.0/24"
         "127.0.0.1"
         # CrowdSec
         "52.51.161.146"

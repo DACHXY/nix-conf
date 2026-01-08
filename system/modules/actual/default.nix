@@ -39,7 +39,7 @@ in
     forceSSL = true;
 
     locations."/api/".proxyPass =
-      "http://localhost:${toString config.services.actual-budget-api.listenPort}/";
-    locations."/".proxyPass = "http://localhost:${toString config.services.actual.settings.port}";
+      "http://127.0.0.1:${toString config.services.actual-budget-api.listenPort}/";
+    locations."/".proxyPass = "http://127.0.0.1:${toString config.services.actual.settings.port}";
   };
 }

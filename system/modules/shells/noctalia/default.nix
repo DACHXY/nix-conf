@@ -67,19 +67,19 @@ in
             cards = [
               {
                 enabled = true;
+                id = "banner-card";
+              }
+              {
+                enabled = true;
+                id = "calendar-card";
+              }
+              {
+                enabled = true;
                 id = "timer-card";
               }
               {
                 enabled = true;
                 id = "weather-card";
-              }
-              {
-                enabled = true;
-                id = "calendar-header-card";
-              }
-              {
-                enabled = true;
-                id = "calendar-month-card";
               }
             ];
           };

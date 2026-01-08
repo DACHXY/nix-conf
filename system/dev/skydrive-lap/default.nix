@@ -10,11 +10,11 @@ in
   systemConf = {
     inherit hostname username;
     domain = "net.dn";
-    hyprland.enable = true;
+    # hyprland.enable = true;
+    niri.enable = true;
     face = pkgs.fetchurl {
-      url = "https://files.net.dn/skydrive.jpg";
+      url = "https://git.dnywe.com/dachxy/skydrive-avatar/raw/branch/main/skydrive.jpg";
       hash = "sha256-aMjl6VL1Zy+r3ElfFyhFOlJKWn42JOnAFfBXF+GPB/Q=";
-      curlOpts = "-k";
     };
   };
 
@@ -22,9 +22,9 @@ in
     ../../modules/presets/basic.nix
     ./common
     ./games
-    ./services
     ./sops
     ./utility
+    ./network
   ];
 
   users.users.root.openssh.authorizedKeys.keys = [

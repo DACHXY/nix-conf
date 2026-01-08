@@ -1,6 +1,7 @@
 {
   imports = [
     ../../../modules/gaming.nix
-    ./game.nix
+    ./shadps4.nix
+    ./minecraft.nix
   ];
 }

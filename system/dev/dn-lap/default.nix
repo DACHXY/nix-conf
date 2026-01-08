@@ -23,6 +23,7 @@ in
     ./sops
     ./utility
     ./virtualisation
+    ./network
   ];
 
   users.users."${username}".openssh.authorizedKeys.keys = [

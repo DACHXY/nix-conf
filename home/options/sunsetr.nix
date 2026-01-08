@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib)
     mkIf
@@ -11,7 +16,7 @@ in
 {
   options.services.sunsetr = {
     enable = mkEnableOption "Enable sunsetr.";
-    package = mkPackageOption "sunsetr";
+    package = mkPackageOption pkgs "sunsetr" { };
   };
 
   config = mkIf cfg.enable {

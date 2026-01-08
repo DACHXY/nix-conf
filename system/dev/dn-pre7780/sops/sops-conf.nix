@@ -7,17 +7,6 @@ in
     secrets = {
       "lam/env" = { };
 
-      "netbird/oidc/secret" = mkIf config.services.netbird.server.dashboard.enable {
-        owner = "netbird";
-      };
-
-      "netbird/coturn/password" = mkIf config.services.netbird.server.coturn.enable {
-        owner = "turnserver";
-        key = "netbird/oidc/secret";
-      };
-      "netbird/dataStoreKey" = mkIf config.services.netbird.server.management.enable {
-        owner = "netbird";
-      };
       "acme/pdns" = mkIf (hasAttr "acme" config.users.users) {
         owner = "acme";
       };

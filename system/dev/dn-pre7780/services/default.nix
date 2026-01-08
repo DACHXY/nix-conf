@@ -3,8 +3,7 @@
     ../../../modules/postgresql.nix
     # ./mail.nix
     ./nginx.nix
-    ./wireguard.nix
+    # ./pangolin.nix
     # ./nextcloud.nix
-    # ./netbird.nix
   ];
 }

@@ -6,8 +6,9 @@
 }:
 let
   inherit (config.systemConf) username security;
-  inherit (lib) concatStringsSep;
+  inherit (lib) concatStringsSep mkForce optionalString;
   inherit (helper.nftables) mkElementsStatement;
+  netbirdCfg = config.services.netbird;
 
   ethInterface = "enp0s31f6";
   sshPorts = [ 30072 ];
@@ -23,19 +24,16 @@ let
     restrict = "10.0.0.128/25";
   };
 
-  kube = {
-    ip = "10.10.0.1/24";
-    range = "10.10.0.0/24";
+  infra = {
+    ip = "10.10.0.2/32";
     interface = "wg1";
-    port = 51821;
-    masterIP = "10.10.0.1";
-    masterHostname = "api-kube.${config.networking.domain}";
-    masterAPIServerPort = 6443;
+    range = "10.10.0.0/24";
   };
 
   allowedSSHIPs = concatStringsSep ", " [
     "122.117.215.55"
     "192.168.100.1/24"
+    "100.64.0.0/16"
     personal.range
   ];
 
@@ -168,6 +166,13 @@ let
   ];
 in
 {
+  systemConf.security.allowedIPs = [
+    "10.10.0.0/24"
+    "10.0.0.0/24"
+  ];
+
+  services.resolved.enable = mkForce false;
+
   networking = {
     nat = {
       enable = true;
@@ -175,7 +180,6 @@ in
       externalInterface = ethInterface;
       internalInterfaces = [
         personal.interface
-        kube.interface
       ];
     };
 
@@ -183,15 +187,12 @@ in
       allowedUDPPorts = [
         53
         personal.port
-        kube.port
         25565
-        kube.masterAPIServerPort
         5359
       ];
       allowedTCPPorts = sshPorts ++ [
         53
         25565
-        kube.masterAPIServerPort
         5359
       ];
     };
@@ -235,9 +236,10 @@ in
 
               tcp dport { ${sshPortsString} } jump ssh-filter
 
-              iifname { ${ethInterface}, ${personal.interface}, ${kube.interface} } udp dport { ${toString personal.port}, ${toString kube.port} } accept
-              iifname ${personal.interface} ip saddr ${personal.ip} jump wg-subnet
-              iifname ${kube.interface} ip saddr ${kube.ip} jump kube-filter
+              iifname { ${ethInterface}, ${personal.interface} } udp dport { ${toString personal.port}  } accept
+              iifname ${infra.interface} ip saddr ${infra.range} accept
+              iifname ${personal.interface} ip saddr ${personal.range} jump wg-subnet
+              iifname ${netbirdCfg.clients.wt0.interface} accept
 
               drop
             }
@@ -250,6 +252,11 @@ in
               # Allow DNS qeury
               udp dport 53 accept
               tcp dport 53 accept
+
+              # Allow UDP hole punching
+              ${optionalString (
+                netbirdCfg.clients ? wt0
+              ) ''udp sport ${toString netbirdCfg.clients.wt0.port} accept''}
 
               meta skuid ${toString config.users.users.systemd-timesync.uid} accept
 
@@ -273,14 +280,9 @@ in
               meta l4proto { icmp, ipv6-icmp } accept
 
               iifname ${personal.interface} ip saddr ${personal.ip} jump wg-subnet
-              iifname ${kube.interface} ip saddr ${kube.ip} jump kube-filter
+              iifname ${infra.interface} ip saddr ${infra.ip} accept
 
               counter
-            }
-
-            chain kube-filter {
-              ip saddr ${kube.ip} ip daddr ${kube.ip} accept
-              counter drop
             }
 
             chain wg-subnet {
@@ -309,17 +311,8 @@ in
             inherit (r) publicKey allowedIPs;
           }) (fullRoute ++ meshRoute);
         };
-
-        ${kube.interface} = {
-          ips = [ kube.ip ];
-          listenPort = kube.port;
-          privateKeyFile = config.sops.secrets."wireguard/privateKey".path;
-          peers = [ ];
-        };
       };
     };
-
-    extraHosts = "${kube.masterIP} ${kube.masterHostname}";
   };
 
   services = {
@@ -349,7 +342,7 @@ in
 
     openssh = {
       enable = true;
-      ports = sshPorts;
+      ports = mkForce sshPorts;
       settings = {
         PasswordAuthentication = false;
         UseDns = false;
@@ -385,9 +378,7 @@ in
     pdns-recursor = {
       enable = true;
       forwardZones = {
-        "${config.networking.domain}." = "127.0.0.1:5359";
-        "pre7780.dn." = "127.0.0.1:5359";
-        "test.local." = "127.0.0.1:5359";
+        "dn." = "127.0.0.1:5359";
       };
       forwardZonesRecurse = {
         # ==== Rspamd DNS ==== #
@@ -514,7 +505,7 @@ in
     "uptime.${config.networking.domain}" = {
       enableACME = true;
       forceSSL = true;
-      locations."/".proxyPass = "http://localhost:3001";
+      locations."/".proxyPass = "http://127.0.0.1:3001";
     };
   };
 

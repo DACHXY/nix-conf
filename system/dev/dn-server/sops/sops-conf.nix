@@ -5,10 +5,6 @@ in
 {
   sops.secrets = {
     "wireguard/privateKey" = { };
-    "nextcloud/adminPassword" = { };
-    "nextcloud/whiteboard" = {
-      owner = "nextcloud";
-    };
     "step_ca/password" = { };
     vaultwarden = { };
     "oauth/password" = { };

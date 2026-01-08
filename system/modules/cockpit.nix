@@ -28,6 +28,6 @@ in
   services.nginx.virtualHosts."${domain}" = mkIf enableNginx {
     enableACME = true;
     forceSSL = true;
-    locations."/".proxyPass = "http://localhost:${toString config.services.cockpit.port}";
+    locations."/".proxyPass = "http://127.0.0.1:${toString config.services.cockpit.port}";
   };
 }

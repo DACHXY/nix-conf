@@ -46,10 +46,10 @@ in
               if (fqdn != null) then
                 "${if https then "https" else "http"}://${fqdn}"
               else
-                "http://localhost:${toString port}"
+                "http://127.0.0.1:${toString port}"
             }";
             DATABASE_URL = "postgresql://docmost@docmost?schema=public&host=/var/run/postgresql";
-            REDIS_URL = "redis://localhost:${toString config.services.redis.servers.docmost.port}";
+            REDIS_URL = "redis://127.0.0.1:${toString config.services.redis.servers.docmost.port}";
           }
           // extraConf
         );
@@ -77,7 +77,7 @@ in
         enableACME = lib.mkIf https true;
         forceSSL = lib.mkIf https true;
         locations."/" = {
-          proxyPass = "http://localhost:${toString port}";
+          proxyPass = "http://127.0.0.1:${toString port}";
           proxyWebsockets = true;
         };
       };

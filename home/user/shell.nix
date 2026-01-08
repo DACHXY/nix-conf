@@ -1,10 +1,12 @@
 {
+  lib,
   osConfig,
   config,
   pkgs,
   ...
 }:
 let
+  inherit (lib) mkForce;
   remoteRebuld = import ../scripts/remoteRebuild.nix { inherit osConfig config pkgs; };
 in
 {

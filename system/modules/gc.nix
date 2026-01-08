@@ -11,7 +11,7 @@
     optimise.automatic = true;
     gc = {
       automatic = true;
-      dates = [ "03:15" ];
+      dates = "weekly";
       options = "--delete-older-than 7d";
     };
   };

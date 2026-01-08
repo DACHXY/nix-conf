@@ -27,7 +27,7 @@ in
       ports = [ 22 ];
       settings = {
         PasswordAuthentication = lib.mkDefault false;
-        AllowUsers = lib.mkDefault [ username ];
+        AllowUsers = [ username ];
         UseDns = lib.mkDefault false;
         PermitRootLogin = lib.mkDefault "no";
       };
