@@ -27,6 +27,7 @@ in
       "mods" = "${modpack}/mods";
     };
     serverProperties = {
+
       server-port = 25565;
       difficulty = 3;
       gamemode = "survival";

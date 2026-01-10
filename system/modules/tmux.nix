@@ -2,7 +2,8 @@
   pkgs,
   config,
   ...
-}: let
+}:
+let
   getIconScript = pkgs.writeShellScript "get-icon" ''
     get_icons() {
       local session_name="$1"
@@ -30,7 +31,8 @@
 
   prefixKey = "C-Space";
   tmuxConfigPath = "/etc/tmux.conf";
-in {
+in
+{
   environment = {
     variables = {
       TMUXINATOR_CONFIG = "/etc/tmuxinator";

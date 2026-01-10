@@ -7,8 +7,9 @@
   ...
 }:
 let
+  inherit (builtins) concatStringsSep;
   inherit (lib.generators) mkLuaInline;
-  inherit (lib) concatStringsSep optionalString;
+  inherit (lib) optionalString;
 
   suda-nvim = pkgs.vimUtils.buildVimPlugin {
     name = "vim-suda";
@@ -369,11 +370,11 @@ in
         formatter = {
           conform-nvim = {
             enable = true;
-            setupOpts = {
-              formatters_by_ft = {
-                nix = [ "nixfmt" ];
-              };
-            };
+            # setupOpts = {
+            #   formatters_by_ft = {
+            #     nix = [ "nixfmt" ];
+            #   };
+            # };
           };
         };
 
@@ -420,7 +421,10 @@ in
           nix = {
             enable = true;
             extraDiagnostics.enable = false;
-            format.enable = false; # Manually configured in conform-nvim
+            format = {
+              type = [ "nixfmt" ];
+              enable = true;
+            };
             lsp.servers = [ "nixd" ];
           };
           sql.enable = true;

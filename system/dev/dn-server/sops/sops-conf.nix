@@ -6,7 +6,6 @@ in
   sops.secrets = {
     "wireguard/privateKey" = { };
     "step_ca/password" = { };
-    vaultwarden = { };
     "oauth/password" = { };
     "oauth/adminEnv" = { };
     "ldap/password" = lib.mkIf config.mail-server.enable {

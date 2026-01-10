@@ -8,11 +8,8 @@ let
   inherit (lib)
     getExe
     pipe
-    map
-    listToAttrs
-    genList
     ;
-  inherit (builtins) fetchurl;
+  inherit (builtins) fetchurl genList listToAttrs;
   inherit (config.systemConf) username;
 
   # nvidia-offload-enabled = config.hardware.nvidia.prime.offload.enableOffloadCmd;
@@ -20,8 +17,8 @@ let
   terminal = "ghostty";
   browser = "zen-twilight";
 
-  brightnessStep = builtins.toString 10;
-  volumeStep = builtins.toString 4;
+  brightnessStep = toString 10;
+  volumeStep = toString 4;
 
   execOnceScript = pkgs.writeShellScript "startupExec" ''
     # Fix nemo open in terminal
@@ -163,7 +160,10 @@ in
         ];
 
         input = {
-          focus-follows-mouse.enable = true;
+          focus-follows-mouse = {
+            max-scroll-amount = "90%";
+            enable = true;
+          };
           mouse.accel-speed = -0.1;
           keyboard = {
             repeat-delay = 250;
@@ -226,11 +226,11 @@ in
             "Mod+WheelScrollLeft".action = focus-column-left;
 
             # Touchpad
-            "TouchpadScrollDown" = {
+            "Mod+TouchpadScrollDown" = {
               cooldown-ms = 150;
               action = focus-window-or-workspace-down;
             };
-            "TouchpadScrollUp" = {
+            "Mod+TouchpadScrollUp" = {
               cooldown-ms = 150;
               action = focus-window-or-workspace-up;
             };
