@@ -5,9 +5,11 @@
   ...
 }:
 let
+  inherit (builtins) concatStringsSep;
   inherit (config.systemConf) username security;
-  inherit (lib) concatStringsSep mkForce optionalString;
+  inherit (lib) mkForce optionalString;
   inherit (helper.nftables) mkElementsStatement;
+
   netbirdCfg = config.services.netbird;
 
   ethInterface = "enp0s31f6";

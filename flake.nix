@@ -134,6 +134,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    git-hooks.url = "github:cachix/git-hooks.nix";
+
     # ==== Shell ==== #
     caelestia-shell = {
       url = "github:caelestia-dots/shell";
@@ -144,34 +146,35 @@
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
   };
 
   outputs =
     {
       self,
       nixpkgs,
+      systems,
       ...
     }@inputs:
     let
       inherit (builtins) mapAttrs;
+      forEachSystem = nixpkgs.lib.genAttrs (import systems);
 
       hosts = {
         dn-pre7780 = {
           system = "x86_64-linux";
-          path = ./system/dev/dn-pre7780;
+          confPath = ./system/dev/dn-pre7780;
         };
         dn-server = {
           system = "x86_64-linux";
-          path = ./system/dev/dn-server;
+          confPath = ./system/dev/dn-server;
         };
         dn-lap = {
           system = "x86_64-linux";
-          path = ./system/dev/dn-lap;
+          confPath = ./system/dev/dn-lap;
         };
         skydrive-lap = {
           system = "x86_64-linux";
-          path = ./system/dev/skydrive-lap;
+          confPath = ./system/dev/skydrive-lap;
         };
       };
     in
@@ -181,7 +184,7 @@
         mapAttrs (
           hostname: conf:
           let
-            inherit (conf) path system;
+            inherit (conf) confPath system;
             pkgs = import nixpkgs {
               inherit system;
             };
@@ -232,11 +235,46 @@
               ./options
 
               # ==== Private Configuration ==== #
-              (import path { inherit hostname; })
+              (import confPath { inherit hostname; })
             ];
           }
         ) hosts
       );
+
+      formatter = forEachSystem (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+          config = self.checks.${system}.pre-commit-check.config;
+          inherit (config) package configFile;
+          script = ''
+            ${pkgs.lib.getExe package} run --all-files --config ${configFile}
+          '';
+        in
+        pkgs.writeShellScriptBin "pre-commit-run" script
+      );
+
+      checks = forEachSystem (system: {
+        pre-commit-check = inputs.git-hooks.lib.${system}.run {
+          src = ./.;
+          hooks = {
+            nixfmt.enable = true;
+          };
+        };
+      });
+
+      devShells = forEachSystem (system: {
+        default =
+          let
+            pkgs = import nixpkgs { inherit system; };
+            inherit (self.checks.${system}.pre-commit-check) shellHook enabledPackages;
+          in
+          pkgs.mkShell {
+            inherit shellHook;
+            name = "nixos";
+            buildInputs = enabledPackages;
+          };
+      });
 
       # ==== MicroVM Packages ==== #
       # packages."${system}" = {

@@ -10,8 +10,7 @@ let
   cfg = config.services.netbird;
   srv = cfg.server;
 
-  # TODO: Change realm to master
-  realm = "netbird";
+  realm = "master";
 in
 {
   sops.secrets."netbird/wt0-setupKey" = {
@@ -30,7 +29,7 @@ in
       inherit realm vDomain;
       domain = "netbird.${domain}";
       oidcURL = "https://${config.services.keycloak.settings.hostname}";
-      enableNginx = false;
+      enableNginx = true;
       oidcType = "keycloak";
     })
   ];
@@ -71,49 +70,11 @@ in
     real_ip_recursive on;
   '';
 
-  services.nginx.virtualHosts."netbird.local" = {
-    locations = {
-      "/" = {
-        root = cfg.server.dashboard.finalDrv;
-        tryFiles = "$uri $uri.html $uri/ =404";
-      };
-
-      "/404.html".extraConfig = ''
-        internal;
-      '';
-
-      "/api" = {
-        extraConfig = ''
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        '';
-        proxyPass = "http://127.0.0.1:${builtins.toString srv.management.port}";
-      };
-
-      "/management.ManagementService/".extraConfig = ''
-        client_body_timeout 1d;
-
-        grpc_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-
-        grpc_pass grpc://127.0.0.1:${builtins.toString srv.management.port};
-        grpc_read_timeout 1d;
-        grpc_send_timeout 1d;
-        grpc_socket_keepalive on;
-      '';
-
-      "/signalexchange.SignalExchange/".extraConfig = ''
-        client_body_timeout 1d;
-
-        grpc_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-
-        grpc_pass grpc://127.0.0.1:${builtins.toString srv.signal.port};
-        grpc_read_timeout 1d;
-        grpc_send_timeout 1d;
-        grpc_socket_keepalive on;
+  services.nginx.virtualHosts."${srv.domain}" = {
+    locations."/api" = {
+      extraConfig = ''
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
       '';
     };
-
-    extraConfig = ''
-      error_page 404 /404.html;
-    '';
   };
 }

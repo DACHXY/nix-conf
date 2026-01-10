@@ -126,12 +126,6 @@ in
         ./expr
         ./wm
 
-        # Bitwarden client
-        (import ../../../../home/user/bitwarden.nix {
-          email = "danny@net.dn";
-          baseUrl = "https://bitwarden.net.dn";
-        })
-
         # waybar
         (import ../../../../home/user/waybar.nix {
           matchByDesc = true;

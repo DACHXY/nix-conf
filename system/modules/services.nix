@@ -32,13 +32,5 @@ in
         PermitRootLogin = lib.mkDefault "no";
       };
     };
-
-    xserver = {
-      enable = false;
-      xkb = {
-        layout = "us";
-        options = "caps:swapescape";
-      };
-    };
   };
 }

@@ -10,7 +10,8 @@ in
   systemConf = {
     inherit hostname username;
     domain = "net.dn";
-    # hyprland.enable = true;
+    enableHomeManager = true;
+    hyprland.enable = false;
     niri.enable = true;
     face = pkgs.fetchurl {
       url = "https://git.dnywe.com/dachxy/skydrive-avatar/raw/branch/main/skydrive.jpg";
@@ -26,6 +27,8 @@ in
     ./sops
     ./utility
     ./network
+    ./home
+    ../../modules/shells/noctalia
   ];
 
   users.users.root.openssh.authorizedKeys.keys = [
