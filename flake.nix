@@ -254,14 +254,29 @@
         pkgs.writeShellScriptBin "pre-commit-run" script
       );
 
-      checks = forEachSystem (system: {
-        pre-commit-check = inputs.git-hooks.lib.${system}.run {
-          src = ./.;
-          hooks = {
-            nixfmt.enable = true;
+      checks = forEachSystem (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          pre-commit-check = inputs.git-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              nixfmt.enable = true;
+
+              check-comment = {
+                enable = true;
+                name = "check comment";
+                entry = "${pkgs.callPackage ./githooks/check-comment.nix { }}";
+                files = "\\.nix$";
+                pass_filenames = false;
+                stages = [ "pre-commit" ];
+              };
+            };
           };
-        };
-      });
+        }
+      );
 
       devShells = forEachSystem (system: {
         default =
