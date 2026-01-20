@@ -172,8 +172,6 @@ in
             "application/json"
             "application/pdf"
             "text/html"
-            "image/png"
-            "image/jpeg"
           ]
       );
     in

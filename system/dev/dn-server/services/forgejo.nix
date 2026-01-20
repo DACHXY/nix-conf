@@ -1,8 +1,10 @@
 { lib, config, ... }:
 let
+  inherit (config.networking) domain;
+
   cfg = config.services.forgejo;
   srv = cfg.settings.server;
-  domain = "git.dnywe.com";
+  hostname = "git.${domain}";
   mailServer = "mx1.net.dn";
 
   forgejoOwner = {
@@ -39,7 +41,7 @@ in
 
     settings = {
       server = {
-        DOMAIN = domain;
+        DOMAIN = hostname;
         ROOT_URL = "https://${srv.DOMAIN}";
         HTTP_PORT = 32006;
         SSH_PORT = lib.head config.services.openssh.ports;
@@ -68,5 +70,11 @@ in
       mailer.PASSWD = config.sops.secrets."forgejo/mailer/password".path;
       server.SECRET_KEY = config.sops.secrets."forgejo/server/secretKey".path;
     };
+  };
+
+  services.nginx.virtualHosts.${hostname} = {
+    useACMEHost = domain;
+    forceSSL = true;
+    locations."/".proxyPass = "http://127.0.0.1:${toString srv.HTTP_PORT}";
   };
 }

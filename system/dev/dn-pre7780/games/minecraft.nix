@@ -4,8 +4,6 @@
     {
       home.packages = with pkgs; [
         prismlauncher
-        lsfg-vk
-        lsfg-vk-ui
       ];
     }
   ];

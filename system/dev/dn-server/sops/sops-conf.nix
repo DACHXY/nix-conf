@@ -17,30 +17,10 @@ in
       mode = "0660";
       group = config.users.groups.docker.name;
     };
-    "powerdns-admin/secret" = {
-      mode = "0660";
-      owner = "powerdnsadmin";
-      group = "powerdnsadmin";
-    };
-    "powerdns-admin/salt" = {
-      mode = "0660";
-      owner = "powerdnsadmin";
-      group = "powerdnsadmin";
-    };
-    powerdns = {
-      mode = "0660";
-      owner = "pdns";
-      group = "pdns";
-    };
     rspamd-trainer = {
     };
     rspamd = mkIf config.services.rspamd.enable {
       owner = config.services.rspamd.user;
-    };
-    "acme/env" = mkIf config.security.acme.acceptTerms {
-      mode = "0660";
-      owner = "acme";
-      group = "acme";
     };
     "postsrsd/secret" = mkIf config.services.postsrsd.enable {
       mode = "0660";

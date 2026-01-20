@@ -1,22 +1,19 @@
-{
-  fqdn ? null,
-}:
 { config, ... }:
 let
+  inherit (config.networking) domain;
   port = 31004;
-  finalFqdn = if fqdn == null then config.networking.fqdn else fqdn;
+  hostname = "ntfy.${domain}";
 in
 {
   systemConf.security.allowedDomains = [
     "ntfy.sh"
-    "web.push.apple.com"
   ];
 
   services.ntfy-sh = {
     enable = true;
     settings = {
       listen-http = ":${toString port}";
-      base-url = "https://${finalFqdn}";
+      base-url = "https://${hostname}";
       upstream-base-url = "https://ntfy.sh";
       behind-proxy = true;
       proxy-trusted-hosts = "127.0.0.1";
@@ -30,8 +27,8 @@ in
   };
 
   services.nginx.virtualHosts = {
-    "${finalFqdn}" = {
-      enableACME = true;
+    "${hostname}" = {
+      useACMEHost = domain;
       forceSSL = true;
       locations."/" = {
         proxyWebsockets = true;

@@ -5,7 +5,7 @@ in
 {
   systemConf = {
     face = ../../../../home/config/.face;
-    domain = "net.dn";
+    domain = "dnywe.com";
   };
 
   home-manager.users."${username}" =

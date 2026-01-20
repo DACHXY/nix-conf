@@ -436,7 +436,10 @@ in
               ts-error-translator.enable = true;
             };
           };
-          python.enable = true;
+          python = {
+            enable = true;
+            format.type = [ "ruff" ];
+          };
           markdown = {
             enable = true;
             extensions = {

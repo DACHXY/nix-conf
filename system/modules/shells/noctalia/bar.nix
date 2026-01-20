@@ -1,6 +1,10 @@
+{ lib }:
+let
+  inherit (lib) mkForce;
+in
 {
-  backgroundOpacity = 0.25;
-  capsuleOpacity = 0;
+  backgroundOpacity = mkForce 0.25;
+  capsuleOpacity = mkForce 0;
   density = "comfortable";
   exclusive = true;
   floating = true;

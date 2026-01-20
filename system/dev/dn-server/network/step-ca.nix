@@ -1,4 +1,7 @@
 { pkgs, config, ... }:
+let
+  inherit (config.networking) domain;
+in
 {
   environment.systemPackages = with pkgs; [ step-cli ];
 
@@ -57,7 +60,7 @@ Bq-3sY8n13Dv0E6yx2hVIAlzLj3aE29LC4A2j81vW5MtpaM27lMpg.cwlqZ-8l1iZNeeS9.idRpRJ9zB
       };
       dnsNames = [
         "10.0.0.1"
-        "ca.net.dn"
+        "ca.${domain}"
       ];
       federatedRoots = null;
       insecureAddress = "";
@@ -81,8 +84,8 @@ Bq-3sY8n13Dv0E6yx2hVIAlzLj3aE29LC4A2j81vW5MtpaM27lMpg.cwlqZ-8l1iZNeeS9.idRpRJ9zB
     intermediatePasswordFile = config.sops.secrets."step_ca/password".path;
   };
 
-  services.nginx.virtualHosts."ca.net.dn" = {
-    enableACME = true;
+  services.nginx.virtualHosts."ca.${domain}" = {
+    useACMEHost = domain;
     forceSSL = true;
     locations."/" = {
       proxyPass = "https://10.0.0.1:8443/";

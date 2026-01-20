@@ -58,7 +58,6 @@ in
   // extraConf;
 
   services.nginx.virtualHosts."${domain}" = {
-    enableACME = true;
     forceSSL = true;
 
     locations."/" = {

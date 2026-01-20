@@ -46,7 +46,7 @@ in
       '';
       webmail = {
         enable = true;
-        hostname = "mail.${domain}";
+        hostname = "mail.dnywe.com";
       };
       keycloak = {
         dbSecretFile = config.sops.secrets."oauth/password".path;

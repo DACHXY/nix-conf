@@ -7,10 +7,10 @@
 let
   inherit (lib) mkIf mkDefault mkAfter;
   inherit (config.sops) secrets;
+  inherit (config.networking) domain;
   spreedCfg = config.services.nextcloud-spreed-signaling;
   nextcloudCfg = config.services.nextcloud;
-  turnDomain = "coturn.dnywe.com";
-  domain = "net.dn";
+  turnDomain = "coturn.${domain}";
 in
 {
   sops.secrets = {
@@ -79,7 +79,7 @@ in
       mail_smtpname = "nextcloud";
       mail_smtpmode = "smtp";
       mail_smtpauthtype = "LOGIN";
-      mail_domain = "net.dn";
+      mail_domain = "${domain}";
       mail_smtpport = 465;
       mail_smtpsecure = "ssl";
       mail_from_address = "nextcloud";
@@ -123,8 +123,13 @@ in
     };
   };
 
+  services.nginx.virtualHosts.${nextcloudCfg.hostName} = {
+    useACMEHost = domain;
+    forceSSL = true;
+  };
+
   services.nginx.virtualHosts.${spreedCfg.hostName} = {
-    enableACME = true;
+    useACMEHost = domain;
     forceSSL = true;
   };
 

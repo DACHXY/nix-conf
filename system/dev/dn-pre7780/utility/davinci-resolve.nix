@@ -1,5 +1,5 @@
 {
   imports = [
-    ../../../modules/davinci-resolve.nix
+    # ../../../modules/davinci-resolve.nix
   ];
 }
