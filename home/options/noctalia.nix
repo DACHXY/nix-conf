@@ -1,16 +1,18 @@
 { config, lib, ... }:
 let
-  inherit (lib)
-    mkOption
-    types
+  inherit (builtins)
     elem
     isList
     filter
     listToAttrs
     concatMap
-    nameValuePair
     attrNames
     isAttrs
+    ;
+  inherit (lib)
+    mkOption
+    types
+    nameValuePair
     ;
 
   filterAttrsRecursive' =

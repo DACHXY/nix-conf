@@ -1,4 +1,7 @@
-{ inputs, ... }:
+{ config, inputs, ... }:
+let
+  inherit (config.systemConf) username;
+in
 {
   documentation.nixos.enable = false;
   nix = {
@@ -14,6 +17,7 @@
       warn-dirty = false;
       trusted-users = [
         "@wheel"
+        username
       ];
       experimental-features = [
         "nix-command"

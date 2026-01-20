@@ -3,7 +3,11 @@
   home-manager.sharedModules = [
     {
       home.packages = with pkgs; [
-        heroic
+        (heroic.override {
+          extraPkgs = pkgs: [
+            pkgs.gamemode
+          ];
+        })
       ];
     }
   ];

@@ -2,7 +2,7 @@
 { lib, config, ... }:
 let
   inherit (lib) mkForce;
-  domain = "dnywe.com";
+  inherit (config.networking) domain;
   cfg = config.services.keycloak;
 in
 {
@@ -12,6 +12,9 @@ in
     };
   };
 
-  # Disable nginx reverse proxy
-  services.nginx.virtualHosts."${cfg.settings.hostname}" = mkForce { };
+  services.nginx.virtualHosts."${cfg.settings.hostname}" = {
+    useACMEHost = domain;
+    forceSSL = true;
+    enableACME = mkForce false;
+  };
 }

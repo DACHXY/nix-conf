@@ -2,7 +2,8 @@
 let
 
   inherit (config.systemConf) username;
-  inherit (lib) mkForce mapAttrs;
+  inherit (builtins) mapAttrs;
+  inherit (lib) mkForce;
 in
 {
 
@@ -57,7 +58,7 @@ in
             volumeOverdrive = false;
             volumeStep = 5;
           };
-          bar = import ./bar.nix;
+          bar = import ./bar.nix { inherit lib; };
           brightness = {
             brightnessStep = 5;
             enableDdcSupport = false;
@@ -98,7 +99,7 @@ in
           };
           controlCenter = import ./controlCenter.nix;
           dock = {
-            backgroundOpacity = 1;
+            backgroundOpacity = 1.0;
             colorizeIcons = false;
             displayMode = "auto_hide";
             enabled = false;
@@ -162,7 +163,7 @@ in
             manualSunset = "18:30";
           };
           notifications = {
-            backgroundOpacity = 1;
+            backgroundOpacity = 1.0;
             criticalUrgencyDuration = 15;
             enableKeyboardLayoutToast = true;
             enabled = true;
@@ -176,7 +177,7 @@ in
           };
           osd = {
             autoHideMs = 1500;
-            backgroundOpacity = 1;
+            backgroundOpacity = 1.0;
             enabled = true;
             enabledTypes = [
               0
@@ -207,7 +208,7 @@ in
             fontDefaultScale = 1;
             fontFixed = config.stylix.fonts.monospace.name;
             fontFixedScale = 1;
-            panelBackgroundOpacity = 0.25;
+            panelBackgroundOpacity = mkForce 0.25;
             panelsAttachedToBar = true;
             settingsPanelAttachToBar = true;
             tooltipsEnabled = true;

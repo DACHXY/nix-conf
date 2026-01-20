@@ -73,7 +73,7 @@ in
         extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
       };
 
-      services.nfsm.enable = false;
+      services.nfsm.enable = true;
 
       programs.niri.package = osConfig.programs.niri.package;
       programs.niri.settings = {
@@ -154,6 +154,7 @@ in
             matches = [
               { app-id = "^xdg-desktop-portal-gtk$"; }
               { app-id = "^(org.gnome.Nautilus)$"; }
+              { app-id = "^(org.gnome.Loupe)$"; }
             ];
             open-floating = true;
           }
@@ -177,9 +178,9 @@ in
           in
           {
             # ==== Launch ==== #
-            "Mod+Return".action = sh ''${prefix} ${terminal}'';
-            "Mod+F".action = sh ''${browser}'';
-            "Mod+E".action = sh ''${prefix} ${terminal} -e yazi'';
+            "Mod+Return".action = sh "${prefix} ${terminal}";
+            "Mod+F".action = sh "${browser}";
+            "Mod+E".action = sh "${prefix} ${terminal} -e yazi";
             "Mod+Ctrl+P".action = spawn "${rbwSelector}";
             "Mod+Ctrl+M".action = spawn "${toggleWlogout}";
 
@@ -198,9 +199,9 @@ in
             "XF86AudioStop".action = spawn "playerctl" "stop";
             "XF86AudioMute".action = spawn "wpctl" "set-mute" "@DEFAULT_SINK@" "toggle";
             "XF86AudioRaiseVolume".action =
-              sh ''wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%+'';
+              sh "wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%+";
             "XF86AudioLowerVolume".action =
-              sh ''wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%-'';
+              sh "wpctl set-mute @DEFAULT_SINK@ 0 && wpctl set-volume @DEFAULT_SINK@ ${volumeStep}%-";
             "XF86MonBrightnessDown".action = spawn "brightnessctl set ${brightnessStep}%-";
             "XF86MonBrightnessUp".action = spawn "brightnessctl set ${brightnessStep}%+";
 

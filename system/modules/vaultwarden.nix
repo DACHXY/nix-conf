@@ -26,8 +26,8 @@ in
     environmentFile = secrets.vaultwarden.path;
     config = {
       DOMAIN = "https://${domain}";
-      SIGNUPS_ALLOWED = true;
-      SIGNUPS_VERIFY = true;
+      SIGNUPS_ALLOWED = false;
+      SIGNUPS_VERIFY = false;
       ROCKET_PORT = 8222;
       ROCKET_ADDRESS = "127.0.0.1";
       ROCKET_LOG = "critical";
@@ -42,7 +42,6 @@ in
   };
 
   services.nginx.virtualHosts.${domain} = {
-    enableACME = true;
     forceSSL = true;
     locations."/" = {
       proxyPass = "http://127.0.0.1:${toString cfg.config.ROCKET_PORT}/";

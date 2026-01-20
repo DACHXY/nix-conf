@@ -7,12 +7,10 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
   inherit (lib) mkIf optionalAttrs;
-  inherit (builtins) toString;
 in
 {
   services.prometheus.exporters.node = mkIf selfMonitor {
@@ -43,7 +41,6 @@ in
   };
 
   services.nginx.virtualHosts."${fqdn}" = mkIf configureNginx {
-    enableACME = true;
     forceSSL = true;
 
     locations."/" = {

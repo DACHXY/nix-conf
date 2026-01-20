@@ -19,5 +19,6 @@
     ../user/wm-service.nix
     ../user/ghostty.nix
     ../user/podman.nix
+    ../user/image-viewer.nix
   ];
 }

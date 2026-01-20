@@ -1,7 +1,7 @@
 { config, lib, ... }:
 let
   inherit (lib) mkForce;
-  domain = "dnywe.com";
+  inherit (config.networking) domain;
 
   # Virtual Domain
   vDomain = "vnet.dn";
@@ -19,9 +19,9 @@ in
   };
 
   systemConf.security.allowedDomains = [
-    "login.dnywe.com"
-    "pkgs.netbird.io"
+    config.services.keycloak.settings.hostname
     "${srv.domain}"
+    "pkgs.netbird.io"
   ];
 
   imports = [
@@ -71,6 +71,8 @@ in
   '';
 
   services.nginx.virtualHosts."${srv.domain}" = {
+    useACMEHost = domain;
+    addSSL = true;
     locations."/api" = {
       extraConfig = ''
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

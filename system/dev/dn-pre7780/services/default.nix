@@ -4,6 +4,5 @@
     # ./mail.nix
     ./nginx.nix
     # ./pangolin.nix
-    # ./nextcloud.nix
   ];
 }

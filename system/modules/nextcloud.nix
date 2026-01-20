@@ -3,7 +3,7 @@
   adminpassFile,
   datadir ? null,
   https ? true,
-  configureACME ? true,
+  configureNginx ? true,
   trusted-domains ? [ ],
   trusted-proxies ? [ ],
   whiteboardSecrets ? [ ],
@@ -16,13 +16,6 @@
 }:
 let
   inherit (lib) mkIf optionalString;
-
-  nextcloudPkg = pkgs.nextcloud32.overrideAttrs (oldAttr: rec {
-    caBundle = config.security.pki.caBundle;
-    postPatch = ''
-      cp ${caBundle} resources/config/ca-bundle.crt
-    '';
-  });
 in
 {
   imports = [
@@ -86,13 +79,12 @@ in
 
   services.nextcloud = {
     enable = true;
-    package = nextcloudPkg;
     configureRedis = true;
     hostName = hostname;
     https = https;
     datadir = lib.mkIf (datadir != null) datadir;
     phpExtraExtensions =
-      all: with all; [
+      allEx: with allEx; [
         imagick
       ];
 
@@ -153,9 +145,7 @@ in
     secrets = whiteboardSecrets;
   };
 
-  services.nginx.virtualHosts.${hostname} = mkIf configureACME {
-    enableACME = true;
-    forceSSL = true;
+  services.nginx.virtualHosts.${hostname} = mkIf configureNginx {
     locations."/whiteboard/" = {
       proxyWebsockets = true;
       proxyPass = "http://127.0.0.1:${config.services.nextcloud-whiteboard-server.settings.PORT}/";

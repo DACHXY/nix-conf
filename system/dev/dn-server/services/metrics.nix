@@ -8,7 +8,10 @@
 let
   inherit (helper.grafana) mkDashboard;
   inherit (lib) optionalAttrs optional;
-  inherit (config.networking) hostName;
+  inherit (config.networking) hostName domain;
+
+  grafanaHostname = "grafana.${domain}";
+  prometheusHostname = "metrics.${domain}";
 
   datasourceTemplate = [
     {
@@ -55,7 +58,7 @@ in
 {
   imports = [
     (import ../../../modules/prometheus.nix {
-      fqdn = "metrics.net.dn";
+      fqdn = prometheusHostname;
       selfMonitor = true;
       configureNginx = true;
       scrapes = [
@@ -108,7 +111,7 @@ in
     })
 
     (import ../../../modules/grafana.nix {
-      domain = "grafana.net.dn";
+      domain = grafanaHostname;
       passFile = config.sops.secrets."grafana/password".path;
       smtpHost = "${config.mail-server.hostname}.${config.mail-server.domain}:465";
       smtpDomain = config.mail-server.domain;
@@ -193,5 +196,14 @@ in
       };
     };
     enable = true;
+  };
+
+  services.nginx.virtualHosts = {
+    "${grafanaHostname}" = {
+      useACMEHost = domain;
+    };
+    "${prometheusHostname}" = {
+      useACMEHost = domain;
+    };
   };
 }

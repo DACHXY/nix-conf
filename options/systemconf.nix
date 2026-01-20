@@ -1,4 +1,5 @@
 {
+  self,
   inputs,
   config,
   pkgs,
@@ -124,7 +125,12 @@ in
       useUserPackages = true;
       useGlobalPkgs = true;
       extraSpecialArgs = {
-        inherit helper inputs system;
+        inherit
+          helper
+          inputs
+          system
+          self
+          ;
         inherit (cfg) username hostname;
       };
       sharedModules = [

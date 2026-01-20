@@ -6,11 +6,12 @@
 }:
 let
   inherit (builtins) concatStringsSep;
-  inherit (config.systemConf) username security;
+  inherit (config.systemConf) security domain;
   inherit (lib) mkForce optionalString;
   inherit (helper.nftables) mkElementsStatement;
 
   netbirdCfg = config.services.netbird;
+  netbirdRange = "100.64.0.0/16";
 
   ethInterface = "enp0s31f6";
   sshPorts = [ 30072 ];
@@ -35,7 +36,7 @@ let
   allowedSSHIPs = concatStringsSep ", " [
     "122.117.215.55"
     "192.168.100.1/24"
-    "100.64.0.0/16"
+    netbirdRange
     personal.range
   ];
 
@@ -173,8 +174,6 @@ in
     "10.0.0.0/24"
   ];
 
-  services.resolved.enable = mkForce false;
-
   networking = {
     nat = {
       enable = true;
@@ -189,12 +188,10 @@ in
       allowedUDPPorts = [
         53
         personal.port
-        25565
         5359
       ];
       allowedTCPPorts = sshPorts ++ [
         53
-        25565
         5359
       ];
     };
@@ -233,15 +230,18 @@ in
 
               ct state vmap { invalid : drop, established : accept, related : accept }
 
+              # Allow Incoming DNS qeury
               udp dport 53 accept
               tcp dport 53 accept
 
               tcp dport { ${sshPortsString} } jump ssh-filter
 
+              # Allow Netbird UDP
+              udp dport { ${toString netbirdCfg.clients.wt0.port} } accept
+              iifname ${netbirdCfg.clients.wt0.interface} accept
               iifname { ${ethInterface}, ${personal.interface} } udp dport { ${toString personal.port}  } accept
               iifname ${infra.interface} ip saddr ${infra.range} accept
               iifname ${personal.interface} ip saddr ${personal.range} jump wg-subnet
-              iifname ${netbirdCfg.clients.wt0.interface} accept
 
               drop
             }
@@ -258,7 +258,7 @@ in
               # Allow UDP hole punching
               ${optionalString (
                 netbirdCfg.clients ? wt0
-              ) ''udp sport ${toString netbirdCfg.clients.wt0.port} accept''}
+              ) "udp sport ${toString netbirdCfg.clients.wt0.port} accept"}
 
               meta skuid ${toString config.users.users.systemd-timesync.uid} accept
 
@@ -280,6 +280,8 @@ in
               type filter hook forward priority 0; policy drop;
 
               meta l4proto { icmp, ipv6-icmp } accept
+
+              ct state vmap { invalid : drop, established : accept, related : accept }
 
               iifname ${personal.interface} ip saddr ${personal.ip} jump wg-subnet
               iifname ${infra.interface} ip saddr ${infra.ip} accept
@@ -309,7 +311,7 @@ in
           ips = [ personal.ip ];
           listenPort = personal.port;
           privateKeyFile = config.sops.secrets."wireguard/privateKey".path;
-          peers = builtins.map (r: {
+          peers = map (r: {
             inherit (r) publicKey allowedIPs;
           }) (fullRoute ++ meshRoute);
         };
@@ -321,27 +323,6 @@ in
     dbus.enable = true;
     blueman.enable = true;
 
-    postgresql = {
-      enable = lib.mkDefault true;
-      authentication = ''
-        host  powerdnsadmin powerdnsadmin 127.0.0.1/32    trust
-      '';
-      ensureUsers = [
-        {
-          name = "powerdnsadmin";
-          ensureDBOwnership = true;
-        }
-        {
-          name = "pdns";
-          ensureDBOwnership = true;
-        }
-      ];
-      ensureDatabases = [
-        "powerdnsadmin"
-        "pdns"
-      ];
-    };
-
     openssh = {
       enable = true;
       ports = mkForce sshPorts;
@@ -352,104 +333,10 @@ in
       };
     };
 
-    powerdns = {
-      enable = true;
-      extraConfig = ''
-        launch=gpgsql
-        loglevel=6
-        webserver-password=$WEB_PASSWORD
-        api=yes
-        api-key=$WEB_PASSWORD
-        gpgsql-host=/var/run/postgresql
-        gpgsql-dbname=pdns
-        gpgsql-user=pdns
-        gpgsql-dnssec=yes
-        webserver=yes
-        webserver-port=8081
-        local-port=5359
-        dnsupdate=yes
-        primary=yes
-        secondary=no
-        allow-dnsupdate-from=10.0.0.0/24
-        allow-axfr-ips=10.0.0.0/24
-        also-notify=10.0.0.148:53
-      '';
-      secretFile = config.sops.secrets.powerdns.path;
-    };
-
-    pdns-recursor = {
-      enable = true;
-      forwardZones = {
-        "dn." = "127.0.0.1:5359";
-      };
-      forwardZonesRecurse = {
-        # ==== Rspamd DNS ==== #
-        "multi.uribl.com." = "168.95.1.1";
-        "score.senderscore.com." = "168.95.1.1";
-        "list.dnswl.org." = "168.95.1.1";
-        "dwl.dnswl.org." = "168.95.1.1";
-
-        # ==== Others ==== #
-        "tw." = "168.95.1.1";
-        "." = "8.8.8.8";
-      };
-      dnssecValidation = "off";
-      dns.allowFrom = [
-        "127.0.0.0/8"
-        "10.0.0.0/24"
-        "192.168.100.0/24"
-      ];
-      dns.port = 5300;
-      yaml-settings = {
-        webservice.webserver = true;
-        recordcache.max_negative_ttl = 60;
-      };
-    };
-
-    dnsdist = {
-      enable = true;
-      extraConfig = ''
-        newServer("127.0.0.1:${toString config.services.pdns-recursor.dns.port}")
-        addDOHLocal("0.0.0.0:8053", nil, nil, "/", { reusePort = true })
-        getPool(""):setCache(newPacketCache(65535, {maxTTL=86400, minTTL=0, temporaryFailureTTL=60, staleTTL=60, dontAge=false}))
-      '';
-    };
-
-    powerdns-admin = {
-      enable = true;
-      secretKeyFile = config.sops.secrets."powerdns-admin/secret".path;
-      saltFile = config.sops.secrets."powerdns-admin/salt".path;
-      config =
-        # python
-        ''
-          import cachelib
-          BIND_ADDRESS = "127.0.0.1"
-          PORT = 8081
-          SESSION_TYPE = 'cachelib'
-          SESSION_CACHELIB = cachelib.simple.SimpleCache()
-          SQLALCHEMY_DATABASE_URI = 'postgresql://powerdnsadmin@/powerdnsadmin?host=localhost'
-        '';
-    };
-
     xserver = {
       enable = false;
       xkb.layout = "us";
     };
-  };
-
-  systemd.services.pdns-recursor.before = [ "acme-setup.service" ];
-  systemd.services.pdns.before = [ "acme-setup.service" ];
-
-  users.users = {
-    root.openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSAOufpee7f8D8ONIIGU3qsN+8+DGO7BfZnEOTYqtQ5 danny@pre7780.dn"
-    ];
-
-    "${username}".openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSAOufpee7f8D8ONIIGU3qsN+8+DGO7BfZnEOTYqtQ5 danny@pre7780.dn"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFQA42R3fZmjb9QnUgzzOTIXQBC+D2ravE/ZLvdjoOQ danny@lap.dn"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSHkPa6vmr5WBPXAazY16+Ph1Mqv9E24uLIf32oC2oH danny@phone.dn"
-    ];
   };
 
   systemConf.security = {
@@ -466,52 +353,19 @@ in
           image = "louislam/uptime-kuma:2";
           volumes = [
             "/var/lib/uptime-kuma:/app/data"
-            "${config.security.pki.caBundle}:/etc/ca.crt:ro"
           ];
-          environment = {
-            NODE_EXTRA_CA_CERTS = "/etc/ca.crt";
-          };
         };
       };
     };
   };
 
-  systemd.services.raspamd-trainer = {
+  systemd.services.rspamd-trainer = {
     after = [ "pdns-recursor.service" ];
   };
 
-  services.nginx.virtualHosts = {
-    "dns.${config.networking.domain}" = {
-      enableACME = true;
-      forceSSL = true;
-      locations."/dns-query" = {
-        extraConfig = ''
-          grpc_pass grpc://127.0.0.1:${toString 8053};
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-Host $host;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-          proxy_set_header X-Forwarded-Protocol $scheme;
-          proxy_set_header Range $http_range;
-          proxy_set_header If-Range $http_if_range;
-        '';
-      };
-    };
-    "powerdns.${config.networking.domain}" = {
-      enableACME = true;
-      forceSSL = true;
-      locations."/api".proxyPass = "http://127.0.0.1:8081";
-      locations."/".proxyPass = "http://127.0.0.1:8000";
-    };
-    "uptime.${config.networking.domain}" = {
-      enableACME = true;
-      forceSSL = true;
-      locations."/".proxyPass = "http://127.0.0.1:3001";
-    };
+  services.nginx.virtualHosts."uptime.${domain}" = {
+    useACMEHost = domain;
+    forceSSL = true;
+    locations."/".proxyPass = "http://127.0.0.1:3001";
   };
-
-  nix.settings.trusted-users = [
-    username
-  ];
 }

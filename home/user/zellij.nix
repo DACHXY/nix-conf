@@ -21,7 +21,7 @@ let
 
   zellij-sessionizer-src = fetchurl {
     url = "https://raw.githubusercontent.com/dachxy/zellij-sessionizer/refs/heads/main/zellij-sessionizer";
-    sha256 = "sha256:12kbni75x9g424bymky8cy84i354j654rfmz9bffnabbblccfbpn";
+    sha256 = "sha256:0p6s2mwcya448vgag42akwlfmzr9nw1vxh6gv5lmz1xmyrhkysjd";
   };
 
   zellij-sessionizer = pkgs.writeShellScriptBin "zellij-sessionizer" ''

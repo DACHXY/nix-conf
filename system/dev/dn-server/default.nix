@@ -1,9 +1,11 @@
 { hostname }:
 {
   pkgs,
+  config,
   ...
 }:
 let
+  inherit (config.networking) domain;
   username = "danny";
 in
 {
@@ -17,7 +19,7 @@ in
         "maps.rspamd.com"
         "cdn-hub.crowdsec.net"
         "api.crowdsec.net"
-        "mx1.dnywe.com"
+        "mx1.${domain}"
       ];
       allowedIPs = [
         "127.0.0.1"
@@ -58,4 +60,16 @@ in
   environment.systemPackages = with pkgs; [
     openssl
   ];
+
+  users.users = {
+    root.openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSAOufpee7f8D8ONIIGU3qsN+8+DGO7BfZnEOTYqtQ5 danny@pre7780.dn"
+    ];
+
+    "${username}".openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSAOufpee7f8D8ONIIGU3qsN+8+DGO7BfZnEOTYqtQ5 danny@pre7780.dn"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJFQA42R3fZmjb9QnUgzzOTIXQBC+D2ravE/ZLvdjoOQ danny@lap.dn"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSHkPa6vmr5WBPXAazY16+Ph1Mqv9E24uLIf32oC2oH danny@phone.dn"
+    ];
+  };
 }

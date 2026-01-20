@@ -12,10 +12,8 @@
     ./keycloak.nix
     ./netbird.nix
     ./hideTTY.nix
-    # (import ../../../modules/opencloud.nix {
-    #   fqdn = "opencloud.net.dn";
-    #   envFile = config.sops.secrets."opencloud".path;
-    # })
-    (import ./ntfy.nix { fqdn = "ntfy.net.dn"; })
+    ./dns.nix
+    ./acme.nix
+    ./ntfy.nix
   ];
 }

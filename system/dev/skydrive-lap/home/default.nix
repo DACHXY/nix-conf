@@ -1,16 +1,18 @@
 {
+  self,
   config,
   lib,
   pkgs,
   ...
 }:
 let
-  inherit (config.networking) hostName;
+  serverCfg = self.nixosConfigurations.dn-server.config;
   inherit (config.systemConf) username;
   inherit (lib) optionalString;
+  inherit (serverCfg.services.nextcloud) hostName;
 
   memeSelector = pkgs.callPackage ../../../../home/scripts/memeSelector.nix {
-    url = "https://nextcloud.net.dn/public.php/dav/files/pygHoPB5LxDZbeY/";
+    url = "https://${hostName}/public.php/dav/files/pygHoPB5LxDZbeY/";
   };
 in
 {

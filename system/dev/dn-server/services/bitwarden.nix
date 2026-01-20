@@ -1,7 +1,16 @@
+{ config, ... }:
+let
+  inherit (config.networking) domain;
+  hostname = "bitwarden.${domain}";
+in
 {
   imports = [
     (import ../../../modules/vaultwarden.nix {
-      domain = "bitwarden.net.dn";
+      domain = hostname;
     })
   ];
+
+  services.nginx.virtualHosts."${hostname}" = {
+    useACMEHost = domain;
+  };
 }

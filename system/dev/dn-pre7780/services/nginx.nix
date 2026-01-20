@@ -1,4 +1,8 @@
-{ config, ... }:
+{ self, config, ... }:
+let
+  serverCfg = self.nixosConfigurations.dn-server.config;
+  inherit (serverCfg.networking) domain;
+in
 {
   networking.firewall.allowedTCPPorts = [
     443
@@ -10,7 +14,7 @@
     defaults = {
       validMinDays = 2;
       webroot = null;
-      server = "https://ca.net.dn/acme/acme/directory";
+      server = "https://ca.${domain}/acme/acme/directory";
       renewInterval = "daily";
       email = "danny@pre7780.dn";
       dnsResolver = "10.0.0.1:53";

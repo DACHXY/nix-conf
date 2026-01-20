@@ -7,7 +7,7 @@
 }:
 let
   inherit (pkgs.stdenv.hostPlatform) system;
-  inherit (lib) getExe';
+  inherit (lib) getExe' getExe;
   yaziPlugins = pkgs.fetchFromGitHub {
     owner = "yazi-rs";
     repo = "plugins";
@@ -43,11 +43,11 @@ in
     enableFishIntegration = true;
 
     plugins = {
-      toggle-pane = ''${yaziPlugins}/toggle-pane.yazi'';
-      mount = ''${yaziPlugins}/mount.yazi'';
-      zoom = ''${yaziPlugins}/zoom'';
-      vcs-files = ''${yaziPlugins}/vcs-files'';
-      git = ''${yaziPlugins}/git'';
+      toggle-pane = "${yaziPlugins}/toggle-pane.yazi";
+      mount = "${yaziPlugins}/mount.yazi";
+      zoom = "${yaziPlugins}/zoom";
+      vcs-files = "${yaziPlugins}/vcs-files";
+      git = "${yaziPlugins}/git";
     };
 
     settings = {
@@ -77,7 +77,7 @@ in
         ];
 
         player = [
-          { run = ''mpv --force-window "$1"''; }
+          { run = ''${getExe pkgs.mpv} --force-window "$1"''; }
         ];
 
         open = [

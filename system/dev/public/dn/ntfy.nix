@@ -1,10 +1,12 @@
 {
+  self,
   config,
   pkgs,
   lib,
   ...
 }:
 let
+  serverCfg = self.nixosConfigurations.dn-server.config;
   inherit (config.systemConf) username;
   ntfyWrapper = import ../../../../home/scripts/ntfy.nix { inherit config pkgs lib; };
 in
@@ -30,7 +32,7 @@ in
       {
         enable = true;
         settings = {
-          default-host = "https://ntfy.net.dn";
+          default-host = serverCfg.services.ntfy-sh.settings.base-url;
           subscribe = [
             {
               topic = "public-notifications";
