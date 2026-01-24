@@ -6,7 +6,7 @@
 }:
 let
   inherit (helper) getMonitors;
-  inherit (builtins) elemAt;
+  inherit (builtins) elemAt length;
   inherit (config.networking) hostName;
   inherit (config.systemConf) username;
   inherit (lib) optionalString mkForce;
@@ -24,7 +24,11 @@ in
     let
       monitors = getMonitors hostName config;
       mainMonitor = (elemAt monitors 0).criteria;
-      secondMonitor = (elemAt monitors 1).criteria;
+      secondMonitor =
+        let
+          index = if (length monitors) > 1 then 1 else 0;
+        in
+        (elemAt monitors index).criteria;
       mainMonitorSwayFormat = "desc:ASUSTek COMPUTER INC - ASUS VG32VQ1B";
     in
     {
@@ -55,6 +59,18 @@ in
               mode = "2560x1440@179.876999Hz";
               position = "-1440,-600";
               transform = "90";
+            }
+          ];
+        }
+        {
+          profile.name = "AcerOnly";
+          profile.outputs = [
+            {
+              criteria = "Acer Technologies XV272U V3 1322131231233";
+              mode = "2560x1440@179.876999Hz";
+              position = "0,0";
+              transform = "normal";
+              scale = 1.0;
             }
           ];
         }

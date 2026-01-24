@@ -7,11 +7,10 @@
 let
   inherit (builtins) concatStringsSep;
   inherit (config.systemConf) security domain;
-  inherit (lib) mkForce optionalString;
+  inherit (lib) mkForce;
   inherit (helper.nftables) mkElementsStatement;
 
   netbirdCfg = config.services.netbird;
-  netbirdRange = "100.64.0.0/16";
 
   ethInterface = "enp0s31f6";
   sshPorts = [ 30072 ];
@@ -36,7 +35,6 @@ let
   allowedSSHIPs = concatStringsSep ", " [
     "122.117.215.55"
     "192.168.100.1/24"
-    netbirdRange
     personal.range
   ];
 
@@ -221,50 +219,41 @@ in
             }
 
             chain input {
-              type filter hook input priority 0; policy drop;
+              type filter hook input priority -10; policy drop;
 
               iif lo accept
-
-              meta nftrace set 1
               meta l4proto { icmp, ipv6-icmp } accept
-
               ct state vmap { invalid : drop, established : accept, related : accept }
-
-              # Allow Incoming DNS qeury
-              udp dport 53 accept
-              tcp dport 53 accept
 
               tcp dport { ${sshPortsString} } jump ssh-filter
 
-              # Allow Netbird UDP
-              udp dport { ${toString netbirdCfg.clients.wt0.port} } accept
-              iifname ${netbirdCfg.clients.wt0.interface} accept
-              iifname { ${ethInterface}, ${personal.interface} } udp dport { ${toString personal.port}  } accept
-              iifname ${infra.interface} ip saddr ${infra.range} accept
-              iifname ${personal.interface} ip saddr ${personal.range} jump wg-subnet
-
-              drop
+              iifname { ${personal.interface}, ${infra.interface}, ${netbirdCfg.clients.wt0.interface} } accept
             }
 
             chain output {
-              type filter hook output priority 0; policy drop;
+              type filter hook output priority -10; policy drop;
 
               iif lo accept
+              ct state vmap { invalid : drop, established : accept, related : accept }
+
+              # Time Sync
+              meta skuid ${toString config.users.users.systemd-timesync.uid} accept
+
+              # VPN
+              oifname { ${personal.interface}, ${infra.interface}, ${netbirdCfg.clients.wt0.interface} } accept
 
               # Allow DNS qeury
               udp dport 53 accept
               tcp dport 53 accept
 
-              # Allow UDP hole punching
-              ${optionalString (
-                netbirdCfg.clients ? wt0
-              ) "udp sport ${toString netbirdCfg.clients.wt0.port} accept"}
+              # UDP Hole Punching
+              meta mark 0x1bd00 accept
 
-              meta skuid ${toString config.users.users.systemd-timesync.uid} accept
+              # DHCP
+              udp sport 68 udp dport 67 accept
 
-              ct state vmap { invalid : drop, established : accept, related : accept }
+              # Allowed IPs
               ip saddr != @restrict_source_ips accept
-
               ip daddr @${security.rules.setName} accept
               ip6 daddr @${security.rules.setNameV6} accept
 
@@ -272,27 +261,10 @@ in
             }
 
             chain ssh-filter {
-              ip saddr { ${allowedSSHIPs} } accept
-              counter reject
-            }
+              iifname { ${personal.interface}, ${infra.interface}, ${netbirdCfg.clients.wt0.interface} } tcp dport { ${sshPortsString} } accept
+              ip saddr { ${allowedSSHIPs} } tcp dport { ${sshPortsString} } accept
 
-            chain forward {
-              type filter hook forward priority 0; policy drop;
-
-              meta l4proto { icmp, ipv6-icmp } accept
-
-              ct state vmap { invalid : drop, established : accept, related : accept }
-
-              iifname ${personal.interface} ip saddr ${personal.ip} jump wg-subnet
-              iifname ${infra.interface} ip saddr ${infra.ip} accept
-
-              counter
-            }
-
-            chain wg-subnet {
-              ip saddr ${personal.full} accept
-              ip saddr ${personal.restrict} ip daddr ${personal.range} accept
-              counter drop
+              counter log prefix "SSH-DROP: " flags all drop
             }
 
             chain postrouting {
