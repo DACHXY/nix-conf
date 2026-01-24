@@ -10,6 +10,7 @@ let
   inherit (lib) optionalAttrs optional;
   inherit (config.networking) hostName domain;
 
+  oidcEndpoint = "https://${config.services.keycloak.settings.hostname}/realms/master";
   grafanaHostname = "grafana.${domain}";
   prometheusHostname = "metrics.${domain}";
 
@@ -118,13 +119,13 @@ in
       extraSettings = {
         "auth.generic_oauth" =
           let
-            OIDCBaseUrl = "https://keycloak.net.dn/realms/master/protocol/openid-connect";
+            OIDCBaseUrl = "${oidcEndpoint}/protocol/openid-connect";
           in
           {
             enabled = true;
             allow_sign_up = true;
             client_id = "grafana";
-            client_secret = ''$__file{${config.sops.secrets."grafana/client_secret".path}}'';
+            client_secret = "$__file{${config.sops.secrets."grafana/client_secret".path}}";
             scopes = "openid email profile offline_access roles";
             email_attribute_path = "email";
             login_attribute_path = "username";

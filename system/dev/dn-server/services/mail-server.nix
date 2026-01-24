@@ -18,6 +18,7 @@ in
     "api.docker.com"
     "cdn.segment.com"
     "api.segment.io"
+    "sa-update.surbl.org"
   ];
 
   mail-server =

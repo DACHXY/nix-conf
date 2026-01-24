@@ -55,6 +55,7 @@ in
     ../../modules/shells/noctalia
     ../../modules/sunshine.nix
     ../../modules/secure-boot.nix
+    ../../modules/card-reader.nix
   ];
 
   # Live Sync D
