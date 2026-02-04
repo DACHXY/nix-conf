@@ -14,7 +14,7 @@
 let
   inherit (lib) mkIf;
 
-  logFilePath = "${config.services.stalwart-mail.dataDir}/logs";
+  logFilePath = "${config.services.stalwart.dataDir}/logs";
 in
 {
   services.postgresql = {
@@ -32,13 +32,13 @@ in
 
   systemd.tmpfiles.rules =
     let
-      inherit (config.users.users.stalwart-mail) name group;
+      inherit (config.users.users.stalwart) name group;
     in
     [
       "d ${logFilePath} 0750 ${name} ${group} - "
     ];
 
-  services.stalwart-mail = {
+  services.stalwart = {
     enable = true;
     openFirewall = true;
     settings = {

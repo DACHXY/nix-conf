@@ -12,9 +12,8 @@ in
   systemConf = {
     inherit hostname username;
     enableHomeManager = true;
+    windowManager = "niri";
     nvidia.enable = true;
-    hyprland.enable = false;
-    niri.enable = true;
     sddm.package = (
       pkgs.sddm-astronaut.override {
         embeddedTheme = "purple_leaves";

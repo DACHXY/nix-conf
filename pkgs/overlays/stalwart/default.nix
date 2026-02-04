@@ -1,5 +1,5 @@
 final: prev: {
-  stalwart-mail = prev.stalwart-mail.overrideAttrs (oldAttrs: {
+  stalwart = prev.stalwart.overrideAttrs (oldAttrs: {
     patches = [
       ./enable_root_ca.patch
     ];

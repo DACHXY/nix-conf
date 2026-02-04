@@ -20,5 +20,6 @@
     ../user/ghostty.nix
     ../user/podman.nix
     ../user/image-viewer.nix
+    ../user/wm.nix
   ];
 }

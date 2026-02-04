@@ -102,7 +102,7 @@ in
       "192.168.100.0/24"
     ];
     dns.port = 5300;
-    yaml-settings = {
+    settings = {
       webservice.webserver = true;
       recordcache.max_negative_ttl = 60;
     };
