@@ -5,11 +5,11 @@ final: prev: {
     in
     final.pkgs.stdenv.mkDerivation (finalAttrs: rec {
       pname = "dwproton";
-      version = "10.0-14";
+      version = "10.0-16";
 
       src = final.pkgs.fetchzip {
         url = "https://dawn.wine/dawn-winery/dwproton/releases/download/${pname}-${finalAttrs.version}/${pname}-${finalAttrs.version}-x86_64.tar.xz";
-        hash = "sha256-5fDo7YUPhp0OwjdAXHfovSuFCgSPwHW0cSZk9E+FY98=";
+        hash = "sha256-9wDhtrB5IjFVZxyorAJUaivRwE85pzQ6/eDgHXCSEh8=";
       };
 
       dontUnpack = true;

@@ -10,8 +10,10 @@
 let
   inherit (pkgs.stdenv.hostPlatform) system;
   inherit (lib)
+    optional
     mkOption
     mkEnableOption
+    mkMerge
     types
     mkIf
     ;
@@ -64,7 +66,7 @@ in
     domain = mkOption {
       type = types.str;
       default = "local";
-      description = ''Domain for system'';
+      description = "Domain for system";
     };
 
     username = mkOption {
@@ -85,16 +87,15 @@ in
       };
     };
 
-    hyprland = {
-      enable = (mkEnableOption "Enable hyprland") // {
-        default = false;
-      };
-    };
-
-    niri = {
-      enable = (mkEnableOption "Enable niri") // {
-        default = false;
-      };
+    windowManager = mkOption {
+      type =
+        with types;
+        nullOr (enum [
+          "hyprland"
+          "niri"
+          "mango"
+        ]);
+      default = null;
     };
 
     enableHomeManager = (mkEnableOption "Home manager") // {
@@ -117,7 +118,9 @@ in
 
     system.stateVersion = stateVersion;
 
-    programs.hyprland.enable = if (cfg.hyprland.enable && (!cfg.niri.enable)) then true else false;
+    programs.hyprland.enable = cfg.windowManager == "hyprland";
+    programs.niri.enable = cfg.windowManager == "niri";
+    programs.mango.enable = cfg.windowManager == "mango";
 
     # ==== Home Manager ==== #
     home-manager = mkIf cfg.enableHomeManager {
@@ -134,6 +137,7 @@ in
         inherit (cfg) username hostname;
       };
       sharedModules = [
+        inputs.mango.hmModules.mango
         inputs.hyprland.homeManagerModules.default
         inputs.caelestia-shell.homeManagerModules.default
         inputs.sops-nix.homeManagerModules.default

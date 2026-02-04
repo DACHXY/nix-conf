@@ -32,9 +32,9 @@ in
         mode = "0660";
       };
     }
-    // (optionalAttrs config.services.stalwart-mail.enable (
+    // (optionalAttrs config.services.stalwart.enable (
       let
-        inherit (config.users.users.stalwart-mail) name group;
+        inherit (config.users.users.stalwart) name group;
         owner = name;
       in
       {

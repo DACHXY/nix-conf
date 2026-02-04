@@ -27,6 +27,16 @@ in
         };
         workspaces."game" = { };
         window-rules = [
+          # Wine systray
+          {
+            matches = [
+              {
+                title = "^$";
+                app-id = "^steam_app_(.*)$";
+              }
+            ];
+            open-fullscreen = false;
+          }
           # Steam Game Fullscreen
           {
             matches = [
@@ -68,5 +78,8 @@ in
           }
         ];
       };
+      wayland.windowManager.mango.settings = ''
+        xkb_rules_options = caps:escape
+      '';
     };
 }

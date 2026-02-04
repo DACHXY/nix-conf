@@ -11,8 +11,7 @@ in
     inherit hostname username;
     domain = "net.dn";
     enableHomeManager = true;
-    hyprland.enable = false;
-    niri.enable = true;
+    windowManager = "niri";
     face = pkgs.fetchurl {
       url = "https://git.dnywe.com/dachxy/skydrive-avatar/raw/branch/main/skydrive.jpg";
       hash = "sha256-aMjl6VL1Zy+r3ElfFyhFOlJKWn42JOnAFfBXF+GPB/Q=";

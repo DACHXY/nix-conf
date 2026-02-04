@@ -3,10 +3,12 @@
   config,
   helper,
   pkgs,
+  lib,
   ...
 }:
 let
   inherit (osConfig.systemConf) username;
+  inherit (lib) mkForce;
   inherit (helper) capitalize;
   inherit (pkgs) runCommand;
 
@@ -14,7 +16,7 @@ let
     owner = "JustAdumbPrsn";
     repo = "zen-nebula";
     rev = "main";
-    sha256 = "sha256-wtntRAkOGm6fr396kqzqk+GyPk+ytifXTqqOp0YIvlw=";
+    sha256 = "sha256-Eg9HsN+yDA8OdVcE9clS+FyUhVBH3ooN/odkZIVR/p4=";
   };
 
   patchedNebula =
@@ -142,6 +144,8 @@ in
     source = patchedNebula;
     recursive = true;
   };
+
+  home.file.".zen/${profileName}/search.json.mozlz4".force = mkForce true;
 
   xdg.mimeApps =
     let

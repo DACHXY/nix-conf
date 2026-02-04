@@ -1,4 +1,3 @@
-{ config, ... }:
 {
   imports = [
     ./actual-budget.nix
@@ -15,5 +14,6 @@
     ./dns.nix
     ./acme.nix
     ./ntfy.nix
+    ./homepage.nix
   ];
 }

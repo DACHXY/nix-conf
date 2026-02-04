@@ -11,6 +11,7 @@
     ../polkit.nix
     ../hyprland.nix
     ../niri.nix
+    ../mango.nix
   ];
 
   programs.gdk-pixbuf.modulePackages = [ pkgs.librsvg ];

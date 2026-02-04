@@ -7,44 +7,43 @@
 }:
 let
   inherit (lib) mkIf;
+  inherit (pkgs.stdenv.hostPlatform) system;
   inherit (config.systemConf) username;
-
-  hyprlandEnabled = config.programs.hyprland.enable;
 in
 {
-  programs.hyprland = {
-    enable = config.systemConf.hyprland.enable;
-    withUWSM = false;
-    package = inputs.hyprland.packages."${pkgs.system}".hyprland;
-    portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
-  };
-
-  environment.sessionVariables = mkIf hyprlandEnabled {
-    NIXOS_OZONE_WL = "1";
-    WLR_NO_HARDWARE_CURSORS = "1";
-  };
-
-  environment.systemPackages = mkIf hyprlandEnabled (
-    with pkgs;
-    [
-      pyprland
-      hyprsunset
-      hyprpicker
-      hyprshot
-      kitty
-    ]
-  );
-
-  nix = mkIf hyprlandEnabled {
-    settings = {
-      substituters = [ "https://hyprland.cachix.org" ];
-      trusted-public-keys = [
-        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-      ];
+  config = mkIf config.programs.hyprland.enable {
+    programs.hyprland = {
+      withUWSM = false;
+      package = inputs.hyprland.packages."${system}".hyprland;
+      portalPackage = inputs.hyprland.packages.${system}.xdg-desktop-portal-hyprland;
     };
-  };
 
-  home-manager.users."${username}" = mkIf hyprlandEnabled {
-    imports = [ ../../home/user/hyprland.nix ];
+    environment.sessionVariables = {
+      NIXOS_OZONE_WL = "1";
+      WLR_NO_HARDWARE_CURSORS = "1";
+    };
+
+    environment.systemPackages = (
+      with pkgs;
+      [
+        pyprland
+        hyprsunset
+        hyprpicker
+        hyprshot
+      ]
+    );
+
+    nix = {
+      settings = {
+        substituters = [ "https://hyprland.cachix.org" ];
+        trusted-public-keys = [
+          "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+        ];
+      };
+    };
+
+    home-manager.users."${username}" = {
+      imports = [ ../../home/user/hyprland.nix ];
+    };
   };
 }

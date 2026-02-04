@@ -4,5 +4,6 @@
     ./hyprlock.nix
     ./sunsetr.nix
     ./noctalia.nix
+    ./wm.nix
   ];
 }
