@@ -119,7 +119,7 @@ in
         serverVersion = lib.replaceStrings [ "." ] [ "_" ] "fabric-${mcVersion}";
       in
       {
-        enable = true;
+        enable = false;
         autoStart = true;
         enableReload = true;
         jvmOpts = "-Xms2144M -Xmx8240M";

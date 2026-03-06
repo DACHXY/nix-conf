@@ -8,13 +8,13 @@ in
 {
   systemConf = {
     inherit hostname username;
-    niri.enable = true;
+    enableHomeManager = true;
+    windowManager = "niri";
   };
 
   imports = [
     ../../modules/presets/basic.nix
-    ../public/dn
-    ../public/dn/ntfy.nix
+    ../public/dn/presets/local.nix
     ./common
     ./games
     ./home
@@ -24,6 +24,9 @@ in
     ./utility
     ./virtualisation
     ./network
+    ../../modules/shells/noctalia
+    ../../modules/sunshine.nix
+    ../../modules/card-reader.nix
   ];
 
   users.users."${username}".openssh.authorizedKeys.keys = [

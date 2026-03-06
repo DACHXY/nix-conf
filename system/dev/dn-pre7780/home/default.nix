@@ -76,10 +76,6 @@ in
         }
       ];
 
-      programs.ghostty.settings = {
-        background-opacity = 0.9;
-      };
-
       # ==== Shells ==== #
       # Caelestia
       programs.caelestia.settings = {
@@ -92,6 +88,7 @@ in
       # Noctalia
       programs.noctalia-shell.filteredIds = [
         "Brightness"
+        "Battery"
       ];
 
       # ==== WM ==== #

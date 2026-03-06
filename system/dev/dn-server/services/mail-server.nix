@@ -21,6 +21,8 @@ in
     "sa-update.surbl.org"
   ];
 
+  services.opendkim.enable = mkForce false;
+
   mail-server =
     let
       domain = "net.dn";

@@ -1,5 +1,5 @@
 {
-  countdownDuration = 10000;
+  countdownDuration = 3000;
   enableCountdown = true;
   position = "bottom_center";
   powerOptions = [

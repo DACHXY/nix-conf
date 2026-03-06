@@ -13,7 +13,7 @@ in
     enable = true;
     openFirewall = true;
     listenPort = 8044;
-    environmentFile = config.sops.secrets."homepage".path;
+    environmentFiles = [ config.sops.secrets."homepage".path ];
     allowedHosts = "www.${domain},${domain},localhost:${toString cfg.listenPort}";
     docker = {
       docker = {
@@ -60,6 +60,17 @@ in
               icon = "paperless.svg";
               description = "PDF editing, tagging, and viewing";
               href = config.services.paperless.settings.PAPERLESS_URL;
+            };
+          }
+        ];
+      }
+      {
+        "Development" = [
+          {
+            "Forgejo" = {
+              icon = "forgejo.svg";
+              description = "Git repository";
+              href = config.services.forgejo.settings.server.ROOT_URL;
             };
           }
         ];
@@ -121,6 +132,31 @@ in
               icon = "powerdns.svg";
               description = "DNS record management";
               href = "https://powerdns.${domain}";
+              widgets =
+                let
+                  queryProp = ''job="powerdns_recursor"'';
+                in
+                [
+                  {
+                    type = "prometheusmetric";
+                    url = "https://metrics.dnywe.com";
+                    refreshInterval = 10000;
+                    metrics = [
+                      {
+                        label = "Up";
+                        query = "up{${queryProp}}";
+                      }
+                      {
+                        label = "Query Rate";
+                        query = "sum(rate(pdns_recursor_questions{${queryProp}}[1h]))";
+                        format = {
+                          type = "number";
+                          suffix = " req/s";
+                        };
+                      }
+                    ];
+                  }
+                ];
             };
           }
           {

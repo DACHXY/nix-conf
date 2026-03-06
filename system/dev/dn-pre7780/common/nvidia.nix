@@ -1,7 +1,4 @@
-{ config, lib, ... }:
-let
-  inherit (lib) mkForce;
-in
+{ ... }:
 {
   imports = [
     (import ../../../modules/nvidia.nix {
@@ -10,6 +7,4 @@ in
       nvidia-bus-id = "PCI:1:0:0";
     })
   ];
-
-  hardware.nvidia.package = mkForce config.boot.kernelPackages.nvidiaPackages.beta;
 }

@@ -1,4 +1,5 @@
 {
+  pkgs,
   config,
   lib,
   ...
@@ -10,6 +11,10 @@ let
 in
 {
   home-manager.users."${username}" = {
+    home.packages = with pkgs; [
+      mattermost-desktop
+    ];
+
     home.sessionVariables = {
       BROWSER = mkForce "chromium";
     };
@@ -27,9 +32,9 @@ in
       }
     ];
 
-    programs.hyprlock.monitors = [
-      "LG Display"
-    ];
+    programs.noctalia-shell = {
+      settings = { };
+    };
 
     programs.chromium = {
       enable = true;
@@ -55,34 +60,7 @@ in
 
     imports = [
       ../../../../home/presets/basic.nix
-
-      # waybar
-      (import ../../../../home/user/waybar.nix {
-        settings = [
-          {
-            output = "eDP-1";
-            height = 46;
-            modules-left = [
-              "custom/os"
-              "hyprland/workspaces"
-              "clock"
-              "mpris"
-            ];
-            modules-right = [
-              "wlr/taskbar"
-              "temperature"
-              "custom/wallRand"
-              "custom/wireguard"
-              "custom/recording"
-              "idle_inhibitor"
-              "network"
-              "pulseaudio"
-              "battery"
-              "custom/swaync"
-            ];
-          }
-        ];
-      })
+      ../../../../home/user/zellij.nix
     ];
   };
 }

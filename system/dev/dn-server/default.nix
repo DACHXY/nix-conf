@@ -46,7 +46,7 @@ in
   '';
 
   imports = [
-    ../public/dn
+    ../public/dn/presets/server.nix
     ./common
     ./home
     ./network

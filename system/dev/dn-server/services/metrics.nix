@@ -143,7 +143,7 @@ in
             {
               uid = "prometheus-dn-server";
               name = "Prometheus";
-              url = "https://metrics.net.dn";
+              url = "https://${prometheusHostname}";
               type = "prometheus";
             }
           ];
