@@ -125,7 +125,8 @@
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
 
     niri = {
-      url = "github:sodiboo/niri-flake";
+      # url = "github:sodiboo/niri-flake";
+      url = "github:dachxy/niri-flake"; # Wait for blur configurations
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

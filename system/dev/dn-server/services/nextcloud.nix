@@ -48,7 +48,10 @@ in
     (import ../../../modules/nextcloud.nix {
       hostname = "nextcloud.${domain}";
       adminpassFile = secrets."nextcloud/adminPassword".path;
-      trusted-proxies = [ "10.0.0.0/24" ];
+      trusted-proxies = [
+        "10.0.0.0/24"
+        "10.10.0.0/24"
+      ];
       whiteboardSecrets = [
         secrets."nextcloud/whiteboard".path
       ];

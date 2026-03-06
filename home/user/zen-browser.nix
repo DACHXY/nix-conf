@@ -3,12 +3,10 @@
   config,
   helper,
   pkgs,
-  lib,
   ...
 }:
 let
   inherit (osConfig.systemConf) username;
-  inherit (lib) mkForce;
   inherit (helper) capitalize;
   inherit (pkgs) runCommand;
 
@@ -39,6 +37,7 @@ let
 in
 {
   programs.zen-browser = {
+    suppressXdgMigrationWarning = true;
     enable = true;
     languagePacks = [
       "en-US"
@@ -137,15 +136,19 @@ in
     };
   };
 
-  home.file.".zen/${profileName}/zen-keyboard-shortcuts.json".source =
+  xdg.configFile."zen/${profileName}/zen-keyboard-shortcuts.json".source =
     ../config/zen/zen-keyboard-shortcuts.json;
 
-  home.file.".zen/${profileName}/chrome" = {
+  xdg.configFile."zen/${profileName}/chrome" = {
     source = patchedNebula;
     recursive = true;
   };
 
-  home.file.".zen/${profileName}/search.json.mozlz4".force = mkForce true;
+  systemd.user.tmpfiles.rules = [
+    ''
+      L+ ${config.home.homeDirectory}/.zen - - - - ${config.home.homeDirectory}/.config/zen
+    ''
+  ];
 
   xdg.mimeApps =
     let

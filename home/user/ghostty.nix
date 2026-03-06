@@ -1,12 +1,10 @@
 {
   inputs,
   pkgs,
-  lib,
   ...
 }:
 let
   inherit (pkgs.stdenv.hostPlatform) system;
-  inherit (lib) mkDefault;
 
   ghosttyShaders = pkgs.fetchFromGitHub {
     owner = "sahaj-b";
@@ -28,9 +26,9 @@ in
         "${ghosttyShaders}/ripple_cursor.glsl"
       ];
 
-      unfocused-split-opacity = 0.85;
+      unfocused-split-opacity = 0.65;
       desktop-notifications = true;
-      background-opacity = mkDefault 0.6;
+      background-opacity = 0.5;
       background-blur = 20;
 
       wait-after-command = false;

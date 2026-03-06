@@ -83,10 +83,7 @@ in
     hostName = hostname;
     https = https;
     datadir = lib.mkIf (datadir != null) datadir;
-    phpExtraExtensions =
-      allEx: with allEx; [
-        imagick
-      ];
+    enableImagemagick = true;
 
     extraApps = {
       inherit (config.services.nextcloud.package.packages.apps)
@@ -132,6 +129,7 @@ in
         "OC\\Preview\\HEIC"
         "OC\\Preview\\SVG"
         "OC\\Preview\\FONT"
+        "OC\\Preview\\Movie"
       ];
     };
   };

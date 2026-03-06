@@ -25,5 +25,5 @@ in
   ];
 
   # Disable man cache
-  documentation.man.generateCaches = mkForce false;
+  documentation.man.cache.enable = mkForce false;
 }

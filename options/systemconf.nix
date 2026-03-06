@@ -10,10 +10,8 @@
 let
   inherit (pkgs.stdenv.hostPlatform) system;
   inherit (lib)
-    optional
     mkOption
     mkEnableOption
-    mkMerge
     types
     mkIf
     ;

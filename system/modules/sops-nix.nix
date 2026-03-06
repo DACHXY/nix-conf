@@ -12,6 +12,18 @@ in
     };
   };
 
+  home-manager.sharedModules = [
+    {
+      sops = {
+        defaultSopsFile = defaultSopsFile;
+
+        age = {
+          keyFile = ageKeyFile;
+        };
+      };
+    }
+  ];
+
   environment.variables = {
     SOPS_AGE_KEY_FILE = ageKeyFile;
   };

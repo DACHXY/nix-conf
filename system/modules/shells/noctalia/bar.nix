@@ -131,6 +131,15 @@ in
         showUnreadBadge = true;
       }
       {
+        deviceNativePath = "__default__";
+        displayMode = "graphic";
+        hideIfIdle = false;
+        hideIfNotDetected = true;
+        id = "Battery";
+        showNoctaliaPerformance = true;
+        showPowerProfiles = true;
+      }
+      {
         colorizeDistroLogo = false;
         colorizeSystemIcon = "primary";
         customIconPath = "";

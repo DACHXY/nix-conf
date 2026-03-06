@@ -33,8 +33,8 @@ let
   };
 
   allowedSSHIPs = concatStringsSep ", " [
-    "122.117.215.55"
     "192.168.100.1/24"
+    "140.113.229.197/32"
     personal.range
   ];
 

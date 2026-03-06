@@ -38,10 +38,11 @@ in
     }
   ];
 
+  nix.settings.download-buffer-size = 671088640;
+
   imports = [
     ../../modules/presets/basic.nix
-    ../public/dn
-    ../public/dn/ntfy.nix
+    ../public/dn/presets/local.nix
     ./expr
     ./network
     ./common

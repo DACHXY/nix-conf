@@ -59,6 +59,7 @@ in
       programs.noctalia-shell = {
         enable = true;
         systemd.enable = true;
+        colors = mkForce { };
         settings = {
           settingsVersion = 26;
           appLauncher = {
@@ -126,7 +127,7 @@ in
           };
           controlCenter = import ./controlCenter.nix;
           dock = {
-            backgroundOpacity = 1.0;
+            backgroundOpacity = mkForce 1.0;
             colorizeIcons = false;
             displayMode = "auto_hide";
             enabled = false;
@@ -159,6 +160,8 @@ in
             shadowOffsetY = 3;
             showHibernateOnLockScreen = false;
             showScreenCorners = true;
+            lockScreenAnimation = true;
+            lockScreenCountdownDuration = 3000;
           };
           hooks = {
             enabled = false;
@@ -190,7 +193,8 @@ in
             manualSunset = "18:30";
           };
           notifications = {
-            backgroundOpacity = 1.0;
+            enableMarkdown = true;
+            backgroundOpacity = mkForce 1.00;
             criticalUrgencyDuration = 15;
             enableKeyboardLayoutToast = true;
             enabled = true;
@@ -204,7 +208,7 @@ in
           };
           osd = {
             autoHideMs = 1500;
-            backgroundOpacity = 1.0;
+            backgroundOpacity = mkForce 0.55;
             enabled = true;
             enabledTypes = [
               0
@@ -249,7 +253,7 @@ in
             hideWallpaperFilenames = true;
             monitorDirectories = [
             ];
-            overviewEnabled = false;
+            overviewEnabled = true;
             panelPosition = "follow_bar";
             randomEnabled = false;
             randomIntervalSec = 300;

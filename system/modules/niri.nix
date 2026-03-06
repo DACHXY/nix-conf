@@ -108,9 +108,40 @@ in
             };
           };
 
+          blur = {
+            passes = 3;
+            offset = 3;
+            noise = 0.02;
+            saturation = 1.5;
+          };
+
+          debug = {
+            honor-xdg-activation-with-invalid-serial = [ ];
+          };
+
+          layer-rules = [
+            {
+              matches = [
+                { namespace = "^noctalia-overview*"; }
+              ];
+              place-within-backdrop = true;
+            }
+            {
+              matches = [
+                { namespace = "^noctalia-background-.*$"; }
+              ];
+              background-effect = {
+                blur = true;
+              };
+            }
+          ];
+
           window-rules = [
             # Global
             {
+              background-effect = {
+                blur = true;
+              };
               geometry-corner-radius =
                 let
                   round = wmCfg.border.radius + 0.0;
@@ -122,8 +153,16 @@ in
                   top-right = round;
                 };
               clip-to-geometry = true;
-              opacity = 1.0;
+              opacity = 0.8;
               draw-border-with-background = false;
+            }
+            # non transparent
+            {
+              matches = [
+                { app-id = "^(com.mitchellh.ghostty)$"; }
+                { app-id = "^(zen-twilight)$"; }
+              ];
+              opacity = 1.0;
             }
             # Float
             {
