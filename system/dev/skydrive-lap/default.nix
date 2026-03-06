@@ -1,10 +1,15 @@
 { hostname }:
 {
+  self,
   pkgs,
   ...
 }:
 let
   username = "skydrive";
+  serverCfg = self.nixosConfigurations.dn-server.config;
+  serverNextcloudCfg = serverCfg.services.nextcloud;
+  nextcloudURL =
+    (if serverNextcloudCfg.https then "https" else "http") + "://" + serverNextcloudCfg.hostName;
 in
 {
   systemConf = {
@@ -13,8 +18,8 @@ in
     enableHomeManager = true;
     windowManager = "niri";
     face = pkgs.fetchurl {
-      url = "https://git.dnywe.com/dachxy/skydrive-avatar/raw/branch/main/skydrive.jpg";
-      hash = "sha256-aMjl6VL1Zy+r3ElfFyhFOlJKWn42JOnAFfBXF+GPB/Q=";
+      url = "${nextcloudURL}/s/EtMnqXqCy78MLt4/preview";
+      hash = "sha256-McwMPLFJWiWhh7K12ZHI6uwyvRgj9zW/hFIBl3dLrKE=";
     };
   };
 
