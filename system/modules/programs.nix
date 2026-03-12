@@ -1,13 +1,7 @@
 { pkgs, ... }:
 
 {
-
   environment.systemPackages = with pkgs; [
-    # neovim
-    luajitPackages.lua
-    lua51Packages.lua
-    luajitPackages.luarocks
-    luajitPackages.magick
     imagemagick
   ];
 

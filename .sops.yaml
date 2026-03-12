@@ -11,6 +11,10 @@ creation_rules:
           - *dn_lap
           - *dn_server
           - *dn_pre7780
+  - path_regex: system/dev/dn-cc/sops/secret.yaml
+    key_groups:
+      - age:
+          - *dn_pre7780
   - path_regex: system/dev/dn-pre7780/sops/secret.yaml
     key_groups:
       - age:
