@@ -14,7 +14,7 @@ in
 {
   systemConf = {
     inherit hostname username;
-    domain = "net.dn";
+    domain = "dnywe.com";
     enableHomeManager = true;
     windowManager = "niri";
     face = pkgs.fetchurl {
@@ -33,7 +33,17 @@ in
     ./network
     ./home
     ../../modules/shells/noctalia
+    ../../modules/sunshine.nix
   ];
+
+  services.openssh.settings.PasswordAuthentication = true;
+
+  services.displayManager.sddm.autoLogin.relogin = true;
+
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "${username}";
+  };
 
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSAOufpee7f8D8ONIIGU3qsN+8+DGO7BfZnEOTYqtQ5 danny@pre7780.dn"

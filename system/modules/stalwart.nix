@@ -1,22 +1,27 @@
 {
-  adminPassFile,
-  ldapConf,
-  domain ? null,
-  acmeConfs ? null,
-  certs ? null,
-  enableNginx ? true,
+  hostname,
+  domain,
 }:
 {
   config,
-  lib,
   ...
 }:
 let
-  inherit (lib) mkIf;
+  inherit (config.sops) secrets;
+  cfg = config.services.stalwart;
+  secretPrefix = "/run/credentials/stalwart.service";
+  adminPasswordVarName = "user_admin_password";
+  adminPasswordFile = "${secretPrefix}/${adminPasswordVarName}";
 
-  logFilePath = "${config.services.stalwart.dataDir}/logs";
+  fqdn = "${hostname}.${domain}";
 in
 {
+  sops.secrets."stalwart/password" = {
+    owner = cfg.user;
+    group = cfg.group;
+    mode = "0440";
+  };
+
   services.postgresql = {
     enable = true;
     ensureDatabases = [
@@ -30,20 +35,14 @@ in
     ];
   };
 
-  systemd.tmpfiles.rules =
-    let
-      inherit (config.users.users.stalwart) name group;
-    in
-    [
-      "d ${logFilePath} 0750 ${name} ${group} - "
-    ];
-
   services.stalwart = {
     enable = true;
-    openFirewall = true;
+    credentials = {
+      user_admin_password = secrets."stalwart/password".path;
+    };
     settings = {
       server = {
-        hostname = if (domain != null) then "mx1.${domain}" else config.networking.fqdn;
+        hostname = fqdn;
         proxy = {
           trusted-networks = [ "10.0.0.148" ];
         };
@@ -91,11 +90,9 @@ in
       };
 
       lookup.default = {
-        hostname = "mx1.${domain}";
-        domain = "${domain}";
+        inherit domain;
+        hostname = fqdn;
       };
-      acme = mkIf (acmeConfs != null) acmeConfs;
-      certificate = mkIf (certs != null) certs;
 
       directory = {
         "in-memory" = {
@@ -104,37 +101,24 @@ in
             {
               name = "postmaster";
               class = "individual";
-              secret = "%{file:${adminPassFile}}%";
+              secret = "%{file:${adminPasswordFile}}%";
               email = [ "postmaster@${domain}" ];
             }
           ];
         };
-        "ldap" = ldapConf;
         imap.lookup.domains = [
-          "mx1.${domain}"
+          fqdn
         ];
       };
 
       authentication.fallback-admin = {
         user = "admin";
-        secret = "%{file:${adminPassFile}}%";
+        secret = "%{file:${adminPasswordFile}}%";
       };
       tracer."stdout" = {
         enable = true;
         type = "console";
         level = "info";
-      };
-    };
-  };
-
-  services.nginx = mkIf enableNginx {
-    enable = true;
-    virtualHosts = {
-      "mail.${domain}" = {
-        locations."/".proxyPass = "http://127.0.0.1:8080";
-        locations."/jmap".proxyPass = "http://127.0.0.1:31004";
-        enableACME = true;
-        forceSSL = true;
       };
     };
   };

@@ -24,8 +24,8 @@ in
     btop
     eza
     fzf
-    neofetch
     ripgrep
+    fastfetch
     tree
     tldr # Alternative for man
     wget

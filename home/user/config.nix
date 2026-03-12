@@ -11,7 +11,6 @@ in
     lib.mkForce "${configDir}/starship/starship.toml";
 
   home.file = {
-    ".config/neofetch".source = "${configDir}/neofetch";
     ".config/rofi".source = "${configDir}/rofi";
     ".config/scripts".source = "${configDir}/scripts";
     ".config/gh" = {

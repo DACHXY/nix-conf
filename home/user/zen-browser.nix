@@ -1,4 +1,5 @@
 {
+  inputs,
   osConfig,
   config,
   helper,
@@ -9,13 +10,9 @@ let
   inherit (osConfig.systemConf) username;
   inherit (helper) capitalize;
   inherit (pkgs) runCommand;
+  inherit (builtins) hasAttr;
 
-  zenNebula = pkgs.fetchFromGitHub {
-    owner = "JustAdumbPrsn";
-    repo = "zen-nebula";
-    rev = "main";
-    sha256 = "sha256-Eg9HsN+yDA8OdVcE9clS+FyUhVBH3ooN/odkZIVR/p4=";
-  };
+  zenNebula = inputs.zen-nebula;
 
   patchedNebula =
     runCommand "patched-nebula"
@@ -37,7 +34,6 @@ let
 in
 {
   programs.zen-browser = {
-    suppressXdgMigrationWarning = true;
     enable = true;
     languagePacks = [
       "en-US"
@@ -156,7 +152,10 @@ in
         let
           zen-browser = config.programs.zen-browser.package;
         in
-        zen-browser.meta.desktopFileName;
+        if hasAttr "desktopFileName" zen-browser.meta then
+          zen-browser.meta.desktopFileName
+        else
+          "Zen Browser Twilight";
 
       associations = builtins.listToAttrs (
         map

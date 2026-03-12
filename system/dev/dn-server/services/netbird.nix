@@ -35,6 +35,7 @@ in
   ];
 
   services.netbird = {
+    useRoutingFeatures = "server";
     ui.enable = mkForce false;
 
     clients.wt0 = {

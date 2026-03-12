@@ -1,0 +1,5 @@
+{
+  imports = [
+    ./ldap.nix
+  ];
+}

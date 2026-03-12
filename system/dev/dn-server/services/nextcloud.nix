@@ -59,6 +59,7 @@ in
   ];
 
   services.nextcloud = {
+    package = pkgs.nextcloud32;
     extraApps = {
       inherit (config.services.nextcloud.package.packages.apps) music spreed;
 

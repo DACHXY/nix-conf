@@ -4,6 +4,7 @@ let
   inherit (lib) nameValuePair mkForce;
   inherit (config.sops) secrets;
   inherit (config.networking) domain;
+  infraIP = "10.10.0.0";
 
   splitDNS = listToAttrs (
     map (x: nameValuePair x "127.0.0.1:5359") [
@@ -71,8 +72,8 @@ in
       dnsupdate=yes
       primary=yes
       secondary=no
-      allow-dnsupdate-from=10.0.0.0/24
-      allow-axfr-ips=10.0.0.0/24
+      allow-dnsupdate-from=${infraIP}/24
+      allow-axfr-ips=${infraIP}/24
       also-notify=10.0.0.148:53
     '';
     secretFile = secrets.powerdns.path;
@@ -98,7 +99,7 @@ in
     dnssecValidation = "off";
     dns.allowFrom = [
       "127.0.0.0/8"
-      "10.0.0.0/24"
+      "${infraIP}/24"
       "192.168.100.0/24"
     ];
     dns.port = 5300;

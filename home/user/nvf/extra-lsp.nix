@@ -6,6 +6,11 @@
     };
     treesitter.grammars = with pkgs.vimPlugins.nvim-treesitter-parsers; [
       dockerfile
+      latex
+      scss
+      svelte
+      typst
+      vue
     ];
     extraPackages = with pkgs; [
       # docker

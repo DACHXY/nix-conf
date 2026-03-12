@@ -88,7 +88,6 @@ in
       # Noctalia
       programs.noctalia-shell.filteredIds = [
         "Brightness"
-        "Battery"
       ];
 
       # ==== WM ==== #
