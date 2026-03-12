@@ -5,5 +5,6 @@
     ../yubikey.nix
     ../ntfy.nix
     ../wm.nix
+    ../networkmanager.nix
   ];
 }

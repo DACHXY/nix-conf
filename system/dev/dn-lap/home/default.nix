@@ -1,11 +1,9 @@
 {
   pkgs,
   config,
-  lib,
   ...
 }:
 let
-  inherit (lib) mkForce;
   inherit (config.networking) hostName;
   inherit (config.systemConf) username;
 in
@@ -14,10 +12,6 @@ in
     home.packages = with pkgs; [
       mattermost-desktop
     ];
-
-    home.sessionVariables = {
-      BROWSER = mkForce "chromium";
-    };
 
     services.kanshi.settings = [
       {
@@ -32,35 +26,10 @@ in
       }
     ];
 
-    programs.noctalia-shell = {
-      settings = { };
-    };
-
-    programs.chromium = {
-      enable = true;
-      extensions = [
-        # Bitwarden
-        {
-          id = "nngceckbapebfimnlniiiahkandclblb";
-        }
-        # Vimium
-        {
-          id = "dbepggeogbaibhgnhhndojpepiihcmeb";
-        }
-        # Dark Reader
-        {
-          id = "eimadpbcbfnmbkopoojfekhnkhdbieeh";
-        }
-        # Vertical Tabs
-        {
-          id = "efobhjmgoddhfdhaflheioeagkcknoji";
-        }
-      ];
-    };
-
     imports = [
       ../../../../home/presets/basic.nix
       ../../../../home/user/zellij.nix
+      ./noctalia.nix
     ];
   };
 }

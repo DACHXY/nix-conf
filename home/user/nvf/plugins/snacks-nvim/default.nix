@@ -45,7 +45,7 @@ in
     enable = true;
     setupOpts = {
       image = {
-        enabled = false;
+        enabled = true;
         doc = {
           enabled = true;
         };

@@ -2,6 +2,6 @@
   imports = [
     ../../../modules/virtualization.nix
     ../../../modules/wine.nix
-    ./kvm.nix
+    # ./kvm.nix
   ];
 }

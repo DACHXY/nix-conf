@@ -1,14 +1,21 @@
-{ lib, config, ... }:
+{
+  lib,
+  config,
+  inputs,
+  ...
+}:
 let
 
   inherit (config.systemConf) username;
-  inherit (builtins) mapAttrs;
+  inherit (builtins) mapAttrs hasAttr;
   inherit (lib)
+    listToAttrs
     mkForce
     removePrefix
     concatStringsSep
     mapAttrsToList
     mkIf
+    mkDefault
     ;
 in
 {
@@ -18,10 +25,26 @@ in
   networking.networkmanager.enable = true;
   services.upower.enable = true;
   hardware.bluetooth.enable = true;
+  systemd.user.services.polkit-gnome-authentication-agent-1.enable = mkForce false;
+
   # ================================= #
 
+  # Calendar Service
+  # Run `nix shell nixpkgs#gnome-control-center -c bash -c "XDG_CURRENT_DESKTOP=GNOME gnome-control-center"`,
+  # Then login to service. Check: https://nixos.wiki/wiki/GNOME/Calendar
+  programs.dconf.enable = true;
+  services.gnome.evolution-data-server.enable = true;
+  services.gnome.gnome-online-accounts.enable = true;
+  services.gnome.gnome-keyring.enable = true;
+  programs.evolution.enable = true;
+
   home-manager.users.${username} =
-    { osConfig, config, ... }:
+    {
+      osConfig,
+      config,
+      pkgs,
+      ...
+    }:
     let
       wmCfg = config.wm;
       bindCfg = wmCfg.keybinds;
@@ -56,224 +79,444 @@ in
         "XF86MonBrightnessUp" = ''noctalia "brightness" "increase"'';
       };
 
-      programs.noctalia-shell = {
-        enable = true;
-        systemd.enable = true;
-        colors = mkForce { };
-        settings = {
-          settingsVersion = 26;
-          appLauncher = {
-            customLaunchPrefix = "";
-            customLaunchPrefixEnabled = false;
-            enableClipPreview = true;
-            enableClipboardHistory = true;
-            pinnedExecs = [
-            ];
-            position = "top_center";
-            sortByMostUsed = true;
-            terminalCommand = "${wmCfg.app.terminal.run}";
-            useApp2Unit = false;
-            viewMode = "list";
+      # Install Required Packages
+      home.packages = mkIf (hasAttr "wt0" osConfig.services.netbird.clients) [
+        # Alias netbird-wt0 to netbird
+        (pkgs.writeShellScriptBin "netbird" ''
+          netbird-wt0 $@
+        '')
+        # Output noctalia settings in nix format
+        (pkgs.writeShellScriptBin "noctalia-settings" ''
+          PATH="$PATH:${pkgs.jq}/bin:${pkgs.nixfmt}/bin"
+          tmp=$(mktemp)
+
+          noctalia-shell ipc call state all | jq -S .settings > "$tmp"
+
+          nix eval --impure --expr \
+          "(builtins.fromJSON (builtins.readFile \"$tmp\"))$1" \
+          | nixfmt
+
+          rm "$tmp"
+        '')
+        pkgs.gpu-screen-recorder
+      ];
+
+      programs.noctalia-shell =
+        let
+          officialPlugins = [
+            "niri-overview-launcher"
+            "timer"
+            "screen-recorder"
+            "clipper"
+            "battery-threshold"
+            "polkit-agent"
+            "todo"
+            "keybind-cheatsheet"
+            "battery-action"
+            "weekly-calendar"
+            "privacy-indicator"
+            "netbird"
+            "network-manager-vpn"
+          ];
+          states = listToAttrs (
+            map (x: {
+              name = x;
+              value = {
+                enabled = true;
+                sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
+              };
+            }) officialPlugins
+          );
+        in
+        {
+          enable = true;
+          package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+            calendarSupport = true;
           };
-          audio = {
-            cavaFrameRate = 30;
-            externalMixer = "pwvucontrol";
-            mprisBlacklist = [
-            ];
-            preferredPlayer = "mpv";
-            visualizerQuality = "high";
-            visualizerType = "linear";
-            volumeOverdrive = false;
-            volumeStep = 5;
-          };
-          bar = import ./bar.nix { inherit lib; };
-          brightness = {
-            brightnessStep = 5;
-            enableDdcSupport = false;
-            enforceMinimum = true;
-          };
-          calendar = {
-            cards = [
+          systemd.enable = true;
+          colors = mkForce { };
+          plugins = {
+            sources = [
               {
                 enabled = true;
-                id = "banner-card";
-              }
-              {
-                enabled = true;
-                id = "calendar-card";
-              }
-              {
-                enabled = true;
-                id = "timer-card";
-              }
-              {
-                enabled = true;
-                id = "weather-card";
+                name = "Official Noctalia Plugins";
+                url = "https://github.com/noctalia-dev/noctalia-plugins";
               }
             ];
+            inherit states;
           };
-          changelog = {
-            lastSeenVersion = "";
+          pluginSettings = {
+            netbird = {
+              compactMode = true;
+              defaultPeerAction = "copy-ip";
+              hideDisconnected = false;
+              pingCount = 5;
+              refreshInterval = 5000;
+              showIpAddress = false;
+              showPing = false;
+            };
+            privacy-indicator = {
+              activeColor = "primary";
+              enableToast = false;
+              hideInactive = true;
+              iconSpacing = 4;
+              inactiveColor = "none";
+              micFilterRegex = "";
+              removeMargins = true;
+            };
           };
-          colorSchemes = {
-            darkMode = true;
-            generateTemplatesForPredefined = true;
-            manualSunrise = "06:30";
-            manualSunset = "18:30";
-            matugenSchemeType = "scheme-neutral";
-            predefinedScheme = "Noctalia (default)";
-            schedulingMode = "off";
-            useWallpaperColors = true;
-          };
-          controlCenter = import ./controlCenter.nix;
-          dock = {
-            backgroundOpacity = mkForce 1.0;
-            colorizeIcons = false;
-            displayMode = "auto_hide";
-            enabled = false;
-            floatingRatio = 1;
-            monitors = [
-            ];
-            onlySameOutput = true;
-            pinnedApps = [
-            ];
-            size = 1;
-          };
-          general = {
-            allowPanelsOnScreenWithoutBar = true;
-            animationDisabled = false;
-            animationSpeed = 1.5;
-            avatarImage = "${config.home.homeDirectory}/.face";
-            boxRadiusRatio = 0.68;
-            iRadiusRatio = 0.68;
-            compactLockScreen = false;
-            dimmerOpacity = 0.4;
-            enableShadows = true;
-            forceBlackScreenCorners = true;
-            language = "";
-            lockOnSuspend = true;
-            radiusRatio = 1;
-            scaleRatio = 1;
-            screenRadiusRatio = 1.09;
-            shadowDirection = "bottom_right";
-            shadowOffsetX = 2;
-            shadowOffsetY = 3;
-            showHibernateOnLockScreen = false;
-            showScreenCorners = true;
-            lockScreenAnimation = true;
-            lockScreenCountdownDuration = 3000;
-          };
-          hooks = {
-            enabled = false;
-            darkModeChange = "";
-            wallpaperChange = "";
-          };
-          location = {
-            analogClockInCalendar = false;
-            firstDayOfWeek = -1;
-            name = "Taipei, TW";
-            showCalendarEvents = true;
-            showCalendarWeather = true;
-            showWeekNumberInCalendar = false;
-            use12hourFormat = false;
-            useFahrenheit = false;
-            weatherEnabled = true;
-            weatherShowEffects = true;
-          };
-          network = {
-            wifiEnabled = true;
-          };
-          nightLight = {
-            enabled = true;
-            autoSchedule = true;
-            dayTemp = "6000";
-            nightTemp = "5500";
-            forced = false;
-            manualSunrise = "06:30";
-            manualSunset = "18:30";
-          };
-          notifications = {
-            enableMarkdown = true;
-            backgroundOpacity = mkForce 1.00;
-            criticalUrgencyDuration = 15;
-            enableKeyboardLayoutToast = true;
-            enabled = true;
-            location = "bottom_right";
-            lowUrgencyDuration = 3;
-            monitors = [
-            ];
-            normalUrgencyDuration = 8;
-            overlayLayer = true;
-            respectExpireTimeout = false;
-          };
-          osd = {
-            autoHideMs = 1500;
-            backgroundOpacity = mkForce 0.55;
-            enabled = true;
-            enabledTypes = [
-              0
-              1
-              2
-            ];
-            location = "right";
-            monitors = [
-            ];
-            overlayLayer = true;
-          };
-          screenRecorder = {
-            audioCodec = "opus";
-            audioSource = "default_output";
-            colorRange = "limited";
-            directory = "${config.home.homeDirectory}/Videos";
-            frameRate = 60;
-            quality = "very_high";
-            showCursor = true;
-            videoCodec = "h264";
-            videoSource = "portal";
-          };
-          sessionMenu = import ./sessionMenu.nix;
-          systemMonitor = import ./systemMonitor.nix;
-          templates = import ./templates.nix;
-          ui = {
-            fontDefault = config.stylix.fonts.sansSerif.name;
-            fontDefaultScale = 1;
-            fontFixed = config.stylix.fonts.monospace.name;
-            fontFixedScale = 1;
-            panelBackgroundOpacity = mkForce 0.25;
-            panelsAttachedToBar = true;
-            settingsPanelAttachToBar = true;
-            tooltipsEnabled = true;
-          };
-          wallpaper = {
-            directory = "${config.home.homeDirectory}/Pictures/Wallpapers";
-            enableMultiMonitorDirectories = false;
-            enabled = true;
-            fillColor = "#000000";
-            fillMode = "crop";
-            hideWallpaperFilenames = true;
-            monitorDirectories = [
-            ];
-            overviewEnabled = true;
-            panelPosition = "follow_bar";
-            randomEnabled = false;
-            randomIntervalSec = 300;
-            recursiveSearch = false;
-            setWallpaperOnAllMonitors = true;
-            transitionDuration = 1500;
-            transitionEdgeSmoothness = 0.05;
-            transitionType = "random";
-            useWallhaven = false;
-            wallhavenCategories = "111";
-            wallhavenOrder = "desc";
-            wallhavenPurity = "100";
-            wallhavenQuery = "";
-            wallhavenResolutionHeight = "";
-            wallhavenResolutionMode = "atleast";
-            wallhavenResolutionWidth = "";
-            wallhavenSorting = "relevance";
+          settings = {
+            appLauncher = {
+              autoPasteClipboard = false;
+              clipboardWatchImageCommand = "wl-paste --type image --watch cliphist store";
+              clipboardWatchTextCommand = "wl-paste --type text --watch cliphist store";
+              clipboardWrapText = true;
+              customLaunchPrefix = "";
+              customLaunchPrefixEnabled = false;
+              density = "default";
+              enableClipPreview = true;
+              enableClipboardHistory = true;
+              enableSessionSearch = true;
+              enableSettingsSearch = true;
+              enableWindowsSearch = true;
+              iconMode = "tabler";
+              ignoreMouseInput = false;
+              overviewLayer = false;
+              pinnedApps = [ ];
+              position = "top_center";
+              screenshotAnnotationTool = "";
+              showCategories = true;
+              showIconBackground = false;
+              sortByMostUsed = true;
+              terminalCommand = "${wmCfg.app.terminal.run}";
+              useApp2Unit = false;
+              viewMode = "list";
+            };
+            audio = {
+              mprisBlacklist = [ ];
+              preferredPlayer = "mpv";
+              spectrumFrameRate = 30;
+              visualizerType = "linear";
+              volumeFeedback = false;
+              volumeFeedbackSoundFile = "";
+              volumeOverdrive = false;
+              volumeStep = 5;
+            };
+            bar = import ./bar.nix { inherit lib; };
+            brightness = {
+              backlightDeviceMappings = [ ];
+              brightnessStep = 5;
+              enableDdcSupport = false;
+              enforceMinimum = true;
+            };
+            calendar = {
+              cards = [
+                {
+                  enabled = true;
+                  id = "banner-card";
+                }
+                {
+                  enabled = true;
+                  id = "calendar-card";
+                }
+                {
+                  enabled = true;
+                  id = "timer-card";
+                }
+                {
+                  enabled = true;
+                  id = "weather-card";
+                }
+              ];
+            };
+            colorSchemes = {
+              darkMode = true;
+              generationMethod = "tonal-spot";
+              manualSunrise = "06:30";
+              manualSunset = "18:30";
+              monitorForColors = "";
+              predefinedScheme = "Noctalia (default)";
+              schedulingMode = "off";
+              useWallpaperColors = true;
+            };
+            controlCenter = import ./controlCenter.nix { inherit config; };
+            dock = {
+              animationSpeed = 1;
+              backgroundOpacity = mkForce 1.0;
+              colorizeIcons = false;
+              deadOpacity = 0.6;
+              displayMode = "auto_hide";
+              dockType = "floating";
+              enabled = false;
+              floatingRatio = 1;
+              groupApps = false;
+              groupClickAction = "cycle";
+              groupContextMenuMode = "extended";
+              groupIndicatorStyle = "dots";
+              inactiveIndicators = false;
+              indicatorColor = "primary";
+              indicatorOpacity = 0.6;
+              indicatorThickness = 3;
+              launcherIconColor = "none";
+              launcherPosition = "end";
+              monitors = [ ];
+              onlySameOutput = true;
+              pinnedApps = [ ];
+              pinnedStatic = false;
+              position = "bottom";
+              showDockIndicator = false;
+              showLauncherIcon = false;
+              sitOnFrame = false;
+              size = 1;
+            };
+            general = {
+              allowPanelsOnScreenWithoutBar = true;
+              allowPasswordWithFprintd = false;
+              animationDisabled = false;
+              animationSpeed = 1.5;
+              autoStartAuth = false;
+              avatarImage = "${config.home.homeDirectory}/.face";
+              boxRadiusRatio = 0.68;
+              clockFormat = "hh\\nmm";
+              clockStyle = "custom";
+              compactLockScreen = false;
+              dimmerOpacity = 0.4;
+              enableBlurBehind = true;
+              enableLockScreenCountdown = true;
+              enableLockScreenMediaControls = false;
+              enableShadows = true;
+              forceBlackScreenCorners = true;
+              iRadiusRatio = 0.68;
+              keybinds = {
+                keyDown = [ "Down" ];
+                keyEnter = [
+                  "Return"
+                  "Enter"
+                ];
+                keyEscape = [ "Esc" ];
+                keyLeft = [ "Left" ];
+                keyRemove = [ "Del" ];
+                keyRight = [ "Right" ];
+                keyUp = [ "Up" ];
+              };
+              language = "";
+              lockOnSuspend = true;
+              lockScreenAnimations = false;
+              lockScreenBlur = 0;
+              lockScreenCountdownDuration = 3000;
+              lockScreenMonitors = [ ];
+              lockScreenTint = 0;
+              passwordChars = false;
+              radiusRatio = 1;
+              reverseScroll = false;
+              scaleRatio = 1;
+              screenRadiusRatio = 1.09;
+              shadowDirection = "bottom_right";
+              shadowOffsetX = 2;
+              shadowOffsetY = 3;
+              showChangelogOnStartup = true;
+              showHibernateOnLockScreen = false;
+              showScreenCorners = true;
+              showSessionButtonsOnLockScreen = true;
+              telemetryEnabled = false;
+            };
+            hooks = {
+              darkModeChange = "";
+              enabled = false;
+              performanceModeDisabled = "";
+              performanceModeEnabled = "";
+              screenLock = "";
+              screenUnlock = "";
+              session = "";
+              startup = "";
+              wallpaperChange = "";
+            };
+            location = {
+              analogClockInCalendar = false;
+              firstDayOfWeek = -1;
+              hideWeatherCityName = false;
+              hideWeatherTimezone = false;
+              name = mkDefault "Taipei, TW";
+              showCalendarEvents = true;
+              showCalendarWeather = true;
+              showWeekNumberInCalendar = false;
+              use12hourFormat = false;
+              useFahrenheit = false;
+              weatherEnabled = true;
+              weatherShowEffects = true;
+            };
+            network = {
+              airplaneModeEnabled = false;
+              bluetoothAutoConnect = true;
+              bluetoothDetailsViewMode = "grid";
+              bluetoothHideUnnamedDevices = false;
+              bluetoothRssiPollIntervalMs = 60000;
+              bluetoothRssiPollingEnabled = false;
+              disableDiscoverability = false;
+              networkPanelView = "wifi";
+              wifiDetailsViewMode = "grid";
+              wifiEnabled = true;
+            };
+            nightLight = {
+              autoSchedule = true;
+              dayTemp = "6000";
+              enabled = true;
+              forced = false;
+              manualSunrise = "06:30";
+              manualSunset = "18:30";
+              nightTemp = "5500";
+            };
+            notifications = {
+              backgroundOpacity = mkForce 1.00;
+              clearDismissed = true;
+              criticalUrgencyDuration = 15;
+              density = "default";
+              enableBatteryToast = true;
+              enableKeyboardLayoutToast = true;
+              enableMarkdown = true;
+              enableMediaToast = false;
+              enabled = true;
+              location = "bottom_right";
+              lowUrgencyDuration = 3;
+              monitors = [ ];
+              normalUrgencyDuration = 8;
+              overlayLayer = true;
+              respectExpireTimeout = false;
+              saveToHistory = {
+                critical = true;
+                low = true;
+                normal = true;
+              };
+              sounds = {
+                criticalSoundFile = "";
+                enabled = false;
+                excludedApps = "discord,firefox,chrome,chromium,edge";
+                lowSoundFile = "";
+                normalSoundFile = "";
+                separateSounds = false;
+                volume = 0.5;
+              };
+            };
+            osd = {
+              autoHideMs = 1500;
+              backgroundOpacity = mkForce 0.55;
+              enabled = true;
+              enabledTypes = [
+                0
+                1
+                2
+              ];
+              location = "right";
+              monitors = [ ];
+              overlayLayer = true;
+            };
+            settingsVersion = 57;
+            sessionMenu = import ./sessionMenu.nix;
+            systemMonitor = {
+              batteryCriticalThreshold = 5;
+              batteryWarningThreshold = 20;
+              cpuCriticalThreshold = 90;
+              cpuWarningThreshold = 80;
+              criticalColor = "";
+              diskAvailCriticalThreshold = 10;
+              diskAvailWarningThreshold = 20;
+              diskCriticalThreshold = 90;
+              diskWarningThreshold = 80;
+              enableDgpuMonitoring = false;
+              externalMonitor = "resources || missioncenter || jdsystemmonitor || corestats || system-monitoring-center || gnome-system-monitor || plasma-systemmonitor || mate-system-monitor || ukui-system-monitor || deepin-system-monitor || pantheon-system-monitor";
+              gpuCriticalThreshold = 90;
+              gpuWarningThreshold = 80;
+              memCriticalThreshold = 90;
+              memWarningThreshold = 80;
+              swapCriticalThreshold = 90;
+              swapWarningThreshold = 80;
+              tempCriticalThreshold = 90;
+              tempWarningThreshold = 80;
+              useCustomColors = false;
+              warningColor = "";
+            };
+            templates = {
+              activeTemplates = [ ];
+              enableUserTheming = false;
+            };
+            ui = {
+              boxBorderEnabled = false;
+              fontDefault = config.stylix.fonts.sansSerif.name;
+              fontDefaultScale = 1;
+              fontFixed = config.stylix.fonts.monospace.name;
+              fontFixedScale = 1;
+              panelBackgroundOpacity = mkForce 0.25;
+              panelsAttachedToBar = true;
+              settingsPanelMode = "attached";
+              settingsPanelSideBarCardStyle = false;
+              tooltipsEnabled = true;
+            };
+            wallpaper = {
+              automationEnabled = false;
+              directory = "${config.home.homeDirectory}/Pictures/Wallpapers";
+              enableMultiMonitorDirectories = false;
+              enabled = true;
+              favorites = [ ];
+              fillColor = "#000000";
+              fillMode = "crop";
+              hideWallpaperFilenames = true;
+              monitorDirectories = [ ];
+              overviewBlur = 0.4;
+              overviewEnabled = true;
+              overviewTint = 0.6;
+              panelPosition = "follow_bar";
+              randomIntervalSec = 300;
+              setWallpaperOnAllMonitors = true;
+              showHiddenFiles = false;
+              skipStartupTransition = false;
+              sortOrder = "name";
+              transitionDuration = 1500;
+              transitionEdgeSmoothness = 0.05;
+              transitionType = "random";
+              useSolidColor = false;
+              useWallhaven = false;
+              viewMode = "single";
+              wallhavenApiKey = "";
+              wallhavenCategories = "111";
+              wallhavenOrder = "desc";
+              wallhavenPurity = "100";
+              wallhavenQuery = "";
+              wallhavenRatios = "";
+              wallhavenResolutionHeight = "";
+              wallhavenResolutionMode = "atleast";
+              wallhavenResolutionWidth = "";
+              wallhavenSorting = "relevance";
+              wallpaperChangeMode = "random";
+            };
+            plugins = {
+              autoUpdate = false;
+            };
+            noctaliaPerformance = {
+              disableDesktopWidgets = true;
+              disableWallpaper = true;
+            };
+            desktopWidgets = {
+              enabled = true;
+              gridSnap = false;
+              monitorWidgets = [ ];
+              overviewEnabled = true;
+            };
+            idle = {
+              customCommands = "[]";
+              enabled = false;
+              fadeDuration = 5;
+              lockCommand = "";
+              lockTimeout = 660;
+              resumeLockCommand = "";
+              resumeScreenOffCommand = "";
+              resumeSuspendCommand = "";
+              screenOffCommand = "";
+              screenOffTimeout = 600;
+              suspendCommand = "";
+              suspendTimeout = 1800;
+            };
           };
         };
-      };
 
       programs.niri.settings = mkIf osConfig.programs.niri.enable (
         with config.lib.niri.actions;
