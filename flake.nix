@@ -181,6 +181,10 @@
           system = "x86_64-linux";
           confPath = ./system/dev/dn-pre7780;
         };
+        dn-cc = {
+          system = "x86_64-linux";
+          confPath = ./system/dev/dn-cc;
+        };
         dn-server = {
           system = "x86_64-linux";
           confPath = ./system/dev/dn-server;
@@ -197,8 +201,8 @@
     in
     {
       # ==== NixOS Configuration ==== #
-      nixosConfigurations = (
-        mapAttrs (
+      nixosConfigurations =
+        (mapAttrs (
           hostname: conf:
           let
             inherit (conf) confPath system;
@@ -256,8 +260,17 @@
               (import confPath { inherit hostname; })
             ];
           }
-        ) hosts
-      );
+        ) hosts)
+
+        # ==== Extra ==== #
+        // {
+          ccIso = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            modules = [
+              ./system/dev/dn-cc/iso.nix
+            ];
+          };
+        };
 
       formatter = forEachSystem (
         system:
@@ -308,6 +321,18 @@
             buildInputs = enabledPackages;
           };
       });
+
+      packages = forEachSystem (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          buildCCIso = pkgs.writeShellScriptBin "build-cc-iso" ''
+            nix build --impure .#nixosConfigurations.ccIso.config.system.build.isoImage
+          '';
+        }
+      );
 
       # ==== MicroVM Packages ==== #
       # packages."${system}" = {
