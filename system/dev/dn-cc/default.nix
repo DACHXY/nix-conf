@@ -24,6 +24,8 @@ in
     inherit hostname username;
   };
 
+  virtualisation.vmware.guest.enable = true;
+
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     ./boot.nix
