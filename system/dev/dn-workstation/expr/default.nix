@@ -10,6 +10,7 @@ let
 in
 {
   imports = [
+    # ./osx-kvm.nix
     extra-modules
     ./noise-cancel.nix
     ./acme.nix

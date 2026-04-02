@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 let
   defaultSopsFile = ../.. + "/system/dev/${config.networking.hostName}/sops/secret.yaml";
   ageKeyFile = "/var/lib/sops-nix/key.txt";
@@ -27,4 +27,6 @@ in
   environment.variables = {
     SOPS_AGE_KEY_FILE = ageKeyFile;
   };
+
+  environment.systemPackages = with pkgs; [ sops ];
 }

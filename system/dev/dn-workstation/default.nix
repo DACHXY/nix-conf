@@ -43,7 +43,9 @@ in
   imports = [
     ../../modules/presets/basic.nix
     ../public/dn/presets/local.nix
+    ./services
     ./sops
+    ./expr
     ./network
     ./common
     ./games
