@@ -32,6 +32,12 @@ let
     range = "10.10.0.0/24";
   };
 
+  infra2 = {
+    ip = "10.20.0.2/32";
+    interface = "wg2";
+    range = "10.20.0.0/24";
+  };
+
   allowedSSHIPs = concatStringsSep ", " [
     "192.168.100.1/24"
     "140.113.229.197/32"
@@ -168,6 +174,7 @@ let
 in
 {
   systemConf.security.allowedIPs = [
+    "10.20.0.0/24"
     "10.10.0.0/24"
     "10.0.0.0/24"
   ];
@@ -227,7 +234,7 @@ in
 
               tcp dport { ${sshPortsString} } jump ssh-filter
 
-              iifname { ${personal.interface}, ${infra.interface}, ${netbirdCfg.clients.wt0.interface} } accept
+              iifname { ${personal.interface}, ${infra.interface}, ${infra2.interface}, ${netbirdCfg.clients.wt0.interface} } accept
             }
 
             chain output {
@@ -240,11 +247,14 @@ in
               meta skuid ${toString config.users.users.systemd-timesync.uid} accept
 
               # VPN
-              oifname { ${personal.interface}, ${infra.interface}, ${netbirdCfg.clients.wt0.interface} } accept
+              oifname { ${personal.interface}, ${infra.interface}, ${infra2.interface}, ${netbirdCfg.clients.wt0.interface} } accept
 
               # Allow DNS qeury
               udp dport 53 accept
               tcp dport 53 accept
+
+              # Wireguard Connection
+              udp dport 51820 accept
 
               # UDP Hole Punching
               meta mark 0x1bd00 accept

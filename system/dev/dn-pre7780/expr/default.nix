@@ -3,10 +3,10 @@ let
   extra-modules = "${
     fetchGit {
       url = "https://git.dnywe.com/dachxy/extra-modules";
-      rev = "cce58d705bee67e0634d4353b5eb40bd4a99ca42";
+      rev = "2f5755df4183ec3b174126d2a3945c350cb2ac61";
       ref = "main";
     }
-  }/modules//default.nix";
+  }/modules/default.nix";
 in
 {
   imports = [

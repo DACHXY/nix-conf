@@ -28,6 +28,10 @@ in
         dnsResolver
         dnsPropagationCheck
         ;
+      extraLegoFlags = [
+        "--dns.propagation-wait"
+        "5s"
+      ];
       environmentFile = pkgs.writeText "lego-config" ''
         LEGO_CA_CERTIFICATES=${config.security.pki.caBundle}
       '';

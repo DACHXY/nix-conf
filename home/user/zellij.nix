@@ -2,17 +2,14 @@
   pkgs,
   lib,
   config,
+  inputs,
+  system,
   ...
 }:
 let
   inherit (builtins) fetchurl;
   inherit (config.lib.stylix) colors;
   inherit (lib) getExe;
-
-  zjstatus = fetchurl {
-    url = "https://github.com/dj95/zjstatus/releases/download/v0.21.1/zjstatus.wasm";
-    sha256 = "sha256:06mfcijmsmvb2gdzsql6w8axpaxizdc190b93s3nczy212i846fw";
-  };
 
   zellij-switch = fetchurl {
     url = "https://github.com/mostafaqanbaryan/zellij-switch/releases/download/0.2.1/zellij-switch.wasm";
@@ -255,15 +252,11 @@ in
         strider location="zellij:strider"
         compact-bar location="zellij:compact-bar"
         session-manager location="zellij:session-manager"
-        welcome-screen location="zellij:session-manager" {
-            welcome_screen true
-        }
         filepicker location="zellij:strider" {
             cwd "/"
         }
         configuration location="zellij:configuration"
         plugin-manager location="zellij:plugin-manager"
-        about location="zellij:about"
       }
       web_client {
         font "monospace"
@@ -301,19 +294,20 @@ in
                     size = 1;
                     borderless = true;
                     plugin = {
-                      location = "file:${zjstatus}";
+                      location = "file:${inputs.zjstatus.packages.${system}.default}/bin/zjstatus";
                       format_left = "{mode}#[bg=#${colors.base00}] {tabs}";
                       format_center = "";
                       format_right = "#[bg=#${colors.base00},fg=#${colors.base0D}]#[bg=#${colors.base0D},fg=#${colors.base01},bold] #[bg=#${colors.base02},fg=#${colors.base05},bold] {session} #[bg=#${colors.base03},fg=#${colors.base05},bold]";
                       format_space = "";
                       format_hide_on_overlength = "true";
-                      format_precedence = "crl";
+                      format_precedence = "lrc";
 
                       border_enabled = "false";
                       border_char = "─";
                       border_format = "#[fg=#6C7086]{char}";
                       border_position = "top";
 
+                      hide_frame_for_single_pane = "true";
                       mode_normal = "#[bg=#${colors.base0B},fg=#${colors.base02},bold] NORMAL#[bg=#${colors.base03},fg=#${colors.base0B}]█";
                       mode_locked = "#[bg=#${colors.base04},fg=#${colors.base02},bold] LOCKED #[bg=#${colors.base03},fg=#${colors.base04}]█";
                       mode_resize = "#[bg=#${colors.base08},fg=#${colors.base02},bold] RESIZE#[bg=#${colors.base03},fg=#${colors.base08}]█";

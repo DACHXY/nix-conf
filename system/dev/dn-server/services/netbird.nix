@@ -5,7 +5,7 @@ let
 
   # Virtual Domain
   vDomain = "vnet.dn";
-  proxyIP = "10.10.0.1";
+  proxyIP = "10.20.0.1";
 
   cfg = config.services.netbird;
   srv = cfg.server;

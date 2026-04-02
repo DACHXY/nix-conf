@@ -1,7 +1,6 @@
 { ... }:
 {
   programs.noctalia-shell.settings = {
-
     desktopWidgets = {
       monitorWidgets = [
         {

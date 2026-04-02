@@ -22,6 +22,8 @@ in
   ];
 
   services.opendkim.enable = mkForce false;
+  # services.dovecot.enable = mkForce false;
+  # services.postfix.enable = mkForce false;
 
   mail-server =
     let

@@ -163,6 +163,10 @@
       url = "github:DreamMaoMao/mango";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    zjstatus = {
+      url = "github:dj95/zjstatus";
+    };
   };
 
   outputs =
@@ -177,25 +181,35 @@
       forEachSystem = nixpkgs.lib.genAttrs (import systems);
 
       hosts = {
+        dn-workstation = {
+          system = "x86_64-linux";
+          confPath = ./system/dev/dn-workstation;
+          minimal = false;
+        };
         dn-pre7780 = {
           system = "x86_64-linux";
           confPath = ./system/dev/dn-pre7780;
+          minimal = false;
         };
         dn-cc = {
           system = "x86_64-linux";
           confPath = ./system/dev/dn-cc;
+          minimal = true;
         };
         dn-server = {
           system = "x86_64-linux";
           confPath = ./system/dev/dn-server;
+          minimal = false;
         };
         dn-lap = {
           system = "x86_64-linux";
           confPath = ./system/dev/dn-lap;
+          minimal = false;
         };
         skydrive-lap = {
           system = "x86_64-linux";
           confPath = ./system/dev/skydrive-lap;
+          minimal = false;
         };
       };
     in
@@ -205,7 +219,7 @@
         (mapAttrs (
           hostname: conf:
           let
-            inherit (conf) confPath system;
+            inherit (conf) confPath system minimal;
             pkgs = import nixpkgs {
               inherit system;
             };
@@ -222,8 +236,10 @@
                 helper
                 inputs
                 self
+                system
                 ;
             };
+
             modules = [
               # ==== Common Configuration ==== #
               {
@@ -239,6 +255,10 @@
                 ++ (import ./pkgs/overlays);
               }
 
+              # ==== Private Configuration ==== #
+              (import confPath { inherit hostname; })
+            ]
+            ++ (pkgs.lib.optionals (!minimal) [
               # ==== Common Modules ==== #
               inputs.home-manager.nixosModules.default
               inputs.mail-ntfy-server.nixosModules.default
@@ -254,11 +274,10 @@
               inputs.niri.nixosModules.niri
               inputs.mango.nixosModules.mango
               inputs.lanzaboote.nixosModules.lanzaboote
-              ./options
 
-              # ==== Private Configuration ==== #
-              (import confPath { inherit hostname; })
-            ];
+              # ==== Extra Options ==== #
+              ./options
+            ]);
           }
         ) hosts)
 
@@ -268,6 +287,12 @@
             system = "x86_64-linux";
             modules = [
               ./system/dev/dn-cc/iso.nix
+            ];
+          };
+          workstationIso = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            modules = [
+              ./system/dev/dn-pre7780/iso.nix
             ];
           };
         };
@@ -330,6 +355,9 @@
         {
           buildCCIso = pkgs.writeShellScriptBin "build-cc-iso" ''
             nix build --impure .#nixosConfigurations.ccIso.config.system.build.isoImage
+          '';
+          buildWorkstationIso = pkgs.writeShellScriptBin "build-workstation-iso" ''
+            nix build --impure .#nixosConfigurations.workstationIso.config.system.build.isoImage
           '';
         }
       );

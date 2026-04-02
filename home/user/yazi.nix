@@ -8,12 +8,20 @@
 let
   inherit (pkgs.stdenv.hostPlatform) system;
   inherit (lib) getExe' getExe;
-  yaziPlugins = pkgs.fetchFromGitHub {
+  yaziOfficalPlugins = pkgs.fetchFromGitHub {
     owner = "yazi-rs";
     repo = "plugins";
     rev = "main";
     hash = "sha256-TUS+yXxBOt6tL/zz10k4ezot8IgVg0/2BbS8wPs9KcE=";
   };
+
+  compressYazi = pkgs.fetchFromGitHub {
+    owner = "kkv9";
+    repo = "compress.yazi";
+    rev = "main";
+    hash = "sha256-Mby185FCJY6nqHcHDQu+D5SLk+wGcyeUHK8yAvrd4TM=";
+  };
+
   md2html = pkgs.callPackage ./../scripts/md2html.nix { };
   pdfNormalize = pkgs.writeShellScriptBin "normalize-pdf" ''
     # Nomalize pdf to A4 size
@@ -33,7 +41,7 @@ let
     if config.services.swww.enable then
       ''shell -- ${getExe' config.services.swww.package "awww"} img "$0" --transition-fps 45 --transition-duration 1 --transition-type random''
     else
-      ''shell '${getExe' config.programs.caelestia.cli.package "caelestia"} wallpaper -f "$0" 2>&1 >/dev/null' '';
+      ''shell 'caelestia wallpaper -f "$0" 2>&1 >/dev/null' '';
 in
 {
   programs.yazi = {
@@ -43,11 +51,12 @@ in
     enableFishIntegration = true;
 
     plugins = {
-      toggle-pane = "${yaziPlugins}/toggle-pane.yazi";
-      mount = "${yaziPlugins}/mount.yazi";
-      zoom = "${yaziPlugins}/zoom";
-      vcs-files = "${yaziPlugins}/vcs-files";
-      git = "${yaziPlugins}/git";
+      toggle-pane = "${yaziOfficalPlugins}/toggle-pane.yazi";
+      mount = "${yaziOfficalPlugins}/mount.yazi";
+      zoom = "${yaziOfficalPlugins}/zoom";
+      vcs-files = "${yaziOfficalPlugins}/vcs-files";
+      git = "${yaziOfficalPlugins}/git";
+      compress = "${compressYazi}";
     };
 
     settings = {

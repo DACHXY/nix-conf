@@ -35,6 +35,9 @@ let
 in
 {
   options.systemConf = {
+    enable = (mkEnableOption "Enable system configuration") // {
+      default = true;
+    };
     hostname = mkOption {
       type = types.str;
       description = "Hostname for system";
@@ -107,7 +110,7 @@ in
     };
   };
 
-  config = {
+  config = mkIf cfg.enable {
     # ==== System ==== #
     networking = {
       inherit (cfg) domain;

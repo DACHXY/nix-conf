@@ -155,7 +155,7 @@ in
         if hasAttr "desktopFileName" zen-browser.meta then
           zen-browser.meta.desktopFileName
         else
-          "Zen Browser Twilight";
+          "zen-twilight.desktop";
 
       associations = builtins.listToAttrs (
         map

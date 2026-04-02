@@ -111,6 +111,7 @@ in
             "battery-threshold"
             "polkit-agent"
             "todo"
+            "custom-commands"
             "keybind-cheatsheet"
             "battery-action"
             "weekly-calendar"
@@ -489,7 +490,7 @@ in
               wallpaperChangeMode = "random";
             };
             plugins = {
-              autoUpdate = false;
+              autoUpdate = true;
             };
             noctaliaPerformance = {
               disableDesktopWidgets = true;
@@ -528,10 +529,11 @@ in
             # Core
             "${bindCfg.toggle-control-center}".action = noctalia "controlCenter" "toggle";
             "${bindCfg.toggle-launcher}".action = noctalia "launcher" "toggle";
+            "${bindCfg.toggle-launcher-shortcuts}".action = noctalia "plugin:custom-commands" "toggle";
             "${bindCfg.lock-screen}".action = noctalia "lockScreen" "lock";
 
             # Utilities
-            "${bindCfg.clipboard-history}".action = noctalia "launcher" "clipboard";
+            "${bindCfg.clipboard-history}".action = noctalia "plugin:clipper" "toggle";
             "${bindCfg.emoji}".action = noctalia "launcher" "emoji";
             "${bindCfg.screen-recorder}".action = noctalia "screenRecorder" "toggle";
             "${bindCfg.notification-center}".action = noctalia "notifications" "toggleHistory";

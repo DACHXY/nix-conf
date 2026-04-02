@@ -49,7 +49,7 @@ in
           extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
         };
 
-        services.nfsm.enable = true;
+        services.nfsm.enable = false;
 
         programs.niri.package = osConfig.programs.niri.package;
         programs.niri.settings = {
