@@ -5,8 +5,11 @@
   ...
 }:
 let
-  inherit (builtins) length;
-  inherit (lib) getExe' optionalString;
+  inherit (lib)
+    getExe'
+    mkMerge
+    mapAttrsToList
+    ;
   inherit (config.systemConf) username;
   serverCfg = self.nixosConfigurations.dn-server.config;
   serverNextcloudCfg = serverCfg.services.nextcloud;
@@ -23,31 +26,28 @@ in
     }:
     let
       inherit (config.home) homeDirectory;
-      pathToSync = [
-        {
+
+      # ==== Add path to sync here ==== #
+      pathToSync = {
+        wallpapers = {
           target = "/Wallpapers";
           source = "${homeDirectory}/Pictures/Wallpapers";
-        }
-      ];
-    in
-    {
-      sops.secrets."netrc" = {
-        mode = "0700";
-        sopsFile = ../sops/dn-secret.yaml;
-        path = "${homeDirectory}/.netrc";
+        };
+        notes = {
+          target = "/Notes";
+          source = "${homeDirectory}/notes";
+        };
       };
 
-      systemd.user = {
-        services.nextcloud-autosync = {
+      mkSyncSystemd = name: target: source: {
+        services."nextcloud-autosync-${name}" = {
           Unit = {
             Description = "Auto sync Nextcloud";
             After = "network-online.target";
           };
           Service = {
             Type = "simple";
-            ExecStart = "${getExe' pkgs.nextcloud-client "nextcloudcmd"} -h -n ${
-              optionalString (length pathToSync > 0) "--path"
-            } ${toString (map (x: "${x.target} ${x.source}") pathToSync)} ${nextcloudURL}";
+            ExecStart = "${getExe' pkgs.nextcloud-client "nextcloudcmd"} -h -n --path ${target} ${source} ${nextcloudURL}";
             TimeoutStopSec = "180";
             KillMode = "process";
             KillSignal = "SIGINT";
@@ -55,9 +55,9 @@ in
           Install.WantedBy = [ "multi-user.target" ];
         };
 
-        timers.nextcloud-autosync =
+        timers."nextcloud-autosync-${name}" =
           let
-            cfg = config.systemd.user.timers.nextcloud-autosync;
+            cfg = config.systemd.user.timers."nextcloud-autosync-${name}";
           in
           {
             Unit.Description = "Automatic async files with nextcloud when booted up after ${cfg.Timer.OnBootSec} then rerun every ${cfg.Timer.OnUnitActiveSec} ";
@@ -70,5 +70,16 @@ in
           };
         startServices = true;
       };
+    in
+    {
+      sops.secrets."netrc" = {
+        mode = "0700";
+        sopsFile = ../sops/dn-secret.yaml;
+        path = "${homeDirectory}/.netrc";
+      };
+
+      systemd.user = mkMerge (
+        mapAttrsToList (name: value: mkSyncSystemd name value.target value.source) pathToSync
+      );
     };
 }
