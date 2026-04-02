@@ -185,6 +185,25 @@ in
           run = ''shell 'ripdrag "$@" -x 2>/dev/null &' --confirm'';
           desc = "Drag the file";
         }
+        # Compress
+        {
+          on = [
+            "c"
+            "a"
+            "a"
+          ];
+          run = "plugin compress";
+          desc = "Archive selected files";
+        }
+        {
+          on = [
+            "c"
+            "a"
+            "p"
+          ];
+          run = "plugin compress -p";
+          desc = "Archive selected files (password)";
+        }
         # Start terminal
         {
           on = [ "!" ];
@@ -251,5 +270,7 @@ in
     ueberzugpp
     pdfNormalize
     ripdrag
+    rar
+    gzip
   ];
 }
