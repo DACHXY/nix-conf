@@ -41,7 +41,6 @@ in
   nix.settings.download-buffer-size = 671088640;
 
   imports = [
-    ./hardware-configuration.nix
     ../../modules/presets/basic.nix
     ../public/dn/presets/local.nix
     ./sops
