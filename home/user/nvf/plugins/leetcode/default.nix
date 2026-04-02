@@ -2,12 +2,11 @@
   lib,
   pkgs,
   config,
-  osConfig,
+  username,
   ...
 }:
 let
   inherit (lib.generators) mkLuaInline;
-  inherit (osConfig.systemConf) username;
   relativeDir = "projects/leetcode";
   dataDir = "${config.home.homeDirectory}/${relativeDir}";
 in

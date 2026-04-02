@@ -51,6 +51,7 @@ in
       trusted-proxies = [
         "10.0.0.0/24"
         "10.10.0.0/24"
+        "10.20.0.0/24"
       ];
       whiteboardSecrets = [
         secrets."nextcloud/whiteboard".path

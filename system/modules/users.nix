@@ -17,6 +17,7 @@ in
         "networkmanager"
         "docker"
         "kvm"
+        "podman"
       ]
       ++ (if config.programs.gamemode.enable then [ "gamemode" ] else [ ])
     );

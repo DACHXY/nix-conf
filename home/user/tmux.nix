@@ -1,16 +1,25 @@
 { pkgs, lib, ... }:
-
 let
+  inherit (lib) concatStringsSep;
+
   findDirs = [
     "~/practice"
     "~/projects"
     "~/notes"
   ];
+  extraDirs = [
+    "/etc/nixos"
+  ];
   tmuxSessionizer = pkgs.writeShellScriptBin "tmux-sessionizer" ''
+    EXTRA_DIRS=${concatStringsSep "\n" extraDirs}
+
     if [[ $# -eq 1 ]]; then
         selected=$1
     else
-        selected=$(find ${lib.concatStringsSep " " findDirs} mindepth 1 -maxdepth 1 -type d | fzf)
+        selected=$( ( \
+        find ${concatStringsSep " " findDirs} -mindepth 1 -maxdepth 1 -type d; \
+        printf "%s\n" $EXTRA_DIRS \
+        ) | fzf )
     fi
 
     if [[ -z $selected ]]; then

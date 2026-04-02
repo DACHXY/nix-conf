@@ -10,6 +10,7 @@ let
     toUpper
     substring
     concatStringsSep
+    splitString
     ;
   inherit (builtins) toJSON;
 in
@@ -121,4 +122,8 @@ in
       (x: if (length x > 0) then elemAt x 0 else { profile.outputs = [ ]; })
       (x: x.profile.outputs)
     ]);
+
+  ldap = {
+    getOlcSuffix = domain: concatStringsSep "," (map (dc: "dc=${dc}") (splitString "." domain));
+  };
 }

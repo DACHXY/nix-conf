@@ -385,6 +385,11 @@ in
         "SPACE"
       ];
 
+      toggle-launcher-shortcuts = mkBindOption [
+        mod
+        "R"
+      ];
+
       lock-screen = mkBindOption [
         mod
         "CTRL"

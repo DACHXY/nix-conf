@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (config.networking) domain;
+  # inherit (config.networking) domain;
   inherit (lib)
     concatStringsSep
     splitString
@@ -16,6 +16,8 @@ let
 
   getOlcSuffix = domain: concatStringsSep "," (map (dc: "dc=${dc}") (splitString "." domain));
 
+  # NOTE: This domain is about to change
+  domain = "net.dn";
   ldapHostname = "ldap";
   olcSuffix = getOlcSuffix domain;
   adminDN = "cn=admin,ou=people,${olcSuffix}";

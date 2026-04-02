@@ -11,7 +11,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
