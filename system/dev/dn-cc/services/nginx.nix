@@ -37,7 +37,7 @@ let
 
   # ==== geoip ==== #
   geoDBCountry = fetchurl {
-    url = "https://nextcloud.dnywe.com/s/yaeZjXcc5er9eaA/download";
+    url = "https://nextcloud.dnywe.com/s/W6xCcLtHM3Tp8LX/download";
     sha256 = "sha256:0ir3bmni7756zfma8xfr1bnbszsizaas4gs3sq4zd4qgjl3rhm66";
   };
   allowedCountries = [ "TW" ];
