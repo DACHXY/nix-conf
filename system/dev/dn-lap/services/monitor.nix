@@ -6,7 +6,7 @@ let
 in
 {
   services.logind.settings.Login = {
-    HandleLidSwitch = "ignore";
+    HandleLidSwitch = "suspend";
   };
 
   home-manager.users."${username}" = {

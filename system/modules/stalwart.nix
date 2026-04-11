@@ -37,6 +37,7 @@ in
 
   services.stalwart = {
     enable = true;
+    stateVersion = "25.11";
     credentials = {
       user_admin_password = secrets."stalwart/password".path;
     };

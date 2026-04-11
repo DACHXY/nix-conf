@@ -26,8 +26,8 @@ in
       imports = [
         # Git
         (import ../../../../home/user/git.nix {
-          inherit username;
-          email = "Danny01161013@gmail.com";
+          username = "DACHXY";
+          email = "dachxy@dnywe.com";
         })
       ];
     };

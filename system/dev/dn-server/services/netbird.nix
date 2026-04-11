@@ -64,6 +64,14 @@ in
 
   networking.firewall.allowedTCPPorts = [ 32011 ];
 
+  systemd.services.netbird-management = {
+    after = [
+      "keycloak.service"
+      "pdns.service"
+      "pdns-recursor.service"
+    ];
+  };
+
   # ==== Proxy By Caddy & CDN ==== #
   services.nginx.appendHttpConfig = ''
     set_real_ip_from ${proxyIP};

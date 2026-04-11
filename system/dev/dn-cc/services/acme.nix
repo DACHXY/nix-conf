@@ -16,6 +16,7 @@ let
       server
       dnsProvider
       email
+      extraDomains
       ;
 
     extraLegoFlags = [

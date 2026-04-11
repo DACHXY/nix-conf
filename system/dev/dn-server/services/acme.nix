@@ -42,6 +42,7 @@ in
       domain = "*.dnywe.com";
       extraDomainNames = [
         "*.stalwart.dnywe.com"
+        "dnywe.com"
       ];
       server = "https://acme-v02.api.letsencrypt.org/directory";
       dnsProvider = "cloudflare";

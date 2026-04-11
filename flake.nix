@@ -247,7 +247,6 @@
                 nixpkgs.config.allowUnfree = true;
                 nixpkgs.overlays = [
                   inputs.niri.overlays.niri
-                  inputs.mail-server.overlay
                   inputs.nix-minecraft.overlay
                   inputs.nix-tmodloader.overlay
                   inputs.rust-overlay.overlays.default

@@ -1,47 +1,19 @@
 {
   osConfig,
-  config,
   pkgs,
   ...
 }:
 let
   hostname = osConfig.networking.hostName;
 
-  shouldNotify =
-    (builtins.hasAttr "ntfy-client" config.services) && config.services.ntfy-client.enable;
-
-  rebuildCommand = ''
-    sudo nixos-rebuild switch --target-host "$TARGET" \
-      --build-host "$BUILD" \
-      --sudo --ask-sudo-password $@'';
-
   rebuild = pkgs.writeShellScriptBin "rebuild" ''
-    ${rebuildCommand}
-  '';
-
-  # Notification
-  nrebuild = pkgs.writeShellScriptBin "nrebuild" ''
-    ${
-      if shouldNotify then
-        ''
-          export NTFY_TITLE="🎯 ${hostname}" 
-          export NTFY_TAGS="gear"
-
-          if ${rebuildCommand}
-          then
-            ntfy pub system-build "✅ Build success" > /dev/null 2>&1
-          else
-            ntfy pub system-build "⛔ Build failed" > /dev/null 2>&1
-          fi
-        ''
-      else
-        rebuildCommand
-    }
+    sudo -v
+    nh os switch . -H "${hostname}"
+    sudo -k
   '';
 in
 {
   home.packages = [
-    nrebuild
     rebuild
   ];
 

@@ -80,7 +80,7 @@ let
       exit 1
     fi
 
-    ${config.services.swww.package}/bin/awww img "$selected" --transition-fps 45 --transition-duration 1 --transition-type random
+    ${config.services.awww.package}/bin/awww img "$selected" --transition-fps 45 --transition-duration 1 --transition-type random
   '';
 
   rbwSelector = import ../scripts/rbwSelector.nix { inherit pkgs; };

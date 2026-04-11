@@ -1,6 +1,5 @@
 {
   pkgs,
-  config,
   ...
 }:
 let
@@ -13,19 +12,21 @@ in
     scriptBin
   ];
 
-  home-manager.users."${config.systemConf.username}" = {
-    xdg.desktopEntries."davindi-resolve" = {
-      name = "Davinci Resolve";
-      genericName = "Video Editor";
-      exec = "${scriptBin}/bin/davinci-resolve";
-      icon = "${pkgs.davinci-resolve}/share/icons/hicolor/128x128/apps/davinci-resolve.png";
-      comment = "Professional video editing, color, effects and audio post-processing";
-      categories = [
-        "AudioVideo"
-        "AudioVideoEditing"
-        "Video"
-        "Graphics"
-      ];
-    };
-  };
+  home-manager.sharedModules = [
+    {
+      xdg.desktopEntries."davindi-resolve" = {
+        name = "Davinci Resolve";
+        genericName = "Video Editor";
+        exec = "${scriptBin}/bin/davinci-resolve";
+        icon = "${pkgs.davinci-resolve}/share/icons/hicolor/128x128/apps/davinci-resolve.png";
+        comment = "Professional video editing, color, effects and audio post-processing";
+        categories = [
+          "AudioVideo"
+          "AudioVideoEditing"
+          "Video"
+          "Graphics"
+        ];
+      };
+    }
+  ];
 }

@@ -38,8 +38,8 @@ let
   '';
 
   setWallpaper =
-    if config.services.swww.enable then
-      ''shell -- ${getExe' config.services.swww.package "awww"} img "$0" --transition-fps 45 --transition-duration 1 --transition-type random''
+    if config.services.awww.enable then
+      ''shell -- ${getExe' config.services.awww.package "awww"} img "$0" --transition-fps 45 --transition-duration 1 --transition-type random''
     else
       ''shell 'caelestia wallpaper -f "$0" 2>&1 >/dev/null' '';
 in

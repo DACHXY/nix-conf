@@ -60,19 +60,19 @@ in
   ];
 
   services.nextcloud = {
-    package = pkgs.nextcloud32;
+    package = pkgs.nextcloud33;
     extraApps = {
       inherit (config.services.nextcloud.package.packages.apps) music spreed;
 
       user_migration = pkgs.fetchNextcloudApp {
-        url = "https://github.com/nextcloud-releases/user_migration/releases/download/v9.0.0/user_migration-v9.0.0.tar.gz";
-        sha256 = "sha256-WiEEAazuj8kh5o+URs22uoNWANXcXQYLTaoABMU6rFo=";
+        url = "https://github.com/nextcloud-releases/user_migration/releases/download/v10.2.0/user_migration-v10.2.0.tar.gz";
+        sha256 = "sha256-eWK0vsaYfCHEe2PpD0RfGdIufXmcWocRYB237Cx3lx0=";
         license = "agpl3Plus";
       };
 
       cospend = pkgs.fetchNextcloudApp {
-        url = "https://github.com/julien-nc/cospend-nc/releases/download/v3.2.0/cospend-3.2.0.tar.gz";
-        sha256 = "sha256-mclcZDNmvpYX/2q7azyiTLSCiTYvk7ILeqtb/8+0ADQ=";
+        url = "https://github.com/julien-nc/cospend-nc/releases/download/v4.0.0/cospend-4.0.0.tar.gz";
+        sha256 = "sha256-fxIC0gEYCek1LZ0rxmRAbWyYSfuHt6Bs/JCLYPR7ZFM=";
         license = "agpl3Plus";
       };
     };
@@ -80,7 +80,7 @@ in
 
     settings = {
       mail_smtpauth = true;
-      mail_smtphost = "mx1.${domain}";
+      mail_smtphost = "mx2.${domain}";
       mail_smtpname = "nextcloud";
       mail_smtpmode = "smtp";
       mail_smtpauthtype = "LOGIN";

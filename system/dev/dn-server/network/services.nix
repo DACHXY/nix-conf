@@ -7,9 +7,11 @@
 let
   inherit (builtins) concatStringsSep;
   inherit (config.systemConf) security domain;
-  inherit (lib) mkForce;
+  inherit (lib) mkForce optionalString;
   inherit (helper.nftables) mkElementsStatement;
 
+  serverRules = config.server-rules;
+  allowedIPv4 = serverRules.rule.default.allowed.ipv4;
   netbirdCfg = config.services.netbird;
 
   ethInterface = "enp0s31f6";
@@ -38,11 +40,13 @@ let
     range = "10.20.0.0/24";
   };
 
-  allowedSSHIPs = concatStringsSep ", " [
-    "192.168.100.1/24"
-    "140.113.229.197/32"
-    personal.range
-  ];
+  allowedSSHIPs = concatStringsSep ", " (
+    [
+      "192.168.100.1/24"
+      personal.range
+    ]
+    ++ allowedIPv4
+  );
 
   fullRoute = [
     {
@@ -207,12 +211,6 @@ in
         filter = {
           family = "inet";
           content = ''
-            set restrict_source_ips {
-              type ipv4_addr
-              flags interval
-              ${mkElementsStatement security.sourceIPs}
-            }
-
             set ${security.rules.setName} {
               type ipv4_addr
               flags interval
@@ -249,6 +247,9 @@ in
               # VPN
               oifname { ${personal.interface}, ${infra.interface}, ${infra2.interface}, ${netbirdCfg.clients.wt0.interface} } accept
 
+              # matrix
+              tcp dport 8448 accept
+
               # Allow DNS qeury
               udp dport 53 accept
               tcp dport 53 accept
@@ -262,12 +263,20 @@ in
               # DHCP
               udp sport 68 udp dport 67 accept
 
-              # Allowed IPs
-              ip saddr != @restrict_source_ips accept
-              ip daddr @${security.rules.setName} accept
-              ip6 daddr @${security.rules.setNameV6} accept
+              ${
+                if security.outbound.enable then
+                  ''
+                    # Allowed IPs
+                    ip daddr @${security.rules.setName} accept
+                    ip6 daddr @${security.rules.setNameV6} accept
 
-              counter log prefix "OUTPUT-DROP: " flags all drop
+                    counter log prefix "OUTPUT-DROP: " flags all drop
+                  ''
+                else
+                  ''
+                    accept
+                  ''
+              }
             }
 
             chain ssh-filter {

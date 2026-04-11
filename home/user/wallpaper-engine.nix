@@ -29,7 +29,7 @@ let
   cfg = config.services.linux-wallpaperengine;
 in
 {
-  services.swww.enable = mkForce false;
+  services.awww.enable = mkForce false;
 
   services.linux-wallpaperengine = {
     enable = true;

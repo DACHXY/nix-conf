@@ -6,21 +6,13 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  fileSystems."/mnt/ssd" = {
-    device = "/dev/disk/by-label/DN-SSD";
-    fsType = "exfat";
+  boot.supportedFilesystems = [ "ntfs" ];
+  fileSystems."/mnt/windows" = {
+    device = "/dev/nvme2n1p2";
+    fsType = "ntfs-3g";
     options = [
-      "x-systemd.automount"
-      "noauto"
-      "x-systemd.idle-timeout=600"
-      "nofail"
-      "user"
-      "x-gvfs-show"
-      "gid=1000"
+      "rw"
       "uid=1000"
-      "dmask=000"
-      "fmask=000"
-      "exec"
     ];
   };
 }

@@ -16,9 +16,7 @@ let
 
   getOlcSuffix = domain: concatStringsSep "," (map (dc: "dc=${dc}") (splitString "." domain));
 
-  # NOTE: This domain is about to change
   domain = "net.dn";
-  ldapHostname = "ldap";
   olcSuffix = getOlcSuffix domain;
   adminDN = "cn=admin,ou=people,${olcSuffix}";
   localDN = "gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth";

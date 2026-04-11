@@ -13,7 +13,7 @@ let
 in
 {
   # ==== Disabled Services ==== #
-  services.swww.enable = mkForce false;
+  services.awww.enable = mkForce false;
   programs.waybar.enable = mkForce false;
   services.swaync.enable = mkForce false;
 

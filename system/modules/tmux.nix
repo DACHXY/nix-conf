@@ -98,14 +98,23 @@ in
         bind -n M-H previous-window
         bind -n M-L next-window
 
+        # Move Windows
+        bind-key -n C-S-h swap-window -t -1\; select-window -t -1
+        bind-key -n C-S-l swap-window -t +1\; select-window -t +1
+
         unbind %
         bind | split-window -h -c "#{pane_current_path}"
 
         unbind '"'
         bind - split-window -v -c "#{pane_current_path}"
 
+        # Reload config
+        unbind R
+        bind R source-file ${tmuxConfigPath}
+
+        # rename
         unbind r
-        bind r source-file ${tmuxConfigPath}
+        bind r command-prompt -I "#W" "rename-window '%%'"
 
         bind -r j resize-pane -D 5
         bind -r k resize-pane -U 5

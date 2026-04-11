@@ -1,3 +1,4 @@
+# Check: https://nix-community.github.io/lanzaboote/getting-started/prepare-your-system.html
 { pkgs, lib, ... }:
 {
   environment.systemPackages = with pkgs; [
