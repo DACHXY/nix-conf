@@ -55,13 +55,13 @@ in
   services.kanshi.enable = true;
 
   # === Awww === #
-  services.swww = {
+  services.awww = {
     enable = true;
     package = inputs.awww.packages.${system}.awww;
   };
 
-  systemd.user.services.swww.Service.ExecStart =
-    mkForce "${getExe' config.services.swww.package "awww-daemon"} ${escapeShellArgs config.services.swww.extraArgs}";
+  systemd.user.services.awww.Service.ExecStart =
+    mkForce "${getExe' config.services.awww.package "awww-daemon"} ${escapeShellArgs config.services.awww.extraArgs}";
 
   # === sunsetr === #
   services.sunsetr.enable = true;

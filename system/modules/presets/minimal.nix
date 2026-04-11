@@ -19,7 +19,6 @@ in
     ../tmux.nix
     ../ca.nix
     ../sops-nix.nix
-    ../gc.nix
     ../security.nix
     ../systemd-resolv.nix
   ];

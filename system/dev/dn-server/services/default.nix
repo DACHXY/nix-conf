@@ -15,5 +15,6 @@
     ./acme.nix
     ./ntfy.nix
     ./homepage.nix
+    ./matrix.nix
   ];
 }

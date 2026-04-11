@@ -5,7 +5,7 @@ let
   cfg = config.services.forgejo;
   srv = cfg.settings.server;
   hostname = "git.${domain}";
-  mailServer = "mx1.net.dn";
+  mailServer = "mx2.${domain}";
 
   forgejoOwner = {
     owner = "forgejo";
@@ -61,8 +61,8 @@ in
         ENABLED = true;
         SMTP_ADDR = mailServer;
         SMTP_PORT = 587;
-        FROM = "noreply@${srv.DOMAIN}";
-        USER = "noreply@${srv.DOMAIN}";
+        FROM = "forgejo@${srv.DOMAIN}";
+        USER = "forgejo@${srv.DOMAIN}";
       };
     };
 

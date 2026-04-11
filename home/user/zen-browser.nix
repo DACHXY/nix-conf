@@ -75,6 +75,7 @@ in
         "font.name.monospace.ja" = "Noto Sans Mono CJK JP";
         "font.name.monospace.x-western" = "CaskaydiaCove Nerd Font Mono";
         "font.name.monospace.zh-TW" = "Noto Sans Mono CJK TC";
+        "sidebar.expandOnHover" = false;
       };
 
       ExtensionSettings =

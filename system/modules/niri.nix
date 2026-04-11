@@ -185,6 +185,9 @@ in
               repeat-delay = wmCfg.input.keyboard.repeat-delay;
               repeat-rate = wmCfg.input.keyboard.repeat-rate;
             };
+            touchpad = {
+              dwt = true;
+            };
           };
 
           binds =

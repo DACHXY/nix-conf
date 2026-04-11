@@ -1,5 +1,6 @@
 { hostname }:
 {
+  config,
   inputs,
   pkgs,
   lib,
@@ -11,12 +12,13 @@
 let
   inherit (pkgs.stdenv.hostPlatform) system;
   inherit (lib) mkForce;
-  inherit (builtins) getEnv;
+  serverRules = config.server-rules;
+
   stateVersion = "25.11";
   username = "danny";
-  ip = getEnv "CC_IP";
+  ip = serverRules.extra.dn-cc.network.ipv4;
   prefix = 25;
-  gateway = getEnv "CC_GATEWAY";
+  gateway = serverRules.extra.dn-cc.network.gateway;
 in
 {
   # ==== VMware guest ==== #
@@ -65,13 +67,13 @@ in
     ./disk.nix
     ./services
     ./security
+    ../public/dn/server-rule.nix
     ../../modules/time.nix
     ../../modules/environment.nix
     ../../modules/internationalisation.nix
     ../../modules/misc.nix
     ../../modules/programs.nix
     ../../modules/sops-nix.nix
-    ../../modules/gc.nix
     ../../modules/security.nix
     ../../modules/systemd-resolv.nix
     (import ./network.nix {
@@ -117,8 +119,8 @@ in
         ../../../home/user/direnv.nix
 
         (import ../../../home/user/git.nix {
-          inherit username;
-          email = "Danny01161013@gmail.com";
+          username = "dachxy";
+          email = "dachxy@dnywe.com";
         })
       ];
 

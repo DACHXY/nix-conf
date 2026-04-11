@@ -12,7 +12,7 @@
     enable = true;
     execWheelOnly = true;
     extraConfig = ''
-      Defaults timestamp_timeout=0
+      Defaults timestamp_timeout=1
     '';
   };
 

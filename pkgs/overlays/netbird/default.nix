@@ -6,15 +6,15 @@ final: prev: {
   netbird-signal = final.pkgs.callPackage ./package.nix { componentName = "signal"; };
   netbird-relay = final.pkgs.callPackage ./package.nix { componentName = "relay"; };
   netbird-dashboard = prev.netbird-dashboard.overrideAttrs (prevAttrs: rec {
-    version = "2.35.0";
+    version = "2.36.0";
 
     src = prev.fetchFromGitHub {
       owner = "netbirdio";
       repo = "dashboard";
       rev = "v${version}";
-      hash = "sha256-eqDH0mtxb756M6G0pC+FmbZtgj0vk9uKXnzCHlPEquE=";
+      hash = "sha256-VsecD83dz6U6jEaGIxv7M9ePzbTPCXeffSoyyBr2Vh4=";
     };
 
-    npmDepsHash = "sha256-AYbTtUgo/e9BD5Kg877qUHkj+4l2OJ88rxnquA2789k=";
+    npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
   });
 }

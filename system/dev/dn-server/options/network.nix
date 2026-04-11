@@ -7,14 +7,21 @@
 let
   inherit (lib)
     mkOption
+    mkEnableOption
     types
     concatStringsSep
     unique
+    mkIf
+    mkMerge
+    warn
     ;
   cfg = config.systemConf.security;
 in
 {
   options.systemConf.security = {
+    outbound.enable = mkEnableOption "enable outbound traffic control" // {
+      default = true;
+    };
     allowedDomains = mkOption {
       type = with types; listOf str;
       description = "Domains that allowed to query dns.";
@@ -48,55 +55,53 @@ in
       description = "IPv6 that allowed to request.";
       default = [ ];
     };
-    sourceIPs = mkOption {
-      type = with types; listOf str;
-      description = "Source IPs to restrict.";
-      default = [ ];
-    };
   };
 
-  config = {
-    environment.systemPackages = with pkgs; [
-      ipset
-    ];
+  config = mkMerge [
+    (mkIf cfg.outbound.enable {
+      environment.systemPackages = with pkgs; [
+        ipset
+      ];
 
-    systemd.timers.fetch-allowed-domains = {
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnBootSec = 10;
-        OnUnitActiveSec = 360;
-      };
-    };
-
-    systemd.services.fetch-allowed-domains =
-      let
-        script = pkgs.writeShellScript "fetch-allowed-domains" ''
-          DOMAINS=(${toString (map (x: ''"${x}"'') cfg.allowedDomains)})
-          SETNAME="inet filter ${cfg.rules.setName}"
-
-          nft flush set $SETNAME
-          nft add element $SETNAME { ${concatStringsSep "," cfg.allowedIPs} }
-
-          for domain in "''${DOMAINS[@]}"; do
-            ips=$(dig +short A $domain | grep -E '^[0-9.]+$')
-            for ip in $ips; do
-              nft add element $SETNAME { $ip }
-              echo "Added $ip for $domain"
-            done
-          done
-        '';
-      in
-      {
-        path = with pkgs; [
-          nftables
-          dig.dnsutils
-        ];
-        after = [ "network.target" ];
-        serviceConfig = {
-          ExecStart = "${script}";
-          Type = "oneshot";
+      systemd.timers.fetch-allowed-domains = {
+        wantedBy = [ "timers.target" ];
+        timerConfig = {
+          OnBootSec = 10;
+          OnUnitActiveSec = 360;
         };
-        restartTriggers = [ script ];
       };
-  };
+
+      systemd.services.fetch-allowed-domains =
+        let
+          script = pkgs.writeShellScript "fetch-allowed-domains" ''
+            DOMAINS=(${toString (map (x: ''"${x}"'') cfg.allowedDomains)})
+            SETNAME="inet filter ${cfg.rules.setName}"
+
+            nft flush set $SETNAME
+            nft add element $SETNAME { ${concatStringsSep "," cfg.allowedIPs} }
+
+            for domain in "''${DOMAINS[@]}"; do
+              ips=$(dig +short A $domain | grep -E '^[0-9.]+$')
+              for ip in $ips; do
+                nft add element $SETNAME { $ip }
+                echo "Added $ip for $domain"
+              done
+            done
+          '';
+        in
+        {
+          path = with pkgs; [
+            nftables
+            dig.dnsutils
+          ];
+          after = [ "network.target" ];
+          serviceConfig = {
+            ExecStart = "${script}";
+            Type = "oneshot";
+          };
+          restartTriggers = [ script ];
+        };
+    })
+    (mkIf (!cfg.outbound.enable) (warn "outbound control is disabled." { }))
+  ];
 }

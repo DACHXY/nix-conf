@@ -12,6 +12,7 @@ in
   systemConf = {
     inherit hostname username;
     security = {
+      outbound.enable = false; # Disable outbound traffic control
       allowedDomains = [
         "github.com"
         "cache.nixos.org"
@@ -19,6 +20,7 @@ in
         "maps.rspamd.com"
         "cdn-hub.crowdsec.net"
         "api.crowdsec.net"
+        "mx2.${domain}"
         "mx1.${domain}"
       ];
       allowedIPs = [
@@ -31,10 +33,6 @@ in
         "ff02::/16"
         "fe80::/10"
         "::1"
-      ];
-      sourceIPs = [
-        "10.0.0.1"
-        "192.168.100.0/24"
       ];
     };
   };

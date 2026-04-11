@@ -40,24 +40,6 @@ in
     ];
   };
 
-  systemd.services.nextcloud-config-recognize =
-    let
-      inherit (config.services.nextcloud) occ;
-    in
-    {
-      wantedBy = [ "multi-user.target" ];
-      after = [
-        "nextcloud-setup.service"
-      ];
-      script = ''
-        ${occ}/bin/nextcloud-occ config:app:set recognize node_binary --value '${lib.getExe pkgs.nodejs_22}'
-        ${occ}/bin/nextcloud-occ config:app:set recognize tensorflow.purejs --value 'true'
-      '';
-      serviceConfig = {
-        Type = "oneshot";
-      };
-    };
-
   # Disable Other login method for nextcloud
   # Admin can login through adding `?direct=1` to url param
   systemd.services.nextcloud-config-oidc =
@@ -93,14 +75,14 @@ in
         whiteboard
         user_oidc
         memories
-        recognize
         ;
 
-      camerarawpreviews = pkgs.fetchNextcloudApp {
-        url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v0.8.8/camerarawpreviews_nextcloud.tar.gz";
-        sha256 = "sha256-Pnjm38hn90oV3l4cPAnQ+oeO6x57iyqkm80jZGqDo1I=";
-        license = "agpl3Plus";
-      };
+      # NOTE: wait for nextcloud 33 😢
+      # camerarawpreviews = pkgs.fetchNextcloudApp {
+      #   url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v0.8.8/camerarawpreviews_nextcloud.tar.gz";
+      #   sha256 = "sha256-Pnjm38hn90oV3l4cPAnQ+oeO6x57iyqkm80jZGqDo1I=";
+      #   license = "agpl3Plus";
+      # };
     };
     extraAppsEnable = true;
 

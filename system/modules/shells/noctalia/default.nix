@@ -16,6 +16,8 @@ let
     mapAttrsToList
     mkIf
     mkDefault
+    getExe'
+    getExe
     ;
 in
 {
@@ -53,7 +55,7 @@ in
     in
     {
       # ==== Disabled Services ==== #
-      services.swww.enable = mkForce false; # Wallpaper
+      services.awww.enable = mkForce false; # Wallpaper
       programs.waybar.enable = mkForce false; # Bar
       services.swayidle.enable = mkForce false; # Idle
       services.sunsetr.enable = mkForce false; # Bluelight filter
@@ -164,6 +166,35 @@ in
               inactiveColor = "none";
               micFilterRegex = "";
               removeMargins = true;
+            };
+            custom-commands = {
+              commands =
+                let
+                  getQRCode = pkgs.writeShellScriptBin "getQRcode" ''
+                    notify() {
+                      noctalia-shell ipc call toast send "$1"
+                    }
+
+                    if wl-paste --list-type | grep -q "image/png"; then
+                      link=$(${getExe' pkgs.zbar.out "zbarimg"} <(wl-paste --type image/png) | sed 's/QR-Code://')
+                      if [ -n "$link" ]; then
+                        echo "$link" | wl-copy
+                        notify "{\"title\":\"QR Code\",\"body\":\"$link\",\"icon\":\"link\"}"
+                      else
+                        notify '{"title":"QR Code","body":"Failed to decode QR.","icon":"error"}'
+                      fi
+                    else
+                      notify '{"title":"QR Code","body":"No image found in clipboard.","icon":"warning"}'
+                    fi
+                  '';
+                in
+                [
+                  {
+                    name = "Get QRcode from clipboard";
+                    command = "${getExe getQRCode}";
+                    icon = "screenshot";
+                  }
+                ];
             };
           };
           settings = {

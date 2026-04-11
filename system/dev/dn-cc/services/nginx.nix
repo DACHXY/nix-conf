@@ -2,6 +2,7 @@
   self,
   lib,
   pkgs,
+  config,
   ...
 }:
 let
@@ -9,11 +10,22 @@ let
   inherit (lib)
     concatStringsSep
     mkForce
+    mkAfter
+    optionalString
+    mkBefore
     ;
+
+  serverRules = config.server-rules;
   serverCfg = self.nixosConfigurations.dn-server.config;
   inherit (serverCfg.networking) domain;
+  matrixDomain = "matrix.${domain}";
+  matrixAuthDomain = "matrix-auth.${domain}";
   dn-server-ip = "10.20.0.2";
 
+  # ==== Utils ==== #
+  mkAllowedList = allowedList: concatStringsSep "\n" (map (v: "allow ${v};") allowedList);
+
+  # ==== Cloudflare ==== #
   cloudflareCert = fetchurl {
     url = "https://developers.cloudflare.com/ssl/static/authenticated_origin_pull_ca.pem";
     sha256 = "sha256:0hxqszqfzsbmgksfm6k0gp0hsx9k1gqx24gakxqv0391wl6fsky1";
@@ -35,13 +47,15 @@ let
     }
   );
 
+  # ==== Allowed List ==== #
+  allowedCountries = serverRules.rule.default.allowed.countryCode;
+  allowedIPv4 = serverRules.rule.default.allowed.ipv4;
+
   # ==== geoip ==== #
   geoDBCountry = fetchurl {
-    url = "https://nextcloud.dnywe.com/s/W6xCcLtHM3Tp8LX/download";
+    url = "https://nextcloud.dnywe.com/s/geodb/download";
     sha256 = "sha256:0ir3bmni7756zfma8xfr1bnbszsizaas4gs3sq4zd4qgjl3rhm66";
   };
-  allowedCountries = [ "TW" ];
-
   geoIpConfig = ''
     set $allow_access 0;
     if ($allowed_country = 1) {
@@ -52,11 +66,11 @@ let
       set $allow_access 1;
     }
 
-    if ($remote_addr ~ ^127\.\.\.) {
+    if ($remote_addr ~ ^127\.) {
       set $allow_access 1;
     }
 
-    if ($remote_addr ~ ^10\.\.\.) {
+    if ($remote_addr ~ ^10\.) {
       set $allow_access 1;
     }
 
@@ -71,30 +85,34 @@ let
     proxyPass = "https://${dn-server-ip}";
     extraConfig = ''
       proxy_ssl_server_name on;
-      limit_req zone=raw_limit burst=30 nodelay;
+      limit_req zone=raw_limit burst=150 nodelay;
       limit_req_status 429;
     '';
   };
 
-  proxyConfig = {
-    forceSSL = true;
-    useACMEHost = domain;
+  mkProxyConfig =
+    {
+      limitGeo ? true,
+    }:
+    {
+      forceSSL = true;
+      useACMEHost = domain;
 
-    extraConfig = lib.mkAfter ''
-      if ($http_user_agent ~* "GPTBot") {
-        return 444;
-      }
+      extraConfig = lib.mkAfter ''
+        if ($http_user_agent ~* "GPTBot") {
+          return 444;
+        }
 
-      if ($http_user_agent ~* "bot") {
-        return 444;
-      }
+        if ($http_user_agent ~* "bot") {
+          return 444;
+        }
 
-      ssl_client_certificate ${cloudflareCert};
-      ssl_verify_client on;
+        ssl_client_certificate ${cloudflareCert};
+        ssl_verify_client on;
 
-      ${geoIpConfig}
-    '';
-  };
+        ${optionalString limitGeo geoIpConfig}
+      '';
+    };
 in
 
 {
@@ -125,6 +143,8 @@ in
     commonHttpConfig = ''
       log_format main '$remote_addr - $remote_user [$time_local] '
                           '"$host" "$request" "$geoip2_country_code" "$geoip2_country_name" $status $body_bytes_sent '
+                          'upstream_status=$upstream_status '
+                          'upstream_addr=$upstream_addr '
                           '"$http_referer" "$http_user_agent"';
 
       access_log /var/log/nginx/access.log main;
@@ -135,7 +155,7 @@ in
       real_ip_header CF-Connecting-IP;
       real_ip_recursive on;
 
-      limit_req_zone $binary_remote_addr zone=raw_limit:10m rate=80r/s;
+      limit_req_zone $binary_remote_addr zone=raw_limit:10m rate=100r/s;
     '';
 
     defaultListen = mkForce [
@@ -151,6 +171,20 @@ in
     recommendedProxySettings = true;
 
     virtualHosts = {
+      # ==== Main Domain ==== #
+      "${domain}" = {
+        useACMEHost = domain;
+        forceSSL = true;
+
+        locations."/".extraConfig = ''
+          return 404;
+        '';
+
+        # Matrix server
+        locations."= /.well-known/matrix/server" = locationProxyPass;
+        locations."= /.well-known/matrix/client" = locationProxyPass;
+      };
+
       # Default
       "default-ssl" = {
         default = true;
@@ -165,14 +199,49 @@ in
           return = "444";
         };
       };
-      "nextcloud.${domain}" = proxyConfig // {
+
+      "nextcloud.${domain}" = (mkProxyConfig { }) // {
+        locations."/" = locationProxyPass;
+        locations."^~ /s/geodb" = locationProxyPass // {
+          extraConfig = mkBefore ''
+            ${mkAllowedList allowedIPv4}
+            deny all;
+          '';
+        };
+      };
+      "login.${domain}" = (mkProxyConfig { }) // {
+        locations."/" = locationProxyPass;
+        locations."^~ /admin" = locationProxyPass // {
+          extraConfig = mkBefore ''
+            ${mkAllowedList allowedIPv4}
+            deny all;
+          '';
+        };
+      };
+
+      # ==== Matrix ===== #
+      "${matrixDomain}" = (mkProxyConfig { limitGeo = false; }) // {
         locations."/" = locationProxyPass;
       };
-      "login.${domain}" = proxyConfig // {
+      "${matrixAuthDomain}" = (mkProxyConfig { limitGeo = false; }) // {
         locations."/" = locationProxyPass;
-        locations."/admin".extraConfig = ''
-          deny all;
-        '';
+        locations."^~ /livekit/sfu/" = locationProxyPass // {
+          extraConfig = mkAfter ''
+            proxy_send_timeout 120;
+            proxy_read_timeout 120;
+            proxy_buffering off;
+
+            proxy_set_header Accept-Encoding gzip;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+          '';
+          priority = 400;
+        };
+      };
+
+      # ==== Matrix Web client ==== #
+      "element.${domain}" = (mkProxyConfig { }) // {
+        locations."/" = locationProxyPass;
       };
 
       # NOTE: This is not verified and used

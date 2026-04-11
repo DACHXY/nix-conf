@@ -3,7 +3,15 @@ let
   inherit (config.systemConf) username;
 in
 {
-  documentation.nixos.enable = false;
+  documentation.nixos.enable = true;
+
+  programs.nh = {
+    enable = true;
+    clean.enable = true;
+    clean.extraArgs = "--keep 5 --keep-since 3d";
+    flake = "/etc/nixos";
+  };
+
   nix = {
     settings = {
       substituters = [
