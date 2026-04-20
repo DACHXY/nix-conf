@@ -11,6 +11,8 @@
       svelte
       typst
       vue
+      caddy
+      nginx
     ];
     extraPackages = with pkgs; [
       # docker
@@ -21,7 +23,21 @@
 
     lsp.servers = {
       dockerls = { };
-      docker_compose_language_service = { };
+      docker_compose_language_service = {
+        cmd = [
+          "docker-compose-langserver"
+          "--stdio"
+        ];
+        filetypes = [
+          "yaml"
+        ];
+        root_markers = [
+          "docker-compose.yml"
+          "docker-compose.yaml"
+          "compose.yml"
+          ".git"
+        ];
+      };
     };
   };
 }

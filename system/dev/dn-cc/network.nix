@@ -3,6 +3,7 @@
   prefix,
   gateway,
   username,
+  permitRootLogin ? "yes",
 }:
 { pkgs, ... }:
 {
@@ -35,7 +36,7 @@
       PasswordAuthentication = false;
       AllowUsers = [ username ];
       UseDns = false;
-      PermitRootLogin = "no";
+      PermitRootLogin = permitRootLogin;
     };
   };
 

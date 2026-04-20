@@ -116,10 +116,17 @@ in
         unbind r
         bind r command-prompt -I "#W" "rename-window '%%'"
 
-        bind -r j resize-pane -D 5
-        bind -r k resize-pane -U 5
-        bind -r l resize-pane -R 5
-        bind -r h resize-pane -L 5
+        # Move Focus
+        bind -r j select-pane -D
+        bind -r k select-pane -U
+        bind -r l select-pane -R
+        bind -r h select-pane -L
+
+        # Resize Panel
+        bind -r Left  resize-pane -L 5
+        bind -r Down  resize-pane -D 5
+        bind -r Up    resize-pane -U 5
+        bind -r Right resize-pane -R 5
 
         bind -r m resize-pane -Z
 

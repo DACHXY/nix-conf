@@ -60,14 +60,6 @@ in
     };
 
     settings = {
-      plugin.prepend_fetchers = [
-        {
-          id = "git";
-          name = "*";
-          run = "git";
-        }
-      ];
-
       input = {
         cursor_blink = true;
       };

@@ -6,7 +6,7 @@
 let
   inherit (config.systemConf) username;
   serverCfg = self.nixosConfigurations.dn-server.config;
-  domain = serverCfg.services.netbird.server.domain;
+  netbirdDomain = serverCfg.services.netbird.server.domain;
 in
 {
   users.users.${username}.extraGroups = [ "netbird-wt0" ];
@@ -17,8 +17,8 @@ in
       autoStart = true;
       port = 51820;
       environment = {
-        NB_MANAGEMENT_URL = "https://${domain}";
-        NB_ADMIN_URL = "https://${domain}";
+        NB_MANAGEMENT_URL = "https://${netbirdDomain}";
+        NB_ADMIN_URL = "https://${netbirdDomain}";
       };
     };
   };

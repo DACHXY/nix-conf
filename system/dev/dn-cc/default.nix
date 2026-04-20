@@ -21,6 +21,10 @@ let
   gateway = serverRules.extra.dn-cc.network.gateway;
 in
 {
+  systemConf = {
+    inherit hostname username;
+  };
+
   # ==== VMware guest ==== #
   virtualisation.vmware.guest.enable = true;
 
@@ -67,6 +71,7 @@ in
     ./disk.nix
     ./services
     ./security
+    ./network
     ../public/dn/server-rule.nix
     ../../modules/time.nix
     ../../modules/environment.nix
@@ -76,6 +81,7 @@ in
     ../../modules/sops-nix.nix
     ../../modules/security.nix
     ../../modules/systemd-resolv.nix
+    ../../modules/nixsettings.nix
     (import ./network.nix {
       inherit
         ip
@@ -83,6 +89,7 @@ in
         gateway
         username
         ;
+      permitRootLogin = "no";
     })
   ];
 

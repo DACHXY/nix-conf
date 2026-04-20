@@ -128,10 +128,11 @@ in
             }
             {
               matches = [
-                { namespace = "^noctalia-background-.*$"; }
+                { namespace = "^noctalia-(background|launcher-overlay|dock)-.*$"; }
               ];
               background-effect = {
                 blur = true;
+                xray = false;
               };
             }
           ];
@@ -161,6 +162,7 @@ in
               matches = [
                 { app-id = "^(com.mitchellh.ghostty)$"; }
                 { app-id = "^(zen-twilight)$"; }
+                { app-id = "^(Vmware)$"; }
               ];
               opacity = 1.0;
             }

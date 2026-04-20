@@ -1,12 +1,7 @@
 {
-  osConfig,
-  config,
   pkgs,
   ...
 }:
-let
-  remoteRebuld = import ../scripts/remoteRebuild.nix { inherit osConfig config pkgs; };
-in
 {
   imports = [
     ./shellAlias.nix
@@ -15,7 +10,6 @@ in
   home.packages = with pkgs; [
     # Shell
     grc
-    remoteRebuld
   ];
 
   programs = {

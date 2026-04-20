@@ -62,8 +62,8 @@ in
       fqdn = prometheusHostname;
       selfMonitor = true;
       configureNginx = true;
-      scrapes = [
-        (optionalAttrs config.services.pdns-recursor.enable {
+      scrapes =
+        (optional config.services.pdns-recursor.enable {
           job_name = "powerdns_recursor";
           static_configs = [
             {
@@ -82,10 +82,8 @@ in
             }
           ];
         })
-      ]
-      ++ (optional
-        (config.services.crowdsec.enable && config.services.crowdsec.settings.general.prometheus.enabled)
-        [
+        ++ (optional
+          (config.services.crowdsec.enable && config.services.crowdsec.settings.general.prometheus.enabled)
           {
             job_name = "crowdsec";
             static_configs = [
@@ -106,9 +104,30 @@ in
                 replacement = "CrowdSec - \${1}";
               }
             ];
+
           }
-        ]
-      );
+        )
+        ++ (optional config.services.netbird.server.management.enable {
+          job_name = "netbird";
+          static_configs = [
+            {
+              targets = [
+                "127.0.0.1:${toString config.services.netbird.server.management.metricsPort}"
+              ];
+              labels = {
+                machine = "${hostName}";
+              };
+            }
+          ];
+          relabel_configs = [
+            {
+              source_labels = [ "__address__" ];
+              target_label = "instance";
+              regex = "(.*):[0-9]+";
+              replacement = "Netbird - \${1}";
+            }
+          ];
+        });
     })
 
     (import ../../../modules/grafana.nix {

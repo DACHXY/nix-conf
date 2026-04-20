@@ -102,6 +102,8 @@ in
       };
     };
 
+  systemd.services.rspamd-trainer.enable = mkForce false;
+
   virtualisation.oci-containers.containers.phpLDAPadmin = {
     environment = {
       LDAP_ALLOW_GUEST = "true";
