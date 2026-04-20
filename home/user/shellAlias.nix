@@ -7,9 +7,7 @@ let
   hostname = osConfig.networking.hostName;
 
   rebuild = pkgs.writeShellScriptBin "rebuild" ''
-    sudo -v
     nh os switch . -H "${hostname}"
-    sudo -k
   '';
 in
 {

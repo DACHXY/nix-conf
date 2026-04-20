@@ -1,6 +1,13 @@
 {
   description = "DACHXY's NixOS with hyprland";
 
+  nixConfig = {
+    extra-substituters = [ "https://noctalia.cachix.org" ];
+    extra-trusted-public-keys = [
+      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+    ];
+  };
+
   inputs = {
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -148,15 +155,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    noctalia-qs = {
-      url = "github:noctalia-dev/noctalia-qs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.noctalia-qs.follows = "noctalia-qs";
     };
 
     mango = {
@@ -241,6 +242,9 @@
             };
 
             modules = [
+              # ==== Extra Options ==== #
+              ./options
+
               # ==== Common Configuration ==== #
               {
                 nixpkgs.hostPlatform = system;
@@ -273,9 +277,6 @@
               inputs.niri.nixosModules.niri
               inputs.mango.nixosModules.mango
               inputs.lanzaboote.nixosModules.lanzaboote
-
-              # ==== Extra Options ==== #
-              ./options
             ]);
           }
         ) hosts)

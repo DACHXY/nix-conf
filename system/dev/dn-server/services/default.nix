@@ -10,11 +10,13 @@
     ./forgejo.nix
     ./keycloak.nix
     ./netbird.nix
+    ./netbird-keepalive.nix
     ./hideTTY.nix
     ./dns.nix
     ./acme.nix
     ./ntfy.nix
     ./homepage.nix
     ./matrix.nix
+    # ./traefik.nix
   ];
 }

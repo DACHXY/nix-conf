@@ -49,7 +49,7 @@ in
   };
 
   services.netbird = {
-    ui.enable = true;
+    ui.enable = false;
 
     server = {
       inherit domain enableNginx;
@@ -69,12 +69,13 @@ in
           DataStoreEncryptionKey = {
             _secret = secrets."netbird/dataStoreKey".path;
           };
+
           TURNConfig = {
             Secret._secret = secrets."netbird/turn/secret".path;
             Turns = mkForce [
               {
                 Proto = "udp";
-                URI = "turn:${srv.management.turnDomain}:3478";
+                URI = "turns:${srv.management.turnDomain}:5349";
                 Username = "netbird";
                 Password._secret = secrets."netbird/turn/password".path;
               }

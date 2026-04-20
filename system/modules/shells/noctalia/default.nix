@@ -38,7 +38,7 @@ in
   services.gnome.evolution-data-server.enable = true;
   services.gnome.gnome-online-accounts.enable = true;
   services.gnome.gnome-keyring.enable = true;
-  programs.evolution.enable = true;
+  programs.evolution.enable = false;
 
   home-manager.users.${username} =
     {
@@ -61,10 +61,6 @@ in
       services.sunsetr.enable = mkForce false; # Bluelight filter
       programs.hyprlock.enable = mkForce false; # Lock
       services.swaync.enable = mkForce false; # Notification daemon
-
-      systemd.user.services.noctalia-shell.Service.Environment = [
-        "QT_QPA_PLATFORMTHEME=gtk3"
-      ];
 
       wm.keybinds.spawn-repeat = {
         # ==== Media ==== #
@@ -136,7 +132,6 @@ in
           package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
             calendarSupport = true;
           };
-          systemd.enable = true;
           colors = mkForce { };
           plugins = {
             sources = [
@@ -556,6 +551,10 @@ in
           noctalia = spawn "noctalia-shell" "ipc" "call";
         in
         {
+          spawn-at-startup = [
+            { command = [ "QT_QPA_PLATFORMTHEME=gtk3 noctalia-shell" ]; }
+          ];
+
           binds = mapAttrs (name: value: mkForce value) {
             # Core
             "${bindCfg.toggle-control-center}".action = noctalia "controlCenter" "toggle";

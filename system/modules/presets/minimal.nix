@@ -21,6 +21,7 @@ in
     ../sops-nix.nix
     ../security.nix
     ../systemd-resolv.nix
+    ../systemConf.nix
   ];
 
   # Disable man cache

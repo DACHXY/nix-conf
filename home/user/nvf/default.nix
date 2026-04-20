@@ -368,22 +368,13 @@ in
         };
 
         formatter = {
-          conform-nvim = {
-            enable = true;
-            # setupOpts = {
-            #   formatters_by_ft = {
-            #     nix = [ "nixfmt" ];
-            #   };
-            # };
-          };
+          conform-nvim.enable = true;
         };
 
         diagnostics = {
           enable = true;
           config = {
-            float = {
-              border = "rounded";
-            };
+            float.border = "rounded";
             virtual_text.format =
               mkLuaInline
                 # lua
@@ -400,14 +391,20 @@ in
           enableTreesitter = true;
           enableExtraDiagnostics = true;
 
-          bash.enable = true;
-          css.enable = true;
-          yaml.enable = true;
+          nix = {
+            enable = true;
+            extraDiagnostics.enable = false;
+            format = {
+              type = [ "nixfmt" ];
+              enable = true;
+            };
+            lsp.servers = [ "nixd" ];
+          };
           rust = {
             enable = true;
             lsp = {
               enable = true;
-              opts = ''
+              opts = /* lua */ ''
                 ['rust-analyzer'] = {
                   cargo = { allFeature = true },
                   checkOnSave = true,
@@ -418,28 +415,25 @@ in
               '';
             };
           };
-          nix = {
-            enable = true;
-            extraDiagnostics.enable = false;
-            format = {
-              type = [ "nixfmt" ];
-              enable = true;
-            };
-            lsp.servers = [ "nixd" ];
-          };
-          sql.enable = true;
+
+          assembly.enable = true;
           clang.enable = true;
-          ts = {
-            enable = true;
-            format.type = [ "prettierd" ];
-            extensions = {
-              ts-error-translator.enable = true;
-            };
-          };
+          cmake.enable = true;
+          make.enable = true;
+
+          json.enable = true;
+          toml.enable = true;
+          jq.enable = true;
+          yaml.enable = true;
+          xml.enable = true;
+
+          lua.enable = true;
           python = {
             enable = true;
             format.type = [ "ruff" ];
           };
+          go.enable = true;
+
           markdown = {
             enable = true;
             extensions = {
@@ -447,8 +441,25 @@ in
               markview-nvim.enable = true;
             };
           };
+          bash.enable = true;
+          glsl.enable = true;
+          sql.enable = true;
+
+          typescript = {
+            enable = true;
+            format.type = [ "prettierd" ];
+            extensions.ts-error-translator = {
+              enable = true;
+              setupOpts = {
+                auto_attach = true;
+              };
+            };
+          };
           html.enable = true;
-          lua.enable = true;
+          css = {
+            enable = true;
+            format.type = [ "prettierd" ];
+          };
         };
 
         visuals = {
@@ -574,6 +585,7 @@ in
             mappings = {
               open = "<C-/>";
             };
+            setupOpts.direction = "float";
             setupOpts.winbar.name_formatter =
               mkLuaInline
                 # lua

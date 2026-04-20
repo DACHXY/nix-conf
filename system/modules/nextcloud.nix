@@ -77,12 +77,11 @@ in
         memories
         ;
 
-      # NOTE: wait for nextcloud 33 😢
-      # camerarawpreviews = pkgs.fetchNextcloudApp {
-      #   url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v0.8.8/camerarawpreviews_nextcloud.tar.gz";
-      #   sha256 = "sha256-Pnjm38hn90oV3l4cPAnQ+oeO6x57iyqkm80jZGqDo1I=";
-      #   license = "agpl3Plus";
-      # };
+      camerarawpreviews = pkgs.fetchNextcloudApp {
+        url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v0.9.0/camerarawpreviews_nextcloud.tar.gz";
+        sha256 = "sha256-UsvRbsNSnh4qS9nP/lEbRMMKHLZSp03azCf8lvIS7Pk=";
+        license = "agpl3Plus";
+      };
     };
     extraAppsEnable = true;
 

@@ -7,7 +7,7 @@
 let
   inherit (builtins) concatStringsSep;
   inherit (config.systemConf) security domain;
-  inherit (lib) mkForce optionalString;
+  inherit (lib) mkForce;
   inherit (helper.nftables) mkElementsStatement;
 
   serverRules = config.server-rules;
@@ -336,17 +336,13 @@ in
     ];
   };
 
-  virtualisation = {
-    oci-containers = {
-      containers = {
-        uptime-kuma = {
-          extraOptions = [ "--network=host" ];
-          image = "louislam/uptime-kuma:2";
-          volumes = [
-            "/var/lib/uptime-kuma:/app/data"
-          ];
-        };
-      };
+  virtualisation.oci-containers.containers = {
+    uptime-kuma = {
+      extraOptions = [ "--network=host" ];
+      image = "louislam/uptime-kuma:2";
+      volumes = [
+        "/var/lib/uptime-kuma:/app/data"
+      ];
     };
   };
 

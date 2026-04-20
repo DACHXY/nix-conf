@@ -6,18 +6,24 @@
 }:
 let
   serverConfig = self.nixosConfigurations.dn-server.config;
-  inherit (serverConfig.networking) domain hostName;
+  allowedIPv4 = config.server-rules.rule.default.allowed.ipv4;
+
+  inherit (serverConfig.networking) domain;
+  inherit (config.networking) hostName;
+
   ntfyScript = pkgs.writeShellScript "" ''
     set -o allexport
     source "${config.sops.secrets."ntfy".path}"
     set +o allexport
 
     NTFY_URL="https://ntfy.${domain}"
-    curl -u "$NTFY_USER" \
+    ${pkgs.curl}/bin/curl -u "$NTFY_USER" \
          -H "$1" \
          -d "$2" \
          https://ntfy.${domain}/fail2ban
   '';
+
+  nginxAccessLogPath = "/var/log/nginx/access.log";
 in
 {
   sops.secrets."ntfy" = {
@@ -30,8 +36,8 @@ in
     "fail2ban/action.d/ntfy.local".text = pkgs.lib.mkDefault (
       pkgs.lib.mkAfter ''
         [Definition]
-        norestored = true # Needed to avoid receiving a new notification after every restart
-        actionban = ${ntfyScript} "Title: <ip> has been banned" "<name> jail has banned <ip> from accessing ${hostName} after <failures> attempts of hacking the system."
+        norestored = 1
+        actionban = ${ntfyScript} "Title: \"<ip>\" has been banned" "\"<name>\" jail has banned \"<ip>\" from accessing [${hostName}] after <failures> attempts of hacking the system."
       ''
     );
     # Defines a filter that detects URL probing by reading the Nginx access log
@@ -46,35 +52,37 @@ in
   services.fail2ban = {
     enable = true;
     maxretry = 5;
-    ignoreIP = [
-      "10.20.0.0/24"
-    ];
+    ignoreIP = allowedIPv4;
     bantime = "24h";
     bantime-increment = {
       enable = true;
-      multipliers = "1 4 64";
+      multipliers = "1 32 64";
       maxtime = "1y";
       overalljails = true;
     };
 
     jails = {
+      sshd.settings = {
+        backend = "systemd";
+        mode = "aggressive";
+      };
       nginx-url-probe.settings = {
         enabled = true;
         filter = "nginx-url-probe";
-        logpath = "/var/log/nginx/access.log";
+        logpath = nginxAccessLogPath;
         action = ''
           %(action_)s[blocktype=DROP]
                            ntfy'';
-        backend = "auto"; # Do not forget to specify this if your jail uses a log file
-        maxretry = 5;
+        backend = "auto";
+        maxretry = 2;
         findtime = 600;
       };
       nginx-botsearch.settings = {
         enabled = true;
         filter = "nginx-botsearch";
-        logpath = "/var/log/nginx/access.log";
+        logpath = nginxAccessLogPath;
         backend = "auto";
-        maxretry = 3;
+        maxretry = 2;
         findtime = 600;
         action = ''
           %(action_)s[blocktype=DROP]
@@ -83,9 +91,9 @@ in
       nginx-404.settings = {
         enabled = true;
         filter = "nginx-404";
-        logpath = "/var/log/nginx/access.log";
+        logpath = nginxAccessLogPath;
         backend = "auto";
-        maxretry = 50;
+        maxretry = 10;
         findtime = 300;
         action = ''
           %(action_)s[blocktype=DROP]
@@ -116,7 +124,7 @@ in
       nginx-noscript.settings = {
         enabled = true;
         filter = "nginx-noscript";
-        logpath = "/var/log/nginx/access.log";
+        logpath = nginxAccessLogPath;
         backend = "auto";
         maxretry = 5;
         findtime = 600;
@@ -127,7 +135,7 @@ in
       nginx-bad-user-agent.settings = {
         enabled = true;
         filter = "nginx-bad-user-agent";
-        logpath = "/var/log/nginx/access.log";
+        logpath = nginxAccessLogPath;
         backend = "auto";
         maxretry = 2;
         findtime = 600;
@@ -135,11 +143,10 @@ in
           %(action_)s[blocktype=DROP]
                            ntfy'';
       };
-
       nginx-login-bruteforce.settings = {
         enabled = true;
         filter = "nginx-login";
-        logpath = "/var/log/nginx/access.log";
+        logpath = nginxAccessLogPath;
         backend = "auto";
         maxretry = 5;
         findtime = 600;

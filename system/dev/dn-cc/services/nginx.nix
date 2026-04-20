@@ -6,13 +6,14 @@
   ...
 }:
 let
-  inherit (builtins) fetchurl;
+  inherit (builtins) fetchurl elemAt;
   inherit (lib)
     concatStringsSep
     mkForce
     mkAfter
     optionalString
     mkBefore
+    splitString
     ;
 
   serverRules = config.server-rules;
@@ -48,34 +49,20 @@ let
   );
 
   # ==== Allowed List ==== #
+  accessAllowedVar = "$allow_access";
+  ipAllowedVar = "$allow_ip";
   allowedCountries = serverRules.rule.default.allowed.countryCode;
   allowedIPv4 = serverRules.rule.default.allowed.ipv4;
 
   # ==== geoip ==== #
+  geoAllowedVar = "$allowed_country";
   geoDBCountry = fetchurl {
     url = "https://nextcloud.dnywe.com/s/geodb/download";
     sha256 = "sha256:0ir3bmni7756zfma8xfr1bnbszsizaas4gs3sq4zd4qgjl3rhm66";
   };
   geoIpConfig = ''
-    set $allow_access 0;
-    if ($allowed_country = 1) {
-      set $allow_access 1;
-    }
-
-    if ($remote_addr ~ ^192\.168\.100\.) {
-      set $allow_access 1;
-    }
-
-    if ($remote_addr ~ ^127\.) {
-      set $allow_access 1;
-    }
-
-    if ($remote_addr ~ ^10\.) {
-      set $allow_access 1;
-    }
-
-    if ($allow_access = 0) {
-      return 403;
+    if (${geoAllowedVar} = 1) {
+      set ${accessAllowedVar} 1;
     }
   '';
 
@@ -93,24 +80,35 @@ let
   mkProxyConfig =
     {
       limitGeo ? true,
+      verifyClient ? true,
     }:
     {
       forceSSL = true;
       useACMEHost = domain;
 
-      extraConfig = lib.mkAfter ''
+      extraConfig = mkBefore ''
+        ${optionalString verifyClient ''
+          ssl_client_certificate ${cloudflareCert};
+          ssl_verify_client on;
+        ''}
+
+        ${optionalString limitGeo geoIpConfig}
+
         if ($http_user_agent ~* "GPTBot") {
-          return 444;
+          set ${accessAllowedVar} 0;
         }
 
         if ($http_user_agent ~* "bot") {
-          return 444;
+          set ${accessAllowedVar} 0;
         }
 
-        ssl_client_certificate ${cloudflareCert};
-        ssl_verify_client on;
+        if (${ipAllowedVar} = 1) {
+          set ${accessAllowedVar} 1;
+        }
 
-        ${optionalString limitGeo geoIpConfig}
+        if (${accessAllowedVar} = 0) {
+          return 403;
+        }
       '';
     };
 in
@@ -134,9 +132,14 @@ in
         $geoip2_country_name country names en;
       }
 
-      map $geoip2_country_code $allowed_country {
+      map $geoip2_country_code ${geoAllowedVar} {
         default 0;
-        ${concatStringsSep "\n  " (map (c: "${c} 1;") allowedCountries)}
+        ${concatStringsSep "\n" (map (c: "${c} 1;") allowedCountries)}
+      }
+
+      geo ${ipAllowedVar} {
+        default 0;
+        ${concatStringsSep "\n" (map (v: "${v} 1;") allowedIPv4)}
       }
     '';
 
@@ -209,6 +212,7 @@ in
           '';
         };
       };
+
       "login.${domain}" = (mkProxyConfig { }) // {
         locations."/" = locationProxyPass;
         locations."^~ /admin" = locationProxyPass // {
@@ -218,6 +222,43 @@ in
           '';
         };
       };
+
+      "stalwart.${domain}" =
+        let
+          stalwartCfg = config.services.stalwart;
+          managePort = elemAt (splitString ":" (elemAt stalwartCfg.settings.server.listener.management.bind 0)) 1;
+        in
+        (
+          mkProxyConfig {
+            limitGeo = true;
+            verifyClient = false;
+          }
+          // {
+            serverAliases = [
+              "autoconfig.${domain}"
+              "autodiscover.${domain}"
+            ];
+
+            locations."/.well-known/autoconfig/mail/config-v1.1.xml" = {
+              recommendedProxySettings = true;
+              proxyPass = "http://127.0.0.1:${toString managePort}";
+            };
+
+            locations."/mail/config-v1.1.xml" = {
+              recommendedProxySettings = true;
+              proxyPass = "http://127.0.0.1:${toString managePort}";
+            };
+
+            locations."/" = {
+              recommendedProxySettings = true;
+              proxyPass = "http://127.0.0.1:${toString managePort}";
+              extraConfig = ''
+                ${mkAllowedList allowedIPv4}
+                deny all;
+              '';
+            };
+          }
+        );
 
       # ==== Matrix ===== #
       "${matrixDomain}" = (mkProxyConfig { limitGeo = false; }) // {
@@ -244,37 +285,44 @@ in
         locations."/" = locationProxyPass;
       };
 
-      # NOTE: This is not verified and used
-      "netbrid.${domain}" = {
-        http2 = true;
-        forceSSL = true;
-        useACMEHost = domain;
-        extraConfig = ''
-          ${geoIpConfig}
-        '';
+      # ==== Netbird ==== #
+      "netbird.${domain}" =
+        (mkProxyConfig {
+          limitGeo = true;
+          verifyClient = false;
+        })
+        // {
+          locations."/" = {
+            proxyWebsockets = true;
+            recommendedProxySettings = true;
+            extraConfig = ''
+              proxy_pass http://${dn-server-ip};
+              proxy_set_header Host $host;
+            '';
+          };
 
-        locations."/" = {
-          proxyWebsockets = true;
-          proxyPass = "https://${dn-server-ip}";
-          extraConfig = ''
-            proxy_ssl_server_name on;
-          '';
+          locations."/management.ManagementService/" = {
+            extraConfig = ''
+              client_body_timeout 1d;
+              grpc_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              grpc_pass grpc://${dn-server-ip}:8011;
+              grpc_read_timeout 1d;
+              grpc_send_timeout 1d;
+              grpc_socket_keepalive on;
+            '';
+          };
+
+          locations."/signalexchange.SignalExchange/" = {
+            extraConfig = ''
+              client_body_timeout 1d;
+              grpc_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              grpc_pass grpc://${dn-server-ip}:8012;
+              grpc_read_timeout 1d;
+              grpc_send_timeout 1d;
+              grpc_socket_keepalive on;
+            '';
+          };
         };
-
-        locations."/management.ManagementService/".extraConfig = ''
-          grpc_pass grpcs://${dn-server-ip};
-          grpc_set_header Host netbird.${domain};
-          grpc_ssl_name netbird.${domain};
-          grpc_ssl_server_name on;
-        '';
-
-        locations."/signalexchange.SignalExchange/".extraConfig = ''
-          grpc_pass grpcs://${dn-server-ip};
-          grpc_set_header Host netbird.${domain};
-          grpc_ssl_name netbird.${domain};
-          grpc_ssl_server_name on;
-        '';
-      };
     };
   };
 }

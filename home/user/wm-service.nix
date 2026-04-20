@@ -7,7 +7,12 @@
   ...
 }:
 let
-  inherit (lib) escapeShellArgs mkForce getExe';
+  inherit (lib)
+    escapeShellArgs
+    mkForce
+    getExe'
+    mkIf
+    ;
   inherit (osConfig.systemConf) username;
   inherit (pkgs.stdenv.hostPlatform) system;
 
@@ -60,8 +65,9 @@ in
     package = inputs.awww.packages.${system}.awww;
   };
 
-  systemd.user.services.awww.Service.ExecStart =
-    mkForce "${getExe' config.services.awww.package "awww-daemon"} ${escapeShellArgs config.services.awww.extraArgs}";
+  systemd.user.services = mkIf config.services.awww.enable {
+    awww.Service.ExecStart = mkForce "${getExe' config.services.awww.package "awww-daemon"} ${escapeShellArgs config.services.awww.extraArgs}";
+  };
 
   # === sunsetr === #
   services.sunsetr.enable = true;

@@ -12,6 +12,11 @@ in
     windowManager = "niri";
   };
 
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "${username}";
+  };
+
   imports = [
     ../../modules/presets/basic.nix
     ../public/dn/presets/local.nix

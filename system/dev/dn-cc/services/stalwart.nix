@@ -87,6 +87,7 @@ in
       server.hostname = fqdn;
 
       # ==== Listener ==== #
+      http.use-x-forwarded = true;
       server.listener = mkForce {
         smtp = {
           bind = [ "0.0.0.0:25" ];
@@ -112,6 +113,11 @@ in
         management = {
           bind = [ "127.0.0.1:${toString managementPort}" ];
           protocol = "http";
+        };
+        managesieve = {
+          bind = [ "0.0.0.0:4190" ];
+          protocol = "managesieve";
+          max-connections = 1024;
         };
       };
 
@@ -218,10 +224,5 @@ in
     };
   };
 
-  services.nginx.virtualHosts."stalwart.${domain}" = {
-    forceSSL = true;
-    useACMEHost = domain;
-
-    locations."/".proxyPass = "http://127.0.0.1:${toString managementPort}";
-  };
+  # Nginx manged by nginx.nix
 }
