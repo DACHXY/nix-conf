@@ -6,6 +6,7 @@
 }:
 let
   inherit (config.networking) domain;
+
   username = "danny";
 in
 {

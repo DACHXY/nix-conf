@@ -30,6 +30,10 @@ creation_rules:
       - age:
           - *dn_workstation
           - *dn_pre7780
+  - path_regex: system/dev/dn-cscc/sops/secret.yaml
+    key_groups:
+      - age:
+          - *dn_workstation
   - path_regex: system/dev/dn-lap/sops/secret.yaml
     key_groups:
       - age:

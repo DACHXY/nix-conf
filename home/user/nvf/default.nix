@@ -34,6 +34,7 @@ in
     ./plugins/lualine
     ./plugins/leetcode
     ./extra-lsp.nix
+    ./assistant.nix
   ];
 
   home.packages = with pkgs; [
@@ -430,7 +431,9 @@ in
           lua.enable = true;
           python = {
             enable = true;
+            dap.enable = true;
             format.type = [ "ruff" ];
+            lsp.servers = [ "pyright" ];
           };
           go.enable = true;
 

@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 let
@@ -27,7 +28,6 @@ in
 
     home-manager.users."${username}" =
       {
-        osConfig,
         config,
         ...
       }:
@@ -37,6 +37,7 @@ in
         '';
         wmCfg = config.wm;
         bindCfg = wmCfg.keybinds;
+        niriPkgs = inputs.niri-pkgs.packages.${pkgs.stdenv.hostPlatform.system};
       in
       with config.lib.niri.actions;
       {
@@ -51,8 +52,35 @@ in
 
         services.nfsm.enable = false;
 
-        programs.niri.package = osConfig.programs.niri.package;
+        programs.niri.package = niriPkgs.niri-unstable;
         programs.niri.settings = {
+          includes = lib.mkAfter [
+            "${pkgs.writeText "blur.kdl" /* kdl */ ''
+              blur {
+                passes 3
+                offset 3
+                noise 0.02
+                saturation 1.5
+              };
+
+              layer-rule {
+                match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
+                background-effect {
+                  blur true
+                  xray true 
+                }
+              }
+
+              window-rule {
+                background-effect {
+                  blur true
+                  xray false
+                }
+              }
+
+            ''}"
+          ];
+
           spawn-at-startup = [
             { argv = [ "${wmCfg.exec-once}" ]; }
           ];
@@ -62,7 +90,7 @@ in
 
           xwayland-satellite = {
             enable = true;
-            path = getExe pkgs.xwayland-satellite-unstable;
+            path = getExe niriPkgs.xwayland-satellite-unstable;
           };
 
           animations = {
@@ -108,13 +136,6 @@ in
             };
           };
 
-          blur = {
-            passes = 3;
-            offset = 3;
-            noise = 0.02;
-            saturation = 1.5;
-          };
-
           debug = {
             honor-xdg-activation-with-invalid-serial = [ ];
           };
@@ -126,23 +147,11 @@ in
               ];
               place-within-backdrop = true;
             }
-            {
-              matches = [
-                { namespace = "^noctalia-(background|launcher-overlay|dock)-.*$"; }
-              ];
-              background-effect = {
-                blur = true;
-                xray = false;
-              };
-            }
           ];
 
           window-rules = [
             # Global
             {
-              background-effect = {
-                blur = true;
-              };
               geometry-corner-radius =
                 let
                   round = wmCfg.border.radius + 0.0;

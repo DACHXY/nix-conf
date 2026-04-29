@@ -27,6 +27,9 @@ in
     );
   };
 
+  environment.systemPackages = [
+  ];
+
   services.displayManager.autoLogin.user = username;
 
   networking.firewall.allowedTCPPortRanges = [
@@ -66,6 +69,7 @@ in
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSHkPa6vmr5WBPXAazY16+Ph1Mqv9E24uLIf32oC2oH danny@phone.dn"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMj/LeB3i/vca3YwGNpAjf922FgiY2svro48fUSQAjOv Shortcuts on :D"
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSAOufpee7f8D8ONIIGU3qsN+8+DGO7BfZnEOTYqtQ5 danny@pre7780.dn"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII17Qa46NpiXRZfWTgXvGN00wfaQuH1MeHPjvqy4Go4r danny@dn-notebook"
     ];
   };
 }

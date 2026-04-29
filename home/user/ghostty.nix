@@ -1,9 +1,11 @@
 {
   inputs,
   pkgs,
+  lib,
   ...
 }:
 let
+  inherit (lib) mkDefault;
   inherit (pkgs.stdenv.hostPlatform) system;
 
   ghosttyShaders = pkgs.fetchFromGitHub {
@@ -18,7 +20,7 @@ in
     enable = true;
     installBatSyntax = true;
     enableFishIntegration = true;
-    package = inputs.ghostty.packages.${system}.default;
+    package = mkDefault inputs.ghostty.packages.${system}.default;
     clearDefaultKeybinds = false;
     settings = {
       custom-shader = [
@@ -29,7 +31,8 @@ in
       unfocused-split-opacity = 0.65;
       desktop-notifications = true;
       background-opacity = 0.5;
-      background-blur = 20;
+      background-blur = false; # For wm
+      background-opacity-cells = true;
 
       wait-after-command = false;
       shell-integration = "detect";

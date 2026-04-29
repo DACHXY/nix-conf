@@ -2,11 +2,11 @@
   lib,
   pkgs,
   config,
-  username,
   ...
 }:
 let
   inherit (lib.generators) mkLuaInline;
+
   relativeDir = "projects/leetcode";
   dataDir = "${config.home.homeDirectory}/${relativeDir}";
 in
@@ -73,8 +73,4 @@ in
       ];
     };
   };
-
-  systemd.user.tmpfiles.rules = [
-    "d ${dataDir} 0744 ${username} users -"
-  ];
 }

@@ -2,7 +2,6 @@
 {
   imports = [
     ./minimal.nix
-    ../stylix.nix
     ../auto-mount.nix
     ../bluetooth.nix
     ../display-manager.nix

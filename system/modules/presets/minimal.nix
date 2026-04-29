@@ -22,8 +22,10 @@ in
     ../security.nix
     ../systemd-resolv.nix
     ../systemConf.nix
+    ../stylix.nix
   ];
 
   # Disable man cache
   documentation.man.cache.enable = mkForce false;
+
 }

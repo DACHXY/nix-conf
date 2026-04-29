@@ -8,18 +8,12 @@
 
 ## ✨ Main Applications
 
-- [x] Hyprland
+- [x] Niri
 - [x] NVF
-- [x] Waybar
-- [x] Hyprlock
-- [x] Hypridle
+- [x] Noctalia Shell
 - [x] Zen Browser
-- [x] Swaync (Notification Center)
-- [x] Awww (Wallpaper)
 - [x] Ghostty (Terminal)
-- [x] SDDM (Display Manager)
 - [x] Fish (shell)
-- [x] Rofi (Application Launcher)
 - [x] Stylix
 
 ## Manuals

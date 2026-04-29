@@ -16,13 +16,14 @@ let
 
   stateVersion = "25.11";
   username = "danny";
+  domain = "dnywe.com";
   ip = serverRules.extra.dn-cc.network.ipv4;
   prefix = 25;
   gateway = serverRules.extra.dn-cc.network.gateway;
 in
 {
   systemConf = {
-    inherit hostname username;
+    inherit hostname username domain;
   };
 
   # ==== VMware guest ==== #
@@ -30,10 +31,6 @@ in
 
   # ==== Basic ==== #
   system.stateVersion = stateVersion;
-  networking = {
-    hostName = hostname;
-    domain = "dnywe.com";
-  };
   environment.systemPackages = with pkgs; [
     openssl
     neovim
@@ -60,28 +57,14 @@ in
 
   # ==== System Modules ==== #
   imports = [
-    inputs.home-manager.nixosModules.default
-    inputs.disko.nixosModules.disko
-    inputs.sops-nix.nixosModules.sops
-    inputs.stylix.nixosModules.stylix
-    inputs.nix-index-database.nixosModules.nix-index
-
     (modulesPath + "/installer/scan/not-detected.nix")
+    ../../modules/presets/minimal.nix
     ./boot.nix
     ./disk.nix
     ./services
     ./security
     ./network
     ../public/dn/server-rule.nix
-    ../../modules/time.nix
-    ../../modules/environment.nix
-    ../../modules/internationalisation.nix
-    ../../modules/misc.nix
-    ../../modules/programs.nix
-    ../../modules/sops-nix.nix
-    ../../modules/security.nix
-    ../../modules/systemd-resolv.nix
-    ../../modules/nixsettings.nix
     (import ./network.nix {
       inherit
         ip
@@ -92,6 +75,8 @@ in
       permitRootLogin = "no";
     })
   ];
+
+  networking.nat.enableIPv6 = mkForce false;
 
   # ==== Home Manager ==== #
   home-manager = {
@@ -108,18 +93,8 @@ in
         self
         ;
     };
-    sharedModules = [
-      inputs.sops-nix.homeManagerModules.default
-      inputs.nvf.homeManagerModules.default
-    ];
 
     users.${username} = {
-      home = {
-        homeDirectory = mkForce "/home/${username}";
-        stateVersion = stateVersion;
-      };
-      programs.home-manager.enable = true;
-
       imports = [
         ../../../home/user/nvf
         ../../../home/user/environment.nix
@@ -152,8 +127,6 @@ in
     ];
 
     "${username}" = {
-      isNormalUser = true;
-      shell = pkgs.bash; # Actually fish
       extraGroups = [
         "wheel"
         "input"

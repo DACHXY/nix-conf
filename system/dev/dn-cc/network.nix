@@ -5,7 +5,10 @@
   username,
   permitRootLogin ? "yes",
 }:
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
+let
+  inherit (lib) mkForce;
+in
 {
   # ==== Networking ==== #
   networking = {
@@ -31,16 +34,16 @@
 
   services.openssh = {
     enable = true;
-    ports = [ 22 ];
+    ports = mkForce [ 22 ];
     settings = {
-      PasswordAuthentication = false;
-      AllowUsers = [ username ];
-      UseDns = false;
-      PermitRootLogin = permitRootLogin;
+      PasswordAuthentication = mkForce false;
+      AllowUsers = mkForce [ username ];
+      UseDns = mkForce false;
+      PermitRootLogin = mkForce permitRootLogin;
     };
   };
 
-  systemd.services.sshd.wantedBy = pkgs.lib.mkForce [ "multi-user.target" ];
+  systemd.services.sshd.wantedBy = mkForce [ "multi-user.target" ];
 
   users.users.root.openssh.authorizedKeys.keys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSAOufpee7f8D8ONIIGU3qsN+8+DGO7BfZnEOTYqtQ5 danny@pre7780.dn"
