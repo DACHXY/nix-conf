@@ -549,10 +549,13 @@ in
         with config.lib.niri.actions;
         let
           noctalia = spawn "noctalia-shell" "ipc" "call";
+          startNoctalia = pkgs.writeShellScript "noctalia" ''
+            QT_QPA_PLATFORMTHEME=gtk3 noctalia-shell
+          '';
         in
         {
           spawn-at-startup = [
-            { command = [ "QT_QPA_PLATFORMTHEME=gtk3 noctalia-shell" ]; }
+            { command = [ "${startNoctalia}" ]; }
           ];
 
           binds = mapAttrs (name: value: mkForce value) {

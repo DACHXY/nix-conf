@@ -11,6 +11,7 @@ let
   inherit (pkgs.stdenv.hostPlatform) system;
   inherit (lib)
     mkIf
+    mkForce
     ;
   cfg = config.systemConf;
   stateVersion = "25.11";
@@ -20,6 +21,7 @@ in
   networking = {
     inherit (cfg) domain;
     hostName = cfg.hostname;
+    search = mkForce [ ];
   };
 
   system.stateVersion = stateVersion;
@@ -33,6 +35,7 @@ in
     backupFileExtension = "backup-hm";
     useUserPackages = true;
     useGlobalPkgs = true;
+
     extraSpecialArgs = {
       inherit
         helper
@@ -58,6 +61,8 @@ in
         stateVersion = stateVersion;
       };
       programs.home-manager.enable = true;
+
+      gtk.gtk4.theme = null;
 
       home.file.".face" = mkIf (cfg.face != null) {
         source = cfg.face;

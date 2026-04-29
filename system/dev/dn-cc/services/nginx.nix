@@ -249,6 +249,11 @@ in
               proxyPass = "http://127.0.0.1:${toString managePort}";
             };
 
+            locations."/.well-known/jmap" = {
+              recommendedProxySettings = true;
+              proxyPass = "http://127.0.0.1:${toString managePort}";
+            };
+
             locations."/" = {
               recommendedProxySettings = true;
               proxyPass = "http://127.0.0.1:${toString managePort}";

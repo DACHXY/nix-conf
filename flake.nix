@@ -13,6 +13,11 @@
       url = "github:nixos/nixpkgs/nixpkgs-unstable";
     };
 
+    nix-darwin = {
+      url = "github:nix-darwin/nix-darwin/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -129,16 +134,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    mail-ntfy-server = {
-      url = "github:dachxy/mail-ntfy-server";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
 
     niri = {
-      # url = "github:sodiboo/niri-flake";
-      url = "github:dachxy/niri-flake"; # Wait for blur configurations
+      url = "github:sodiboo/niri-flake/very-refactor";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    niri-pkgs = {
+      url = "github:sodiboo/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -179,40 +183,50 @@
     }@inputs:
     let
       inherit (builtins) mapAttrs;
+      inherit (nixpkgs.lib) hasSuffix filterAttrs;
       forEachSystem = nixpkgs.lib.genAttrs (import systems);
 
       hosts = {
         dn-workstation = {
           system = "x86_64-linux";
           confPath = ./system/dev/dn-workstation;
-          minimal = false;
+        };
+        dn-notebook = {
+          system = "aarch64-darwin";
+          confPath = ./system/dev/dn-notebook;
         };
         dn-pre7780 = {
           system = "x86_64-linux";
           confPath = ./system/dev/dn-pre7780;
-          minimal = false;
         };
         dn-cc = {
           system = "x86_64-linux";
           confPath = ./system/dev/dn-cc;
-          minimal = true;
         };
         dn-server = {
           system = "x86_64-linux";
           confPath = ./system/dev/dn-server;
-          minimal = false;
         };
         dn-lap = {
           system = "x86_64-linux";
           confPath = ./system/dev/dn-lap;
-          minimal = false;
         };
         skydrive-lap = {
           system = "x86_64-linux";
           confPath = ./system/dev/skydrive-lap;
-          minimal = false;
+        };
+        dn-cscc = {
+          system = "x86_64-linux";
+          confPath = ./system/dev/dn-cscc;
+        };
+        generic = {
+          system = "x86_64-linux";
+          confPath = ./system/dev/generic;
         };
       };
+
+      mkNixOSDevs = hosts: filterAttrs (n: v: hasSuffix "linux" v.system) hosts;
+      mkDarwinDevs = hosts: filterAttrs (n: v: hasSuffix "darwin" v.system) hosts;
     in
     {
       # ==== NixOS Configuration ==== #
@@ -220,7 +234,7 @@
         (mapAttrs (
           hostname: conf:
           let
-            inherit (conf) confPath system minimal;
+            inherit (conf) confPath system;
             pkgs = import nixpkgs {
               inherit system;
             };
@@ -245,29 +259,11 @@
               # ==== Extra Options ==== #
               ./options
 
-              # ==== Common Configuration ==== #
-              {
-                nixpkgs.hostPlatform = system;
-                nixpkgs.config.allowUnfree = true;
-                nixpkgs.overlays = [
-                  inputs.niri.overlays.niri
-                  inputs.nix-minecraft.overlay
-                  inputs.nix-tmodloader.overlay
-                  inputs.rust-overlay.overlays.default
-                ]
-                ++ (import ./pkgs/overlays);
-              }
-
-              # ==== Private Configuration ==== #
-              (import confPath { inherit hostname; })
-            ]
-            ++ (pkgs.lib.optionals (!minimal) [
               # ==== Common Modules ==== #
-              inputs.home-manager.nixosModules.default
-              inputs.mail-ntfy-server.nixosModules.default
-              inputs.nix-index-database.nixosModules.nix-index
               inputs.disko.nixosModules.disko
               inputs.sops-nix.nixosModules.sops
+              inputs.home-manager.nixosModules.default
+              inputs.nix-index-database.nixosModules.nix-index
               inputs.nix-minecraft.nixosModules.minecraft-servers
               inputs.nix-tmodloader.nixosModules.tmodloader
               inputs.actual-budget-api.nixosModules.default
@@ -277,9 +273,25 @@
               inputs.niri.nixosModules.niri
               inputs.mango.nixosModules.mango
               inputs.lanzaboote.nixosModules.lanzaboote
-            ]);
+
+              # ==== Common Configuration ==== #
+              {
+                nixpkgs.hostPlatform = system;
+                nixpkgs.config.allowUnfree = true;
+                nixpkgs.overlays = [
+                  inputs.niri-pkgs.overlays.niri
+                  inputs.nix-minecraft.overlay
+                  inputs.nix-tmodloader.overlay
+                  inputs.rust-overlay.overlays.default
+                ]
+                ++ (import ./pkgs/overlays);
+              }
+
+              # ==== Private Configuration ==== #
+              (import confPath { inherit hostname; })
+            ];
           }
-        ) hosts)
+        ) (mkNixOSDevs hosts))
 
         # ==== Extra ==== #
         // {
@@ -296,6 +308,42 @@
             ];
           };
         };
+
+      # ==== Nix Darwin Configuration ==== #
+      darwinConfigurations = (
+        mapAttrs (
+          hostname: conf:
+          let
+            inherit (conf) confPath system;
+            pkgs = import nixpkgs {
+              inherit system;
+            };
+            helper = import ./helper {
+              inherit
+                pkgs
+                ;
+              lib = pkgs.lib;
+            };
+          in
+          inputs.nix-darwin.lib.darwinSystem {
+            modules = [
+              # ==== Common Configuration ==== #
+              {
+                nixpkgs.hostPlatform = system;
+                nixpkgs.config.allowUnfree = true;
+                nixpkgs.overlays = [
+                  inputs.rust-overlay.overlays.default
+                ];
+              }
+
+              # ==== Private Configuration ==== #
+              (import confPath { inherit hostname; })
+              inputs.home-manager.darwinModules.home-manager
+            ];
+            specialArgs = { inherit inputs helper; };
+          }
+        ) (mkDarwinDevs hosts)
+      );
 
       formatter = forEachSystem (
         system:

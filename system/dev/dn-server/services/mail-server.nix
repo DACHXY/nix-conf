@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   lib,
   ...
 }:
@@ -94,15 +95,18 @@ in
           ];
       };
       rspamd = {
-        secretFile = config.sops.secrets."rspamd".path;
-        trainerSecretFile = config.sops.secrets."rspamd-trainer".path;
+        enable = false;
+        secretFile = pkgs.writeText "temp" "";
+        trainerSecretFile = pkgs.writeText "temp" "";
       };
       dovecot.oauth = {
         enable = true;
       };
     };
 
+  services.rspamd.enable = mkForce false;
   systemd.services.rspamd-trainer.enable = mkForce false;
+  services.redis.servers.rspamd.enable = mkForce false;
 
   virtualisation.oci-containers.containers.phpLDAPadmin = {
     environment = {
