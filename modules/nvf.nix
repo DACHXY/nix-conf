@@ -43,6 +43,7 @@
       ];
 
       home.packages = with pkgs; [
+        ripgrep
         (rust-bin.stable.latest.default.override {
           extensions = [ "rust-src" ];
         })
