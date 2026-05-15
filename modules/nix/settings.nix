@@ -24,12 +24,22 @@
       extra-system-features = [ "recursive-nix" ];
     };
     flake.modules = {
-      generic.base.nix = {
-        inherit (config.nix) settings;
+      generic.base = args: {
+        nix.settings = config.nix.settings // {
+          trusted-users = [
+            "@wheels"
+            args.config.my.user.name
+          ];
+        };
       };
 
-      homeManager.base.nix = {
-        inherit (config.nix) settings;
+      homeManager.base = hmArgs: {
+        nix.settings = config.nix.settings // {
+          trusted-users = [
+            "@wheels"
+            hmArgs.osConfig.my.user.name
+          ];
+        };
       };
     };
   };
