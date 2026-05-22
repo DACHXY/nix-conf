@@ -325,6 +325,10 @@
               toggle-fullscreen = mkBindOption [
                 "F11"
               ];
+              maximize-to-window-edges = mkBindOption [
+                mod
+                "F11"
+              ];
 
               # ==== Scrolling ==== #
               move-workspace = {

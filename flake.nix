@@ -3,12 +3,14 @@
 
   nixConfig = {
     extra-substituters = [
+      "https://nix-community.cachix.org"
       "https://noctalia.cachix.org"
       "https://yazi.cachix.org"
     ];
     extra-trusted-public-keys = [
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       "yazi.cachix.org-1:Dcdz63NZKfvUCbDGngQDAZq6kOroIrFoyO064uvLh8k="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
     extra-experimental-features = [
       "pipe-operators"
@@ -129,6 +131,11 @@
 
     zjstatus = {
       url = "github:dj95/zjstatus";
+    };
+
+    niri-nfsm = {
+      url = "github:Lyndeno/nfsm/feat/maximize-window-to-edges";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 

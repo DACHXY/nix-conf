@@ -1,13 +1,22 @@
 { config, ... }:
 {
-  configurations.nixos.dn-workstation.module = {
-    imports = with config.flake.modules; [
-      nixos.pc
-      nixos.vpn
-      nixos.danny
-      nixos.nvf
-      nixos.secure-boot
-      generic.dnywe
-    ];
-  };
+  configurations.nixos.dn-workstation.module =
+    { ... }@nixosArgs:
+    {
+      imports = with config.flake.modules; [
+        nixos.pc
+        nixos.vpn
+        nixos.danny
+        nixos.nvf
+        nixos.secure-boot
+        nixos.gaming
+        nixos.virtualisation
+        generic.dnywe
+      ];
+
+      home-manager.users.${nixosArgs.config.my.user.name}.imports =
+        with config.flake.modules.homeManager; [
+          minecraft
+        ];
+    };
 }

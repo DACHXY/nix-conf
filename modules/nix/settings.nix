@@ -1,16 +1,19 @@
 { lib, config, ... }:
 {
-  options.nix.settings = {
-    keep-outputs = lib.mkOption { type = lib.types.bool; };
-    experimental-features = lib.mkOption {
-      type = lib.types.listOf lib.types.singleLineStr;
-      default = [ ];
+  options.nix.settings =
+    let
+      strListOption = lib.mkOption {
+        type = lib.types.listOf lib.types.singleLineStr;
+        default = [ ];
+      };
+    in
+    {
+      keep-outputs = lib.mkOption { type = lib.types.bool; };
+      experimental-features = strListOption;
+      extra-system-features = strListOption;
+      extra-substituters = strListOption;
+      extra-trusted-public-keys = strListOption;
     };
-    extra-system-features = lib.mkOption {
-      type = lib.types.listOf lib.types.singleLineStr;
-      default = [ ];
-    };
-  };
 
   config = {
     nix.settings = {

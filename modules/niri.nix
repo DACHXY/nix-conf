@@ -52,6 +52,7 @@
     in
     with config.lib.niri.actions;
     {
+      imports = [ inputs.niri-nfsm.homeModules.default ];
       home.packages = with pkgs; [
         nautilus # xdg-desktop-portal-gnome file picker
         rNiri
@@ -59,6 +60,10 @@
 
       xdg.portal = {
         extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
+      };
+
+      services.nfsm = {
+        enable = true;
       };
 
       programs.niri.package = niriPkgs.niri-unstable;
@@ -292,7 +297,10 @@
             "${bindCfg.center-window}".action = center-window;
             "${bindCfg.toggle-overview}".action = toggle-overview;
             "${bindCfg.close-window}".action = close-window;
-            "${bindCfg.toggle-fullscreen}".action = fullscreen-window;
+            "${bindCfg.toggle-fullscreen}".action =
+              if config.services.nfsm.enable then (spawn "nfsm-cli" "fullscreen") else fullscreen-window;
+            "${bindCfg.maximize-to-window-edges}".action =
+              if config.services.nfsm.enable then (spawn "nfsm-cli" "maximize") else maximize-to-window-edges;
             "Mod+Shift+slash".action = show-hotkey-overlay;
             "Mod+Ctrl+Shift+P".action = spawn "${getExe pkgs.python312}" "${niri_peekaboo}";
 
