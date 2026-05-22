@@ -48,7 +48,7 @@ creation_rules:
           - *skydrive_lap
           - *dn_pre7780
           - *dn_workstation
-  - path_regex: system/dev/public/sops/dn-secret.yaml
+  - path_regex: modules/users/danny/secret.yaml
     key_groups:
       - age:
           - *dn_pre7780
