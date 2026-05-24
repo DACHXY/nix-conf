@@ -1,4 +1,18 @@
 { inputs, ... }:
+let
+  commonAliases = {
+    ns = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history";
+    ls = "exa --icons";
+    lp = "exa"; # Pure output
+    cat = "bat";
+    g = "git";
+    t = "tmux";
+    podt = "podman-tui";
+
+    # Nixos
+    fullClean = "sudo nix store gc && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
+  };
+in
 {
   flake.modules.generic.base =
     { pkgs, lib, ... }:
@@ -26,18 +40,7 @@
           set -e __GLX_VENDOR_LIBRARY_NAME
           set -e __VK_LAYER_NV_optimus
         '';
-        shellAliases = {
-          ns = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history";
-          ls = "exa --icons";
-          lp = "exa"; # Pure output
-          cat = "bat";
-          g = "git";
-          t = "tmux";
-          podt = "podman-tui";
-
-          # Nixos
-          fullClean = "sudo nix store gc && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
-        };
+        shellAliases = commonAliases;
       };
     };
 
@@ -112,10 +115,13 @@
           hideTTY = ''sudo sh -c "echo 0 > /sys/class/graphics/fb0/blank"'';
           showTTY = ''sudo sh -c "echo 1 > /sys/class/graphics/fb0/blank"'';
         };
+      };
 
+      home-manager.users.${config.my.user.name} = {
         # Set fish as default shell but not login shell
-        bash = {
-          interactiveShellInit = ''
+        programs.bash = {
+          enable = true;
+          initExtra = ''
             if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
             then
               shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
