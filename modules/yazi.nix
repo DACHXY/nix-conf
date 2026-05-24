@@ -41,7 +41,6 @@
     in
     {
       home.packages = with pkgs; [
-        ueberzugpp
         pdfNormalize
         ripdrag
         rar
@@ -281,12 +280,16 @@
     };
 
   flake.modules.nixos.gui =
-    { config, ... }:
+    { config, pkgs, ... }:
     let
       setWallpaper = ''shell 'noctalia-ipc call wallpaper set "$0"  2>&1 >/dev/null' '';
     in
     {
       home-manager.users.${config.my.user.name} = {
+        home.packages = with pkgs; [
+          ueberzugpp
+        ];
+
         programs.yazi.settings.keymap.mgr.prepend_keymap = [
           # Set Wallpaper
           {

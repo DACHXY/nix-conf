@@ -34,6 +34,10 @@
     {
       environment.systemPackages = with pkgs; [
         podman-desktop
+        podman
+        podman-compose
+        dive
+        podman-tui
       ];
     };
 }

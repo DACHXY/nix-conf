@@ -46,7 +46,7 @@
     let
       hostname = config.networking.hostName;
       rebuild = pkgs.writeShellScriptBin "rebuild" ''
-        nh darwin switch . -H "${hostname}"
+        nh darwin switch . -H "${hostname}" --accept-flake-config $@
       '';
     in
     {
@@ -75,7 +75,7 @@
     let
       hostname = config.networking.hostName;
       rebuild = pkgs.writeShellScriptBin "rebuild" ''
-        nh os switch . -H "${hostname}"
+        nh os switch . -H "${hostname}" --accept-flake-config $@
       '';
     in
     {
