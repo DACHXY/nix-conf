@@ -54,8 +54,71 @@
           vim = {
             enableLuaLoader = true;
             vimAlias = true;
-            luaConfigPre = ''
+            luaConfigPre = /* lua */ ''
+              -- Yazi
               ${optionalString yaziOpenDir "vim.g.loaded_netrwPlugin = 1"}
+
+              -- Remote Copy when SSH Session
+              local function has(cmd)
+              return vim.fn.executable(cmd) == 1
+              end
+
+              local function is_ssh()
+                return vim.env.SSH_TTY ~= nil or vim.env.SSH_CONNECTION ~= nil
+              end
+
+              local function copy(lines, regtype)
+                local text = table.concat(lines, "\n")
+
+                -- 1. SSH → OSC52
+                if is_ssh() then
+                  require('vim.ui.clipboard.osc52').copy('+')(lines)
+                  return
+                end
+
+                -- 2. Wayland → wl-copy
+                if has("wl-copy") then
+                  vim.fn.system({"wl-copy"}, text)
+                  return
+                end
+
+                -- 3. macOS → pbcopy
+                if has("pbcopy") then
+                  vim.fn.system({"pbcopy"}, text)
+                  return
+                end
+
+                -- 4. fallback
+                vim.fn.setreg("+", lines)
+              end
+
+              local function paste()
+                if is_ssh() then
+                  return require('vim.ui.clipboard.osc52').paste('+')()
+                end
+
+                if has("wl-paste") then
+                  return vim.fn.systemlist({"wl-paste"})
+                end
+
+                if has("pbpaste") then
+                  return vim.fn.systemlist({"pbpaste"})
+                end
+
+                return vim.fn.getreg("+")
+              end
+
+              vim.g.clipboard = {
+                name = "smart-clipboard",
+                copy = {
+                  ["+"] = copy,
+                  ["*"] = copy,
+                },
+                paste = {
+                  ["+"] = paste,
+                  ["*"] = paste,
+                },
+              }
             '';
 
             treesitter.grammars = with pkgs.vimPlugins.nvim-treesitter-parsers; [
