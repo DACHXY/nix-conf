@@ -6,7 +6,7 @@
   # https://devenv.sh/packages/
   packages = [
     pkgs.git
-    pkgs.cmake
+    pkgs.nixfmt
   ];
 
   # https://devenv.sh/languages/
