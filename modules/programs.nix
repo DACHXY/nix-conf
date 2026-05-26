@@ -8,6 +8,7 @@ let
     g = "git";
     t = "tmux";
     podt = "podman-tui";
+    ds = "devenv shell";
 
     # Nixos
     fullClean = "sudo nix store gc && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
@@ -375,9 +376,9 @@ in
             git_status = {
               format = " ([$ahead_behind$staged$modified$untracked$renamed$deleted$conflicted$stashed]($style)) ";
               conflicted = "[◪◦](italic bright-magenta)";
-              ahead = "[▴│[''\${count}](bold white)│](italic green)";
-              behind = "[▿│[''\${count}](bold white)│](italic red)";
-              diverged = "[◇ ▴┤[''\${ahead_count}](regular white)│▿┤[''\${behind_count}](regular white)│](italic bright-magenta)";
+              ahead = "[▴│[\${count}](bold white)│](italic green)";
+              behind = "[▿│[\${count}](bold white)│](italic red)";
+              diverged = "[◇ ▴┤[\${ahead_count}](regular white)│▿┤[\${behind_count}](regular white)│](italic bright-magenta)";
               untracked = "[◌◦](italic bright-yellow)";
               stashed = "[◃◈](italic white)";
               modified = "[●◦](italic yellow)";
@@ -541,7 +542,7 @@ in
             };
             python = {
               symbol = " ";
-              format = " [''\${symbol}''\${pyenv_prefix}(''\${version})(\($virtualenv\))]($style)";
+              format = " [\${symbol}\${pyenv_prefix}(\${version})(\($virtualenv\))]($style)";
             };
             erlang = {
               symbol = "󰟔 ";

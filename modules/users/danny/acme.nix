@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.danny =
+  flake.modules.nixos.danny-acme =
     {
       config,
       lib,

@@ -7,6 +7,7 @@
         nixos.pc
         nixos.vpn
         nixos.danny
+        nixos.danny-acme
         nixos.nvf
         nixos.secure-boot
         nixos.gaming

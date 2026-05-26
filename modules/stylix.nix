@@ -1,3 +1,4 @@
+# check: https://tinted-theming.github.io/tinted-gallery/
 { inputs, ... }:
 {
   flake.modules.generic.base =
@@ -5,7 +6,7 @@
     {
       stylix = {
         enable = true;
-        base16Scheme = "${pkgs.base16-schemes}/share/themes/gruvbox-material-dark-medium.yaml";
+        base16Scheme = "${pkgs.base16-schemes}/share/themes/ashes.yaml";
         polarity = "dark";
         enableReleaseChecks = false;
       };
