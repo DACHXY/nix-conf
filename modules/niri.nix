@@ -92,7 +92,7 @@
               }
 
               popups {
-                opacity 0.5
+                opacity 0.9
                 geometry-corner-radius 15
 
                 background-effect {
@@ -227,7 +227,7 @@
         binds =
           let
             sh = spawn "sh" "-c";
-            spawnKeybinds = mapAttrs (name: value: {
+            spawnKeybinds = mapAttrs (_: value: {
               action = sh value;
             }) (wmCfg.keybinds.spawn-repeat // wmCfg.keybinds.spawn);
           in
