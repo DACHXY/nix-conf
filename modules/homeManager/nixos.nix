@@ -13,10 +13,6 @@
             {
               home.stateVersion = osConfig.system.stateVersion;
 
-              programs.nix-index = {
-                enable = true;
-                enableFishIntegration = true;
-              };
             }
           )
         ];

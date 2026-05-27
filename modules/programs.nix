@@ -22,6 +22,11 @@ in
       inherit (pkgs.stdenv.hostPlatform) system;
     in
     {
+      environment.variables = {
+        EDITOR = "nvim";
+        SHELL = "${lib.getExe pkgs.fish}";
+      };
+
       environment.systemPackages = with pkgs; [
         inputs.nix-search-tv.packages.${system}.default
         eza
