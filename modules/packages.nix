@@ -28,6 +28,10 @@
   flake.modules.nixos.gui =
     { config, ... }:
     {
+      # For localsend
+      networking.firewall.allowedTCPPorts = [ 53317 ];
+      networking.firewall.allowedUDPPorts = [ 53317 ];
+
       home-manager.users.${config.my.user.name} =
         { pkgs, ... }:
         {
@@ -39,6 +43,7 @@
             ffmpegthumbnailer
             libreoffice-qt
             papirus-folders
+            localsend
 
             wl-clipboard
           ];
