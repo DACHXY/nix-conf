@@ -6,7 +6,7 @@
       inherit (nixosArgs.config.my.user) name;
       noctalia-restart = pkgs.writeShellScriptBin "noctalia-restart" ''
         ${lib.getExe' pkgs.uutils-procps "pkill"} -f quickshell
-        nohup bash -c "QT_QPA_PLATFORMTHEME=gtk3 noctalia-shell" >/dev/null 2>&1 &
+        niri msg action spawn -- bash -c 'QT_QPA_PLATFORMTHEME=gtk3 noctalia-shell'
       '';
     in
     {
