@@ -5,6 +5,7 @@ keys:
   - &dn_cc age17a0gnvmy62hpcdxh8maq4w89qzjwn0utwgg5x0x3p4w7vsfxr52q9ylzw5
   - &dn_cscc age126emul3qu8ffp9w2a0a20n3f354l75h65wv5uu4q58y7msx9xucsjxvrj6
   - &dn_lap age17rjcght2y5p4ryr76ysnxpy2wff62sml7pyc5udcts48985j05vqpwdfq2
+  - &dn_notebook age15x658r8ueamt3svjtzya8307vt94lmr90emxng389r9xtjswu35s72gaye
   - &skydrive_lap age1ar5h06qv72pduau043r04kschwcq0x0lm33wqvxzdh9grmp3cq3sy0ngnz
 
 creation_rules:
@@ -57,6 +58,7 @@ creation_rules:
           - *dn_cc
           - *dn_workstation
           - *dn_cscc
+          - *dn_notebook 
   - path_regex: system/dev/public/sops/secret.yaml
     key_groups:
       - age:
@@ -66,3 +68,4 @@ creation_rules:
           - *dn_lap
           - *dn_workstation
           - *dn_cscc
+          - *dn_notebook 
