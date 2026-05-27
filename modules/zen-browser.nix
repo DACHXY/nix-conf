@@ -233,7 +233,7 @@
                 };
               }
             ];
-            keyboardShortcutsVersion = 18;
+            keyboardShortcutsVersion = 19;
 
             search.default = "google";
             search.force = true;

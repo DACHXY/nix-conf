@@ -1,19 +1,27 @@
 { inputs, config, ... }:
 {
-
   flake.modules.nixos.noctalia =
-    nixosArgs:
+    { pkgs, lib, ... }@nixosArgs:
     let
       inherit (nixosArgs.config.my.user) name;
+      noctalia-restart = pkgs.writeShellScriptBin "noctalia-restart" ''
+        ${lib.getExe' pkgs.uutils-procps "pkill"} -f quickshell
+        nohup bash -c "QT_QPA_PLATFORMTHEME=gtk3 noctalia-shell" >/dev/null 2>&1 &
+      '';
     in
     {
       imports = [
         config.flake.modules.nixos.niri
       ];
 
-      home-manager.users.${name}.imports = [
-        config.flake.modules.homeManager.noctalia
-      ];
+      home-manager.users.${name} = {
+        imports = [
+          config.flake.modules.homeManager.noctalia
+        ];
+        home.packages = [
+          noctalia-restart
+        ];
+      };
 
       services.power-profiles-daemon.enable = true;
       networking.networkmanager.enable = true;
@@ -950,7 +958,7 @@
             { command = [ "${startNoctalia}" ]; }
           ];
 
-          binds = mapAttrs (name: value: mkForce value) {
+          binds = mapAttrs (_: value: mkForce value) {
             # Core
             "${bindCfg.toggle-control-center}".action = noctalia "controlCenter" "toggle";
             "${bindCfg.toggle-launcher}".action = noctalia "launcher" "toggle";
