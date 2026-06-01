@@ -227,7 +227,6 @@
               showIconBackground = false;
               sortByMostUsed = true;
               terminalCommand = "${wmCfg.app.terminal.run}";
-              useApp2Unit = false;
               viewMode = "list";
             };
             audio = {
@@ -241,16 +240,16 @@
               volumeStep = 5;
             };
             bar = {
-              capsuleOpacity = mkForce 0;
-              backgroundOpacity = mkForce 0.25;
               autoHideDelay = 500;
               autoShowDelay = 150;
+              backgroundOpacity = mkForce 0.25;
               barType = "floating";
               capsuleColorKey = "none";
+              capsuleOpacity = mkForce 0;
               contentPadding = 2;
               density = "comfortable";
               displayMode = "always_visible";
-              floating = true;
+              enableExclusionZeonInset = true;
               fontScale = 1;
               frameRadius = 12;
               frameThickness = 8;
@@ -296,6 +295,7 @@
                     maxWidth = 145;
                     scrollingMode = "hover";
                     showIcon = true;
+                    showText = true;
                     textColor = "none";
                     useFixedWidth = false;
                   }
@@ -303,10 +303,11 @@
                 left = [
                   {
                     colorizeSystemIcon = "none";
-                    enableColorization = false;
+                    colorizeSystemText = "none";
                     generalTooltipText = "";
                     hideMode = "alwaysExpanded";
                     icon = "rocket";
+                    iconPosition = "left";
                     id = "CustomButton";
                     ipcIdentifier = "";
                     leftClickExec = "noctalia-shell ipc call launcher toggle";
@@ -748,7 +749,7 @@
               nightTemp = "5500";
             };
             notifications = {
-              backgroundOpacity = mkForce 1.00;
+              backgroundOpacity = mkForce 0.65;
               clearDismissed = true;
               criticalUrgencyDuration = 15;
               density = "default";
@@ -791,7 +792,7 @@
               monitors = [ ];
               overlayLayer = true;
             };
-            settingsVersion = 57;
+            settingsVersion = 59;
             sessionMenu = {
               countdownDuration = 3000;
               enableCountdown = true;
@@ -877,6 +878,7 @@
               settingsPanelMode = "attached";
               settingsPanelSideBarCardStyle = false;
               tooltipsEnabled = true;
+              translucentWidgets = false;
             };
             wallpaper = {
               automationEnabled = false;
@@ -899,9 +901,16 @@
               sortOrder = "name";
               transitionDuration = 1500;
               transitionEdgeSmoothness = 0.05;
-              transitionType = "random";
+              transitionType = [
+                "fade"
+                "disc"
+                "stripes"
+                "wipe"
+                "honeycomb"
+              ];
               useSolidColor = false;
               useWallhaven = false;
+              useOriginalImages = false;
               viewMode = "single";
               wallhavenApiKey = "";
               wallhavenCategories = "111";
@@ -930,17 +939,16 @@
             };
             idle = {
               customCommands = "[]";
-              enabled = false;
               fadeDuration = 5;
               lockCommand = "";
-              lockTimeout = 660;
+              lockTimeout = 1260;
               resumeLockCommand = "";
               resumeScreenOffCommand = "";
               resumeSuspendCommand = "";
               screenOffCommand = "";
-              screenOffTimeout = 600;
+              screenOffTimeout = 1200;
               suspendCommand = "";
-              suspendTimeout = 1800;
+              suspendTimeout = 0;
             };
           };
         };

@@ -4,22 +4,28 @@
       myDomain = "dnywe.com";
     in
     {
+      domain = myDomain;
       services = {
         netbird = rec {
-          domain = "netbird.${myDomain}";
-          endpoint = "https://${domain}";
+          hostname = "netbird.${myDomain}";
+          endpoint = "https://${hostname}";
         };
         nextcloud = rec {
-          domain = "nextcloud.${myDomain}";
-          endpoint = "https://${domain}";
+          hostname = "nextcloud.${myDomain}";
+          endpoint = "https://${hostname}";
         };
         forgejo = rec {
-          domain = "git.${myDomain}";
-          endpoint = "https://${domain}";
+          hostname = "git.${myDomain}";
+          endpoint = "https://${hostname}";
+          sshEndpoint = "ssh://${hostname}";
+        };
+        actual = rec {
+          hostname = "actual.${myDomain}";
+          endpoint = "https://${hostname}";
         };
         oidc = rec {
-          domain = "login.${myDomain}";
-          endpoint = "https://${domain}";
+          hostname = "login.${myDomain}";
+          endpoint = "https://${hostname}";
           realm = "master";
           oidcConfigEndpoint = "${endpoint}/realms/${realm}/.well-known/openid-configuration";
         };
