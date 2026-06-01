@@ -9,7 +9,7 @@ keys:
   - &skydrive_lap age1ar5h06qv72pduau043r04kschwcq0x0lm33wqvxzdh9grmp3cq3sy0ngnz
 
 creation_rules:
-  - path_regex: system/dev/dn-server/sops/secret.yaml
+  - path_regex: modules/hosts/dn-server/secret.yaml
     key_groups:
       - age:
           - *dn_lap

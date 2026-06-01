@@ -1,17 +1,17 @@
 {
   nixpkgs.overlays = [
-    (final: prev: {
+    (final: _: {
       proton-dw-bin =
         let
           steamDisplayName = "Proton DW";
         in
         final.pkgs.stdenv.mkDerivation (finalAttrs: rec {
           pname = "dwproton";
-          version = "10.0-16";
+          version = "11.0-3";
 
           src = final.pkgs.fetchzip {
             url = "https://dawn.wine/dawn-winery/dwproton/releases/download/${pname}-${finalAttrs.version}/${pname}-${finalAttrs.version}-x86_64.tar.xz";
-            hash = "sha256-9wDhtrB5IjFVZxyorAJUaivRwE85pzQ6/eDgHXCSEh8=";
+            hash = "sha256-e/YzKvwe30KveLHRUsntKDwzdEbr7a3Wfkqe/pu93WE=";
           };
 
           dontUnpack = true;

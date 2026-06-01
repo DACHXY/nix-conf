@@ -5,7 +5,6 @@
     {
       home-manager.users.${nixosArgs.config.my.user.name} =
         { lib, pkgs, ... }@hmArgs:
-
         let
           inherit (lib)
             getExe'
@@ -57,6 +56,8 @@
                 ];
               };
             startServices = true;
+
+            tmpfiles.rules = [ "d ${source} 0750 - - -" ];
           };
         in
         {

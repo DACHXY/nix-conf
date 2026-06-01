@@ -46,7 +46,7 @@
 
       securityModule = "${
         fetchGit {
-          url = "ssh://${config.flake.public.config.services.forgejo.domain}/dachxy/nix-server-security.git";
+          url = "${config.flake.public.config.services.forgejo.sshEndpoint}/dachxy/nix-server-security.git";
           rev = "14647680587e1421a1f51354f26d12704a32009d";
           ref = "main";
         }
@@ -65,7 +65,7 @@
           };
           services = mkOption {
             type = with types; attrsOf serviceRuleType;
-            apply = v: mapAttrs (name: value: if value.useDefault then value // cfg.rule.default else value) v;
+            apply = v: mapAttrs (_: value: if value.useDefault then value // cfg.rule.default else value) v;
           };
         };
 

@@ -42,14 +42,17 @@
     {
       home.packages = with pkgs; [
         pdfNormalize
-        ripdrag
         rar
         gzip
+        mediainfo
+        exiftool
       ];
 
       programs.yazi = {
         enable = true;
-        package = inputs.yazi.packages.${system}.default;
+        package = inputs.yazi.packages.${system}.default.override {
+          _7zz = pkgs._7zz-rar;
+        };
         shellWrapperName = "y";
         enableFishIntegration = true;
 
@@ -70,13 +73,9 @@
           opener = {
             edit = [
               {
-                run = ''''${EDITOR:=nvim} "$1"'';
-                desc = "$EDITOR";
+                run = ''nvim "$1"'';
+                desc = "neovim";
                 block = true;
-              }
-              {
-                run = ''code "$0"'';
-                orphan = true;
               }
             ];
 
@@ -246,7 +245,7 @@
     in
     {
       home-manager.users.${config.my.user.name} = {
-        programs.yazi.settings.keymap.mgr.prepend_keymap = [
+        programs.yazi.keymap.mgr.prepend_keymap = [
           # Set Wallpaper
           {
             on = [
@@ -288,9 +287,10 @@
       home-manager.users.${config.my.user.name} = {
         home.packages = with pkgs; [
           ueberzugpp
+          ripdrag
         ];
 
-        programs.yazi.settings.keymap.mgr.prepend_keymap = [
+        programs.yazi.keymap.mgr.prepend_keymap = [
           # Set Wallpaper
           {
             on = [
