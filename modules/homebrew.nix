@@ -24,6 +24,7 @@
       masApps = {
         "RunCat" = 1429033973;
         "HiddenBar" = 1452453066;
+        "CleanMyKeyboard" = 6468120888;
       };
     };
   };
