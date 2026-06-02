@@ -52,10 +52,12 @@
 
     ghostty = {
       url = "github:ghostty-org/ghostty";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     yazi = {
       url = "github:sxyazi/yazi";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     lanzaboote = {
@@ -131,10 +133,11 @@
 
     zjstatus = {
       url = "github:dj95/zjstatus";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     niri-nfsm = {
-      url = "github:Lyndeno/nfsm/feat/maximize-window-to-edges";
+      url = "github:gvolpe/nfsm";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
