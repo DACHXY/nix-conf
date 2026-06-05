@@ -4,6 +4,7 @@
     {
       config,
       pkgs,
+      lib,
       ...
     }:
     {
@@ -31,17 +32,16 @@
       ];
 
       hardware = {
-        nvidia.open = true;
+        nvidia.open = lib.mkDefault true;
 
         # For wayland
         nvidia.modesetting.enable = true;
 
-        nvidia.powerManagement.enable = true;
-        nvidia.powerManagement.finegrained = true;
+        nvidia.powerManagement.enable = lib.mkDefault true;
 
         nvidia.nvidiaSettings = true;
-        nvidia.dynamicBoost.enable = true;
-        nvidia.package = config.boot.kernelPackages.nvidiaPackages.latest;
+        nvidia.dynamicBoost.enable = lib.mkDefault true;
+        nvidia.package = lib.mkDefault config.boot.kernelPackages.nvidiaPackages.latest;
 
         graphics = {
           enable = true;
