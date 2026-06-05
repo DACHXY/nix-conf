@@ -72,10 +72,15 @@
             url = "https://ntfy.dnywe.com";
             position = 200;
           };
+          "mattermost" = {
+            id = "b3c3a986-a4b4-4dbd-9a66-0e22e804fca7";
+            url = "https://mattermost.it.cs.nycu.edu.tw";
+            position = 210;
+          };
           "teams" = {
             id = "1b43051f-d873-4854-a99a-fdec88a5240f";
             url = "https://teams.cloud.microsoft";
-            position = 210;
+            position = 220;
           };
         };
         pinsForce = mkForce true;

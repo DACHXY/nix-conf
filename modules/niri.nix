@@ -195,6 +195,7 @@
               { app-id = "^(com.mitchellh.ghostty)$"; }
               { app-id = "^(zen-twilight)$"; }
               { app-id = "^(Vmware)$"; }
+              { app-id = "^(mpv)$"; }
             ];
             opacity = 1.0;
           }
