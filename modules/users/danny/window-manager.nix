@@ -3,7 +3,7 @@
     { config, ... }:
     {
       home-manager.users.${config.my.user.name} =
-        { pkgs, ... }:
+        { config, ... }:
         {
           # ==== Niri ==== #
           programs.niri.settings = {
@@ -63,39 +63,10 @@
             ];
           };
 
-          # ==== Noctalia === #
-          programs.noctalia-shell = {
-            pluginSettings = {
-              custom-commands =
-                let
-                  toggleVPNScript = pkgs.writeShellScript "toggle-vpn" ''
-                    VPN_NAME="$*"
-
-                    if nmcli -t -f NAME connection show --active | grep -Fxq "$VPN_NAME"; then
-                      nmcli connection down "$VPN_NAME"
-                      notify-send "$VPN_NAME" "$VPN_NAME has been deactivated."
-                    else
-                      nmcli connection up "$VPN_NAME"
-                      notify-send "$VPN_NAME" "$VPN_NAME has been actived."
-                    fi
-                  '';
-                  toggleVPN = vpnName: "${toggleVPNScript} \"${vpnName}\"";
-                in
-                {
-                  commands = [
-                    rec {
-                      name = "CSIT VPN";
-                      command = toggleVPN name;
-                      icon = "shield";
-                    }
-                    rec {
-                      name = "CSIT VPN (test)";
-                      command = toggleVPN name;
-                      icon = "shield-code";
-                    }
-                  ];
-                };
-            };
+          # ==== Noctalia Secrets === #
+          sops.secrets."noctalia" = {
+            sopsFile = ./secret.yaml;
+            path = "${config.home.homeDirectory}/.local/state/noctalia/state.toml";
           };
         };
     };
