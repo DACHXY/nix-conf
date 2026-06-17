@@ -78,7 +78,7 @@
             };
 
             layer-rule {
-              match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
+              match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
               background-effect {
                 blur true
                 xray false
@@ -166,7 +166,7 @@
         layer-rules = [
           {
             matches = [
-              { namespace = "^noctalia-overview*"; }
+              { namespace = "^noctalia-backdrop"; }
             ];
             place-within-backdrop = true;
           }
@@ -207,6 +207,15 @@
               { app-id = "^(org.gnome.Loupe)$"; }
             ];
             open-floating = true;
+          }
+          # Noctalia
+          {
+            matches = [
+              { app-id = "dev.noctalia.Noctalia.Settings"; }
+            ];
+            open-floating = true;
+            default-column-width.fixed = 1080;
+            default-window-height.fixed = 920;
           }
         ];
 

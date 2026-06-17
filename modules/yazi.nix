@@ -281,7 +281,7 @@
   flake.modules.nixos.gui =
     { config, pkgs, ... }:
     let
-      setWallpaper = ''shell 'noctalia-ipc call wallpaper set "$0"  2>&1 >/dev/null' '';
+      setWallpaper = ''shell 'noctalia msg wallpaper-set "$0"  2>&1 >/dev/null' '';
     in
     {
       home-manager.users.${config.my.user.name} = {

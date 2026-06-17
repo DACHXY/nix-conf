@@ -480,6 +480,12 @@
                 "C"
               ];
 
+              windows-switcher = mkBindOption [
+                mod
+                "CTRL"
+                "S"
+              ];
+
               media = {
                 prev = mkBindOption [
                   mod
