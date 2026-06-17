@@ -6,6 +6,8 @@
       nixos.vpn
       nixos.danny
       nixos.nvf
+      nixos.gaming
+      nixos.virtualisation
       generic.dnywe
     ];
   };

@@ -2,7 +2,7 @@
   configurations.nixos.dn-workstation.module = {
     boot.supportedFilesystems = [ "ntfs" ];
     fileSystems."/mnt/windows" = {
-      device = "/dev/nvme2n1p2";
+      device = "/dev/disk/by-uuid/D24249084248F2B1";
       fsType = "ntfs-3g";
       options = [
         "rw"

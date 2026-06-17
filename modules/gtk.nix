@@ -31,13 +31,11 @@
               extraConfig = {
                 gtk-application-prefer-dark-theme = true;
               };
-              theme = null;
             };
           };
 
           home.packages = with pkgs; [
             gsettings-desktop-schemas
-            glib
           ];
         };
     };

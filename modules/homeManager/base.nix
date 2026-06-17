@@ -18,7 +18,5 @@
       };
       programs.home-manager.enable = true;
       programs.man.generateCaches = false;
-
-      gtk.gtk4.theme = null;
     };
 }
