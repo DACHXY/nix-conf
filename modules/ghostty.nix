@@ -7,6 +7,7 @@
         programs.ghostty.settings = {
           window-decoration = true;
           background-blur = true;
+          background-opacity = 0.7;
           font-size = 17;
         };
       };

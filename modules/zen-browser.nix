@@ -23,6 +23,7 @@
       programs.zen-browser = {
         enable = true;
         package = inputs.zen-browser.packages.${system}.twilight;
+
         languagePacks = [
           "en-US"
           "zh-Tw"
@@ -45,14 +46,21 @@
             Cryptomining = true;
             Fingerprinting = true;
           };
+          SanitizeOnShutdown = {
+            FormData = true;
+            Cache = true;
+          };
 
           Preferences = {
             "browser.aboutConfig.showWarning" = false;
+            "media.videocontrols.picture-in-picture.video-toggle.enabled" = true;
             "browser.shell.checkDefaultBrowser" = false;
             "browser.shell.didSkipDefaultBrowserCheckOnFirstRun" = true;
             "browser.tabs.allow_transparent_browser" = true;
             "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
             "font.language.group" = "zh-TW";
+            "network.http.http3.enabled" = true;
+            "network.socket.ip_addr_any.disabled" = true; # disallow bind to 0.0.0.0
             "sidebar.expandOnHover" = false;
           }
           // (optionalAttrs (!isDarwin) {
@@ -239,6 +247,7 @@
             search.force = true;
             search.privateDefault = "ddg";
             settings = {
+              "zen.workspaces.continue-where-left-off" = true;
               "zen.view.compact.should-enable-at-startup" = true;
               "zen.widget.linux.transparency" = true;
               "zen.view.compact.show-sidebar-and-toolbar-on-hover" = false;

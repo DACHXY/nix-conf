@@ -2,6 +2,7 @@
   flake.modules.darwin.gui = {
     homebrew = {
       enable = true;
+      enableFishIntegration = true;
       onActivation = {
         autoUpdate = false;
         cleanup = "uninstall";
@@ -9,21 +10,12 @@
       };
 
       casks = [
-        "raycast"
-        "mattermost"
-        "boring-notch"
+        "TheBoredTeam/boring-notch/boring-notch"
         "domzilla-caffeine"
         "wallspace"
-        "utm"
-      ];
-
-      taps = [
-        "theboredteam/boring-notch"
       ];
 
       masApps = {
-        "RunCat" = 1429033973;
-        "HiddenBar" = 1452453066;
         "CleanMyKeyboard" = 6468120888;
       };
     };
