@@ -7,10 +7,11 @@
     };
 
   flake.modules.darwin.base =
-    { config, ... }:
+    { config, pkgs, ... }:
     {
       users.users.${config.my.user.name} = {
         home = "/Users/${config.my.user.name}";
+        shell = pkgs.zsh;
       };
     };
 
