@@ -2,6 +2,20 @@
   flake.modules.nixos.danny =
     { config, ... }:
     {
+      # Allowing activate VPN in SSH
+      security.polkit.extraConfig = ''
+        polkit.addRule(function (action, subject) {
+          if (
+            subject.isInGroup("wheel") &&
+            [
+              "org.freedesktop.NetworkManager.network-control",
+            ].indexOf(action.id) !== -1
+          ) {
+            return polkit.Result.YES;
+          }
+        });
+      '';
+
       sops.secrets."networkmanager" = {
         sopsFile = ./secret.yaml;
       };

@@ -1,3 +1,7 @@
+{ config, ... }:
+let
+  globalConfig = config;
+in
 {
   flake.modules.nixos.danny =
     { config, ... }:
@@ -67,6 +71,26 @@
           sops.secrets."noctalia" = {
             sopsFile = ./secret.yaml;
             path = "${config.home.homeDirectory}/.local/state/noctalia/state.toml";
+          };
+
+          programs.noctalia.settings = {
+            calendar.account = {
+              danny_nextcloud = {
+                name = "Nextcloud";
+                provider = "custom";
+                server_url = "${globalConfig.flake.public.config.services.nextcloud.endpoint}/remote.php/dav";
+                type = "caldav";
+                username = "dachxy";
+              };
+
+              personal_icloud = {
+                color = "primary";
+                name = "iCloud";
+                provider = "icloud";
+                type = "caldav";
+                username = "Danny01161013@gmail.com";
+              };
+            };
           };
         };
     };

@@ -1,4 +1,9 @@
-{ inputs, config, ... }:
+{
+  inputs,
+  config,
+  self,
+  ...
+}:
 {
   flake.modules.nixos.noctalia =
     { pkgs, ... }@nixosArgs:
@@ -41,6 +46,7 @@
       pkgs,
       lib,
       config,
+      osConfig,
       ...
     }:
     let
@@ -48,28 +54,27 @@
         mapAttrs
         mkForce
         ;
+      inherit (self.lib) capitalize;
+      inherit (osConfig.my.user) name;
 
       wmCfg = config.wm;
       bindCfg = wmCfg.keybinds;
       mod = wmCfg.keybinds.mod;
       sep = wmCfg.keybinds.separator;
 
-      noctalia-settings = pkgs.writeShellScriptBin "noctalia-settings" ''
-        PATH="$PATH:${pkgs.jq}/bin:${pkgs.nixfmt}/bin"
-        tmp=$(mktemp)
+      netbirdAlias = pkgs.writeShellApplication {
+        name = "netbird";
+        text = ''
+          netbird-wt0 "$@"
+        '';
+      };
 
-        noctalia ipc call state all | jq -S .settings > "$tmp"
-
-        nix eval --impure --expr \
-        "(builtins.fromJSON (builtins.readFile \"$tmp\"))$1" \
-        | nixfmt
-
-        rm "$tmp"
-      '';
-
-      netbirdAlias = pkgs.writeShellScriptBin "netbird" ''
-        netbird-wt0 $@
-      '';
+      noctaliaSettings = pkgs.writeShellApplication {
+        name = "noctalia-settings";
+        text = ''
+          nix run github:erooke/toml2nix <(noctalia config export merged)
+        '';
+      };
     in
     {
       imports = [
@@ -80,12 +85,9 @@
       home.packages = with pkgs; [
         # Alias netbird-wt0 to netbird
         netbirdAlias
+        noctaliaSettings
 
-        noctalia-settings
-
-        # Output noctalia settings in nix format
-        pkgs.gpu-screen-recorder
-
+        gpu-screen-recorder
         pwvucontrol
         playerctl
         satty
@@ -100,10 +102,12 @@
         package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
         systemd.enable = true;
         settings = {
+          backdrop.enabled = true;
           bar.default = {
             background_opacity = 0.5;
             capsule = true;
             capsule_padding = 8.0;
+            capsule_opacity = 0.4;
             center = [ "active_window" ];
             end = [
               "tray"
@@ -113,6 +117,7 @@
               "network"
               "bluetooth"
               "volume"
+              "cpu"
               "brightness"
               "battery"
               "notifications"
@@ -135,24 +140,6 @@
           calendar = {
             enabled = true;
             refresh_minutes = 5;
-
-            account = {
-              danny_nextcloud = {
-                name = "Nextcloud";
-                provider = "custom";
-                server_url = "https://nextcloud.dnywe.com/remote.php/dav";
-                type = "caldav";
-                username = "dachxy";
-              };
-
-              personal_icloud = {
-                color = "primary";
-                name = "iCloud";
-                provider = "icloud";
-                type = "caldav";
-                username = "Danny01161013@gmail.com";
-              };
-            };
           };
 
           desktop_widgets = {
@@ -226,9 +213,13 @@
             enabled = true;
             schema_version = 2;
             widget_order = [
+              "lockscreen-login-box@eDP-2"
               "lockscreen-login-box@DP-5"
               "lockscreen-widget-0000000000000001"
               "lockscreen-widget-0000000000000002"
+              "lockscreen-widget-0000000000000003"
+              "lockscreen-widget-0000000000000004"
+              "lockscreen-widget-0000000000000005"
             ];
 
             grid = {
@@ -239,14 +230,13 @@
 
             widget = {
               "lockscreen-login-box@DP-5" = {
-                box_height = 0.0;
-                box_width = 0.0;
+                box_height = 80.0;
+                box_width = 512.0;
                 cx = 1280.0;
-                cy = 1319.0;
+                cy = 1272.0;
                 output = "DP-5";
                 rotation = 0.0;
                 type = "login_box";
-
                 settings = {
                   background_color = "surface_variant";
                   background_opacity = 0.88;
@@ -256,37 +246,101 @@
                   show_login_button = true;
                 };
               };
-
-              "lockscreen-widget-0000000000000001" = {
-                box_height = 112.0;
-                box_width = 240.0;
-                cx = 1712.0;
-                cy = 1176.0;
+              "lockscreen-login-box@eDP-2" = {
+                box_height = 70.0;
+                box_width = 400.0;
+                cx = 1024.0;
+                cy = 1157.0;
+                output = "eDP-2";
+                rotation = 0.0;
+                type = "login_box";
+                settings = {
+                  background_color = "surface_variant";
+                  background_opacity = 0.88;
+                  background_radius = 12.0;
+                  input_opacity = 1.0;
+                  input_radius = 6.0;
+                  show_login_button = true;
+                };
+              };
+              lockscreen-widget-0000000000000001 = {
+                box_height = 224.0;
+                box_width = 288.0;
+                cx = 192.0;
+                cy = 1280.0;
                 output = "DP-5";
                 rotation = 0.0;
                 type = "weather";
-
                 settings = {
                   background = false;
-                  forecast_days = 2;
+                  forecast_days = 4;
+                  shadow = false;
                   show_forecast = true;
                 };
               };
-
-              "lockscreen-widget-0000000000000002" = {
-                box_height = 160.0;
-                box_width = 432.0;
+              lockscreen-widget-0000000000000002 = {
+                box_height = 208.0;
+                box_width = 512.0;
                 cx = 1280.0;
-                cy = 1104.0;
+                cy = 968.0;
                 output = "DP-5";
                 rotation = 0.0;
                 type = "media_player";
-
                 settings = {
                   background = false;
-                  color = "primary";
+                  color = "on_surface";
                   hide_when_no_media = true;
                   layout = "horizontal";
+                  shadow = false;
+                };
+              };
+              lockscreen-widget-0000000000000003 = {
+                box_height = 240.0;
+                box_width = 448.0;
+                cx = 1280.0;
+                cy = 360.0;
+                output = "DP-5";
+                rotation = 0.0;
+                type = "clock";
+                settings = {
+                  background = false;
+                  center_text = true;
+                  clock_style = "digital";
+                  font_family = "";
+                  shadow = false;
+                };
+              };
+              lockscreen-widget-0000000000000004 = {
+                box_height = 96.0;
+                box_width = 656.0;
+                cx = 1280.0;
+                cy = 1136.0;
+                output = "DP-5";
+                rotation = 0.0;
+                type = "audio_visualizer";
+                settings = {
+                  background = false;
+                  bands = 32;
+                  color_1 = "on_surface";
+                  color_2 = "primary";
+                  show_when_idle = false;
+                };
+              };
+              lockscreen-widget-0000000000000005 = {
+                box_height = 32.0;
+                box_width = 256.0;
+                cx = 1280.0;
+                cy = 448.0;
+                output = "DP-5";
+                rotation = 0.0;
+                type = "label";
+                settings = {
+                  background = false;
+                  color = "on_surface";
+                  description = "";
+                  opacity = 0.85;
+                  shadow = false;
+                  title = " Welcome Back, ${capitalize name}! ";
                 };
               };
             };
@@ -299,13 +353,17 @@
 
           notification = {
             background_opacity = 0.55;
-            position = "top_left";
+            position = "top_right";
           };
 
           osd = {
             background_opacity = 0.55;
-            orientation = "vertical";
-            position = "center_right";
+            orientation = "horizontal";
+            position = "top_center";
+            position_vertical = "center_right";
+            kinds = {
+              media = false;
+            };
           };
 
           plugin_settings."noctalia/screen_recorder" = {
@@ -329,12 +387,14 @@
             polkit_agent = true;
             screen_time_enabled = true;
             settings_show_advanced = true;
+            time_format = "{:%-I:%M %p}";
 
             panel = {
               borders = false;
               launcher_categories = false;
               open_near_click_session = true;
               open_near_click_wallpaper = true;
+              open_near_click_control_center = true;
               transparency_mode = "glass";
             };
 
@@ -363,30 +423,30 @@
             transition_on_startup = true;
           };
 
-          widget.battery = {
-            display_mode = "graphic";
-            hide_when_full = true;
-          };
-
-          widget.launcher = {
-            glyph = "rocket";
-          };
-
-          widget.media = {
-            hide_when_no_media = true;
-            title_scroll = "on_hover";
-          };
-
-          widget.network = {
-            show_label = false;
-          };
-
-          widget.recorder = {
-            type = "noctalia/screen_recorder:recorder";
-          };
-
-          widget.tray = {
-            hidden = [ "Blueman" ];
+          widget = {
+            battery = {
+              display_mode = "graphic";
+              hide_when_full = true;
+            };
+            clock = {
+              format = "{:%-I:%M %p}";
+            };
+            launcher = {
+              glyph = "rocket";
+            };
+            media = {
+              hide_when_no_media = true;
+              title_scroll = "on_hover";
+            };
+            network = {
+              show_label = false;
+            };
+            recorder = {
+              type = "noctalia/screen_recorder:recorder";
+            };
+            tray = {
+              hidden = [ "Blueman" ];
+            };
           };
         };
       };
@@ -407,7 +467,7 @@
 
             # Utilities
             "${bindCfg.clipboard-history}".action = panelToggle "clipboard";
-            "${bindCfg.emoji}".action = noctalia "launcher" "/emo ";
+            "${bindCfg.emoji}".action = panelToggle "launcher" "/emo ";
             "${bindCfg.screen-recorder}".action = noctalia "screenRecorder" "toggle";
             "${bindCfg.notification-center}".action = panelToggle "control-center" "notifications";
             "${bindCfg.toggle-dont-disturb}".action = noctalia "notification-dnd-toggle";
