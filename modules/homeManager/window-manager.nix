@@ -483,7 +483,7 @@
               windows-switcher = mkBindOption [
                 mod
                 "CTRL"
-                "S"
+                "SPACE"
               ];
 
               media = {

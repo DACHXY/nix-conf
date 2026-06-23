@@ -12,6 +12,7 @@
         nixos.secure-boot
         nixos.gaming
         nixos.virtualisation
+        # nixos.proxy-server
         generic.dnywe
       ];
 

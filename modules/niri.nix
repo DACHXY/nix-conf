@@ -66,6 +66,12 @@
         enable = true;
       };
 
+      systemd.user.services.fcitx5-daemon = {
+        Unit = {
+          PartOf = [ "niri.service" ];
+        };
+      };
+
       programs.niri.package = niriPkgs.niri-unstable;
       programs.niri.settings = {
         includes = lib.mkAfter [
@@ -196,6 +202,7 @@
               { app-id = "^(zen-twilight)$"; }
               { app-id = "^(Vmware)$"; }
               { app-id = "^(mpv)$"; }
+              { app-id = "^\.virt-manager-wrapped$"; }
             ];
             opacity = 1.0;
           }
