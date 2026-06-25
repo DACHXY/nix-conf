@@ -82,11 +82,9 @@
       stylix.targets = {
         zen-browser.enable = false;
         nvf = {
-          enable = true;
           transparentBackground = true;
         };
         helix = {
-          enable = true;
           transparent = mkForce true;
         };
         starship.enable = false;

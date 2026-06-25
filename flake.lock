@@ -551,6 +551,23 @@
         "type": "github"
       }
     },
+    "luajit-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1763177035,
+        "narHash": "sha256-oYD86MqmlJpiCuEs4LwVtxvarPtz1RPWm8nJqNE0sBs=",
+        "owner": "SteamClientHomebrew",
+        "repo": "LuaJIT",
+        "rev": "89550023569c3e195e75e12951c067fe5591e0d2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SteamClientHomebrew",
+        "ref": "v2.1",
+        "repo": "LuaJIT",
+        "type": "github"
+      }
+    },
     "mail-server": {
       "inputs": {
         "nixpkgs": [
@@ -589,6 +606,7 @@
     },
     "millennium": {
       "inputs": {
+        "luajit-src": "luajit-src",
         "millennium-src": "millennium-src",
         "nixpkgs": [
           "nixpkgs"
@@ -596,16 +614,17 @@
       },
       "locked": {
         "dir": "packages/nix",
-        "lastModified": 1782174433,
-        "narHash": "sha256-9de8yziVrd/BPTXSlVqm8nMTdyS2XViaP7oaTy/IfZ0=",
+        "lastModified": 1781116736,
+        "narHash": "sha256-TSdUSFpCQ4gVBF1J/gQM4S4av1WH3Ijtn8b88gi1xlA=",
         "owner": "SteamClientHomebrew",
         "repo": "Millennium",
-        "rev": "6ca76735b93d622d10483491b9365b722743d670",
+        "rev": "e453aa6e60701497c3bb62a68c5e207915068b90",
         "type": "github"
       },
       "original": {
         "dir": "packages/nix",
         "owner": "SteamClientHomebrew",
+        "ref": "v3.3.0-beta.1",
         "repo": "Millennium",
         "type": "github"
       }
@@ -613,17 +632,17 @@
     "millennium-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1782174310,
-        "narHash": "sha256-vWlT4KGaNvam5Mhcg1WsJOg62h9I5B/npNGs8I2uvQA=",
+        "lastModified": 1780800522,
+        "narHash": "sha256-Na2+zomNGTF2MPoX5Wm72MMi3dl+CQRtfFQHH0AT5JU=",
         "owner": "SteamClientHomebrew",
         "repo": "Millennium",
-        "rev": "948d3bb57f811d4bd9a1f43963defe73253a05bf",
+        "rev": "bd79fe7a94aad1e840d8cae54d6b5233d80268a8",
         "type": "github"
       },
       "original": {
         "owner": "SteamClientHomebrew",
         "repo": "Millennium",
-        "rev": "948d3bb57f811d4bd9a1f43963defe73253a05bf",
+        "rev": "bd79fe7a94aad1e840d8cae54d6b5233d80268a8",
         "type": "github"
       }
     },
@@ -946,11 +965,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782200185,
-        "narHash": "sha256-B61SzYP0om+lkqFTztYjxg7dFr+uz5Vgmb/mmxteAOY=",
+        "lastModified": 1782201665,
+        "narHash": "sha256-M2t5C3MZ1AoEQlc4wdj/p5rcjx6iABAER60X7wN/jJc=",
         "owner": "noctalia-dev",
         "repo": "noctalia-shell",
-        "rev": "891ca9a0e38f449e782f2c8250a43324d6a8f987",
+        "rev": "77072bacf4d41d0adf9c19e080a0dc1e2266b31e",
         "type": "github"
       },
       "original": {
@@ -1590,11 +1609,11 @@
         "rust-overlay": "rust-overlay_4"
       },
       "locked": {
-        "lastModified": 1782200838,
-        "narHash": "sha256-zseJL99Z9pHzErLiQx83CG7p4xQRBUCNnZLaAwgQGBs=",
+        "lastModified": 1782201229,
+        "narHash": "sha256-l6VXsuGCLYkA3NeR7z30GgiqSVVtvMIQn1mU6PpnTKU=",
         "owner": "dj95",
         "repo": "zjstatus",
-        "rev": "c1fc052ee9d50d8bb452fef94d6c8b615b70c1dd",
+        "rev": "d45287a415b4a644e03226903ac89c51af149de0",
         "type": "github"
       },
       "original": {

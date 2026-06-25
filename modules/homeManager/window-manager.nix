@@ -93,7 +93,7 @@
                 # Hint dark theme
                 dconf write /org/gnome/desktop/interface/color-scheme '"prefer-dark"' &
 
-                systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORMTHEME &
+                systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP QT_QPA_PLATFORMTHEME XDG_DATA_DIRS &
               '';
               apply = v: if v != null then pkgs.writeShellScript "exec-once" v else null;
             };
