@@ -138,7 +138,7 @@
     };
 
     millennium = {
-      url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
+      url = "github:SteamClientHomebrew/Millennium/v3.3.0-beta.1?dir=packages/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

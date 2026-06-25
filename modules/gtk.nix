@@ -6,11 +6,18 @@
     in
     {
       home-manager.users.${username} =
-        { pkgs, ... }:
+        { pkgs, config, ... }:
+        let
+          commonConfig = {
+            extraConfig = {
+              gtk-application-prefer-dark-theme = true;
+            };
+            theme = config.gtk.theme;
+          };
+        in
         {
           gtk = {
             enable = true;
-
             cursorTheme = {
               name = "Nordzy-cursors";
               package = pkgs.nordzy-cursor-theme;
@@ -21,22 +28,9 @@
               package = pkgs.papirus-icon-theme;
             };
 
-            gtk3 = {
-              extraConfig = {
-                gtk-application-prefer-dark-theme = true;
-              };
-            };
-
-            gtk4 = {
-              extraConfig = {
-                gtk-application-prefer-dark-theme = true;
-              };
-            };
+            gtk3 = commonConfig;
+            gtk4 = commonConfig;
           };
-
-          home.packages = with pkgs; [
-            gsettings-desktop-schemas
-          ];
         };
     };
 }

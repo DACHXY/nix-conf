@@ -31,14 +31,6 @@
       networking.networkmanager.enable = true;
       services.upower.enable = true;
       hardware.bluetooth.enable = true;
-
-      # Calendar Service
-      # Run `nix shell nixpkgs#gnome-control-center -c bash -c "XDG_CURRENT_DESKTOP=GNOME gnome-control-center"`,
-      # Then login to service. Check: https://nixos.wiki/wiki/GNOME/Calendar
-      programs.dconf.enable = true;
-      services.gnome.evolution-data-server.enable = true;
-      services.gnome.gnome-online-accounts.enable = true;
-      services.gnome.gnome-keyring.enable = true;
     };
 
   flake.modules.homeManager.noctalia =
@@ -92,6 +84,38 @@
         playerctl
         satty
       ];
+
+      # ==== GTK Theme ==== #
+      gtk.theme = {
+        name = "adw-gtk3";
+        package = pkgs.adw-gtk3;
+      };
+
+      systemd.user.services.noctalia-set-gtk-theme = {
+        Install.WantedBy = [ "noctalia.service" ];
+        Service = {
+          Type = "oneshot";
+          Environment = [
+            "XDG_DATA_DIRS=${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:$XDG_DATA_DIRS"
+          ];
+          ExecStart = ''
+            ${lib.getExe' pkgs.glib.bin "gsettings"} set org.gnome.desktop.interface gtk-theme 'adw-gtk3'
+          '';
+        };
+      };
+
+      # ==== Stylix ==== #
+      stylix.targets = {
+        gtk.enable = false;
+        qt.enable = false;
+        btop.enable = false;
+        zed.enable = false;
+        yazi.enable = false;
+        obsidian.enable = false;
+      };
+
+      # ==== Btop ==== #
+      programs.btop.settings.color_theme = "noctalia";
 
       systemd.user.services.noctalia.Service.Environment = [
         "QT_QPA_PLATFORMTHEME=gtk3"
@@ -376,6 +400,23 @@
               "noctalia/timer"
               "noctalia/translator"
             ];
+            source = [
+              {
+                kind = "git";
+                location = "https://github.com/noctalia-dev/community-plugins";
+                name = "community";
+              }
+              {
+                kind = "git";
+                location = "https://github.com/noctalia-dev/official-plugins";
+                name = "official";
+              }
+              {
+                kind = "git";
+                location = "https://github.com/dachxy/official-plugins";
+                name = "DACHXY";
+              }
+            ];
           };
 
           shell = {
@@ -413,8 +454,19 @@
             wallpaper_scheme = "muted";
 
             templates = {
-              community_ids = [ "steam" ];
-              enable_builtin_templates = false;
+              builtin_ids = [
+                "btop"
+                "gtk3"
+                "gtk4"
+                "qt"
+              ];
+              community_ids = [
+                "obsidian"
+                "zed"
+                "steam"
+                "yazi"
+              ];
+              enable_builtin_templates = true;
             };
           };
 
