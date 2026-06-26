@@ -26,7 +26,7 @@
         extest.enable = true;
         extraCompatPackages = with pkgs; [
           proton-ge-bin
-          proton-dw-bin
+          dwproton-bin
         ];
         remotePlay.openFirewall = true;
         dedicatedServer.openFirewall = true;
