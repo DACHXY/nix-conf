@@ -151,6 +151,10 @@
       url = "github:gvolpe/nfsm";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    linux-wallpaper-engine = {
+      url = "github:jagrat7/linux-wallpaper-engine";
+    };
   };
 
   outputs =

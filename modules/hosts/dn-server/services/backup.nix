@@ -32,23 +32,6 @@
       '';
     in
     {
-      fileSystems."/mnt/backup_dn" = {
-        device = "/dev/disk/by-uuid/FBD9-F625";
-        fsType = "exfat";
-        options = [
-          "x-systemd.automount"
-          "noauto"
-          "x-systemd.idle-timeout=600"
-          "nofail"
-          "user"
-          "x-gvfs-show"
-          "gid=1000"
-          "uid=1000"
-          "dmask=000"
-          "fmask=000"
-        ];
-      };
-
       services.postgresqlBackup = {
         enable = true;
         startAt = backupAt;
@@ -64,6 +47,7 @@
           "grafana"
           "crowdsec"
           "netbird"
+          "forgejo"
         ];
         location = "${backupPath}/postgresql";
       };
