@@ -7,11 +7,11 @@
         in
         final.pkgs.stdenv.mkDerivation (finalAttrs: rec {
           pname = "dwproton";
-          version = "11.0-3";
+          version = "11.0-5";
 
           src = final.pkgs.fetchzip {
             url = "https://dawn.wine/dawn-winery/dwproton/releases/download/${pname}-${finalAttrs.version}/${pname}-${finalAttrs.version}-x86_64.tar.xz";
-            hash = "sha256-e/YzKvwe30KveLHRUsntKDwzdEbr7a3Wfkqe/pu93WE=";
+            hash = "sha256-2x4xotJ2aJYbg+G2TDPqyU7uuoc/hZQon9CA6SFGin0=";
           };
 
           dontUnpack = true;
