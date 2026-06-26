@@ -7,12 +7,13 @@
         nixos.pc
         nixos.vpn
         nixos.danny
+        nixos.danny-gui
         nixos.danny-acme
         nixos.nvf
         nixos.secure-boot
         nixos.gaming
         nixos.virtualisation
-        # nixos.proxy-server
+        nixos.wallpaper-engine
         generic.dnywe
       ];
 

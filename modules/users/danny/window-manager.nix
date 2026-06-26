@@ -3,7 +3,7 @@ let
   globalConfig = config;
 in
 {
-  flake.modules.nixos.danny =
+  flake.modules.nixos.danny-gui =
     { config, ... }:
     {
       home-manager.users.${config.my.user.name} =

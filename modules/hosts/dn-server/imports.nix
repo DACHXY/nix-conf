@@ -9,9 +9,6 @@
         nixos.danny-acme
         nixos.nvf
         generic.dnywe
-
-        # services
-        nixos.actual-budget
       ];
     };
 }

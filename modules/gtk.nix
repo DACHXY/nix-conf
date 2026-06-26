@@ -6,13 +6,15 @@
     in
     {
       home-manager.users.${username} =
-        { pkgs, config, ... }:
+        {
+          pkgs,
+          ...
+        }:
         let
           commonConfig = {
             extraConfig = {
               gtk-application-prefer-dark-theme = true;
             };
-            theme = config.gtk.theme;
           };
         in
         {

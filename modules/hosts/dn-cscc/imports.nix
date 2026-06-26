@@ -5,6 +5,7 @@
       nixos.pc
       nixos.vpn
       nixos.danny
+      nixos.danny-gui
       nixos.nvf
       nixos.gaming
       nixos.virtualisation
