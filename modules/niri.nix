@@ -1,4 +1,7 @@
 { config, inputs, ... }:
+let
+  mkNiriPkg = { ... }: niriPkgs: niriPkgs.niri-unstable;
+in
 {
   nixpkgs.overlays = [
     inputs.niri.overlays.niri
@@ -9,6 +12,7 @@
     let
       inherit (nixosArgs.config.my.user) name;
       niriPkgs = inputs.niri-pkgs.packages.${pkgs.stdenv.hostPlatform.system};
+      niriUnstable = mkNiriPkg { inherit pkgs; } niriPkgs;
     in
     {
       imports = [
@@ -17,7 +21,7 @@
 
       programs.niri = {
         enable = true;
-        package = niriPkgs.niri-unstable;
+        package = niriUnstable;
       };
 
       home-manager.users.${name} = {
@@ -49,6 +53,7 @@
       wmCfg = config.wm;
       bindCfg = wmCfg.keybinds;
       niriPkgs = inputs.niri-pkgs.packages.${pkgs.stdenv.hostPlatform.system};
+      niriUnstable = mkNiriPkg { inherit pkgs; } niriPkgs;
     in
     with config.lib.niri.actions;
     {
@@ -72,7 +77,7 @@
         };
       };
 
-      programs.niri.package = niriPkgs.niri-unstable;
+      programs.niri.package = niriUnstable;
       programs.niri.settings = {
         includes = lib.mkAfter [
           "${pkgs.writeText "blur.kdl" ''
