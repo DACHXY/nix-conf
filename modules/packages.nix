@@ -9,6 +9,7 @@
         wget
         killall
         fzf
+        comma
       ];
     };
 
