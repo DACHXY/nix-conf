@@ -16,6 +16,35 @@
         in
         {
           programs.zen-browser.profiles.${profileName} = {
+            containersForce = true;
+            containers = {
+              Private = {
+                color = "purple";
+                icon = "chill";
+                id = 1;
+              };
+            };
+
+            spacesForce = true;
+            spaces = {
+              "Private" = {
+                id = "73fa5b81-2762-4b00-8747-254c10860019";
+                position = 1000;
+                container = 1;
+                icon = "🌕";
+              };
+              "CSIT" = {
+                id = "b76367d7-6cd9-4602-8c0b-130ac31e7e5a";
+                position = 2000;
+                icon = "💻";
+              };
+              "Personal" = {
+                id = "08db5082-6dc7-48f0-8d4a-ccb39fb07d09";
+                position = 3000;
+                icon = "🏠";
+              };
+            };
+
             pins = mkForce {
               "Instagram" = {
                 id = "9813885d-e361-420a-9018-dfaa1f2cbdb9";
@@ -83,15 +112,10 @@
                 url = "https://mattermost.it.cs.nycu.edu.tw";
                 position = 210;
               };
-              "teams" = {
-                id = "1b43051f-d873-4854-a99a-fdec88a5240f";
-                url = "https://teams.cloud.microsoft";
-                position = 220;
-              };
             };
             pinsForce = mkForce true;
+            pinsForceAction = "remove";
           };
-
         };
     };
 }
