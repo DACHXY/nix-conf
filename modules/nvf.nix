@@ -659,7 +659,8 @@
                   };
                 };
               };
-              vue.enable = true;
+              # === Wait for pnpm CVE ===
+              # vue.enable = true;
               html.enable = true;
               css = {
                 enable = true;

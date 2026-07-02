@@ -429,6 +429,10 @@
             screen_time_enabled = true;
             settings_show_advanced = true;
             time_format = "{:%-I:%M %p}";
+            greeter_sync = {
+              auto_sync = true;
+              privilege_command = "ghostty -e pkexec";
+            };
 
             panel = {
               borders = false;

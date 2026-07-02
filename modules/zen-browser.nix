@@ -22,6 +22,7 @@
 
       programs.zen-browser = {
         enable = true;
+        setAsDefaultBrowser = true;
         package = inputs.zen-browser.packages.${system}.twilight;
 
         languagePacks = [
@@ -105,6 +106,12 @@
           "${profileName}" = {
             isDefault = true;
             name = username;
+
+            mods = [
+              "642854b5-88b4-4c40-b256-e035532109df" # Transparent Zen
+              "e122b5d9-d385-4bf8-9971-e137809097d0" # No Top Sites
+            ];
+
             pins = {
               "Instagram" = {
                 id = "9813885d-e361-420a-9018-dfaa1f2cbdb9";
@@ -164,7 +171,7 @@
               # Unbind
               {
                 id = "key_netmonitor";
-                key = "";
+                disabled = true;
               }
               # Binds
               {
@@ -174,6 +181,25 @@
                   control = !isDarwin;
                   meta = isDarwin;
                   shift = true;
+                };
+              }
+              # Workspaces
+              {
+                id = "zen-workspace-forward";
+                key = "e";
+                modifiers = {
+                  control = !isDarwin;
+                  meta = isDarwin;
+                  alt = true;
+                };
+              }
+              {
+                id = "zen-workspace-backward";
+                key = "q";
+                modifiers = {
+                  control = !isDarwin;
+                  meta = isDarwin;
+                  alt = true;
                 };
               }
               # Pins
