@@ -155,6 +155,11 @@
     linux-wallpaper-engine = {
       url = "github:jagrat7/linux-wallpaper-engine";
     };
+
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
