@@ -26,11 +26,6 @@
       inherit (builtins) concatStringsSep;
       inherit (pkgs.stdenv.hostPlatform) isDarwin;
 
-      marks-nvim = pkgs.vimUtils.buildVimPlugin {
-        name = "marks-nvim";
-        src = inputs.marks-nvim;
-      };
-
       yaziOpenDir = config.programs.nvf.settings.vim.utility.yazi-nvim.setupOpts.open_for_directories;
     in
     {
@@ -44,10 +39,12 @@
 
       home.packages = with pkgs; [
         ripgrep
+        lazyjj
         (rust-bin.stable.latest.default.override {
           extensions = [ "rust-src" ];
         })
       ];
+
       programs.nvf = {
         enable = true;
         settings = {
@@ -145,44 +142,51 @@
               registers = "unnamedplus";
             };
 
-            extraPlugins = with pkgs.vimPlugins; {
-              transparent = {
+            lazy.plugins = with pkgs.vimPlugins; {
+              "lazyjj.nvim" = {
+                package = lazyjj-nvim;
+                setupModule = "lazyjj";
+                setupOpts = {
+                  mapping = "<leader>jj";
+                };
+              };
+              "transparent.nvim" = {
                 package = transparent-nvim;
-                setup =
+                setupModule = "transparent";
+                setupOpts = {
+                  extra_groups = [
+                    "NormalFloat"
+                    "NvimTreeNormal"
+                    "TreesitterContext"
+                    "FloatBorder"
+                    "FoldColumn"
+                    "Folded"
+                    "BlinkCmpMenu"
+                    "BlinkCmpBorder"
+                    "BlinkCmpKind"
+                    "WarningMsg"
+                    "ColorColumn"
+                    "ErrorMsg"
+                    "BlinkCmpMenuBorder"
+                    "FzfLuaBackdrop"
+                    "VertSplit"
+                    "Pmenu"
+                    "PmenuSbar"
+                    "DiffText"
+                    "DiffViewNormal"
+                    "CursorColumn"
+                    "QuickFixLine"
+                    "Error"
+                    "NoiceScrollbar"
+                  ];
+                };
+                after =
                   let
                     clearFg = map (x: ''vim.api.nvim_set_hl(0, "${x}", { fg = "NONE", bg = "NONE"})'') [
                       "TabLineFill"
                     ];
                   in
-                  # lua
-                  ''
-                    require("transparent").setup({
-                      extra_groups = {
-                        "NormalFloat",
-                        "NvimTreeNormal",
-                        "TreesitterContext",
-                        "FloatBorder",
-                        "FoldColumn",
-                        "Folded",
-                        "BlinkCmpMenu",
-                        "BlinkCmpBorder",
-                        "BlinkCmpKind",
-                        "WarningMsg",
-                        "ColorColumn",
-                        "ErrorMsg",
-                        "BlinkCmpMenuBorder",
-                        "FzfLuaBackdrop",
-                        "VertSplit",
-                        "Pmenu",
-                        "PmenuSbar",
-                        "DiffText",
-                        "DiffViewNormal",
-                        "CursorColumn",
-                        "QuickFixLine",
-                        "Error",
-                        "NoiceScrollbar"
-                      },
-                    })
+                  /* lua */ ''
                     require("transparent").clear_prefix("NeoTree")
                     require("transparent").clear_prefix("GitGutter")
                     require("transparent").clear_prefix("BufferLine")
@@ -190,11 +194,9 @@
                     ${concatStringsSep "\n" clearFg}
                   '';
               };
-              marks = {
+              "marks.nvim" = {
                 package = marks-nvim;
-                setup = ''
-                  require("marks").setup {}
-                '';
+                setupModule = "marks";
               };
             };
 

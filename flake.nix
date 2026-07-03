@@ -101,18 +101,6 @@
       url = "github:notashelf/nvf";
     };
 
-    # ===== Nvim Plugins ===== #
-    marks-nvim = {
-      url = "github:chentoast/marks.nvim";
-      flake = false;
-    };
-    # ======================== #
-
-    mail-server = {
-      url = "github:dachxy/nix-mail-server";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
 
     niri = {

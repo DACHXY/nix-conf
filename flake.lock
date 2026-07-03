@@ -623,42 +623,6 @@
         "type": "github"
       }
     },
-    "mail-server": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1781442704,
-        "narHash": "sha256-OKSmDWLCR0j+4xU6b/NRSjMB/ZgxX+eAfjlmmWxKE8Q=",
-        "owner": "dachxy",
-        "repo": "nix-mail-server",
-        "rev": "d3b8ea51ec9e14087e81cd4f6b9b6c3895b3779f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "dachxy",
-        "repo": "nix-mail-server",
-        "type": "github"
-      }
-    },
-    "marks-nvim": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1747179163,
-        "narHash": "sha256-ho2b2Ulh+GTqY0QvW7zjFOSlF5g/kaxWyOjKWhTFq7c=",
-        "owner": "chentoast",
-        "repo": "marks.nvim",
-        "rev": "f353e8c08c50f39e99a9ed474172df7eddd89b72",
-        "type": "github"
-      },
-      "original": {
-        "owner": "chentoast",
-        "repo": "marks.nvim",
-        "type": "github"
-      }
-    },
     "millennium": {
       "inputs": {
         "millennium-src": "millennium-src",
@@ -1211,8 +1175,6 @@
         "import-tree": "import-tree",
         "lanzaboote": "lanzaboote",
         "linux-wallpaper-engine": "linux-wallpaper-engine",
-        "mail-server": "mail-server",
-        "marks-nvim": "marks-nvim",
         "millennium": "millennium",
         "niri": "niri",
         "niri-nfsm": "niri-nfsm",
