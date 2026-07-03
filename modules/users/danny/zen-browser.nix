@@ -21,7 +21,7 @@
               Private = {
                 color = "purple";
                 icon = "chill";
-                id = 1;
+                id = 2;
               };
             };
 
@@ -30,7 +30,7 @@
               "Private" = {
                 id = "73fa5b81-2762-4b00-8747-254c10860019";
                 position = 1000;
-                container = 1;
+                container = 2;
                 icon = "🌕";
               };
               "CSIT" = {
