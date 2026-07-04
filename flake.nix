@@ -148,6 +148,8 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    jj-starship.url = "github:dmmulroy/jj-starship";
   };
 
   outputs =

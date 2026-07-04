@@ -87,7 +87,6 @@
         helix = {
           transparent = mkForce true;
         };
-        starship.enable = false;
       };
     };
 }

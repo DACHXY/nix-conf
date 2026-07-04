@@ -653,7 +653,7 @@
 
               typescript = {
                 enable = true;
-                format.type = [ "prettierd" ];
+                format.type = [ "prettier" ];
                 extensions.ts-error-translator = {
                   enable = true;
                   setupOpts = {
@@ -666,7 +666,7 @@
               html.enable = true;
               css = {
                 enable = true;
-                format.type = [ "prettierd" ];
+                format.type = [ "prettier" ];
               };
             };
 
