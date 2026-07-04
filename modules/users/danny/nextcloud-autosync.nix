@@ -24,7 +24,12 @@
               target = "/Notes";
               source = "${homeDirectory}/notes";
             };
+            csit = {
+              target = "/CSIT";
+              source = "${homeDirectory}/Documents/CSIT";
+            };
           };
+          # =============================== #
 
           mkSyncSystemd = name: target: source: {
             services."nextcloud-autosync-${name}" = {
