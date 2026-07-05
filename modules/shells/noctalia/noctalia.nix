@@ -182,6 +182,7 @@
                 box_width = 208.0;
                 cx = 168.0;
                 cy = 1320.0;
+                output = "DP-3";
                 rotation = 0.0;
                 type = "clock";
 
@@ -237,6 +238,7 @@
             enabled = true;
             schema_version = 2;
             widget_order = [
+              "lockscreen-login-box@DP-3"
               "lockscreen-login-box@eDP-2"
               "lockscreen-login-box@DP-5"
               "lockscreen-widget-0000000000000001"
@@ -253,11 +255,32 @@
             };
 
             widget = {
+              "lockscreen-login-box@DP-3" = {
+                box_height = 70.0;
+                box_width = 400.0;
+                cx = 1280.0;
+                cy = 1232.0;
+                output = "DP-3";
+                rotation = 0.0;
+                type = "login_box";
+                settings = {
+                  background_color = "on_primary";
+                  background_opacity = 0.0;
+                  background_radius = 12.0;
+                  input_opacity = 0.8;
+                  input_radius = 32.0;
+                  show_caps_lock = true;
+                  show_keyboard_layout = true;
+                  show_login_button = true;
+                  show_password_hint = true;
+                };
+              };
               "lockscreen-login-box@DP-5" = {
                 box_height = 80.0;
                 box_width = 512.0;
-                cx = 1280.0;
-                cy = 1272.0;
+                cx = 704.0;
+                cy = 2504.0;
+                enabled = false;
                 output = "DP-5";
                 rotation = 0.0;
                 type = "login_box";
@@ -267,7 +290,10 @@
                   background_radius = 12.0;
                   input_opacity = 1.0;
                   input_radius = 6.0;
+                  show_caps_lock = true;
+                  show_keyboard_layout = true;
                   show_login_button = true;
+                  show_password_hint = true;
                 };
               };
               "lockscreen-login-box@eDP-2" = {
@@ -284,17 +310,20 @@
                   background_radius = 12.0;
                   input_opacity = 1.0;
                   input_radius = 6.0;
+                  show_caps_lock = true;
+                  show_keyboard_layout = true;
                   show_login_button = true;
+                  show_password_hint = true;
                 };
               };
               lockscreen-widget-0000000000000001 = {
-                box_height = 224.0;
-                box_width = 288.0;
-                cx = 192.0;
-                cy = 1280.0;
-                output = "DP-5";
+                box_height = 176.0;
+                box_width = 464.0;
+                cx = 1280.0;
+                cy = 336.0;
+                output = "DP-3";
                 rotation = 0.0;
-                type = "weather";
+                type = "clock";
                 settings = {
                   background = false;
                   forecast_days = 4;
@@ -303,68 +332,76 @@
                 };
               };
               lockscreen-widget-0000000000000002 = {
-                box_height = 208.0;
-                box_width = 512.0;
+                box_height = 80.0;
+                box_width = 640.0;
                 cx = 1280.0;
-                cy = 968.0;
-                output = "DP-5";
-                rotation = 0.0;
-                type = "media_player";
-                settings = {
-                  background = false;
-                  color = "on_surface";
-                  hide_when_no_media = true;
-                  layout = "horizontal";
-                  shadow = false;
-                };
-              };
-              lockscreen-widget-0000000000000003 = {
-                box_height = 240.0;
-                box_width = 448.0;
-                cx = 1280.0;
-                cy = 360.0;
-                output = "DP-5";
-                rotation = 0.0;
-                type = "clock";
-                settings = {
-                  background = false;
-                  center_text = true;
-                  clock_style = "digital";
-                  font_family = "";
-                  shadow = false;
-                };
-              };
-              lockscreen-widget-0000000000000004 = {
-                box_height = 96.0;
-                box_width = 656.0;
-                cx = 1280.0;
-                cy = 1136.0;
-                output = "DP-5";
+                cy = 1352.0;
+                output = "DP-3";
                 rotation = 0.0;
                 type = "audio_visualizer";
                 settings = {
                   background = false;
                   bands = 32;
+                  color = "on_surface";
+                  color_1 = "outline";
+                  color_2 = "primary";
+                  hide_when_no_media = true;
+                  layout = "horizontal";
+                  shadow = false;
+                  show_when_idle = false;
+                };
+              };
+              lockscreen-widget-0000000000000003 = {
+                box_height = 176.0;
+                box_width = 448.0;
+                cx = 1280.0;
+                cy = 1056.0;
+                output = "DP-3";
+                rotation = 0.0;
+                type = "media_player";
+                settings = {
+                  background = false;
+                  center_text = true;
+                  clock_style = "digital";
+                  font_family = "";
+                  hide_when_no_media = true;
+                  shadow = false;
+                };
+              };
+              lockscreen-widget-0000000000000004 = {
+                box_height = 208.0;
+                box_width = 256.0;
+                cx = 192.0;
+                cy = 1248.0;
+                output = "DP-3";
+                rotation = 0.0;
+                type = "weather";
+                settings = {
+                  background = false;
+                  bands = 32;
                   color_1 = "on_surface";
                   color_2 = "primary";
+                  forecast_days = 4;
+                  shadow = false;
+                  show_forecast = true;
                   show_when_idle = false;
                 };
               };
               lockscreen-widget-0000000000000005 = {
-                box_height = 32.0;
-                box_width = 256.0;
+                box_height = 64.0;
+                box_width = 224.0;
                 cx = 1280.0;
-                cy = 448.0;
-                output = "DP-5";
+                cy = 432.0;
+                output = "DP-3";
                 rotation = 0.0;
                 type = "label";
                 settings = {
                   background = false;
                   color = "on_surface";
                   description = "";
-                  opacity = 0.85;
+                  opacity = 0.65;
                   shadow = false;
-                  title = " Welcome Back, ${capitalize name}! ";
+                  title = "  Welcome Back, ${capitalize name} !  ";
                 };
               };
             };
