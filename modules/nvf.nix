@@ -597,6 +597,10 @@
               enableTreesitter = true;
               enableExtraDiagnostics = true;
 
+              odin = {
+                enable = true;
+              };
+
               nix = {
                 enable = true;
                 extraDiagnostics.enable = false;
