@@ -145,7 +145,10 @@
             capsule = true;
             capsule_padding = 8.0;
             capsule_opacity = 0.4;
-            center = [ "active_window" ];
+            center = [
+              "privacy"
+              "active_window"
+            ];
             end = [
               "tray"
               "recorder"
@@ -547,6 +550,9 @@
             };
             network = {
               show_label = false;
+            };
+            privacy = {
+              hide_inactive = true;
             };
             recorder = {
               type = "noctalia/screen_recorder:recorder";
