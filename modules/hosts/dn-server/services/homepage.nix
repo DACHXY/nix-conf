@@ -24,14 +24,14 @@ in
   configurations.nixos.dn-server.module =
     { config, ... }:
     let
-      inherit (builtins) concatStringSeps;
+      inherit (builtins) concatStringsSep;
       cfg = config.services.homepage-dashboard;
-      allowedHosts = concatStringSeps "," (
+      allowedHosts = concatStringsSep "," (
         [
           hostname
           "localhost:${toString cfg.listenPort}"
         ]
-        + alias
+        ++ alias
       );
     in
     {

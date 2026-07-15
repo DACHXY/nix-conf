@@ -25,7 +25,6 @@ in
           http-enabled = true;
           health-enabled = true;
           http-management-port = 38081;
-          truststore-paths = config.security.pki.caBundle;
         };
       };
 

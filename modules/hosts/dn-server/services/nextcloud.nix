@@ -93,7 +93,7 @@ in
 
       services.nextcloud = {
         enable = true;
-        package = pkgs.nextcloud33;
+        package = pkgs.nextcloud34;
         configureRedis = true;
         hostName = hostname;
         https = true;
@@ -112,20 +112,14 @@ in
             ;
 
           camerarawpreviews = pkgs.fetchNextcloudApp {
-            url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v0.9.0/camerarawpreviews_nextcloud.tar.gz";
-            sha256 = "sha256-UsvRbsNSnh4qS9nP/lEbRMMKHLZSp03azCf8lvIS7Pk=";
-            license = "agpl3Plus";
-          };
-
-          user_migration = pkgs.fetchNextcloudApp {
-            url = "https://github.com/nextcloud-releases/user_migration/releases/download/v10.2.0/user_migration-v10.2.0.tar.gz";
-            sha256 = "sha256-eWK0vsaYfCHEe2PpD0RfGdIufXmcWocRYB237Cx3lx0=";
+            url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v1.1.1/camerarawpreviews_nextcloud.tar.gz";
+            sha256 = "sha256-PWX7WPJKoMIy4Kn6IH/+6UxPQ4G/nxuDNV1nNaGMp1s=";
             license = "agpl3Plus";
           };
 
           cospend = pkgs.fetchNextcloudApp {
-            url = "https://github.com/julien-nc/cospend-nc/releases/download/v4.0.0/cospend-4.0.0.tar.gz";
-            sha256 = "sha256-fxIC0gEYCek1LZ0rxmRAbWyYSfuHt6Bs/JCLYPR7ZFM=";
+            url = "https://github.com/julien-nc/cospend-nc/releases/download/v4.0.2/cospend-4.0.2.tar.gz";
+            sha256 = "sha256-3uphQHtKlW8kXeLA5hMDpT14lEf+tnJyy4hfKioBDSw=";
             license = "agpl3Plus";
           };
         };

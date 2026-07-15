@@ -8,6 +8,7 @@ in
     let
       cfg = config.services.vaultwarden;
       inherit (globalConfig.flake.public.config.services.vaultwarden) endpoint hostname;
+      inherit (globalConfig.flake.public.config) domain;
     in
     {
       sops.secrets."vaultwarden" = { };
@@ -28,7 +29,7 @@ in
       services.vaultwarden = {
         enable = true;
         dbBackend = "postgresql";
-        environmentFile = config.secrets.vaultwarden.path;
+        environmentFile = config.sops.secrets."vaultwarden".path;
         config = {
           DOMAIN = endpoint;
           SIGNUPS_ALLOWED = false;
@@ -48,6 +49,7 @@ in
 
       services.nginx.virtualHosts.${hostname} = {
         forceSSL = true;
+        useACMEHost = domain;
         locations."/" = {
           proxyPass = "http://127.0.0.1:${toString cfg.config.ROCKET_PORT}/";
           proxyWebsockets = true;

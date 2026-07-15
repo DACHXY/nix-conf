@@ -1,6 +1,6 @@
 { config, self, ... }:
 let
-  inherit (self.lib) mkDashboard;
+  inherit (self.lib.grafana) mkDashboard;
   inherit (config.flake.public.config) domain;
   inherit (config.flake.public.config.services) oidc mailserver prometheus;
   inherit (config.flake.public.config.services.grafana) hostname endpoint;
@@ -10,7 +10,7 @@ let
 in
 {
   configurations.nixos.dn-server.module =
-    { pkgs, ... }:
+    { pkgs, ... }@nixosArgs:
     let
       datasourceTemplate = [
         {
@@ -80,15 +80,15 @@ in
           smtp = {
             enabled = true;
             user = "grafana";
-            password = "$__file{${config.sops.secrets."grafana/password".path}}";
+            password = "$__file{${nixosArgs.config.sops.secrets."grafana/password".path}}";
             host = smtpHost;
             from_address = email;
-            cert_file = config.security.pki.caBundle;
+            cert_file = nixosArgs.config.security.pki.caBundle;
           };
           security = {
             admin_email = email;
-            admin_password = "$__file{${config.sops.secrets."grafana/password".path}}";
-            secret_key = "$__file{${config.sops.secrets."grafana/password".path}}";
+            admin_password = "$__file{${nixosArgs.config.sops.secrets."grafana/password".path}}";
+            secret_key = "$__file{${nixosArgs.config.sops.secrets."grafana/password".path}}";
           };
           database = {
             type = "postgres";
@@ -104,7 +104,7 @@ in
               enabled = true;
               allow_sign_up = true;
               client_id = "grafana";
-              client_secret = "$__file{${config.sops.secrets."grafana/client_secret".path}}";
+              client_secret = "$__file{${nixosArgs.config.sops.secrets."grafana/client_secret".path}}";
               scopes = "openid email profile offline_access roles";
               email_attribute_path = "email";
               login_attribute_path = "username";
@@ -136,11 +136,12 @@ in
         ];
       };
 
-      services.nginx.virtualHosts."${domain}" = {
+      services.nginx.virtualHosts."${hostname}" = {
         forceSSL = true;
+        useACMEHost = domain;
 
         locations."/" = {
-          proxyPass = "http://127.0.0.1:${toString config.services.grafana.settings.server.http_port}";
+          proxyPass = "http://127.0.0.1:${toString nixosArgs.config.services.grafana.settings.server.http_port}";
           proxyWebsockets = true;
           recommendedProxySettings = true;
         };
