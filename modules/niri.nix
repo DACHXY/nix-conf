@@ -223,7 +223,10 @@ in
           # Noctalia
           {
             matches = [
-              { app-id = "dev.noctalia.Noctalia.Settings"; }
+              {
+                app-id = "dev.noctalia.Noctalia";
+                title = "^(Noctalia Settings)$";
+              }
             ];
             open-floating = true;
             default-column-width.fixed = 1080;

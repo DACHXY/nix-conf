@@ -3,7 +3,7 @@
     { config, ... }:
     {
       # Allowing activate VPN in SSH
-      security.polkit.extraConfig = ''
+      security.polkit.extraConfig = /* js */ ''
         polkit.addRule(function (action, subject) {
           if (
             subject.isInGroup("wheel") &&

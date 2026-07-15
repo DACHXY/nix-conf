@@ -6,7 +6,7 @@
 }:
 {
   flake.modules.nixos.noctalia =
-    { pkgs, ... }@nixosArgs:
+    { pkgs, lib, ... }@nixosArgs:
     let
       inherit (nixosArgs.config.my.user) name;
       noctalia-restart = pkgs.writeShellScriptBin "noctalia-restart" ''
@@ -31,6 +31,18 @@
       networking.networkmanager.enable = true;
       services.upower.enable = true;
       hardware.bluetooth.enable = true;
+
+      security.polkit.extraConfig = /* js */ ''
+        polkit.addRule(function(action, subject)) {
+          if (
+            action.id == "org.freedesktop.policykit.exec" &&
+            action.lookup("program") == "/run/current-system/sw/bin/noctalia-greeter" &&
+            subject.isInGroup("wheel")
+          ) {
+            return polkit.result.YES;
+          }
+        }
+      '';
     };
 
   flake.modules.homeManager.noctalia =
@@ -149,6 +161,7 @@
             ];
             font_weight = 600;
             margin_ends = 10;
+            margin_edge = 10;
             start = [
               "control-center"
               "launcher"

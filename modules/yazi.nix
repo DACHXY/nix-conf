@@ -73,19 +73,19 @@
           opener = {
             edit = [
               {
-                run = ''nvim "$1"'';
+                run = "nvim %s";
                 desc = "neovim";
                 block = true;
               }
             ];
 
             player = [
-              { run = ''${getExe pkgs.mpv} --force-window "$1"''; }
+              { run = "${getExe pkgs.mpv} --force-window %s"; }
             ];
 
             open = [
               {
-                run = ''xdg-open "$1"'';
+                run = "xdg-open %s";
                 desc = "Open";
               }
             ];
@@ -187,7 +187,7 @@
                 "c" # combine
               ];
               for = "unix";
-              run = ''shell -- ${lib.getExe pdfCombine} "$@"'';
+              run = ''shell -- ${lib.getExe pdfCombine} "%h"'';
               desc = "Combine selected pdf";
             }
             {
@@ -197,7 +197,7 @@
                 "n" # normalize
               ];
               for = "unix";
-              run = ''shell -- ${lib.getExe pdfNormalize} "$@" 2>/dev/null'';
+              run = ''shell -- ${lib.getExe pdfNormalize} "%h" 2>/dev/null'';
               desc = "Normalize PDF to A4 size";
             }
             {
@@ -207,7 +207,7 @@
               ];
               for = "unix";
               run = [
-                ''shell -- for path in "$@"; do ${lib.getExe md2html} "$path"; done''
+                ''shell -- for path in "%s"; do ${lib.getExe md2html} "$path"; done''
               ];
               desc = "Convert Markdown to HTML";
             }
@@ -252,7 +252,7 @@
               "g"
               "w"
             ];
-            run = ''shell '${setWallpaper} "$0" 2>&1 >/dev/null' '';
+            run = ''shell '${setWallpaper} "%h" 2>&1 >/dev/null' '';
             desc = "Set as wallpaper";
           }
 
@@ -260,7 +260,7 @@
           {
             on = "y";
             run = [
-              ''shell -- for path in "$@"; do echo -n "file://$path"; done | pbcopy''
+              ''shell -- for path in "%s"; do echo -n "file://$path"; done | pbcopy''
               "yank"
             ];
           }
@@ -271,7 +271,7 @@
               "c"
               "D"
             ];
-            run = ''shell 'open -R "$@" &' --confirm'';
+            run = "shell -- open -R %h";
             desc = "Drag the file";
           }
         ];
@@ -297,7 +297,7 @@
               "g"
               "w"
             ];
-            run = ''shell '${setWallpaper} "$0" 2>&1 >/dev/null' '';
+            run = ''shell '${setWallpaper} "%h" 2>&1 >/dev/null' '';
             desc = "Set as wallpaper";
           }
 
@@ -305,7 +305,7 @@
           {
             on = "y";
             run = [
-              ''shell -- for path in "$@"; do echo -n "file://$path"; done | wl-copy -t text/uri-list''
+              ''shell -- for path in "%s"; do echo -n "file://$path"; done | wl-copy -t text/uri-list''
               "yank"
             ];
           }
@@ -316,7 +316,7 @@
               "c"
               "D"
             ];
-            run = ''shell 'ripdrag "$@" -x 2>/dev/null &' --confirm'';
+            run = "shell -- ripdrag -x %h";
             desc = "Drag the file";
           }
         ];
