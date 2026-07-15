@@ -2,7 +2,7 @@
 let
   commonAliases = {
     ns = "nix-search-tv print | fzf --preview 'nix-search-tv preview {}' --scheme history";
-    ls = "exa --icons";
+    ls = "exa --icons auto";
     lp = "exa"; # Pure output
     cat = "bat";
     g = "git";
@@ -24,7 +24,7 @@ in
     {
       environment.variables = {
         EDITOR = "nvim";
-        SHELL = "${lib.getExe pkgs.fish}";
+        SHELL = "/run/current-system/sw/bin/fish";
       };
 
       environment.systemPackages = with pkgs; [

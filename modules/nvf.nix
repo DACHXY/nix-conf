@@ -561,6 +561,14 @@
                   # nix
                   ''(builtins.getFlake "/etc/nixos").nixosConfigurations.${osConfig.networking.hostName}.options.home-manager.users.type.getSubOptions []'';
               };
+
+              servers.rust-analyzer.init_options = {
+                cargo = {
+                  allFeature = true;
+                };
+                checkOnSave = true;
+                procMacro.enable = true;
+              };
             };
 
             debugger = {
@@ -590,6 +598,7 @@
               nvim-lint.linters_by_ft = {
                 dockerfile = [ "hadolint" ];
               };
+              presets.cpplint.enable = lib.mkForce false;
             };
 
             languages = {
@@ -612,18 +621,7 @@
               };
               rust = {
                 enable = true;
-                lsp = {
-                  enable = true;
-                  opts = /* lua */ ''
-                    ['rust-analyzer'] = {
-                      cargo = { allFeature = true },
-                      checkOnSave = true,
-                      procMacro = {
-                        enable = true,
-                      },
-                    },
-                  '';
-                };
+                lsp.enable = true;
               };
 
               assembly.enable = true;

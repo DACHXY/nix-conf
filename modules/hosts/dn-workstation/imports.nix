@@ -13,7 +13,7 @@
         nixos.secure-boot
         nixos.gaming
         nixos.virtualisation
-        nixos.wallpaper-engine
+        # nixos.wallpaper-engine
         generic.dnywe
       ];
 
