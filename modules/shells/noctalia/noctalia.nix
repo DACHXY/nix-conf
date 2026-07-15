@@ -6,7 +6,7 @@
 }:
 {
   flake.modules.nixos.noctalia =
-    { pkgs, lib, ... }@nixosArgs:
+    { pkgs, ... }@nixosArgs:
     let
       inherit (nixosArgs.config.my.user) name;
       noctalia-restart = pkgs.writeShellScriptBin "noctalia-restart" ''
@@ -31,9 +31,10 @@
       networking.networkmanager.enable = true;
       services.upower.enable = true;
       hardware.bluetooth.enable = true;
+      systemd.user.services.niri-flake-polkit.enable = false;
 
       security.polkit.extraConfig = /* js */ ''
-        polkit.addRule(function(action, subject)) {
+        polkit.addRule(function(action, subject) {
           if (
             action.id == "org.freedesktop.policykit.exec" &&
             action.lookup("program") == "/run/current-system/sw/bin/noctalia-greeter" &&
@@ -41,7 +42,7 @@
           ) {
             return polkit.result.YES;
           }
-        }
+        })
       '';
     };
 
