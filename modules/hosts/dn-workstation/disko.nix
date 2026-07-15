@@ -3,6 +3,10 @@
   configurations.nixos.dn-workstation.module = {
     imports = [ inputs.disko.nixosModules.disko ];
 
+    boot.swraid.mdadmConf = ''
+      PROGRAM /run/current-system/sw/bin/true
+    '';
+
     disko.devices = {
       disk = {
         disk1 = {
