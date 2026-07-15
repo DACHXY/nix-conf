@@ -12,7 +12,7 @@ in
       inherit (builtins) listToAttrs;
       inherit (lib) nameValuePair mkForce;
       inherit (config.sops) secrets;
-      inherit (config.server-rules.default) allowed;
+      inherit (config.server-rules.rule.default) allowed;
 
       splitDNS = listToAttrs (
         map (x: nameValuePair x "127.0.0.1:5359") [

@@ -1,5 +1,9 @@
 { inputs, ... }:
 {
+  nixpkgs.overlays = [
+    inputs.nix-minecraft.overlay
+  ];
+
   configurations.nixos.dn-server.module =
     {
       pkgs,

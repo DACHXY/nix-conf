@@ -22,7 +22,8 @@ let
   port = 8008;
   owner = "matrix-synapse";
 
-  mailDomain = mailserver.domain;
+  mailDomain = mailserver.hostname;
+  mailPort = mailserver.port;
 
   clientConfig = {
     "m.homeserver" = {
@@ -54,7 +55,7 @@ let
 in
 {
   configurations.nixos.dn-server.module =
-    { pkgs, ... }:
+    { pkgs, ... }@nixosArgs:
     {
       networking.firewall.allowedTCPPorts = [ 8448 ];
 
@@ -89,16 +90,16 @@ in
           matrix_authentication_service:
             enabled: true
             endpoint: http://127.0.0.1:${toString masPort}/
-            secret: "${config.sops.placeholder."matrix/admin-token"}"
-          turn_shared_secret: ${config.sops.placeholder."matrix/turn-password"} 
+            secret: "${nixosArgs.config.sops.placeholder."matrix/admin-token"}"
+          turn_shared_secret: ${nixosArgs.config.sops.placeholder."matrix/turn-password"} 
 
           email:
             smtp_host: ${mailDomain}
-            smtp_port: 465
-            smtp_user: ${config.sops.placeholder."matrix/smtp-user"}
-            smtp_pass: ${config.sops.placeholder."matrix/smtp-pass"}
+            smtp_port: ${toString mailPort}
+            smtp_user: ${nixosArgs.config.sops.placeholder."matrix/smtp-user"}
+            smtp_pass: ${nixosArgs.config.sops.placeholder."matrix/smtp-pass"}
             force_tls: true
-            notif_from: $(app)s <${config.sops.placeholder."matrix/smtp-user"}@${domain}>
+            notif_from: $(app)s <${nixosArgs.config.sops.placeholder."matrix/smtp-user"}@${domain}>
             app_name: Matrix
             client_base_url: ${endpoint}
             invite_client_location: ${web.endpoint}
@@ -135,13 +136,13 @@ in
             kind: synapse
             homeserver: "${hostname}"
             endpoint: "${endpoint}"
-            secret: "${config.sops.placeholder."matrix/admin-token"}"
+            secret: "${nixosArgs.config.sops.placeholder."matrix/admin-token"}"
 
           secrets:
-            encryption: ${config.sops.placeholder."matrix/encrypt-key"}
+            encryption: ${nixosArgs.config.sops.placeholder."matrix/encrypt-key"}
             keys:
               - kid: "iv1aShae"
-                key_file: ${config.sops.secrets."matrix/encrypt-rsa".path}
+                key_file: ${nixosArgs.config.sops.secrets."matrix/encrypt-rsa".path}
 
           upstream_oauth2:
             providers:
@@ -150,7 +151,7 @@ in
                 human_name: "Keycloak"
                 token_endpoint_auth_method: client_secret_basic
                 client_id: "matrix-authentication-service"
-                client_secret: "${config.sops.placeholder."matrix/mas-client-secret"}"
+                client_secret: "${nixosArgs.config.sops.placeholder."matrix/mas-client-secret"}"
                 scope: "openid profile email"
                 claims_imports:
                   localpart:
@@ -205,7 +206,7 @@ in
           StateDirectory = "matrix-authentication-service";
           WorkingDirectory = masDataDir;
           ExecStart = "${pkgs.matrix-authentication-service}/bin/mas-cli server --config ${
-            config.sops.templates."mas-config.yaml".path
+            nixosArgs.config.sops.templates."mas-config.yaml".path
           }";
           Restart = "on-failure";
           RestartSec = "10s";
@@ -235,7 +236,7 @@ in
         configureRedisLocally = true;
         extras = [ "oidc" ];
         extraConfigFiles = [
-          config.sops.templates."matrix-synapse-secrets.yaml".path
+          nixosArgs.config.sops.templates."matrix-synapse-secrets.yaml".path
         ];
         settings = {
           server_name = domain;
@@ -327,8 +328,8 @@ in
           enable_metrics = true;
 
           turn_uris = [
-            "turn:${coturn.domain}:${toString coturn.port}?transport=udp"
-            "turn:${coturn.domain}:${toString coturn.port}?transport=tcp"
+            "turn:${coturn.hostname}:${toString coturn.port}?transport=udp"
+            "turn:${coturn.hostname}:${toString coturn.port}?transport=tcp"
           ];
           turn_username = "matrix";
           turn_user_lifetime = "1h";
@@ -424,7 +425,7 @@ in
 
           locations."^~ /livekit/jwt/" = {
             priority = 400;
-            proxyPass = "http://127.0.0.1:${toString config.services.lk-jwt-service.port}/";
+            proxyPass = "http://127.0.0.1:${toString nixosArgs.config.services.lk-jwt-service.port}/";
           };
           locations."^~ /livekit/sfu/" = {
             extraConfig = ''
@@ -437,7 +438,7 @@ in
               proxy_set_header Connection "upgrade";
             '';
             priority = 400;
-            proxyPass = "http://[::1]:${toString config.services.livekit.settings.port}/";
+            proxyPass = "http://[::1]:${toString nixosArgs.config.services.livekit.settings.port}/";
             proxyWebsockets = true;
           };
 

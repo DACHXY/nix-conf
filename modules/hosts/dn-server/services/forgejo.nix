@@ -2,7 +2,7 @@
 let
   globalConfig = config;
   inherit (globalConfig.flake.public.config) domain;
-  inherit (globalConfig.flake.public.config.services) mailServer;
+  inherit (globalConfig.flake.public.config.services) mailserver;
   inherit (globalConfig.flake.public.config.services.forgejo) hostname endpoint;
 
   oidcEndpoint = globalConfig.flake.public.config.services.oidc.endpoint;
@@ -64,8 +64,8 @@ in
 
           mailer = {
             ENABLED = true;
-            SMTP_ADDR = mailServer;
-            SMTP_PORT = 587;
+            SMTP_ADDR = mailserver.hostname;
+            SMTP_PORT = mailserver.port;
             FROM = "forgejo@${domain}";
             USER = "forgejo@${domain}";
           };
