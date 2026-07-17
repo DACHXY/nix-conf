@@ -1,16 +1,16 @@
 {
-  flake.modules.nixos.base = {pkgs, ...}: {
+  flake.modules.nixos.base = { pkgs, ... }: {
     programs.nix-ld = {
-      libraries = with pkgs;[
+      libraries = with pkgs; [
         openssl
         zlib
       ];
     };
   };
 
-  flake.modules.darwin.gui = {pkgs, ...}: {
+  flake.modules.darwin.gui = { pkgs, ... }: {
     environment.systemPackages = with pkgs; [
-     nixd
+      nixd
     ];
   };
 
@@ -21,7 +21,10 @@
         enable = true;
         enableMcpIntegration = false;
         installRemoteServer = true;
-        extraPackages = with pkgs; [ nixd nixfmt ];
+        extraPackages = with pkgs; [
+          nixd
+          nixfmt
+        ];
 
         extensions = [
           "nix"
@@ -51,12 +54,12 @@
           {
             context = "Editor && VimControl && !VimWaiting && !menu";
             bindings = {
-                    "-"= "project_panel::ToggleFocus";
-                    "ctrl-h"= "workspace::ActivatePaneLeft";
-                    "ctrl-j"= "workspace::ActivatePaneDown";
-                    "ctrl-k"= "workspace::ActivatePaneUp";
-                    "ctrl-l"= "workspace::ActivatePaneRight";
-                    "space n"= "workspace::ToggleLeftDock";
+              "-" = "project_panel::ToggleFocus";
+              "ctrl-h" = "workspace::ActivatePaneLeft";
+              "ctrl-j" = "workspace::ActivatePaneDown";
+              "ctrl-k" = "workspace::ActivatePaneUp";
+              "ctrl-l" = "workspace::ActivatePaneRight";
+              "space n" = "workspace::ToggleLeftDock";
             };
           }
           {
@@ -86,10 +89,16 @@
           languages = {
             "Nix" = {
               formatter.external = {
-                command= "nixfmt";
-                arguments = ["--quiet" "--"];
+                command = "nixfmt";
+                arguments = [
+                  "--quiet"
+                  "--"
+                ];
               };
-              language_servers = [ "nixd" "!nil" ];
+              language_servers = [
+                "nixd"
+                "!nil"
+              ];
             };
           };
 

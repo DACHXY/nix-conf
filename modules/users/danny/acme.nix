@@ -28,6 +28,10 @@
         acceptTerms = true;
         certs."dnywe.com" = {
           domain = "*.dnywe.com";
+          extraLegoFlags = [
+            "--dns.propagation-wait"
+            "5s"
+          ];
           extraDomainNames = [
             "*.stalwart.dnywe.com"
             "dnywe.com"

@@ -12,21 +12,14 @@ creation_rules:
   - path_regex: modules/hosts/dn-server/secret.yaml
     key_groups:
       - age:
-          - *dn_lap
           - *dn_server
-          - *dn_pre7780
-          - *dn_cc
           - *dn_workstation
-  - path_regex: system/dev/dn-cc/sops/secret.yaml
+  - path_regex: modules/hosts/dn-cc/secret.yaml
     key_groups:
       - age:
           - *dn_pre7780
           - *dn_cc
           - *dn_workstation
-  - path_regex: system/dev/dn-pre7780/sops/secret.yaml
-    key_groups:
-      - age:
-          - *dn_pre7780
   - path_regex: modules/hosts/dn-workstation/secret.yaml
     key_groups:
       - age:
@@ -37,12 +30,6 @@ creation_rules:
       - age:
           - *dn_workstation
           - *dn_cscc
-  - path_regex: system/dev/dn-lap/sops/secret.yaml
-    key_groups:
-      - age:
-          - *dn_pre7780
-          - *dn_lap
-          - *dn_workstation
   - path_regex: system/dev/skydrive-lap/sops/secret.yaml
     key_groups:
       - age:
@@ -58,7 +45,7 @@ creation_rules:
           - *dn_cc
           - *dn_workstation
           - *dn_cscc
-          - *dn_notebook 
+          - *dn_notebook
   - path_regex: system/dev/public/sops/secret.yaml
     key_groups:
       - age:
@@ -68,4 +55,4 @@ creation_rules:
           - *dn_lap
           - *dn_workstation
           - *dn_cscc
-          - *dn_notebook 
+          - *dn_notebook

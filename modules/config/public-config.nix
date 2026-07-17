@@ -9,13 +9,37 @@ in
     in
     {
       domain = myDomain;
+      legacy = {
+        domain = "net.dn";
+      };
       machines = {
-        dn-cc = {
-          ip = "10.20.0.2/32";
+        dn-server = rec {
+          ip = "10.20.0.2";
           range = "10.20.0.0/24";
+          publicKey = "rMain0t9J0YeJR9AjuLuX6WL0Mh5QkFA2lxq/XV9RH4=";
+          wg = {
+            wg1 = {
+              publicKey = publicKey;
+              ip = ip;
+              interface = "wg1";
+            };
+          };
+        };
+        dn-cc = rec {
+          ip = "10.20.0.1";
+          range = "10.20.0.0/24";
+          wg = {
+            wg0 = {
+              ip = ip;
+              interface = "wg0";
+              externalInterface = "ens192";
+              listenPort = 51820;
+              range = range;
+            };
+          };
         };
         gcp = {
-          ip = "10.10.0.2/32";
+          ip = "10.10.0.1";
           range = "10.10.0.0/24";
         };
       };
@@ -48,6 +72,7 @@ in
           realm = "master";
           issuer = "${endpoint}/realms/${realm}";
           oidcConfigEndpoint = "${endpoint}/realms/${realm}/.well-known/openid-configuration";
+          userInfoEndpoint = "${issuer}/protocol/openid-connect/userinfo";
         };
         vaultwarden = rec {
           hostname = "bitwarden.${myDomain}";
@@ -87,6 +112,15 @@ in
           hostname = "ldap.${domain}";
           olcDomain = getOlcSuffix domain;
           endpoint = "ldaps://${hostname}";
+        };
+        lldap = rec {
+          domain = myDomain;
+          hostname = "ldap.${domain}";
+          endpoint = "ldaps://${hostname}";
+          web = {
+            hostname = hostname;
+            endpoint = "https://${hostname}";
+          };
         };
         matrix = rec {
           hostname = "matrix.${myDomain}";
