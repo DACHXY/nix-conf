@@ -579,7 +579,47 @@
             };
 
             formatter = {
-              conform-nvim.enable = true;
+              conform-nvim = {
+                enable = true;
+                presets = {
+                  ruff-organize-imports.enable = true;
+                  ruff-fix.enable = true;
+                };
+                setupOpts.formatters.ruff = {
+                  args = mkLuaInline ''
+                    function(self, ctx)
+                      local style = vim.bo[ctx.buf].expandtab and "'space'" or "'tab'"
+
+                      return {
+                        "format", "--config", "format.indent-style = " .. style,
+                        "--force-exclude",
+                        "--stdin-filename", "$FILENAME",
+                        "-",
+                      }
+                    end
+                  '';
+                  range_args = mkLuaInline ''
+                    function(self, ctx)
+                      local style = vim.bo[ctx.buf].expandtab and "'space'" or "'tab'"
+
+                      return {
+                        "format",
+                        "--config", "format.indent-style = " .. style,
+                        "--force-exclude",
+                        "--range", string.format(
+                          "%d:%d-%d:%d",
+                          ctx.range.start[1],
+                          ctx.range.start[2] + 1,
+                          ctx.range["end"][1],
+                          ctx.range["end"][2] + 1
+                        ),
+                        "--stdin-filename", "$FILENAME",
+                        "-",
+                      }
+                    end
+                  '';
+                };
+              };
             };
 
             diagnostics = {

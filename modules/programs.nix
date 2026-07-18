@@ -120,6 +120,9 @@ in
           # TTY
           hideTTY = ''sudo sh -c "echo 0 > /sys/class/graphics/fb0/blank"'';
           showTTY = ''sudo sh -c "echo 1 > /sys/class/graphics/fb0/blank"'';
+
+          # Trash cli
+          rm = "trash";
         };
       };
 
