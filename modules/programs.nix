@@ -145,6 +145,16 @@ in
     { pkgs, ... }:
     {
       programs.gdk-pixbuf.modulePackages = [ pkgs.librsvg ];
+
+      programs.wshowkeys = {
+        enable = true;
+        package = inputs.wshowkeys.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      };
+
+      programs.fish.shellAliases = {
+        # Show keys
+        showkeys = "wshowkeys -a bottom -F 'Sans Bold 30' -s '#B5B520ff' -f  '#ecd29cff' -b '#201B1488' -l 600 -t 500 -M -U -S";
+      };
     };
 
   flake.modules.homeManager.base =

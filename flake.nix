@@ -149,6 +149,13 @@
     };
 
     jj-starship.url = "github:dmmulroy/jj-starship";
+
+    woomer.url = "github:coffeeispower/woomer";
+
+    wshowkeys = {
+      url = "github:DreamMaoMao/wshowkeys";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

@@ -1,3 +1,4 @@
+{ inputs, ... }:
 {
   flake.modules.generic.base =
     { pkgs, ... }:
@@ -47,6 +48,7 @@
             localsend
 
             wl-clipboard
+            inputs.woomer.packages.${pkgs.stdenv.hostPlatform.system}.default
           ];
         };
     };
