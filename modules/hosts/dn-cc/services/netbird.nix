@@ -25,5 +25,7 @@ in
           setupKeyFile = config.sops.secrets."netbird/setupKey".path;
         };
       };
+
+      systemd.services.netbird-wt0.after = [ "nginx.service" ];
     };
 }
