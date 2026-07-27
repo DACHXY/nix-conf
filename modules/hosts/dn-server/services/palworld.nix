@@ -39,8 +39,6 @@
 
       systemd.user.services.pal-world-server = {
         wantedBy = [ "default.target" ];
-        requires = [ "pal-world-update.service" ];
-        after = [ "pal-world-update.service" ];
 
         script = ''
           ./PalServer.sh

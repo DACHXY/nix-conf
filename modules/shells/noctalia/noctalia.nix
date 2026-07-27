@@ -4,6 +4,9 @@
   self,
   ...
 }:
+let
+  publicConfig = config;
+in
 {
   flake.modules.nixos.noctalia =
     { pkgs, ... }@nixosArgs:
@@ -96,6 +99,8 @@
         pwvucontrol
         playerctl
         satty
+
+        bitwarden-cli
       ];
 
       # ==== GTK Theme ==== #
@@ -444,8 +449,13 @@
             };
           };
 
-          plugin_settings."noctalia/screen_recorder" = {
-            copy_to_clipboard = true;
+          plugin_settings = {
+            "noctalia/bitwarden" = {
+              server_url = publicConfig.flake.public.config.services.vaultwarden.endpoint;
+            };
+            "noctalia/screen_recorder" = {
+              copy_to_clipboard = true;
+            };
           };
 
           plugins = {
@@ -453,6 +463,9 @@
               "noctalia/screen_recorder"
               "noctalia/timer"
               "noctalia/translator"
+              "avivbintangaringga/nix-monitor"
+              "noctalia/bitwarden"
+              "avivbintangaringga/nextboot-selector"
             ];
             source = [
               {
