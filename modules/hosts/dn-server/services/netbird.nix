@@ -67,6 +67,7 @@ in
 
           # ==== Management ==== #
           management = {
+            enable = true;
             dnsDomain = vDomain;
             disableSingleAccountMode = false;
             singleAccountModeDomain = vDomain;
