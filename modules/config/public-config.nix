@@ -12,6 +12,9 @@ in
       legacy = {
         domain = "net.dn";
       };
+      common = {
+        nix-repo = "/etc/nixos";
+      };
       machines = {
         dn-server = rec {
           ip = "10.20.0.2";

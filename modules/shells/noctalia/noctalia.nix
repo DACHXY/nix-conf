@@ -5,7 +5,7 @@
   ...
 }:
 let
-  publicConfig = config;
+  globalConfig = config;
 in
 {
   flake.modules.nixos.noctalia =
@@ -265,8 +265,6 @@ in
               "lockscreen-login-box@DP-5"
               "lockscreen-widget-0000000000000001"
               "lockscreen-widget-0000000000000002"
-              "lockscreen-widget-0000000000000003"
-              "lockscreen-widget-0000000000000004"
               "lockscreen-widget-0000000000000005"
             ];
 
@@ -278,8 +276,8 @@ in
 
             widget = {
               "lockscreen-login-box@DP-3" = {
-                box_height = 70.0;
-                box_width = 400.0;
+                box_height = 196.0;
+                box_width = 720.0;
                 cx = 1280.0;
                 cy = 1232.0;
                 output = "DP-3";
@@ -289,17 +287,22 @@ in
                   background_color = "on_primary";
                   background_opacity = 0.0;
                   background_radius = 12.0;
+                  center_password_text = false;
                   input_opacity = 0.8;
                   input_radius = 32.0;
+                  layout = "regular";
                   show_caps_lock = true;
                   show_keyboard_layout = true;
                   show_login_button = true;
-                  show_password_hint = true;
+                  show_media = true;
+                  show_session_buttons = true;
+                  show_unlock_hint = true;
+                  show_weather = true;
                 };
               };
               "lockscreen-login-box@DP-5" = {
-                box_height = 80.0;
-                box_width = 512.0;
+                box_height = 196.0;
+                box_width = 720.0;
                 cx = 704.0;
                 cy = 2504.0;
                 enabled = false;
@@ -310,17 +313,22 @@ in
                   background_color = "surface_variant";
                   background_opacity = 0.88;
                   background_radius = 12.0;
+                  center_password_text = false;
                   input_opacity = 1.0;
                   input_radius = 6.0;
+                  layout = "regular";
                   show_caps_lock = true;
                   show_keyboard_layout = true;
                   show_login_button = true;
-                  show_password_hint = true;
+                  show_media = true;
+                  show_session_buttons = true;
+                  show_unlock_hint = true;
+                  show_weather = true;
                 };
               };
               "lockscreen-login-box@eDP-2" = {
-                box_height = 70.0;
-                box_width = 400.0;
+                box_height = 196.0;
+                box_width = 720.0;
                 cx = 1024.0;
                 cy = 1157.0;
                 output = "eDP-2";
@@ -330,12 +338,17 @@ in
                   background_color = "surface_variant";
                   background_opacity = 0.88;
                   background_radius = 12.0;
+                  center_password_text = false;
                   input_opacity = 1.0;
                   input_radius = 6.0;
+                  layout = "regular";
                   show_caps_lock = true;
                   show_keyboard_layout = true;
                   show_login_button = true;
-                  show_password_hint = true;
+                  show_media = true;
+                  show_session_buttons = true;
+                  show_unlock_hint = true;
+                  show_weather = true;
                 };
               };
               lockscreen-widget-0000000000000001 = {
@@ -348,65 +361,7 @@ in
                 type = "clock";
                 settings = {
                   background = false;
-                  forecast_days = 4;
                   shadow = false;
-                  show_forecast = true;
-                };
-              };
-              lockscreen-widget-0000000000000002 = {
-                box_height = 80.0;
-                box_width = 640.0;
-                cx = 1280.0;
-                cy = 1352.0;
-                output = "DP-3";
-                rotation = 0.0;
-                type = "audio_visualizer";
-                settings = {
-                  background = false;
-                  bands = 32;
-                  color = "on_surface";
-                  color_1 = "outline";
-                  color_2 = "primary";
-                  hide_when_no_media = true;
-                  layout = "horizontal";
-                  shadow = false;
-                  show_when_idle = false;
-                };
-              };
-              lockscreen-widget-0000000000000003 = {
-                box_height = 176.0;
-                box_width = 448.0;
-                cx = 1280.0;
-                cy = 1056.0;
-                output = "DP-3";
-                rotation = 0.0;
-                type = "media_player";
-                settings = {
-                  background = false;
-                  center_text = true;
-                  clock_style = "digital";
-                  font_family = "";
-                  hide_when_no_media = true;
-                  shadow = false;
-                };
-              };
-              lockscreen-widget-0000000000000004 = {
-                box_height = 208.0;
-                box_width = 256.0;
-                cx = 192.0;
-                cy = 1248.0;
-                output = "DP-3";
-                rotation = 0.0;
-                type = "weather";
-                settings = {
-                  background = false;
-                  bands = 32;
-                  color_1 = "on_surface";
-                  color_2 = "primary";
-                  forecast_days = 4;
-                  shadow = false;
-                  show_forecast = true;
-                  show_when_idle = false;
                 };
               };
               lockscreen-widget-0000000000000005 = {
@@ -423,7 +378,7 @@ in
                   description = "";
                   opacity = 0.65;
                   shadow = false;
-                  title = "  Welcome Back, ${capitalize name} !  ";
+                  title = "  Welcome Back, Danny !  ";
                 };
               };
             };
@@ -442,7 +397,7 @@ in
           osd = {
             background_opacity = 0.55;
             orientation = "horizontal";
-            position = "top_center";
+            position = "bottom_center";
             position_vertical = "center_right";
             kinds = {
               media = false;
@@ -450,8 +405,23 @@ in
           };
 
           plugin_settings = {
+            "avivbintangaringga/nix-monitor" = {
+              update_command = "${pkgs.writeShellApplication {
+                name = "update-nix-flake";
+                runtimeInputs = with pkgs; [
+                  nix
+                ];
+                text = ''
+                  FLAKE_REPO="${globalConfig.flake.public.config.common.nix-repo}"
+
+                  cd "$FLAKE_REPO"
+                  nix flake update
+                '';
+              }}";
+              clean_command = "nh clean all";
+            };
             "noctalia/bitwarden" = {
-              server_url = publicConfig.flake.public.config.services.vaultwarden.endpoint;
+              server_url = globalConfig.flake.public.config.services.vaultwarden.endpoint;
             };
             "noctalia/screen_recorder" = {
               copy_to_clipboard = true;
@@ -478,11 +448,6 @@ in
                 location = "https://github.com/noctalia-dev/official-plugins";
                 name = "official";
               }
-              {
-                kind = "git";
-                location = "https://github.com/dachxy/official-plugins";
-                name = "DACHXY";
-              }
             ];
           };
 
@@ -503,7 +468,6 @@ in
 
             panel = {
               borders = false;
-              launcher_categories = false;
               open_near_click_session = true;
               open_near_click_wallpaper = true;
               open_near_click_control_center = true;
