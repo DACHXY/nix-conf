@@ -63,6 +63,10 @@
             "network.http.http3.enabled" = true;
             "network.socket.ip_addr_any.disabled" = true; # disallow bind to 0.0.0.0
             "sidebar.expandOnHover" = false;
+            "browser.ctrlTab.sortByRecentlyUsed" = true;
+            "browser.tabs.insertAfterCurrent" = true;
+            "signon.rememberSignons" = false;
+            "extensions.formautofill.creditCards.enabled" = false;
           }
           // (optionalAttrs (!isDarwin) {
             "font.name.sans-serif.ja" = "Noto Sans CJK JP";
@@ -281,6 +285,7 @@
               "zen.tabs.vertical.right-side" = true;
               "zen.urlbar.behavior" = "float";
               "zen.welcome-screen.seen" = true;
+              "zen.tabs.show-newtab-vertical" = false;
 
               # Nebula
               "nebula-tab-loading-animation" = 0;
