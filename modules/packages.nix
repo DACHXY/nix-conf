@@ -10,7 +10,6 @@
         wget
         killall
         fzf
-        comma
       ];
     };
 
@@ -24,6 +23,7 @@
         ffmpeg
         mpv
         imagemagick
+        trash-cli
       ];
     };
 
@@ -39,7 +39,6 @@
         {
           home.packages = with pkgs; [
             cava
-            trash-cli
             nemo
             thunderbird
             ffmpegthumbnailer

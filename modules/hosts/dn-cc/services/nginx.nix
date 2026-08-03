@@ -130,7 +130,7 @@ in
 
       services.nginx = {
         enable = true;
-        package = (pkgs.nginx.override { modules = with pkgs.nginxModules; [ geoip2 ]; });
+        additionalModules = with pkgs.nginxModules; [ geoip2 ];
 
         appendHttpConfig = ''
           geoip2 ${geoDBCountry} {

@@ -11,6 +11,7 @@ in
 
       services.keycloak = {
         enable = true;
+
         database = {
           type = "postgresql";
           name = "keycloak";

@@ -10,6 +10,7 @@ in
     {
       config,
       lib,
+      pkgs,
       ...
     }:
     let
@@ -86,6 +87,8 @@ in
             "storage.directory"
             "certificate.*"
           ];
+
+          webadmin.resource = pkgs.writeText "holder" "";
 
           server.hostname = fqdn;
 

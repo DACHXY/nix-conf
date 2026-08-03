@@ -272,7 +272,7 @@
                 };
               }
             ];
-            keyboardShortcutsVersion = 19;
+            keyboardShortcutsVersion = 20;
 
             search.default = "google";
             search.force = true;

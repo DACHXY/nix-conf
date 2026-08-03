@@ -15,6 +15,10 @@
         nixos.virtualisation
         # nixos.wallpaper-engine
         generic.dnywe
+
+        # ==== Claude ==== #
+        generic.claude
+        nixos.danny-claude
       ];
 
       home-manager.users.${nixosArgs.config.my.user.name}.imports =
