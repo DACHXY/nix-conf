@@ -81,6 +81,7 @@
       };
       stylix.targets = {
         zen-browser.enable = false;
+        noctalia.enable = false;
         nvf = {
           transparentBackground = true;
         };

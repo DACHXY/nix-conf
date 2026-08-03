@@ -3,18 +3,13 @@ let
   inherit (config.flake.public.config) domain;
   inherit (config.flake.public.config.services.netbird) hostname vDomain;
   inherit (config.flake.public.config.services) oidc coturn;
-  inherit (config.flake.public.config.machines) dn-cc gcp;
 in
 {
   configurations.nixos.dn-server.module =
     { config, lib, ... }:
     let
-      inherit (lib) mkIf mkForce concatStringsSep;
+      inherit (lib) mkIf mkForce;
       inherit (config.sops) secrets;
-      proxyIPs = [
-        dn-cc.ip
-        gcp.ip
-      ];
 
       cfg = config.services.netbird;
       srv = cfg.server;
@@ -82,6 +77,27 @@ in
               DataStoreEncryptionKey = {
                 _secret = secrets."netbird/dataStoreKey".path;
               };
+
+              Stuns = [
+                {
+                  Proto = "udp";
+                  URI = "stun:stun.cloudflare.com:3478";
+                  Username = "";
+                  Password = null;
+                }
+                {
+                  Proto = "udp";
+                  URI = "stun:stun.l.google.com:19302";
+                  Username = "";
+                  Password = null;
+                }
+                {
+                  Proto = "udp";
+                  URI = "stun:${srv.management.turnDomain}:3478";
+                  Username = "";
+                  Password = null;
+                }
+              ];
 
               TURNConfig = {
                 Secret._secret = secrets."netbird/turn/secret".path;
@@ -186,13 +202,6 @@ in
         ];
       };
 
-      # ==== Proxy By Caddy & CDN ==== #
-      services.nginx.appendHttpConfig = ''
-        ${concatStringsSep "\n" (map (v: "set_real_ip_from ${v};") proxyIPs)}
-        real_ip_header X-Forwarded-For;
-        real_ip_recursive on;
-      '';
-
       services.nginx.virtualHosts."${srv.domain}" = {
         useACMEHost = domain;
         addSSL = true;
@@ -206,6 +215,15 @@ in
           {
             addr = "127.0.0.1";
             port = 30082;
+          }
+          {
+            addr = "[::]";
+            port = 80;
+          }
+          {
+            addr = "[::]";
+            port = 443;
+            ssl = true;
           }
           {
             addr = "0.0.0.0";

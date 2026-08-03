@@ -13,6 +13,15 @@
         tables.filter = {
           family = "inet";
           content = ''
+            set ssh_allow_v4 {
+              type ipv4_addr
+              flags interval
+
+              elements = {
+                ${allowedSSHIPs}
+              }
+            }
+
             chain input {
               type filter hook input priority -10; policy accept;
 
@@ -24,7 +33,7 @@
             }
 
             chain ssh-filter {
-              ip saddr { ${allowedSSHIPs} } accept
+              ip saddr @ssh_allow_v4 accept
 
               limit rate 30/minute log prefix "SSH-DROP: "
               drop

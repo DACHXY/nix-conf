@@ -2,20 +2,17 @@
 {
   flake.modules.nixos.base = {
     imports = [
-      inputs.nix-index-database.nixosModules.nix-index
+      inputs.nix-index-database.nixosModules.default
     ];
+
+    programs.nix-index-database.comma.enable = true;
   };
 
   flake.modules.darwin.base = {
     imports = [
       inputs.nix-index-database.darwinModules.nix-index
     ];
-  };
 
-  flake.modules.homeManager.base = {
-    programs.nix-index = {
-      enable = true;
-      enableFishIntegration = true;
-    };
+    programs.nix-index-database.comma.enable = true;
   };
 }

@@ -7,12 +7,14 @@
       "https://noctalia.cachix.org"
       "https://yazi.cachix.org"
       "https://ghostty.cachix.org"
+      "https://cache.numtide.com"
     ];
     extra-trusted-public-keys = [
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
       "yazi.cachix.org-1:Dcdz63NZKfvUCbDGngQDAZq6kOroIrFoyO064uvLh8k="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
+      "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
     ];
     extra-experimental-features = [
       "pipe-operators"
@@ -91,8 +93,7 @@
     };
 
     stylix = {
-      # url = "github:nix-community/stylix";
-      url = "github:nix-community/stylix/pull/2337/head";
+      url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -156,6 +157,13 @@
       url = "github:DreamMaoMao/wshowkeys";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    keycloak-custom-theme = {
+      url = "/home/danny/projects/keycloak-custom-theme";
+      flake = false;
+    };
+
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs =
