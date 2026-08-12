@@ -27,6 +27,38 @@
           ];
 
           profiles = {
+            "NYCU VPN" = {
+              connection = {
+                autoconnect = "false";
+                id = "NYCU VPN";
+                type = "vpn";
+                uuid = "16a0c10d-ab98-42a6-ae97-4414d7d18f77";
+              };
+              ipv4 = {
+                method = "auto";
+                ignore-auto-dns = true;
+                routes = "10.24.0.0/16";
+                never-default = true;
+              };
+              ipv6 = {
+                addr-gen-mode = "stable-privacy";
+                method = "auto";
+                ignore-auto-dns = true;
+              };
+              proxy = { };
+              vpn = {
+                gateway = "$CSIT_VPN_GATEWAY";
+                otp-flags = "0";
+                password-flags = "0";
+                realm = "$CSIT_VPN_REALM";
+                service-type = "org.freedesktop.NetworkManager.fortisslvpn";
+                trusted-cert = "$CSIT_VPN_TRUST_CERT";
+                user = "$CSIT_VPN_IDENTITY";
+              };
+              vpn-secrets = {
+                password = "$CSIT_VPN_PASSWORD";
+              };
+            };
             "CSIT VPN" = {
               connection = {
                 autoconnect = "false";
@@ -100,7 +132,6 @@
               };
               connection = {
                 id = "NYCU";
-                interface-name = "wlp0s20f3";
                 type = "wifi";
               };
               ipv4 = {
@@ -122,7 +153,6 @@
             DACDAC_5G = {
               connection = {
                 id = "DACDAC_5G";
-                interface-name = "wlp0s20f3";
                 type = "wifi";
               };
               ipv4 = {
@@ -153,7 +183,6 @@
               connection = {
                 autoconnect-priority = "10";
                 id = "CSIT";
-                interface-name = "wlp0s20f3";
                 type = "wifi";
               };
               ipv4 = {
@@ -172,10 +201,37 @@
                 key-mgmt = "wpa-eap";
               };
             };
+            "CSIT-guest" = {
+              "802-1x" = {
+                eap = "peap";
+                identity = "$CSIT_WIFI_IDENTITY";
+                password = "$CSIT_WIFI_PASSWORD";
+                phase2-auth = "gtc";
+              };
+              connection = {
+                autoconnect-priority = "10";
+                id = "CSIT-guest";
+                type = "wifi";
+              };
+              ipv4 = {
+                method = "auto";
+              };
+              ipv6 = {
+                addr-gen-mode = "default";
+                method = "auto";
+              };
+              proxy = { };
+              wifi = {
+                mode = "infrastructure";
+                ssid = "CSIT-guest";
+              };
+              wifi-security = {
+                key-mgmt = "wpa-eap";
+              };
+            };
             YCC0121_5G = {
               connection = {
                 id = "YCC0121_5G";
-                interface-name = "wlp0s20f3";
                 type = "wifi";
                 uuid = "aa650a47-b76c-4782-979e-c2f71dc31c8c";
               };
