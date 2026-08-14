@@ -110,7 +110,6 @@
 
     niri-pkgs = {
       url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     git-hooks.url = "github:cachix/git-hooks.nix";

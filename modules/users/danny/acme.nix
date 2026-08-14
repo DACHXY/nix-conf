@@ -33,7 +33,6 @@
             "5s"
           ];
           extraDomainNames = [
-            "*.stalwart.dnywe.com"
             "dnywe.com"
           ];
           server = "https://acme-v02.api.letsencrypt.org/directory";
