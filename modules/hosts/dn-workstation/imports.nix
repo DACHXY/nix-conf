@@ -16,9 +16,9 @@
         # nixos.wallpaper-engine
         generic.dnywe
 
-        # ==== Claude ==== #
-        generic.claude
-        nixos.danny-claude
+        # ==== AI ==== #
+        generic.ai
+        nixos.danny-ai
       ];
 
       home-manager.users.${nixosArgs.config.my.user.name}.imports =

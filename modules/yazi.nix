@@ -7,7 +7,7 @@
       ...
     }:
     let
-      inherit (pkgs.stdenv.hostPlatform) system;
+      inherit (pkgs.stdenv.hostPlatform) system isDarwin;
       inherit (lib) getExe;
 
       yaziOfficalPlugins = pkgs.fetchFromGitHub {
@@ -80,7 +80,7 @@
             ];
 
             player = [
-              { run = "${getExe pkgs.mpv} --force-window %s"; }
+              { run = if isDarwin then "open %s" else "${getExe pkgs.mpv} --force-window %s"; }
             ];
 
             open = [

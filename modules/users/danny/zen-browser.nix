@@ -92,11 +92,6 @@
                 url = "https://www.dnywe.com";
                 position = 170;
               };
-              "Notion" = {
-                id = "42ed89c2-820c-4a48-824e-39c8bd94b67c";
-                url = "https://notion.so";
-                position = 180;
-              };
               "Element" = {
                 id = "ad60fc37-6ee7-4591-9760-f5f50a7c948f";
                 url = "https://element.dnywe.com";

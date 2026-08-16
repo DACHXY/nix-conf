@@ -89,27 +89,34 @@
             exit 0
           fi
 
-          local host user proto passfile
-          host=$(     grep -E '^server='          "$conf" | cut -d= -f2-)
-          user=$(     grep -E '^user='      "$conf" | cut -d= -f2-)
-          proto=$(    grep -E '^protocol='      "$conf" | cut -d= -f2-)
-          passfile=$( grep -E '^password-file=' "$conf" | cut -d= -f2-)
-          servercert=$( grep -E '^servercert=' "$conf" | cut -d= -f2-)
+          local host user proto passfile servercert
+          host=$(grep -E '^server=' "$conf" | cut -d= -f2-)
+          user=$(grep -E '^user=' "$conf" | cut -d= -f2-)
+          proto=$(grep -E '^protocol=' "$conf" | cut -d= -f2-)
+          passfile=$(grep -E '^password-file=' "$conf" | cut -d= -f2-)
+          servercert=$(grep -E '^servercert=' "$conf" | cut -d= -f2-)
 
           if [[ ! -f "$passfile" ]]; then
             echo "Password file not found: $passfile" >&2
             exit 1
           fi
 
+          local -a openconnect_args=(
+            --protocol="$proto"
+            --user="$user"
+            --passwd-on-stdin
+            --background
+            --pid-file="$pf"
+          )
+
+          if [[ -n "$servercert" ]]; then
+            openconnect_args+=(--servercert="$servercert")
+          fi
+
           cat "$passfile" | sudo "$OPENCONNECT" \
-            --protocol="$proto" \
-            --user="$user" \
-            --passwd-on-stdin \
-            --background \
-            --servercert="$servercert" \
-            --pid-file="$pf" \
+            "''${openconnect_args[@]}" \
             "$host" \
-          >> "$lf" 2>&1 &
+            >> "$lf" 2>&1 &
         }
 
         action_disconnect() {

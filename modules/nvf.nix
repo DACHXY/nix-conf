@@ -647,7 +647,7 @@
               enableExtraDiagnostics = true;
 
               odin = {
-                enable = true;
+                enable = !isDarwin;
               };
 
               nix = {
