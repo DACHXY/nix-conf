@@ -10,14 +10,13 @@
       };
 
       casks = [
-        "TheBoredTeam/boring-notch/boring-notch"
-        "domzilla-caffeine"
+        "theboredteam/boring-notch/boring-notch"
         "wallspace"
+        "thunderbird"
+        "vorssaint"
+        "moonlight"
+        "crossover"
       ];
-
-      masApps = {
-        "CleanMyKeyboard" = 6468120888;
-      };
     };
   };
 }

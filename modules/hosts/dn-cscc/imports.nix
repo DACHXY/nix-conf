@@ -10,8 +10,8 @@
       nixos.gaming
       nixos.virtualisation
       generic.dnywe
-      nixos.danny-claude
-      generic.claude
+      nixos.danny-ai
+      generic.ai
     ];
   };
 }
