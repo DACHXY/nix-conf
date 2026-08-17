@@ -2,15 +2,41 @@
   description = "DACHXY's NixOS with hyprland";
 
   nixConfig = {
-    extra-substituters = [ "https://noctalia.cachix.org" ];
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+      "https://noctalia.cachix.org"
+      "https://yazi.cachix.org"
+      "https://ghostty.cachix.org"
+      "https://cache.numtide.com"
+    ];
     extra-trusted-public-keys = [
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+      "yazi.cachix.org-1:Dcdz63NZKfvUCbDGngQDAZq6kOroIrFoyO064uvLh8k="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
+      "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
     ];
+    extra-experimental-features = [
+      "pipe-operators"
+      "flakes"
+    ];
+    allow-import-from-derivation = true;
   };
+
+  inputs.self.submodules = true;
 
   inputs = {
     nixpkgs = {
       url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    };
+
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+
+    import-tree = {
+      url = "github:vic/import-tree";
     };
 
     nix-darwin = {
@@ -28,11 +54,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     ghostty = {
       url = "github:ghostty-org/ghostty";
     };
@@ -41,19 +62,8 @@
       url = "github:sxyazi/yazi";
     };
 
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-    };
-
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
-    };
-
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-
     lanzaboote = {
-      url = "github:nix-community/lanzaboote/v1.0.0";
+      url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -67,18 +77,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-tmodloader = {
-      url = "github:andOrlando/nix-tmodloader";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     sops-nix = {
       url = "github:Mic92/sops-nix";
-    };
-
-    awww = {
-      url = "git+https://codeberg.org/LGFae/awww";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     zen-nebula = {
@@ -92,16 +92,6 @@
       inputs.home-manager.follows = "home-manager";
     };
 
-    actual-budget-api = {
-      url = "github:DACHXY/actual-budget-api";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    microvm = {
-      url = "github:microvm-nix/microvm.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     stylix = {
       url = "github:nix-community/stylix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -109,29 +99,6 @@
 
     nvf = {
       url = "github:notashelf/nvf";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    nixd = {
-      url = "github:nix-community/nixd";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # ===== Nvim Plugins ===== #
-    marks-nvim = {
-      url = "github:chentoast/marks.nvim";
-      flake = false;
-    };
-    # ======================== #
-
-    attic = {
-      url = "github:zhaofengli/attic";
-      inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    };
-
-    mail-server = {
-      url = "github:dachxy/nix-mail-server";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nix-search-tv.url = "github:3timeslazy/nix-search-tv";
@@ -143,277 +110,71 @@
 
     niri-pkgs = {
       url = "github:sodiboo/niri-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    niri-nfsm = {
-      url = "github:dachxy/nfsm/feat/hm-module";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     git-hooks.url = "github:cachix/git-hooks.nix";
-
-    # ==== Shell ==== #
-    caelestia-shell = {
-      url = "github:caelestia-dots/shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    mango = {
-      url = "github:DreamMaoMao/mango";
+    noctalia-greeter = {
+      url = "github:noctalia-dev/noctalia-greeter";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    millennium = {
+      url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     zjstatus = {
       url = "github:dj95/zjstatus";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    niri-nfsm = {
+      url = "github:gvolpe/nfsm";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    linux-wallpaper-engine = {
+      url = "github:jagrat7/linux-wallpaper-engine";
+    };
+
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    jj-starship.url = "github:dmmulroy/jj-starship";
+
+    woomer.url = "github:coffeeispower/woomer";
+
+    wshowkeys = {
+      url = "github:DreamMaoMao/wshowkeys";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    keycloak-custom-theme = {
+      url = "/home/danny/projects/keycloak-custom-theme";
+      flake = false;
+    };
+
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs =
     {
       self,
-      nixpkgs,
-      systems,
       ...
     }@inputs:
-    let
-      inherit (builtins) mapAttrs;
-      inherit (nixpkgs.lib) hasSuffix filterAttrs;
-      forEachSystem = nixpkgs.lib.genAttrs (import systems);
+    inputs.flake-parts.lib.mkFlake { inherit inputs self; } {
+      imports = [
+        (inputs.import-tree ./modules)
+      ];
 
-      hosts = {
-        dn-workstation = {
-          system = "x86_64-linux";
-          confPath = ./system/dev/dn-workstation;
-        };
-        dn-notebook = {
-          system = "aarch64-darwin";
-          confPath = ./system/dev/dn-notebook;
-        };
-        dn-pre7780 = {
-          system = "x86_64-linux";
-          confPath = ./system/dev/dn-pre7780;
-        };
-        dn-cc = {
-          system = "x86_64-linux";
-          confPath = ./system/dev/dn-cc;
-        };
-        dn-server = {
-          system = "x86_64-linux";
-          confPath = ./system/dev/dn-server;
-        };
-        dn-lap = {
-          system = "x86_64-linux";
-          confPath = ./system/dev/dn-lap;
-        };
-        skydrive-lap = {
-          system = "x86_64-linux";
-          confPath = ./system/dev/skydrive-lap;
-        };
-        dn-cscc = {
-          system = "x86_64-linux";
-          confPath = ./system/dev/dn-cscc;
-        };
-        generic = {
-          system = "x86_64-linux";
-          confPath = ./system/dev/generic;
-        };
-      };
-
-      mkNixOSDevs = hosts: filterAttrs (n: v: hasSuffix "linux" v.system) hosts;
-      mkDarwinDevs = hosts: filterAttrs (n: v: hasSuffix "darwin" v.system) hosts;
-    in
-    {
-      # ==== NixOS Configuration ==== #
-      nixosConfigurations =
-        (mapAttrs (
-          hostname: conf:
-          let
-            inherit (conf) confPath system;
-            pkgs = import nixpkgs {
-              inherit system;
-            };
-            helper = import ./helper {
-              inherit
-                pkgs
-                ;
-              lib = pkgs.lib;
-            };
-          in
-          nixpkgs.lib.nixosSystem {
-            specialArgs = {
-              inherit
-                helper
-                inputs
-                self
-                system
-                ;
-            };
-
-            modules = [
-              # ==== Extra Options ==== #
-              ./options
-
-              # ==== Common Modules ==== #
-              inputs.disko.nixosModules.disko
-              inputs.sops-nix.nixosModules.sops
-              inputs.home-manager.nixosModules.default
-              inputs.nix-index-database.nixosModules.nix-index
-              inputs.nix-minecraft.nixosModules.minecraft-servers
-              inputs.nix-tmodloader.nixosModules.tmodloader
-              inputs.actual-budget-api.nixosModules.default
-              inputs.stylix.nixosModules.stylix
-              inputs.attic.nixosModules.atticd
-              inputs.mail-server.nixosModules.default
-              inputs.niri.nixosModules.niri
-              inputs.mango.nixosModules.mango
-              inputs.lanzaboote.nixosModules.lanzaboote
-
-              # ==== Common Configuration ==== #
-              {
-                nixpkgs.hostPlatform = system;
-                nixpkgs.config.allowUnfree = true;
-                nixpkgs.overlays = [
-                  inputs.niri-pkgs.overlays.niri
-                  inputs.nix-minecraft.overlay
-                  inputs.nix-tmodloader.overlay
-                  inputs.rust-overlay.overlays.default
-                ]
-                ++ (import ./pkgs/overlays);
-              }
-
-              # ==== Private Configuration ==== #
-              (import confPath { inherit hostname; })
-            ];
-          }
-        ) (mkNixOSDevs hosts))
-
-        # ==== Extra ==== #
-        // {
-          ccIso = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-            modules = [
-              ./system/dev/dn-cc/iso.nix
-            ];
-          };
-          workstationIso = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-            modules = [
-              ./system/dev/dn-pre7780/iso.nix
-            ];
-          };
-        };
-
-      # ==== Nix Darwin Configuration ==== #
-      darwinConfigurations = (
-        mapAttrs (
-          hostname: conf:
-          let
-            inherit (conf) confPath system;
-            pkgs = import nixpkgs {
-              inherit system;
-            };
-            helper = import ./helper {
-              inherit
-                pkgs
-                ;
-              lib = pkgs.lib;
-            };
-          in
-          inputs.nix-darwin.lib.darwinSystem {
-            modules = [
-              # ==== Common Configuration ==== #
-              {
-                nixpkgs.hostPlatform = system;
-                nixpkgs.config.allowUnfree = true;
-                nixpkgs.overlays = [
-                  inputs.rust-overlay.overlays.default
-                ];
-              }
-
-              # ==== Private Configuration ==== #
-              (import confPath { inherit hostname; })
-              inputs.home-manager.darwinModules.home-manager
-            ];
-            specialArgs = { inherit inputs helper; };
-          }
-        ) (mkDarwinDevs hosts)
-      );
-
-      formatter = forEachSystem (
-        system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          config = self.checks.${system}.pre-commit-check.config;
-          inherit (config) package configFile;
-          script = ''
-            ${pkgs.lib.getExe package} run --all-files --config ${configFile}
-          '';
-        in
-        pkgs.writeShellScriptBin "pre-commit-run" script
-      );
-
-      checks = forEachSystem (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-        in
-        {
-          pre-commit-check = inputs.git-hooks.lib.${system}.run {
-            src = ./.;
-            hooks = {
-              nixfmt.enable = true;
-
-              check-comment = {
-                enable = true;
-                name = "check comment";
-                entry = "${pkgs.callPackage ./githooks/check-comment.nix { }}";
-                files = "\\.nix$";
-                pass_filenames = false;
-                stages = [ "pre-commit" ];
-              };
-            };
-          };
-        }
-      );
-
-      devShells = forEachSystem (system: {
-        default =
-          let
-            pkgs = import nixpkgs { inherit system; };
-            inherit (self.checks.${system}.pre-commit-check) shellHook enabledPackages;
-          in
-          pkgs.mkShell {
-            inherit shellHook;
-            name = "nixos";
-            buildInputs = enabledPackages;
-          };
-      });
-
-      packages = forEachSystem (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-        in
-        {
-          buildCCIso = pkgs.writeShellScriptBin "build-cc-iso" ''
-            nix build --impure .#nixosConfigurations.ccIso.config.system.build.isoImage
-          '';
-          buildWorkstationIso = pkgs.writeShellScriptBin "build-workstation-iso" ''
-            nix build --impure .#nixosConfigurations.workstationIso.config.system.build.isoImage
-          '';
-        }
-      );
-
-      # ==== MicroVM Packages ==== #
-      # packages."${system}" = {
-      #   vm-1 = self.nixosConfigurations.vm-1.config.microvm.declaredRunner;
-      #   vm-2 = self.nixosConfigurations.vm-2.config.microvm.declaredRunner;
-      # };
+      _module.args.rootPath = ./.;
     };
 }

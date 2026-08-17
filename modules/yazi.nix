@@ -1,0 +1,326 @@
+{ inputs, ... }:
+{
+  flake.modules.homeManager.base =
+    {
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      inherit (pkgs.stdenv.hostPlatform) system isDarwin;
+      inherit (lib) getExe;
+
+      yaziOfficalPlugins = pkgs.fetchFromGitHub {
+        owner = "yazi-rs";
+        repo = "plugins";
+        rev = "main";
+        hash = "sha256-TUS+yXxBOt6tL/zz10k4ezot8IgVg0/2BbS8wPs9KcE=";
+      };
+
+      compressYazi = pkgs.fetchFromGitHub {
+        owner = "kkv9";
+        repo = "compress.yazi";
+        rev = "main";
+        hash = "sha256-Mby185FCJY6nqHcHDQu+D5SLk+wGcyeUHK8yAvrd4TM=";
+      };
+
+      md2html = pkgs.callPackage ../scripts/md2html.nix { };
+      pdfNormalize = pkgs.writeShellScriptBin "normalize-pdf" ''
+        # Nomalize pdf to A4 size
+        for path in "$@"; do
+          output_path="normalized_$(basename "$path")"
+          ${pkgs.ghostscript}/bin/gs \
+             -o "$output_path" \ -sDEVICE=pdfwrite \ -sPAPERSIZE=a4 \ -dFIXEDMEDIA \
+             -dPDFFitPage "$path"
+        done
+      '';
+
+      pdfCombine = pkgs.writeShellScriptBin "combine-pdf" ''
+        ${lib.getExe pkgs.pdftk} "$@" cat output combined_$(date +%Y%m%d_%H%M%S).pdf
+      '';
+    in
+    {
+      home.packages = with pkgs; [
+        pdfNormalize
+        rar
+        gzip
+        mediainfo
+        exiftool
+      ];
+
+      programs.yazi = {
+        enable = true;
+        package = inputs.yazi.packages.${system}.default.override {
+          _7zz = pkgs._7zz-rar;
+        };
+        shellWrapperName = "y";
+        enableFishIntegration = true;
+
+        plugins = {
+          toggle-pane = "${yaziOfficalPlugins}/toggle-pane.yazi";
+          mount = "${yaziOfficalPlugins}/mount.yazi";
+          zoom = "${yaziOfficalPlugins}/zoom";
+          vcs-files = "${yaziOfficalPlugins}/vcs-files";
+          git = "${yaziOfficalPlugins}/git";
+          compress = "${compressYazi}";
+        };
+
+        settings = {
+          input = {
+            cursor_blink = true;
+          };
+
+          opener = {
+            edit = [
+              {
+                run = "nvim %s";
+                desc = "neovim";
+                block = true;
+              }
+            ];
+
+            player = [
+              { run = if isDarwin then "open %s" else "${getExe pkgs.mpv} --force-window %s"; }
+            ];
+
+            open = [
+              {
+                run = "xdg-open %s";
+                desc = "Open";
+              }
+            ];
+          };
+
+          open = {
+            prepend_rules = [
+              {
+                mime = "application/pdf";
+                use = "open";
+              }
+            ];
+          };
+        };
+
+        keymap = {
+          mgr.prepend_keymap = [
+            # Git Changes
+            {
+              on = [
+                "g"
+                "c"
+              ];
+              run = "plugin vcs-files";
+              desc = "Show Git file changes";
+            }
+            # Image zoom
+            {
+              on = "+";
+              run = "plugin zoom 1";
+              desc = "Zoom in hovered file";
+            }
+            {
+              on = "-";
+              run = "plugin zoom -1";
+              desc = "Zoom out hovered file";
+            }
+            # Mount Manager
+            {
+              on = "M";
+              run = "plugin mount";
+              desc = "Launch mount manager";
+              # Usage
+              # Key binding 	Alternate key 	Action
+              # q 	- 	Quit the plugin
+              # k 	↑ 	Move up
+              # j 	↓ 	Move down
+              # l 	→ 	Enter the mount point
+              # m 	- 	Mount the partition
+              # u 	- 	Unmount the partition
+              # e 	- 	Eject the disk
+            }
+            # Toggle Maximize Preview
+            {
+              on = "T";
+              run = "plugin toggle-pane max-preview";
+              desc = "Show or hide the preview panel";
+            }
+            # cd back to the root of the current Git repository
+            {
+              on = [
+                "g"
+                "r"
+              ];
+              run = ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
+              desc = "Go to git root";
+            }
+            # Compress
+            {
+              on = [
+                "c"
+                "a"
+                "a"
+              ];
+              run = "plugin compress";
+              desc = "Archive selected files";
+            }
+            {
+              on = [
+                "c"
+                "a"
+                "p"
+              ];
+              run = "plugin compress -p";
+              desc = "Archive selected files (password)";
+            }
+            # Start terminal
+            {
+              on = [ "!" ];
+              for = "unix";
+              run = ''shell "$SHELL" --block'';
+              desc = "Open $SHELL here";
+            }
+            # Combine PDF
+            {
+              on = [
+                "F" # file
+                "p" # pdf
+                "c" # combine
+              ];
+              for = "unix";
+              run = ''shell -- ${lib.getExe pdfCombine} "%h"'';
+              desc = "Combine selected pdf";
+            }
+            {
+              on = [
+                "F" # file
+                "p" # pdf
+                "n" # normalize
+              ];
+              for = "unix";
+              run = ''shell -- ${lib.getExe pdfNormalize} "%h" 2>/dev/null'';
+              desc = "Normalize PDF to A4 size";
+            }
+            {
+              on = [
+                "F" # file
+                "H" # html
+              ];
+              for = "unix";
+              run = [
+                ''shell -- for path in "%s"; do ${lib.getExe md2html} "$path"; done''
+              ];
+              desc = "Convert Markdown to HTML";
+            }
+          ];
+        };
+
+        initLua =
+          # lua
+          ''
+            -- Show user/group of files in status bar
+            Status:children_add(function()
+              local h = cx.active.current.hovered
+              if not h or ya.target_family() ~= "unix" then
+                return ""
+              end
+
+              return ui.Line {
+                ui.Span(ya.user_name(h.cha.uid) or tostring(h.cha.uid)):fg("magenta"),
+                ":",
+                ui.Span(ya.group_name(h.cha.gid) or tostring(h.cha.gid)):fg("magenta"),
+                " ",
+              }
+            end, 500, Status.RIGHT)
+          '';
+      };
+
+    };
+
+  flake.modules.darwin.gui =
+    { config, pkgs, ... }:
+    let
+      setWallpaper = pkgs.writeShellScript "set-wallpaper" ''
+        osascript -e 'tell application "Finder" to set desktop picture to POSIX file "$@"'
+      '';
+    in
+    {
+      home-manager.users.${config.my.user.name} = {
+        programs.yazi.keymap.mgr.prepend_keymap = [
+          # Set Wallpaper
+          {
+            on = [
+              "g"
+              "w"
+            ];
+            run = ''shell '${setWallpaper} "%h" 2>&1 >/dev/null' '';
+            desc = "Set as wallpaper";
+          }
+
+          # Copy selected files to the system clipboard while yanking
+          {
+            on = "y";
+            run = [
+              ''shell -- for path in "%s"; do echo -n "file://$path"; done | pbcopy''
+              "yank"
+            ];
+          }
+
+          # Drag and Drop
+          {
+            on = [
+              "c"
+              "D"
+            ];
+            run = "shell -- open -R %h";
+            desc = "Drag the file";
+          }
+        ];
+      };
+    };
+
+  flake.modules.nixos.gui =
+    { config, pkgs, ... }:
+    let
+      setWallpaper = ''shell 'noctalia msg wallpaper-set "$0"  2>&1 >/dev/null' '';
+    in
+    {
+      home-manager.users.${config.my.user.name} = {
+        home.packages = with pkgs; [
+          ueberzugpp
+          ripdrag
+        ];
+
+        programs.yazi.keymap.mgr.prepend_keymap = [
+          # Set Wallpaper
+          {
+            on = [
+              "g"
+              "w"
+            ];
+            run = ''shell '${setWallpaper} "%h" 2>&1 >/dev/null' '';
+            desc = "Set as wallpaper";
+          }
+
+          # Copy selected files to the system clipboard while yanking
+          {
+            on = "y";
+            run = [
+              ''shell -- for path in "%s"; do echo -n "file://$path"; done | wl-copy -t text/uri-list''
+              "yank"
+            ];
+          }
+
+          # Drag and Drop
+          {
+            on = [
+              "c"
+              "D"
+            ];
+            run = "shell -- ripdrag -x %h";
+            desc = "Drag the file";
+          }
+        ];
+      };
+
+    };
+}
