@@ -37,7 +37,7 @@
               ipv4 = {
                 method = "auto";
                 ignore-auto-dns = true;
-                routes = "10.24.0.0/16";
+                routes = "140.113.0.0/16";
                 never-default = true;
               };
               ipv6 = {
@@ -47,16 +47,14 @@
               };
               proxy = { };
               vpn = {
-                gateway = "$CSIT_VPN_GATEWAY";
+                gateway = "$NYCU_VPN_GATEWAY";
                 otp-flags = "0";
                 password-flags = "0";
-                realm = "$CSIT_VPN_REALM";
                 service-type = "org.freedesktop.NetworkManager.fortisslvpn";
-                trusted-cert = "$CSIT_VPN_TRUST_CERT";
-                user = "$CSIT_VPN_IDENTITY";
+                user = "$NYCU_VPN_IDENTITY";
               };
               vpn-secrets = {
-                password = "$CSIT_VPN_PASSWORD";
+                password = "$NYCU_VPN_PASSWORD";
               };
             };
             "CSIT VPN" = {
