@@ -4,7 +4,7 @@
 }:
 let
   inherit (config.flake.public.config) domain;
-  inherit (config.flake.public.config.services) matrix mas;
+  inherit (config.flake.public.config.services) matrix mas stalwart;
   inherit (config.flake.public.config.machines) dn-server;
 in
 {
@@ -16,14 +16,13 @@ in
       ...
     }:
     let
-      inherit (builtins) fetchurl elemAt;
+      inherit (builtins) fetchurl;
       inherit (lib)
         concatStringsSep
         mkForce
         mkAfter
         optionalString
         mkBefore
-        splitString
         ;
 
       serverRules = config.server-rules;
@@ -232,8 +231,7 @@ in
 
           "stalwart.${domain}" =
             let
-              stalwartCfg = config.services.stalwart;
-              managePort = elemAt (splitString ":" (elemAt stalwartCfg.settings.server.listener.management.bind 0)) 1;
+              managePort = stalwart.managementPort;
             in
             (
               mkProxyConfig {

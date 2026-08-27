@@ -6,6 +6,7 @@
         containers = {
           enable = true;
           containersConf.settings.compose_warning_logs = false;
+          registries.settings.search = [ "docker.io" ];
         };
         oci-containers.backend = "podman";
         podman = {

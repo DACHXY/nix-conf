@@ -1,6 +1,7 @@
-{ self, ... }:
+{ config, self, ... }:
 let
   inherit (self.lib.ldap) getOlcSuffix;
+  cfg = config.flake.public.config;
 in
 {
   flake.public.config =
@@ -93,6 +94,12 @@ in
           hostname = "mx2.${myDomain}";
           port = 465;
         };
+        stalwart = rec {
+          hostname = "stalwart.${myDomain}";
+          endpoint = "https://${hostname}";
+          # Internal-only JMAP/admin listener, reverse-proxied by nginx.
+          managementPort = 30092;
+        };
         homepage = rec {
           hostname = "${myDomain}";
           alias = [ "www.${myDomain}" ];
@@ -145,6 +152,20 @@ in
         paperless = rec {
           hostname = "paperless.${myDomain}";
           endpoint = "https://${hostname}";
+        };
+        papra = rec {
+          hostname = "papra.${myDomain}";
+          endpoint = "https://${hostname}";
+        };
+        webmail = rec {
+          hostname = "webmail.${myDomain}";
+          endpoint = "https://${hostname}";
+        };
+      };
+      ca = {
+        csrootca = builtins.fetchurl {
+          url = "${cfg.services.nextcloud.endpoint}/s/gm4BjP9FwGmZkey";
+          sha256 = "sha256:1jp9g6i0nvcs5d4wbn122lh2bjc889nhphlphzgf9q5q72xwgc0m";
         };
       };
     };

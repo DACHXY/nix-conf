@@ -35,6 +35,7 @@ in
               "matrix"
               "matrix-auth"
               "git"
+              "webmail"
               null
             ]
           );

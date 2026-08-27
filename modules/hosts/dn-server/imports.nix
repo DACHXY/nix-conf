@@ -10,5 +10,7 @@
         nixos.nvf
         generic.dnywe
       ];
+
+      boot.kernelParams = [ "split_lock_detect=off" ];
     };
 }
