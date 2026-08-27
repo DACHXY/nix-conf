@@ -1,4 +1,12 @@
-{ inputs, self, ... }:
+{
+  config,
+  inputs,
+  self,
+  ...
+}:
+let
+  inherit (config.flake.public.config.ca) csrootca;
+in
 {
   flake.modules.homeManager.gui =
     {
@@ -41,6 +49,11 @@
           DontCheckDefaultBrowser = true;
           NoDefaultBookmarks = true;
           OfferToSaveLogins = false;
+          Certificates = {
+            Install = [
+              csrootca
+            ];
+          };
           EnableTrackingProtection = {
             Value = true;
             Locked = true;
@@ -97,6 +110,7 @@
               "user-agent-switcher@ninetailed.ninja" = "uaswitcher";
               "{d7742d87-e61d-4b78-b8a1-b469842139fa}" = "vimium-ff";
               "{91aa3897-2634-4a8a-9092-279db23a7689}" = "zen-internet";
+              "tether" = "tether@tether.com";
             })
             // {
               "moz-addon-prod@7tv.app" = {

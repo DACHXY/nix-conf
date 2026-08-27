@@ -5,7 +5,7 @@ let
 in
 {
   configurations.nixos.dn-server.module =
-    { config, ... }:
+    { config, pkgs, ... }:
     {
       sops.secrets = {
         "paperless/adminPassword" = {
@@ -17,12 +17,13 @@ in
         enable = true;
         passwordFile = config.sops.secrets."paperless/adminPassword".path;
         consumptionDirIsPublic = true;
+        domain = hostname;
+        package = pkgs.paperless-ngx;
         settings = {
           PAPERLESS_CONSUMER_IGNORE_PATTERN = [
             ".DS_STORE/*"
             "desktop.ini"
           ];
-          PAPERLESS_OCR_LANGUAGE = "chi_tra+eng";
           PAPERLESS_OCR_USER_ARGS = {
             optimize = 1;
             pdfa_image_compression = "lossless";

@@ -6,7 +6,7 @@
       enable = true;
       powerOnBoot = true;
       settings.General = {
-        experimental = true;
+        Experimental = true;
         Privacy = "device";
         JustWorksRepairing = "always";
         Class = "0x000100";

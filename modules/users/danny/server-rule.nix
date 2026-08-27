@@ -47,7 +47,7 @@
       securityModule = "${
         fetchGit {
           url = "${config.flake.public.config.services.forgejo.sshEndpoint}/dachxy/nix-server-security.git";
-          rev = "8b2356ed023e9fef6d71d9cee62d7cbb20f9546f";
+          rev = "840a141c5cc7fa939a473a0bafcc09cc10a24b1f";
           ref = "main";
         }
       }/default.nix";

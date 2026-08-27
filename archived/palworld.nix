@@ -74,7 +74,7 @@
               exit 1
           fi
 
-          if [ ! -f "$BUILDID_FILE" ]; then 
+          if [ ! -f "$BUILDID_FILE" ]; then
               echo "$latest_buildid" > "$BUILDID_FILE"
               echo "Initialized buildid: $latest_buildid"
               exit 0

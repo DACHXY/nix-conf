@@ -157,15 +157,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    keycloak-custom-theme = {
-      url = "/home/danny/projects/keycloak-custom-theme";
-      flake = false;
-    };
-
     llm-agents.url = "github:numtide/llm-agents.nix";
 
     openlogi = {
       url = "github:AprilNEA/OpenLogi";
+    };
+
+    tether = {
+      url = "github:zackb/tether";
+    };
+
+    ihasmail = {
+      url = "github:dachxy/ihasmail/nix-packaging";
     };
   };
 

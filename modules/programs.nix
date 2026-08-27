@@ -86,10 +86,12 @@ in
       rebuild = pkgs.writeShellScriptBin "rebuild" ''
         nh os switch . -H "${hostname}" --accept-flake-config $@
       '';
+      goWin = pkgs.callPackage ../scripts/goWin.nix { };
     in
     {
       environment.systemPackages = with pkgs; [
         rebuild
+        goWin
         grc
       ];
 
@@ -114,7 +116,6 @@ in
         fish.shellAliases = {
           # Systemd Boot
           setWin = "sudo bootctl set-oneshot auto-windows";
-          goWin = "sudo bootctl set-oneshot auto-windows && reboot";
           goBios = "sudo bootctl set-oneshot auto-reboot-to-firmware-setup && reboot";
 
           # TTY

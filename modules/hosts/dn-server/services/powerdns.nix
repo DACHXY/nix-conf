@@ -117,7 +117,15 @@ in
 
       services.dnsdist = {
         enable = true;
-        extraConfig = ''
+        listenAddress = "127.0.0.1";
+        extraConfig = /* lua */ ''
+          setLocal("127.0.0.1:53")
+          addLocal("192.168.100.9:53")
+          addLocal("100.104.189.30:53")
+          addLocal("[::1]:53")
+
+          setSecurityPollSuffix("")
+
           newServer("127.0.0.1:${toString config.services.pdns-recursor.dns.port}")
           addDOHLocal("0.0.0.0:8053", nil, nil, "/", { reusePort = true })
           getPool(""):setCache(newPacketCache(65535, {maxTTL=86400, minTTL=0, temporaryFailureTTL=60, staleTTL=60, dontAge=false}))
