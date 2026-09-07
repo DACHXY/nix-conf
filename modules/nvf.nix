@@ -1030,8 +1030,9 @@
             statusline = {
               lualine = {
                 enable = true;
-                activeSection = {
-                  a = lib.mkForce [
+                setupOpts = {
+                  sections = {
+                  lualine_a = lib.mkForce [
                     ''
                       {
                         "mode",
@@ -1050,7 +1051,7 @@
                       }
                     ''
                   ];
-                  b = lib.mkForce [
+                  lualine_b = lib.mkForce [
                     ''
                       {
                         "filetype",
@@ -1074,7 +1075,7 @@
                       }
                     ''
                   ];
-                  c = lib.mkForce [
+                  lualine_c = lib.mkForce [
                     # lua
                     ''
                        {
@@ -1091,7 +1092,7 @@
                       }
                     ''
                   ];
-                  x = lib.mkForce [
+                  lualine_x = lib.mkForce [
                     # lua
                     ''
                       {
@@ -1188,7 +1189,7 @@
                       }
                     ''
                   ];
-                  y = lib.mkForce [
+                  lualine_y = lib.mkForce [
                     ''
                       {
                         "",
@@ -1212,7 +1213,7 @@
                       }
                     ''
                   ];
-                  z = lib.mkForce [
+                  lualine_z = lib.mkForce [
                     ''
                       {
                         "",
@@ -1242,13 +1243,15 @@
                     ''
                   ];
                 };
-                componentSeparator = {
+
+                component_separator = {
                   left = "";
                   right = "";
                 };
-                sectionSeparator = {
+                section_separator = {
                   left = "";
                   right = "";
+                };
                 };
               };
             };
