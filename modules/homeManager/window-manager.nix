@@ -413,6 +413,11 @@
                   "SHIFT"
                   "S"
                 ];
+                edit = mkBindOption [
+                  mod
+                  "CTRL"
+                  "E"
+                ];
               };
 
               toggle-control-center = mkBindOption [

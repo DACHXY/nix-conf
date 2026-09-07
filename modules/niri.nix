@@ -208,6 +208,7 @@ in
               { app-id = "^(Vmware)$"; }
               { app-id = "^(mpv)$"; }
               { app-id = "^\.virt-manager-wrapped$"; }
+              { app-id = "^(com.gabm.satty)$"; }
             ];
             opacity = 1.0;
           }
@@ -217,6 +218,7 @@ in
               { app-id = "^xdg-desktop-portal-gtk$"; }
               { app-id = "^(org.gnome.Nautilus)$"; }
               { app-id = "^(org.gnome.Loupe)$"; }
+              { app-id = "^(com.gabm.satty)$"; }
             ];
             open-floating = true;
           }
@@ -353,6 +355,7 @@ in
                 write-to-disk = false;
               }
             ];
+            "${bindCfg.screenshot.edit}".action = sh "wl-paste --type image/png | satty --filename -";
           }
           # Map Mod+{1 ~ 9} to workspace{1 ~ 9}
           // (pipe 9 [
