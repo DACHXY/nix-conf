@@ -146,10 +146,10 @@ in
         settings = {
           backdrop.enabled = true;
           bar.default = {
-            background_opacity = 0.5;
+            background_opacity = 0.55;
             capsule = true;
-            capsule_padding = 8.0;
             capsule_opacity = 0.4;
+            capsule_padding = 8.0;
             center = [
               "privacy"
               "active_window"
@@ -159,18 +159,21 @@ in
               "recorder"
               "clipboard"
               "caffeine"
+              "bar"
               "network"
               "bluetooth"
               "volume"
+              "network_tx"
+              "network_rx"
               "cpu"
               "brightness"
-              "battery"
               "notifications"
               "session"
+              "battery"
             ];
             font_weight = 600;
-            margin_ends = 10;
             margin_edge = 10;
+            margin_ends = 10;
             start = [
               "control-center"
               "launcher"
@@ -199,15 +202,16 @@ in
             };
 
             widget = {
-              "desktop-widget-0000000000000001" = {
-                box_height = 112.0;
-                box_width = 208.0;
-                cx = 168.0;
-                cy = 1320.0;
+              desktop-widget-0000000000000001 = {
+                box_height = 0.0;
+                box_width = 0.0;
+                cx = 130.5;
+                cy = 1359.0;
                 output = "DP-3";
+                placement_height = 1440.0;
+                placement_width = 2560.0;
                 rotation = 0.0;
                 type = "clock";
-
                 settings = {
                   background = false;
                   center_text = true;
@@ -267,7 +271,6 @@ in
               "lockscreen-widget-0000000000000002"
               "lockscreen-widget-0000000000000005"
             ];
-
             grid = {
               cell_size = 16;
               major_interval = 4;
@@ -436,6 +439,8 @@ in
               "avivbintangaringga/nix-monitor"
               "noctalia/bitwarden"
               "avivbintangaringga/nextboot-selector"
+              "rxtsel/portctl"
+              "andrewdems/vpn-manager"
             ];
             source = [
               {
@@ -463,14 +468,15 @@ in
             time_format = "{:%-I:%M %p}";
             greeter_sync = {
               auto_sync = true;
-              privilege_command = "ghostty -e pkexec";
+              privilege_command = "pkexec";
             };
 
             panel = {
               borders = false;
+              launcher_categories = false;
+              open_near_click_control_center = true;
               open_near_click_session = true;
               open_near_click_wallpaper = true;
-              open_near_click_control_center = true;
               transparency_mode = "glass";
             };
 
@@ -485,9 +491,11 @@ in
           };
 
           theme = {
+            builtin = "Nord";
+            community_palette = "Cream Autumn";
+            mode = "dark";
             source = "wallpaper";
             wallpaper_scheme = "muted";
-
             templates = {
               builtin_ids = [
                 "btop"
@@ -511,6 +519,9 @@ in
           };
 
           widget = {
+            bar = {
+              type = "andrewdems/vpn-manager:bar";
+            };
             battery = {
               display_mode = "graphic";
               hide_when_full = true;
@@ -527,6 +538,13 @@ in
             };
             network = {
               show_label = false;
+              vpn_status = "hidden";
+            };
+            network_rx = {
+              network_speed_compact = true;
+            };
+            network_tx = {
+              network_speed_compact = true;
             };
             privacy = {
               hide_inactive = true;
