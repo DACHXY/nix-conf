@@ -16,6 +16,8 @@
         "vorssaint"
         "moonlight"
         "crossover"
+        "caskhub"
+        "sozercan/repo/kaset"
       ];
     };
   };

@@ -34,11 +34,19 @@
     { pkgs, ... }:
     {
       environment.systemPackages = with pkgs; [
-        podman-desktop
+        krunkit
         podman
         podman-compose
-        dive
-        podman-tui
       ];
+
+      homebrew = {
+        casks = [
+          "podman-desktop"
+        ];
+        brews = [
+          "podman-tui"
+          "dive"
+        ];
+      };
     };
 }

@@ -4,6 +4,7 @@
     imports = with config.flake.modules; [
       darwin.laptop
       darwin.danny
+      darwin.vpn
       darwin.nvf
       generic.dnywe
 

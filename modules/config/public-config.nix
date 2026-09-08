@@ -164,8 +164,9 @@ in
       };
       ca = {
         csrootca = builtins.fetchurl {
-          url = "${cfg.services.nextcloud.endpoint}/s/gm4BjP9FwGmZkey";
-          sha256 = "sha256:1jp9g6i0nvcs5d4wbn122lh2bjc889nhphlphzgf9q5q72xwgc0m";
+          name = "csrootca";
+          url = "${cfg.services.nextcloud.endpoint}/s/gm4BjP9FwGmZkey/download";
+          sha256 = "sha256:13wcywyjb2bwg84jwmhm5iryj8y55hr0b157smyimaxjpq6xjc54";
         };
       };
     };

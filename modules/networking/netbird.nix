@@ -19,4 +19,15 @@
         };
       };
     };
+
+  flake.modules.darwin.vpn = { ... }: {
+    homebrew = {
+      brews = [
+        "netbirdio/tap/netbird"
+      ];
+      casks = [
+        "netbirdio/tap/netbird-ui"
+      ];
+    };
+  };
 }
