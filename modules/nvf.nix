@@ -1032,226 +1032,240 @@
                 enable = true;
                 setupOpts = {
                   sections = {
-                  lualine_a = lib.mkForce [
-                    ''
+                    lualine_a = lib.mkForce [
                       {
-                        "mode",
-                        icons_enabled = true,
+                        "@1" = "mode";
+                        icons_enabled = true;
                         separator = {
-                          left = "",
-                          right = ""
-                        },
+                          left = "";
+                          right = "";
+                        };
                       }
-                    ''
-                    ''
                       {
-                        "",
-                        draw_empty = true,
-                        separator = { left = '', right = '' }
+                        "@1" = "";
+                        draw_empty = true;
+                        separator = {
+                          left = "";
+                          right = "";
+                        };
                       }
-                    ''
-                  ];
-                  lualine_b = lib.mkForce [
-                    ''
+                    ];
+                    lualine_b = lib.mkForce [
                       {
-                        "filetype",
-                        colored = true,
-                        icon_only = true,
-                        icon = { align = 'left' }
+                        "@1" = "filetype";
+                        colored = true;
+                        icon_only = true;
+                        icon.align = "left";
                       }
-                    ''
-                    ''
                       {
-                        "filename",
-                        symbols = {modified = ' ', readonly = ' '},
-                        separator = { left = '', right = ''}
-                      }
-                    ''
-                    ''
-                      {
-                        "",
-                        draw_empty = true,
-                        separator = { left = '', right = '' }
-                      }
-                    ''
-                  ];
-                  lualine_c = lib.mkForce [
-                    # lua
-                    ''
-                       {
-                          "diff",
-                          colored = false,
-                          diff_color = {
-                            -- Same color values as the general color option can be used here.
-                            added    = 'DiffAdd',    -- Changes the diff's added color
-                            modified = 'DiffChange', -- Changes the diff's modified color
-                            removed  = 'DiffDelete', -- Changes the diff's removed color you
-                          },
-                          symbols = {added = '+', modified = '~', removed = '-'}, -- Changes the diff symbols
-                          separator = {right = ''}
-                      }
-                    ''
-                  ];
-                  lualine_x = lib.mkForce [
-                    # lua
-                    ''
-                      {
-                        -- Lsp server name
-                        function()
-                          local buf_ft = vim.bo.filetype
-                          local excluded_buf_ft = { toggleterm = true, NvimTree = true, ["neo-tree"] = true, TelescopePrompt = true }
-
-                          if excluded_buf_ft[buf_ft] then
-                            return ""
-                            end
-
-                          local bufnr = vim.api.nvim_get_current_buf()
-                          local clients = vim.lsp.get_clients({ bufnr = bufnr })
-
-                          if vim.tbl_isempty(clients) then
-                            return "No Active LSP"
-                          end
-
-                          local active_clients = {}
-                          for _, client in ipairs(clients) do
-                            table.insert(active_clients, client.name)
-                          end
-
-                          return table.concat(active_clients, ", ")
-                        end,
-                        icon = ' ',
-                        separator = {left = ''},
-                      }
-                    ''
-                    # lua
-                    ''
-                      {
-                        -- Recording Status
-                        function()
-                          local reg = vim.fn.reg_recording()
-                          if reg == "" then return "" end
-                          return "@" .. reg
-                        end,
-                      }
-                    ''
-                    # lua
-                    ''
-                      {
-                        function()
-                          local status, conform = pcall(require, 'conform')
-                          if not status then
-                            return 'Conform not installed'
-                          end
-
-                          local lsp_format = require('conform.lsp_format')
-
-                          local formatters = conform.list_formatters_for_buffer()
-
-                          if #formatters == 0 then
-                            return '󰷈 Disabled'
-                          end
-
-                          if formatters and #formatters > 0 then
-                            local formatterNames = {}
-                            
-                            for _, formatter in ipairs(formatters) do
-                              table.insert(formatterNames, formatter)
-                            end
-
-                            return '󰷈 ' .. table.concat(formatterNames, ' ')
-                          end
-
-                          local bufnr = vim.api.nvim_get_current_buf()
-                          local lsp_clients = lsp_format.get_format_clients({ bufnr = bufnr })
-
-                          if not vim.tbl_isempty(lsp_clients) then
-                            return '󰷈 LSP Formatter'
-                          end
-
-                          return ''\'''\'
-                        end
-                      }
-                    ''
-                    # lua
-                    ''
-                      {
-                        "diagnostics",
-                        sources = {'nvim_lsp', 'nvim_diagnostic', 'nvim_diagnostic', 'vim_lsp', 'coc'},
-                        symbols = {error = '󰅙  ', warn = '  ', info = '  ', hint = '󰌵 '},
-                        colored = true,
-                        update_in_insert = false,
-                        always_visible = false,
-                        diagnostics_color = {
-                          color_error = { fg = 'red' },
-                          color_warn = { fg = 'yellow' },
-                          color_info = { fg = 'cyan' },
-                        },
-                      }
-                    ''
-                  ];
-                  lualine_y = lib.mkForce [
-                    ''
-                      {
-                        "",
-                        draw_empty = true,
-                        separator = { left = '', right = '' }
-                      }
-                    ''
-                    ''
-                      {
-                        'searchcount',
-                        maxcount = 999,
-                        timeout = 120,
-                        separator = {left = ''}
-                      }
-                    ''
-                    ''
-                      {
-                        "branch",
-                        icon = ' •',
-                        separator = {left = ''}
-                      }
-                    ''
-                  ];
-                  lualine_z = lib.mkForce [
-                    ''
-                      {
-                        "",
-                        draw_empty = true,
-                        separator = { left = '', right = '' }
-                      }
-                    ''
-                    ''
-                      {
-                        "progress",
-                        separator = {left = ''}
-                      }
-                    ''
-                    ''
-                      {"location"}
-                    ''
-                    ''
-                      {
-                        "fileformat",
-                        color = {fg='black'},
+                        "@1" = "filename";
                         symbols = {
-                          unix = '', -- e843
-                          dos = '',  -- e70f
-                          mac = '',  -- e711
-                        }
+                          modified = " ";
+                          readonly = " ";
+                        };
+                        separator = {
+                          left = "";
+                          right = "";
+                        };
                       }
-                    ''
-                  ];
-                };
+                      {
+                        "@1" = "";
+                        draw_empty = true;
+                        separator = {
+                          left = "";
+                          right = "";
+                        };
+                      }
+                    ];
+                    lualine_c = lib.mkForce [
+                      {
+                        "@1" = "diff";
+                        colored = false;
+                        diff_color = {
+                          added = "DiffAdd";
+                          modified = "DiffChange";
+                          removed = "DiffDelete";
+                        };
+                        symbols = {
+                          added = "+";
+                          modified = "~";
+                          removed = "-";
+                        };
+                        separator.right = "";
+                      }
+                    ];
+                    lualine_x = lib.mkForce [
+                      {
+                        _type = "lua-inline";
+                        expr = /* lua */ ''
+                          function()
+                            local buf_ft = vim.bo.filetype
+                            local excluded_buf_ft = {
+                              toggleterm = true,
+                              NvimTree = true,
+                              ["neo-tree"] = true,
+                              TelescopePrompt = true
+                            }
 
-                component_separator = {
-                  left = "";
-                  right = "";
-                };
-                section_separator = {
-                  left = "";
-                  right = "";
-                };
+                            if excluded_buf_ft[buf_ft] then
+                              return ""
+                            end
+
+                            local bufnr = vim.api.nvim_get_current_buf()
+                            local clients = vim.lsp.get_clients({ bufnr = bufnr })
+
+                            if vim.tbl_isempty(clients) then
+                              return "No Active LSP"
+                            end
+
+                            local active_clients = {}
+                            for _, client in ipairs(clients) do
+                              table.insert(active_clients, client.name)
+                            end
+
+                            return table.concat(active_clients, ", ")
+                          end
+                        '';
+                        icon = " ";
+                        separator.left = "";
+                      }
+                      {
+                        _type = "lua-inline";
+                        expr = /* lua */ ''
+                          function()
+                            local reg = vim.fn.reg_recording()
+                            if reg == "" then return "" end
+                            return "@" .. reg
+                          end
+                        '';
+                      }
+                      # lua
+                      {
+                        _type = "lua-inline";
+                        expr = /* lua */ ''
+                          function()
+                            local status, conform = pcall(require, 'conform')
+                            if not status then
+                              return 'Conform not installed'
+                            end
+
+                            local lsp_format = require('conform.lsp_format')
+                            local formatters = conform.list_formatters_for_buffer()
+
+                            if #formatters == 0 then
+                              return '󰷈 Disabled'
+                            end
+
+                            if formatters and #formatters > 0 then
+                              local formatterNames = {}
+
+                              for _, formatter in ipairs(formatters) do
+                                table.insert(formatterNames, formatter)
+                              end
+
+                              return '󰷈 ' .. table.concat(formatterNames, ' ')
+                            end
+
+                            local bufnr = vim.api.nvim_get_current_buf()
+                            local lsp_clients = lsp_format.get_format_clients({ bufnr = bufnr })
+
+                            if not vim.tbl_isempty(lsp_clients) then
+                              return '󰷈 LSP Formatter'
+                            end
+
+                            return ""
+                          end
+                        '';
+                      }
+                      {
+                        "@1" = "diagnostics";
+                        sources = [
+                          "nvim_lsp"
+                          "nvim_diagnostic"
+                          "nvim_diagnostic"
+                          "vim_lsp"
+                          "coc"
+                        ];
+                        symbols = {
+                          error = "󰅙  ";
+                          warn = "  ";
+                          info = "  ";
+                          hint = "󰌵 ";
+                        };
+                        colored = true;
+                        update_in_insert = false;
+                        always_visible = false;
+                        diagnostics_color = {
+                          color_error.fg = "red";
+                          color_warn.fg = "yellow";
+                          color_info.fg = "cyan";
+                        };
+                      }
+                    ];
+                    lualine_y = lib.mkForce [
+                      {
+                        "@1" = "";
+                        draw_empty = true;
+                        separator = {
+                          left = "";
+                          right = "";
+                        };
+                      }
+
+                      {
+                        "@1" = "searchcount";
+                        maxcount = 999;
+                        timeout = 120;
+                        separator.left = "";
+                      }
+
+                      {
+                        "@1" = "branch";
+                        icon = " •";
+                        separator.left = "";
+                      }
+                    ];
+                    lualine_z = lib.mkForce [
+                      {
+                        "@1" = "";
+                        draw_empty = true;
+                        separator = {
+                          left = "";
+                          right = "";
+                        };
+                      }
+
+                      {
+                        "@1" = "progress";
+                        separator.left = "";
+                      }
+
+                      {
+                        "@1" = "location";
+                      }
+
+                      {
+                        "@1" = "fileformat";
+                        color.fg = "black";
+                        symbols = {
+                          unix = "";
+                          dos = "";
+                          mac = "";
+                        };
+                      }
+                    ];
+                  };
+
+                  options = {
+                    component_separator = {
+                      left = "";
+                      right = "";
+                    };
+                    section_separator = {
+                      left = "";
+                      right = "";
+                    };
+                  };
                 };
               };
             };
