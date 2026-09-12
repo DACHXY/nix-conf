@@ -4,7 +4,7 @@
     {
       services.dbus = {
         enable = true;
-        packages = with pkgs; [ gcr ];
+        packages = with pkgs; [ gcr_4 ];
       };
     };
 }
