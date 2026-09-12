@@ -209,6 +209,7 @@ in
               { app-id = "^(mpv)$"; }
               { app-id = "^\.virt-manager-wrapped$"; }
               { app-id = "^(com.gabm.satty)$"; }
+              { app-id = "^ONLYOFFICE$"; }
             ];
             opacity = 1.0;
           }
@@ -233,6 +234,7 @@ in
             open-floating = true;
             default-column-width.fixed = 1080;
             default-window-height.fixed = 920;
+            opacity = 1.0;
           }
         ];
 

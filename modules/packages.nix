@@ -42,7 +42,7 @@
             nemo
             thunderbird
             ffmpegthumbnailer
-            libreoffice-qt
+            onlyoffice-desktopeditors
             papirus-folders
             localsend
 

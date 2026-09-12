@@ -166,7 +166,7 @@ in
         csrootca = builtins.fetchurl {
           name = "csrootca";
           url = "${cfg.services.nextcloud.endpoint}/s/gm4BjP9FwGmZkey/download";
-          sha256 = "sha256:13wcywyjb2bwg84jwmhm5iryj8y55hr0b157smyimaxjpq6xjc54";
+          sha256 = "sha256:0p75r7sqdwzdlxw5m7is6jj20x59ck8p36scncn4qmr49wvjaapj";
         };
       };
     };
