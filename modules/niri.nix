@@ -210,6 +210,8 @@ in
               { app-id = "^\.virt-manager-wrapped$"; }
               { app-id = "^(com.gabm.satty)$"; }
               { app-id = "^ONLYOFFICE$"; }
+              { app-id = "^(com.flectar.mail)$"; }
+              { app-id = "^(thunderbird)$"; }
             ];
             opacity = 1.0;
           }

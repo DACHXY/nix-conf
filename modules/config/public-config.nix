@@ -118,19 +118,10 @@ in
           endpoint = "https://${hostname}";
         };
         openldap = rec {
-          domain = "net.dn";
-          hostname = "ldap.${domain}";
-          olcDomain = getOlcSuffix domain;
-          endpoint = "ldaps://${hostname}";
-        };
-        lldap = rec {
           domain = myDomain;
           hostname = "ldap.${domain}";
+          olcDomain = getOlcSuffix "net.dn";
           endpoint = "ldaps://${hostname}";
-          web = {
-            hostname = hostname;
-            endpoint = "https://${hostname}";
-          };
         };
         matrix = rec {
           hostname = "matrix.${myDomain}";
@@ -159,6 +150,10 @@ in
         };
         webmail = rec {
           hostname = "webmail.${myDomain}";
+          endpoint = "https://${hostname}";
+        };
+        aria = rec {
+          hostname = "aria.${myDomain}";
           endpoint = "https://${hostname}";
         };
       };

@@ -48,6 +48,7 @@
 
             wl-clipboard
             inputs.woomer.packages.${pkgs.stdenv.hostPlatform.system}.default
+            inputs.flectar-mail.packages.${pkgs.stdenv.hostPlatform.system}.default
           ];
         };
     };

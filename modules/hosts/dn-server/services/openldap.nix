@@ -3,23 +3,27 @@ let
   inherit (config.flake.public.config.services.openldap)
     olcDomain
     ;
+
+  inherit (config.flake.public.config)
+    domain
+    ;
 in
 {
   configurations.nixos.dn-server.module =
-    { pkgs, ... }:
+    { config, pkgs, ... }:
     {
-      # systemd.services.openldap = {
-      #   wants = [ "acme-finished-${hostname}.target" ];
-      #   serviceConfig.LoadCredential =
-      #     let
-      #       certDir = config.security.acme.certs."${hostname}".directory;
-      #     in
-      #     [
-      #       "full.pem:${certDir}/full.pem"
-      #       "cert.pem:${certDir}/cert.pem"
-      #       "key.pem:${certDir}/key.pem"
-      #     ];
-      # };
+      systemd.services.openldap = {
+        wants = [ "acme-finished-${domain}.target" ];
+        serviceConfig.LoadCredential =
+          let
+            certDir = config.security.acme.certs."${domain}".directory;
+          in
+          [
+            "full.pem:${certDir}/full.pem"
+            "cert.pem:${certDir}/cert.pem"
+            "key.pem:${certDir}/key.pem"
+          ];
+      };
 
       networking.firewall.allowedTCPPorts = [
         389 # LDAP
@@ -28,10 +32,10 @@ in
 
       services.openldap =
         let
-          # credsDir = "/run/credentials/openldap.service";
-          # caDir = "${credsDir}/full.pem";
-          # certDir = "${credsDir}/cert.pem";
-          # keyDir = "${credsDir}/key.pem";
+          credsDir = "/run/credentials/openldap.service";
+          caDir = "${credsDir}/full.pem";
+          certDir = "${credsDir}/cert.pem";
+          keyDir = "${credsDir}/key.pem";
         in
         {
           enable = true;
@@ -43,13 +47,13 @@ in
             attrs = {
               olcLogLevel = "conns config";
 
-              # olcTLSCACertificateFile = caDir;
-              # olcTLSCertificateFile = certDir;
-              # olcTLSCertificateKeyFile = keyDir;
-              # olcTLSCipherSuite = "HIGH:MEDIUM:+3DES:+RC4:+aNULL";
-              # olcTLSCRLCheck = "none";
-              # olcTLSVerifyClient = "never";
-              # olcTLSProtocolMin = "3.1";
+              olcTLSCACertificateFile = caDir;
+              olcTLSCertificateFile = certDir;
+              olcTLSCertificateKeyFile = keyDir;
+              olcTLSCipherSuite = "HIGH:MEDIUM:+3DES:+RC4:+aNULL";
+              olcTLSCRLCheck = "none";
+              olcTLSVerifyClient = "never";
+              olcTLSProtocolMin = "3.1";
             };
 
             children = {
@@ -78,7 +82,8 @@ in
                   olcAccess = [
                     ''
                       {0}to attrs=userPassword
-                          by peername="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage
+                          by dn.exact="cn=replicator,${olcDomain}" read
+                          by dn.exact="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage
                           by dn.exact="cn=admin,${olcDomain}" manage
                           by dn.exact="uid=admin,ou=people,${olcDomain}" manage
                           by self write
@@ -87,7 +92,8 @@ in
                     ''
                     ''
                       {1}to *
-                          by peername="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage
+                          by dn.exact="cn=replicator,${olcDomain}" read
+                          by dn.exact="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth" manage
                           by dn.exact="cn=admin,${olcDomain}" manage
                           by dn.exact="uid=admin,ou=people,${olcDomain}" manage
                           by self read
@@ -135,6 +141,16 @@ in
                       "manager"
                       "owner"
                     ];
+                  };
+
+                  "olcOverlay={5}syncprov".attrs = {
+                    objectClass = [
+                      "olcOverlayConfig"
+                      "olcSyncProvConfig"
+                      "top"
+                    ];
+                    olcOverlay = "{5}syncprov";
+                    olcSpCheckpoint = "100 10";
                   };
                 };
               };

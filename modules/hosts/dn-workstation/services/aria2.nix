@@ -1,15 +1,18 @@
-{ ... }: {
-
+{ config, ... }:
+let
+  inherit (config.flake.public.config) domain;
+  inherit (config.flake.public.config.services) aria;
+in
+{
   configurations.nixos.dn-workstation.module =
-    { config, ... }:
+    { pkgs, ... }:
     {
-      services.aria2 = {
-        enable = true;
-        settings = {
-          dir = "/home/${config.my.user.name}/Videos/T/Aria";
-        };
-        openPorts = true;
-        rpcSecretFile = config.sops.secrets."aria2/rpcSecret".path;
+      environment.systemPackages = with pkgs; [ motrix-next ];
+
+      services.nginx.virtualHosts."${aria.hostname}" = {
+        useACMEHost = domain;
+        forceSSL = true;
+        locations."/".proxyPass = "http://127.0.0.1:29100";
       };
     };
 }
