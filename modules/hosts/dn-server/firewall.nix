@@ -1,3 +1,7 @@
+{ config, ... }:
+let
+  inherit (config.flake.public.config.machines) dn-cc;
+in
 {
   configurations.nixos.dn-server.module =
     { config, ... }:
@@ -30,12 +34,21 @@
               ct state vmap { invalid : drop, established : accept, related : accept }
 
               tcp dport { ${sshPortsString} } jump ssh-filter
+              # Not the public MX - only dn-cc may relay SMTP here.
+              tcp dport 25 jump smtp-filter
             }
 
             chain ssh-filter {
               ip saddr @ssh_allow_v4 accept
 
               limit rate 30/minute log prefix "SSH-DROP: "
+              drop
+            }
+
+            chain smtp-filter {
+              ip saddr ${dn-cc.ip} accept
+
+              limit rate 10/minute log prefix "SMTP-DROP: "
               drop
             }
           '';

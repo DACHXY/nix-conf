@@ -115,6 +115,9 @@ in
         };
       };
 
+      networking.firewall.allowedUDPPorts = [ 53 ];
+      networking.firewall.allowedTCPPorts = [ 53 ];
+
       services.dnsdist = {
         enable = true;
         listenAddress = "127.0.0.1";
@@ -122,6 +125,8 @@ in
           setLocal("127.0.0.1:53")
           addLocal("192.168.100.9:53")
           addLocal("100.104.189.30:53")
+          addLocal("10.20.0.2:53")
+          addLocal("10.10.0.2:53")
           addLocal("[::1]:53")
 
           setSecurityPollSuffix("")

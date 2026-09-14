@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, ... }:
 let
   inherit (config.flake.public.config) domain;
 
@@ -18,30 +18,33 @@ let
     };
 in
 {
-  configurations.nixos.dn-server.module = { config, lib, ... }: {
-    sops.secrets."cloudflared-creds" = {
-      mode = "0400";
-    };
+  configurations.nixos.dn-server.module =
+    { config, lib, ... }:
+    {
+      sops.secrets."cloudflared-creds" = {
+        mode = "0400";
+      };
 
-    services.cloudflared = {
-      enable = true;
-      tunnels = {
-        "43131813-cfae-4eff-9597-f759bdc7e9e0" = {
-          default = "http_status:404";
-          ingress = lib.mkMerge (
-            map mkIngress [
-              "login"
-              "nextcloud"
-              "matrix"
-              "matrix-auth"
-              "git"
-              "webmail"
-              null
-            ]
-          );
-          credentialsFile = config.sops.secrets."cloudflared-creds".path;
+      services.cloudflared = {
+        enable = true;
+        tunnels = {
+          "43131813-cfae-4eff-9597-f759bdc7e9e0" = {
+            default = "http_status:404";
+            ingress = lib.mkMerge (
+              map mkIngress [
+                "login"
+                "nextcloud"
+                "matrix"
+                "matrix-auth"
+                "git"
+                "webmail"
+                "jmap"
+                null
+              ]
+            );
+            credentialsFile = config.sops.secrets."cloudflared-creds".path;
+          };
         };
       };
     };
-  };
 }

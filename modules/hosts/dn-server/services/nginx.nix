@@ -84,6 +84,30 @@ in
           }
         '';
       };
+
+      # Same as mkDenyConfig, but exempts request paths matching `paths`
+      # (regex) - nginx runs server-level `if`s before location matching, so
+      # a location can't opt out of mkDenyConfig on its own.
+      mkDenyConfigExceptPaths =
+        paths:
+        let
+          pathsRegex = concatStringsSep "|" paths;
+        in
+        {
+          extraConfig = ''
+            if ($request_uri ~ "^(${pathsRegex})") {
+              set ${accessAllowedVar} 1;
+            }
+
+            if (${ipAllowedVar} = 1) {
+              set ${accessAllowedVar} 1;
+            }
+
+            if (${accessAllowedVar} = 0) {
+              return 444;
+            }
+          '';
+        };
     in
     {
       networking.firewall.allowedTCPPorts = [ 443 ];
@@ -171,11 +195,22 @@ in
             limitGeo = true;
           };
 
+          # ==== Webmail (Bulwark) ==== #
+          "webmail.${domain}" = mkLimitConfig {
+            limitGeo = true;
+          };
+          "jmap.${domain}" = mkLimitConfig {
+            limitGeo = true;
+          };
+
           "nextcloud.${domain}" = mkDenyConfig;
           "login.${domain}" = mkDenyConfig;
           "actual.${domain}" = mkDenyConfig;
           "bitwarden.${domain}" = mkDenyConfig;
-          "${domain}" = mkDenyConfig;
+          "${domain}" = mkDenyConfigExceptPaths [
+            "/\\.well-known/jmap"
+            "/jmap/"
+          ];
           "element.${domain}" = mkDenyConfig;
           "git.${domain}" = mkDenyConfig;
           "grafana.${domain}" = mkDenyConfig;
