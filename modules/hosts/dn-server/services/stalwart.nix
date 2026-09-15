@@ -5,10 +5,6 @@ let
   inherit (config.flake.public.config.machines) dn-cc;
 in
 {
-  # Backend mail store: dn-cc (hosts/dn-cc/services/stalwart.nix) is the
-  # sole public MX/relay and relays here over WireGuard. Hand-rolled unit
-  # since stalwart_0_16 is incompatible with the native `services.stalwart`
-  # module.
   configurations.nixos.dn-server.module =
     {
       config,
@@ -21,17 +17,12 @@ in
 
       package = pkgs.stalwart_0_16;
       dbName = "stalwart";
-      # SystemSettings.defaultHostname: embedded as the apiUrl/downloadUrl/
-      # etc. host in every JMAP session resource, so must be the publicly
-      # reachable hostname the browser talks to (bulwark.nix), not internal.
       fqdn = "jmap.${domain}";
       managementPort = 30093;
       certDir = config.security.acme.certs."${domain}".directory;
 
       getCredFile = var_name: "/run/credentials/stalwart.service/${var_name}";
 
-      # Bootstrap config: bare DataStore value telling stalwart where its
-      # own registry lives. Everything else is configured via `plan` below.
       configJson = pkgs.writeText "stalwart-config.json" (
         builtins.toJSON {
           "@type" = "PostgreSql";
@@ -43,10 +34,7 @@ in
         }
       );
 
-      # Declarative server-config plan, applied via stalwart-bootstrap below.
       plan = [
-        # Objects referenced (by "#id") further down must be created first -
-        # stalwart-cli applies in file order, doesn't defer references.
         {
           "@type" = "upsert";
           object = "Certificate";
@@ -61,7 +49,6 @@ in
                 "@type" = "File";
                 filePath = "${certDir}/key.pem";
               };
-              # Matches the ACME cert's SANs (users/danny/acme.nix).
               subjectAlternativeNames = {
                 "${domain}" = true;
                 "*.${domain}" = true;
@@ -103,11 +90,7 @@ in
         {
           "@type" = "upsert";
           object = "Directory";
-          # LdapDirectory has no "name" field to match on - description is
-          # the closest thing it has.
           value = {
-            # This host's own openldap master (openldap.nix), bound as the
-            # same replicator identity dn-cc's replica uses.
             dir-ldap = {
               description = "ldap";
               "@type" = "Ldap";
@@ -138,8 +121,6 @@ in
           object = "MtaRoute";
           matchOn = [ "name" ];
           value = {
-            # dn-server has no public IP/reputation of its own - all
-            # outbound goes through dn-cc.
             relay-dncc = {
               name = "relay-dncc";
               "@type" = "Relay";
@@ -147,7 +128,6 @@ in
               port = 25;
               protocol = "smtp";
               implicitTls = false;
-              # The *.dnywe.com cert is never valid for a bare IP.
               allowInvalidCerts = true;
             };
           };
@@ -192,7 +172,6 @@ in
           };
         }
         {
-          # dn-cc already filters before relaying here.
           "@type" = "update";
           object = "SpamSettings";
           value.enable = false;
@@ -217,14 +196,11 @@ in
             smtp = {
               name = "smtp";
               protocol = "smtp";
-              # NetworkListener.bind is a Map, not a list.
               bind."0.0.0.0:25" = true;
             };
             imap = {
               name = "imap";
               protocol = "imap";
-              # Plain IMAP, no TLS - only reachable over WireGuard. Needed
-              # as an imapsync destination migrating mailboxes from dn-cc.
               bind."0.0.0.0:143" = true;
             };
             imaps = {
@@ -286,9 +262,6 @@ in
         '';
       };
 
-      # With a real (non-ephemeral) registry store there's no auto-generated
-      # bootstrap password, so this fallback admin must be pinned for the
-      # initial plan apply to authenticate at all.
       sops.templates."stalwart-recovery-admin.env" = {
         owner = "stalwart";
         content = ''
@@ -327,7 +300,6 @@ in
           RestartSec = 5;
           StateDirectory = "stalwart";
           CacheDirectory = "stalwart";
-          # Default tracer writes here; directory never existed otherwise.
           LogsDirectory = "stalwart";
           EnvironmentFile = config.sops.templates."stalwart-recovery-admin.env".path;
           LoadCredential = [
@@ -341,13 +313,8 @@ in
 
       systemd.services.stalwart-bootstrap = {
         description = "Stalwart configuration bootstrap";
-        # Not `requires`: ExecStartPost restarts stalwart.service, and
-        # `requires` would propagate that stop back to this unit,
-        # SIGTERM-ing itself mid-run.
         after = [ "stalwart.service" ];
         wantedBy = [ "multi-user.target" ];
-        # `after` only waits for the process to fork, not for it to finish
-        # connecting to postgres and bind its HTTP listener - retry until ready.
         startLimitIntervalSec = 120;
         startLimitBurst = 30;
         serviceConfig = {
@@ -356,11 +323,8 @@ in
           Restart = "on-failure";
           RestartSec = 3;
           EnvironmentFile = config.sops.templates."stalwart-bootstrap.env".path;
-          # Brand-new/empty registry -> stalwart's fixed bootstrap-mode port,
-          # before `plan` creates the real "management" listener.
           Environment = "STALWART_URL=http://127.0.0.1:8080";
           ExecStart = "${getExe pkgs.stalwart-cli} apply --file ${planFile}";
-          # New/changed listeners only take effect on restart.
           ExecStartPost = "${pkgs.systemd}/bin/systemctl restart stalwart.service";
         };
       };
@@ -369,6 +333,17 @@ in
         forceSSL = true;
         useACMEHost = domain;
         locations."/".proxyPass = "http://127.0.0.1:${toString managementPort}";
+      };
+
+      services.nginx.virtualHosts."${fqdn}" = {
+        forceSSL = true;
+        useACMEHost = domain;
+        locations."/".proxyPass = "http://127.0.0.1:${toString managementPort}";
+      };
+
+      services.nginx.virtualHosts."${domain}".locations = {
+        "/.well-known/jmap".proxyPass = "http://127.0.0.1:${toString managementPort}/.well-known/jmap";
+        "/jmap/".proxyPass = "http://127.0.0.1:${toString managementPort}/jmap/";
       };
     };
 }

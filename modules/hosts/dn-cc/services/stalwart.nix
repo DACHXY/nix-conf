@@ -6,10 +6,6 @@ let
   inherit (config.flake.public.config.services) mailserver stalwart;
 in
 {
-  # Public MX/submission gateway: validates recipients against LDAP, relays
-  # everything to dn-server for storage (see dn-server/services/stalwart.nix).
-  # Hand-rolled unit since stalwart_0_16 is incompatible with the native
-  # `services.stalwart` module.
   configurations.nixos.dn-cc.module =
     {
       config,
@@ -29,8 +25,6 @@ in
 
       getCredFile = var_name: "/run/credentials/stalwart.service/${var_name}";
 
-      # Fresh RocksDb store - mail already migrated off dn-cc via imapsync,
-      # nothing to preserve from the old 0.15.5 postgres-backed deployment.
       configJson = pkgs.writeText "stalwart-config.json" (
         builtins.toJSON {
           "@type" = "RocksDb";
@@ -40,9 +34,6 @@ in
 
       plan = [
         {
-          # webadmin is a pluggable "Application" fetched at runtime; point
-          # it at nixpkgs' prebuilt zip via file:// instead of a network
-          # fetch. Access is restricted nginx-side, not here.
           "@type" = "upsert";
           object = "Application";
           value = {
@@ -102,9 +93,6 @@ in
               certificateManagement = {
                 "@type" = "Manual";
               };
-              # Stalwart generates/rotates the signing keys and (with
-              # dnsManagement below) publishes/retires the DKIM TXT records
-              # itself, no manual DkimSignature object needed.
               dkimManagement = {
                 "@type" = "Automatic";
                 algorithms = {
@@ -112,8 +100,6 @@ in
                   Dkim1Ed25519Sha256 = true;
                 };
               };
-              # Only DKIM/SPF/DMARC - Mx/AutoConfig/AutoDiscover are
-              # hand-managed elsewhere.
               dnsManagement = {
                 "@type" = "Automatic";
                 dnsServerId = "#cloudflare-dns";
@@ -121,6 +107,8 @@ in
                   dkim = true;
                   spf = true;
                   dmarc = true;
+                  mtaSts = true;
+                  tlsRpt = true;
                 };
               };
               subAddressing = {
@@ -132,13 +120,7 @@ in
         {
           "@type" = "upsert";
           object = "Directory";
-          # LdapDirectory has no stable upsert key - matches on nothing,
-          # first apply always creates.
           value = {
-            # Local read-only openldap replica (openldap.nix), bound as the
-            # syncrepl replicator identity - already has read access to
-            # userPassword. Used only to validate recipients/authenticate
-            # senders; delivery always goes to dn-server (MtaOutboundStrategy).
             dir-ldap = {
               description = "ldap";
               "@type" = "Ldap";
@@ -169,10 +151,28 @@ in
               port = 25;
               protocol = "smtp";
               implicitTls = false;
-              # The *.dnywe.com cert is never valid for a bare IP - hop
-              # stays inside WireGuard anyway.
               allowInvalidCerts = true;
             };
+          };
+        }
+        {
+          "@type" = "upsert";
+          object = "MtaTlsStrategy";
+          matchOn = [ "name" ];
+          value = {
+            no-dane = {
+              name = "no-dane";
+              dane = "disable";
+            };
+          };
+        }
+        {
+          "@type" = "update";
+          object = "MtaSts";
+          value = {
+            mode = "enforce";
+            maxAge = 604800000;
+            mxHosts.${fqdn} = true;
           };
         }
         {
@@ -193,6 +193,17 @@ in
         }
         {
           "@type" = "update";
+          object = "SenderAuth";
+          value.dkimSignDomain = {
+            match."0" = {
+              "if" = "is_local_domain(sender_domain) && !is_empty(authenticated_as)";
+              "then" = "sender_domain";
+            };
+            "else" = "false";
+          };
+        }
+        {
+          "@type" = "update";
           object = "MtaOutboundStrategy";
           value = {
             # Route names are the MtaRoute's own "name" field, not "#id".
@@ -205,10 +216,11 @@ in
               };
               "else" = "'mx'";
             };
+            # See MtaTlsStrategy "no-dane" above.
+            tls."else" = "'no-dane'";
           };
         }
         {
-          # "disable" is a recognized expression constant -> AggregateFrequency::Never.
           "@type" = "update";
           object = "DkimReportSettings";
           value.sendFrequency."else" = "disable";
@@ -232,8 +244,6 @@ in
           value.sendFrequency."else" = "disable";
         }
         {
-          # Auto-ban rules, off by default - relevant here since smtp:25 and
-          # submission(s) are open to the whole internet.
           "@type" = "update";
           object = "Security";
           value = {
@@ -259,9 +269,6 @@ in
           object = "SpamSettings";
           value.scoreSpam = 8;
         }
-        # Unwanted default bootstrap listeners (dn-cc has no local mailboxes;
-        # https:443 conflicts with nginx). Bound dual-stack ([::]), which
-        # was the source of the "IPv6 unavailable" warnings.
       ]
       ++ (map
         (name: {
@@ -397,7 +404,7 @@ in
           Restart = "on-failure";
           RestartSec = 3;
           EnvironmentFile = config.sops.templates."stalwart-bootstrap.env".path;
-          Environment = "STALWART_URL=http://127.0.0.1:8080";
+          Environment = "STALWART_URL=http://127.0.0.1:${toString managementPort}";
           ExecStart = "${getExe pkgs.stalwart-cli} apply --file ${planFile}";
           ExecStartPost = "${pkgs.systemd}/bin/systemctl restart stalwart.service";
         };

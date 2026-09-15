@@ -270,6 +270,24 @@ in
               }
             );
 
+          # RFC 8461 requires this exact hostname; Stalwart (MtaSts object in
+          # stalwart.nix) generates and serves the policy body itself.
+          "mta-sts.${domain}" =
+            (mkProxyConfig {
+              limitGeo = false;
+              verifyClient = false;
+            })
+            // {
+              locations."/.well-known/mta-sts.txt" = {
+                recommendedProxySettings = true;
+                proxyPass = "http://127.0.0.1:${toString stalwart.managementPort}";
+              };
+
+              locations."/" = {
+                return = "404";
+              };
+            };
+
           # ==== Matrix ===== #
           "${matrixDomain}" = (mkProxyConfig { limitGeo = false; }) // {
             locations."/" = locationProxyPass;

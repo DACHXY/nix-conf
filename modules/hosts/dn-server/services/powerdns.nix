@@ -99,6 +99,10 @@ in
           "list.dnswl.org." = "168.95.1.1";
           "dwl.dnswl.org." = "168.95.1.1";
 
+          # ==== forward to cloudflare ==== #
+          "_domainkey.${domain}." = "1.1.1.1";
+          "_mta-sts.${domain}." = "1.1.1.1";
+
           # ==== Others ==== #
           "tw." = "168.95.1.1";
           "." = "1.1.1.1";
