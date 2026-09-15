@@ -1,16 +1,27 @@
 { config, ... }:
 let
   inherit (config.flake.public.config) domain;
+  inherit (config.flake.public.config.services) nextcloud;
   inherit (config.flake.public.config.services.oidc) hostname;
 in
 {
   configurations.nixos.dn-server.module =
     { config, ... }:
+    let
+      keycloakTheme = builtins.fetchurl {
+        url = "${nextcloud.endpoint}/s/CQeeFf6BiSztTci/download";
+        sha256 = "sha256:01i12k81hvws835gv27c1dhidxljl011ih4rh6cjpn6cayvd2nhy";
+        name = "keycloak-theme-kc26.jar";
+      };
+    in
     {
       sops.secrets."oauth/password" = { };
 
       services.keycloak = {
         enable = true;
+        plugins = [
+          keycloakTheme
+        ];
 
         database = {
           type = "postgresql";

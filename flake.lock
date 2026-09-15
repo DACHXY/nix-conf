@@ -550,23 +550,6 @@
         "type": "github"
       }
     },
-    "flectar-mail": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1789321448,
-        "narHash": "sha256-XRof6clSskoK6N2YyXzn9+2R27HWXBBR+8NIpJFeTqQ=",
-        "path": "/home/danny/projects/flectar-mail",
-        "type": "path"
-      },
-      "original": {
-        "path": "/home/danny/projects/flectar-mail",
-        "type": "path"
-      }
-    },
     "fromYaml": {
       "flake": false,
       "locked": {
@@ -1130,6 +1113,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-darwin-legacy": {
+      "locked": {
+        "lastModified": 1788334797,
+        "narHash": "sha256-nskSa8kDimM7F0VFSP8IdoSNo4G0vKzOtxwvOFpoGDI=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c19db427a1fdfc7591c0b0baeb4665dcef2c61da",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-26.05-darwin",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1769909678,
@@ -1449,6 +1448,27 @@
         "type": "github"
       }
     },
+    "nono": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nixpkgs-darwin-legacy": "nixpkgs-darwin-legacy"
+      },
+      "locked": {
+        "lastModified": 1789416875,
+        "narHash": "sha256-twBIRlczQP/IDK1j1BxMiPkSJ+gQmKEQJTBvllo9G5E=",
+        "owner": "nolabs-ai",
+        "repo": "nono",
+        "rev": "b09d2406bf3494ebd5a5a62f4d66653f41968e84",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nolabs-ai",
+        "repo": "nono",
+        "type": "github"
+      }
+    },
     "nur": {
       "inputs": {
         "flake-parts": [
@@ -1540,7 +1560,6 @@
         "chaotic": "chaotic",
         "disko": "disko",
         "flake-parts": "flake-parts",
-        "flectar-mail": "flectar-mail",
         "ghostty": "ghostty",
         "git-hooks": "git-hooks",
         "home-manager": "home-manager_3",
@@ -1561,6 +1580,7 @@
         "nixpkgs": "nixpkgs_10",
         "noctalia": "noctalia",
         "noctalia-greeter": "noctalia-greeter",
+        "nono": "nono",
         "nvf": "nvf",
         "openlogi": "openlogi",
         "rust-overlay": "rust-overlay_3",

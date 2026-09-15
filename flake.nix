@@ -171,9 +171,8 @@
       url = "github:dachxy/ihasmail/nix-packaging";
     };
 
-    flectar-mail = {
-      # Local checkout, still being iterated on before it's pushed/merged.
-      url = "path:/home/danny/projects/flectar-mail";
+    nono = {
+      url = "github:nolabs-ai/nono";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

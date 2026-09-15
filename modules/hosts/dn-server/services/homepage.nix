@@ -4,7 +4,7 @@
 }:
 let
   inherit (config.flake.public.config) domain;
-  inherit (config.flake.public.config.services.homepage) hostname endpoint alias;
+  inherit (config.flake.public.config.services.homepage) hostname alias;
   inherit (config.flake.public.config.services)
     nextcloud
     paperless
@@ -228,7 +228,6 @@ in
 
         ];
         settings = {
-          base = endpoint;
           headerStyle = "boxed";
           title = "DN Home";
           description = "Welcome! maybe?";
