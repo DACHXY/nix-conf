@@ -49,8 +49,10 @@ in
         ];
       };
 
-      systemd.services.netbird-management.environment = {
-        NETBIRD_STORE_ENGINE_POSTGRES_DSN = "host=/var/run/postgresql user=netbird dbname=netbird";
+      systemd.services.netbird-management = {
+        environment = {
+          NETBIRD_STORE_ENGINE_POSTGRES_DSN = "host=/var/run/postgresql user=netbird dbname=netbird";
+        };
       };
 
       services.netbird = {
