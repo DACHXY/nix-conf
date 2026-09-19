@@ -39,6 +39,7 @@ in
                 "git"
                 "webmail"
                 "jmap"
+                "cloudphone"
                 null
               ]
             );
