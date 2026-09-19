@@ -1,6 +1,11 @@
 {
   flake.modules.nixos.gui =
-    { config, pkgs, lib, ... }:
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
     let
       # NVENC (hardware encoding) lives behind Sunshine's CUDA build, which
       # nixpkgs disables unless cudaSupport is on.  Without it Sunshine silently
@@ -30,7 +35,8 @@
 
       # Grant CAP_SYS_NICE so Sunshine can raise the priority of its
       # capture/encode EGL context (otherwise it warns and stays at normal prio).
-      security.wrappers.sunshine.capabilities =
-        lib.mkIf nvenc (lib.mkForce "cap_sys_admin,cap_sys_nice+p");
+      security.wrappers.sunshine.capabilities = lib.mkIf nvenc (
+        lib.mkForce "cap_sys_admin,cap_sys_nice+p"
+      );
     };
 }

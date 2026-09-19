@@ -1,11 +1,12 @@
 {
   flake.modules.nixos.virtual-display =
-    { config, pkgs, lib, ... }:
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
     let
-      # 256-byte EDID for a headless virtual display on a spare NVIDIA connector.
-      # Offers 1920x1080@60/120, 2560x1440@60/120, 3840x2160@60.  The HDMI VSDB
-      # + HDMI Forum VSDB blocks are required by the proprietary NVIDIA driver to
-      # unlock pixel clocks above the HDMI 1.4 ceiling (~165 MHz).
       create-edid = pkgs.writeText "create-edid.py" ''
         import struct, sys
 
@@ -122,37 +123,27 @@
         assert len(edid) == 256
         open(sys.argv[1], 'wb').write(edid)
       '';
-      edid = pkgs.runCommand "sunshine-virt-edid.bin"
-        {
-          nativeBuildInputs = [ pkgs.python3 ];
-        } ''
-        python3 ${create-edid} "$out"
-      '';
+      edid =
+        pkgs.runCommand "sunshine-virt-edid.bin"
+          {
+            nativeBuildInputs = [ pkgs.python3 ];
+          }
+          ''
+            python3 ${create-edid} "$out"
+          '';
       edid-pkg = pkgs.runCommand "sunshine-virt-edid" { } ''
         mkdir -p "$out/lib/firmware/edid"
         cp ${edid} "$out/lib/firmware/edid/sunshine-virt.bin"
       '';
-      user = config.my.user.name;
       connector = "DP-2"; # spare connector on dn-cscc (no physical sink attached)
     in
     {
-      # Force-enable the spare connector with a custom EDID so a headless
-      # virtual display exists at all times -- no dummy plug required.
       hardware.display.edid.packages = [ edid-pkg ];
       hardware.display.outputs.${connector} = {
         edid = "sunshine-virt.bin";
         mode = "e";
       };
 
-      # Stream the virtual display instead of the physical monitors.
       services.sunshine.settings.output_name = connector;
-
-      # Keep the virtual display parked to the right of the physical monitors.
-      home-manager.users.${user}.programs.niri.settings.outputs.${connector} = {
-        position = {
-          x = 4480;
-          y = 0;
-        };
-      };
     };
 }
