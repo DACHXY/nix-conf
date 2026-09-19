@@ -27,5 +27,32 @@ in
         enable = true;
         package = pkgs.claude-code;
       };
+
+      programs.pi-coding-agent = {
+        enable = true;
+        package = pkgs.pi-coding-agent;
+        extraPackages = with pkgs; [
+          nodejs
+          bun
+        ];
+        settings = {
+          packages = [
+            "npm:@ooo-razum/pi-open-webui"
+            "npm:pi-mcp-adapter"
+            "npm:pi-agent-plugins"
+            "npm:pi-web-access"
+            "npm:pi-subagents"
+            "npm:context-mode"
+            "npm:billion-context"
+            "npm:bigpowers"
+            "npm:@dietrichgebert/ponytail"
+            "npm:@narumitw/pi-btw"
+            "npm:@narumitw/pi-plan-mode"
+            "npm:pi-hermes-memory"
+            "npm:pi-animations"
+            "npm:pi-playwright"
+          ];
+        };
+      };
     };
 }
