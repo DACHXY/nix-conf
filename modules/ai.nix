@@ -51,6 +51,7 @@ in
             "npm:pi-hermes-memory"
             "npm:pi-animations"
             "npm:pi-playwright"
+            "npm:pi-ui-design"
           ];
         };
       };

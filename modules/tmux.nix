@@ -167,11 +167,11 @@
           set -g allow-passthrough on
           set -s set-clipboard on
           set-option -s set-clipboard on
-          # kitty keyboard protocol; needed by pi (pi works best with csi-u)
-          # 'extended-keys on' (tmux < 3.4) is deprecated and maps to xterm format
-          if-shell "tmux show -g extended-keys-format 2>/dev/null" \
-            "set -g extended-keys-format csi-u" \
-            "set -g extended-keys on"
+          # kitty keyboard protocol; pi works best with csi-u.
+          # extended-keys defaults to *off* and 'on' alone means xterm format, so
+          # it has to be enabled separately from the format (tmux >= 3.4).
+          set -g extended-keys on
+          if-shell "tmux show -gv extended-keys-format >/dev/null 2>&1" "set -g extended-keys-format csi-u"
 
           set -g status "on"
           set -g status-style fg=default,bg=default
