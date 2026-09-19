@@ -222,6 +222,11 @@ in
           "powerdns.${domain}" = mkDenyConfig;
           "talk.${domain}" = mkDenyConfig;
           "uptime.${domain}" = mkDenyConfig;
+
+          "cloudphone.${domain}" = (mkLimitConfig { limitGeo = true; }) // {
+            forceSSL = true;
+            locations."/".proxyPass = "http://100.104.150.125:3000";
+          };
         };
       };
     };
