@@ -20,6 +20,19 @@ in
           exec uvx opensearch-mcp-server-py "$@"
         '';
       };
+
+      # nono-wrapped stdio server, shared by claude-code and pi (pi-mcp-adapter)
+      mcpServer = {
+        command = "nono";
+        args = [
+          "run"
+          "--profile"
+          profilePath
+          "--allow-cwd"
+          "--"
+          "nono-opensearch-mcp"
+        ];
+      };
     in
     {
       sops.secrets =
@@ -72,16 +85,21 @@ in
       home-manager.users.${config.my.user.name} = {
         programs.claude-code.mcpServers."opensearch-mcp-server" = {
           type = "stdio";
-          command = "nono";
-          args = [
-            "run"
-            "--profile"
-            profilePath
-            "--allow-cwd"
-            "--"
-            "nono-opensearch-mcp"
-          ];
+          command = mcpServer.command;
+          args = mcpServer.args;
         };
+
+        # Global MCP config read by pi (pi-mcp-adapter) and other MCP clients
+        home.file.".config/mcp/mcp.json".source = pkgs.writeText "mcp.json" ''
+          {
+            "mcpServers": {
+              "opensearch-mcp-server": {
+                "command": "${mcpServer.command}",
+                "args": ${builtins.toJSON mcpServer.args}
+              }
+            }
+          }
+        '';
       };
     };
 }
