@@ -55,6 +55,7 @@ in
             "npm:pi-playwright"
             "npm:pi-ui-design"
             "npm:pi-design-deck"
+            "npm:pi-jev-auto-mode"
           ];
         };
       };
