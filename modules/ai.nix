@@ -22,7 +22,42 @@ in
 
   flake.modules.homeManager.ai =
     { pkgs, ... }:
+    let
+      piThemes = pkgs.fetchFromGitHub {
+        owner = "luongnv89";
+        repo = "pi-extensions";
+        rev = "a035a6b0a53412f61aeb471434bb5bbf96e8bc7c";
+        hash = "sha256-7I0UgtAZ7rk0MnXUdt/6MdGVHsy+TZDJPVAxUWyvrR4=";
+      };
+    in
     {
+      home.file.".pi/agent/themes".source = "${piThemes}/themes";
+
+      # Global MCP config read by pi (pi-mcp-adapter) and other MCP clients
+      home.file.".config/mcp/mcp.json".source = pkgs.writeText "mcp.json" (
+        builtins.toJSON {
+          mcpServers = {
+            "cloudflare-api" = {
+              type = "http";
+              url = "https://mcp.cloudflare.com/mcp";
+              auth = "oauth";
+            };
+            # nono-sandboxed server; provided by modules/users/danny/nono.nix
+            "opensearch-mcp-server" = {
+              command = "nono";
+              args = [
+                "run"
+                "--profile"
+                "/etc/nono/profiles/opensearch-mcp.json"
+                "--allow-cwd"
+                "--"
+                "nono-opensearch-mcp"
+              ];
+            };
+          };
+        }
+      );
+
       programs.claude-code = {
         enable = true;
         package = pkgs.claude-code;
@@ -38,6 +73,9 @@ in
         settings = {
           defaultProvider = "deepseek";
           defaultModel = "deepseek-v4-flash";
+          defaultThinkingLevel = "low";
+          theme = "omarchy";
+          quietStartup = true;
           packages = [
             "npm:@ooo-razum/pi-open-webui"
             "npm:pi-mcp-adapter"
@@ -56,6 +94,8 @@ in
             "npm:pi-ui-design"
             "npm:pi-design-deck"
             "npm:pi-jev-auto-mode"
+            "npm:pi-zentui"
+            "npm:timestamp-pi"
           ];
         };
       };

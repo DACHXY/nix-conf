@@ -3,7 +3,7 @@ let
   profilePath = "/etc/nono/profiles/opensearch-mcp.json";
 in
 {
-  flake.modules.geneirc.danny-ai =
+  flake.modules.generic.danny-ai =
     {
       config,
       pkgs,
@@ -88,18 +88,6 @@ in
           command = mcpServer.command;
           args = mcpServer.args;
         };
-
-        # Global MCP config read by pi (pi-mcp-adapter) and other MCP clients
-        home.file.".config/mcp/mcp.json".source = pkgs.writeText "mcp.json" ''
-          {
-            "mcpServers": {
-              "opensearch-mcp-server": {
-                "command": "${mcpServer.command}",
-                "args": ${builtins.toJSON mcpServer.args}
-              }
-            }
-          }
-        '';
       };
     };
 }
