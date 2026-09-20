@@ -171,7 +171,10 @@
           # extended-keys defaults to *off* and 'on' alone means xterm format, so
           # it has to be enabled separately from the format (tmux >= 3.4).
           set -g extended-keys on
-          if-shell "tmux show -gv extended-keys-format >/dev/null 2>&1" "set -g extended-keys-format csi-u"
+          # Absolute path: on darwin the server is often started with a PATH
+          # that has no nix profile, so a bare `tmux` here resolves to nothing
+          # and the format silently stays xterm.
+          if-shell "${pkgs.tmux}/bin/tmux show -gv extended-keys-format >/dev/null 2>&1" "set -g extended-keys-format csi-u"
 
           set -g status "on"
           set -g status-style fg=default,bg=default
