@@ -36,6 +36,8 @@ in
           bun
         ];
         settings = {
+          defaultProvider = "deepseek";
+          defaultModel = "deepseek-v4-flash";
           packages = [
             "npm:@ooo-razum/pi-open-webui"
             "npm:pi-mcp-adapter"
@@ -52,6 +54,7 @@ in
             "npm:pi-animations"
             "npm:pi-playwright"
             "npm:pi-ui-design"
+            "npm:pi-design-deck"
           ];
         };
       };
