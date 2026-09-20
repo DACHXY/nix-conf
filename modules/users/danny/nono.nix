@@ -3,7 +3,7 @@ let
   profilePath = "/etc/nono/profiles/opensearch-mcp.json";
 in
 {
-  flake.modules.nixos.danny-ai =
+  flake.modules.geneirc.danny-ai =
     {
       config,
       pkgs,

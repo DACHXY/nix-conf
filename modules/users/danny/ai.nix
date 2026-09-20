@@ -30,4 +30,8 @@ in
     {
       imports = with globalConfig.flake.modules; [ generic.danny-ai ];
     };
+
+  flake.modules.darwin.danny-ai = { ... }: {
+    imports = with globalConfig.flake.modules; [ generic.danny-ai ];
+  };
 }

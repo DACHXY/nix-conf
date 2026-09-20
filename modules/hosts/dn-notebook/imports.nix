@@ -10,7 +10,7 @@
 
       # ==== AI ==== #
       generic.ai
-      generic.danny-ai
+      darwin.danny-ai
     ];
   };
 }
