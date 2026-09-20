@@ -60,11 +60,29 @@
       };
     };
 
-  flake.modules.darwin.base = {
-    imports = [
-      inputs.stylix.darwinModules.stylix
-    ];
-  };
+  flake.modules.darwin.base =
+    { config, pkgs, ... }:
+    let
+      caskaydia = {
+        name = "CaskaydiaCove Nerd Font Mono";
+        package = pkgs.nerd-fonts.caskaydia-cove;
+      };
+    in
+    {
+      imports = [
+        inputs.stylix.darwinModules.stylix
+      ];
+
+      stylix.fonts = {
+        serif = config.stylix.fonts.monospace;
+        sansSerif = config.stylix.fonts.monospace;
+        monospace = caskaydia;
+        emoji = {
+          package = pkgs.noto-fonts-color-emoji;
+          name = "Noto Color Emoji";
+        };
+      };
+    };
 
   flake.modules.homeManager.base =
     { lib, ... }:

@@ -38,6 +38,7 @@
         package = if isDarwin then pkgs.ghostty-bin else inputs.ghostty.packages.${system}.default;
         clearDefaultKeybinds = false;
         settings = {
+          font-family = "CaskaydiaCove Nerd Font Mono";
           custom-shader = [
             "${ghosttyShaders}/cursor_sweep.glsl"
             "${ghosttyShaders}/ripple_cursor.glsl"
