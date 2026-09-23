@@ -505,6 +505,19 @@
                 ];
               };
 
+              mouse-mode = {
+                normal = mkBindOption [
+                  mod
+                  "Apostrophe"
+                ];
+
+                hint = mkBindOption [
+                  mod
+                  "CTRL"
+                  "F"
+                ];
+              };
+
               focus-workspace-prefix = mkBindOption [ mod ];
             };
           };
