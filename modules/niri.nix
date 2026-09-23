@@ -61,6 +61,7 @@ in
       home.packages = with pkgs; [
         nautilus # xdg-desktop-portal-gnome file picker
         rNiri
+        warpd
       ];
 
       xdg.portal = {
@@ -360,6 +361,10 @@ in
               }
             ];
             "${bindCfg.screenshot.edit}".action = sh "wl-paste --type image/png | satty --filename -";
+
+            # Mouse mode
+            "${bindCfg.mouse-mode.normal}".action = spawn "warpd" "--normal";
+            "${bindCfg.mouse-mode.hint}".action = spawn "warpd" "--hint";
           }
           # Map Mod+{1 ~ 9} to workspace{1 ~ 9}
           // (pipe 9 [
