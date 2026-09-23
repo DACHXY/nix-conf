@@ -28,7 +28,6 @@ in
           "run"
           "--profile"
           profilePath
-          "--allow-cwd"
           "--"
           "nono-opensearch-mcp"
         ];

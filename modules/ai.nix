@@ -49,7 +49,6 @@ in
                 "run"
                 "--profile"
                 "/etc/nono/profiles/opensearch-mcp.json"
-                "--allow-cwd"
                 "--"
                 "nono-opensearch-mcp"
               ];
@@ -96,6 +95,7 @@ in
             "npm:pi-jev-auto-mode"
             "npm:pi-zentui"
             "npm:timestamp-pi"
+            "npm:pi-claude-bridge"
           ];
         };
       };
