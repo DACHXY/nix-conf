@@ -1,7 +1,7 @@
 { inputs, config, ... }:
 let
 
-  inherit (config.flake.modules.public.config.services) nextcloud;
+  inherit (config.flake.public.config.services) nextcloud;
 in
 {
 
@@ -13,9 +13,11 @@ in
           inputs.vyolune.homeManagerModules.default
         ];
 
-        sops.secrets."vyolune/nextcloud-password" = { };
+        sops.secrets."vyolune/nextcloud-password" = {
+          sopsFile = ./secret.yaml;
+        };
 
-        programs.vyolune = {
+        services.vyolune = {
           enable = true;
           settings = {
             url = "${nextcloud.endpoint}/remote.php/dav";
@@ -49,9 +51,9 @@ in
                 };
               };
             };
-
-            daemon.enable = true;
           };
+
+          daemon.enable = true;
         };
       };
     };

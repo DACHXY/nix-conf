@@ -2445,15 +2445,16 @@
         "nixpkgs": "nixpkgs_16"
       },
       "locked": {
-        "lastModified": 1790186163,
-        "narHash": "sha256-kBepAK3LdDmT9bNu8pH6Ra58opCI/sDs+RpPyOcTV+o=",
-        "ref": "refs/heads/feat/vyolune",
-        "rev": "0f451d25c1eb98da345c42c5cdb2af28855e8f17",
-        "revCount": 30,
+        "lastModified": 1790231865,
+        "narHash": "sha256-8opPUzgUqyc+1tQ3q2um2nO/U/v2IjedEgKUgllGvl0=",
+        "ref": "main",
+        "rev": "aaedc76bb1ae76d037263aa917a8a2785e9a0314",
+        "revCount": 31,
         "type": "git",
         "url": "https://git.dnywe.com/dachxy/vyolune"
       },
       "original": {
+        "ref": "main",
         "type": "git",
         "url": "https://git.dnywe.com/dachxy/vyolune"
       }
