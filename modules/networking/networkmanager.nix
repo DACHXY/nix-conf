@@ -5,7 +5,7 @@
       networking.networkmanager = {
         enable = lib.mkDefault true;
         plugins = with pkgs; [
-          networkmanager-fortisslvpn
+          networkmanager-openconnect
         ];
       };
 
