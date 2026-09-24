@@ -21,45 +21,76 @@ in
     };
 
   flake.modules.homeManager.ai =
-    { pkgs, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
+      inherit (lib) optionalAttrs;
+      inherit (pkgs.stdenv.hostPlatform) isDarwin;
+
       piThemes = pkgs.fetchFromGitHub {
         owner = "luongnv89";
         repo = "pi-extensions";
         rev = "a035a6b0a53412f61aeb471434bb5bbf96e8bc7c";
         hash = "sha256-7I0UgtAZ7rk0MnXUdt/6MdGVHsy+TZDJPVAxUWyvrR4=";
       };
+
+      # Zen is a Firefox fork, so point the MCP at its binary instead of Firefox.
+      zenPath = "${config.programs.zen-browser.package}/Applications/Zen Browser (Twilight).app/Contents/MacOS/zen";
+
+      mcpServers = {
+        "cloudflare-api" = {
+          type = "http";
+          url = "https://mcp.cloudflare.com/mcp";
+          auth = "oauth";
+        };
+        # nono-sandboxed server; provided by modules/users/danny/nono.nix
+        "opensearch-mcp-server" = {
+          command = "nono";
+          args = [
+            "run"
+            "--profile"
+            "/etc/nono/profiles/opensearch-mcp.json"
+            "--"
+            "nono-opensearch-mcp"
+          ];
+        };
+      }
+      // optionalAttrs isDarwin {
+        "firefox-devtools" = {
+          command = "firefox-devtools-mcp";
+          args = [
+            "--headless"
+            "--viewport"
+            "1280x720"
+            "--firefox-path"
+            zenPath
+          ];
+        };
+      };
     in
     {
       home.file.".pi/agent/themes".source = "${piThemes}/themes";
 
+      # Firefox automation MCP
+      home.packages = [ pkgs.firefox-devtools-mcp ];
+
       # Global MCP config read by pi (pi-mcp-adapter) and other MCP clients
       home.file.".config/mcp/mcp.json".source = pkgs.writeText "mcp.json" (
-        builtins.toJSON {
-          mcpServers = {
-            "cloudflare-api" = {
-              type = "http";
-              url = "https://mcp.cloudflare.com/mcp";
-              auth = "oauth";
-            };
-            # nono-sandboxed server; provided by modules/users/danny/nono.nix
-            "opensearch-mcp-server" = {
-              command = "nono";
-              args = [
-                "run"
-                "--profile"
-                "/etc/nono/profiles/opensearch-mcp.json"
-                "--"
-                "nono-opensearch-mcp"
-              ];
-            };
-          };
-        }
+        builtins.toJSON { inherit mcpServers; }
       );
 
       programs.claude-code = {
         enable = true;
         package = pkgs.claude-code;
+      };
+
+      programs.opencode = {
+        enable = true;
+        package = pkgs.opencode;
       };
 
       programs.pi-coding-agent = {
@@ -96,6 +127,7 @@ in
             "npm:timestamp-pi"
             "npm:pi-claude-bridge"
             "npm:@porche/pi-usage"
+            "npm:opencode-pi"
           ];
         };
       };
