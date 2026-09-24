@@ -9,6 +9,11 @@
         ];
       };
 
+      programs.nm-applet = {
+        enable = true;
+        indicator = false;
+      };
+
       networking = {
         enableIPv6 = lib.mkDefault false;
         firewall.enable = lib.mkDefault true;

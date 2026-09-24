@@ -48,12 +48,9 @@
               proxy = { };
               vpn = {
                 gateway = "$NYCU_VPN_GATEWAY";
-                password-flags = "0";
+                password-flags = "1";
                 protocol = "fortinet";
                 service-type = "org.freedesktop.NetworkManager.openconnect";
-              };
-              vpn-secrets = {
-                password = "$NYCU_VPN_PASSWORD";
               };
             };
             "CSIT VPN" = {
@@ -77,12 +74,9 @@
               proxy = { };
               vpn = {
                 gateway = "$CSIT_VPN_GATEWAY";
-                password-flags = "0";
+                password-flags = "1";
                 protocol = "fortinet";
                 service-type = "org.freedesktop.NetworkManager.openconnect";
-              };
-              vpn-secrets = {
-                password = "$CSIT_VPN_PASSWORD";
               };
             };
             "CSIT VPN (test)" = {
@@ -106,12 +100,9 @@
               proxy = { };
               vpn = {
                 gateway = "$CSIT_VPN_TEST_GATEWAY";
-                password-flags = "0";
+                password-flags = "1";
                 protocol = "fortinet";
                 service-type = "org.freedesktop.NetworkManager.openconnect";
-              };
-              vpn-secrets = {
-                password = "$CSIT_VPN_TEST_PASSWORD";
               };
             };
             NYCU = {
