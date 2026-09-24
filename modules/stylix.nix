@@ -9,6 +9,7 @@
         base16Scheme = "${pkgs.base16-schemes}/share/themes/ashes.yaml";
         polarity = "dark";
         enableReleaseChecks = false;
+        targets.plymouth.enable = false;
       };
     };
 
