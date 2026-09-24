@@ -73,8 +73,9 @@
               };
               proxy = { };
               vpn = {
-                gateway = "$CSIT_VPN_GATEWAY";
-                password-flags = "1";
+                gateway = "$CSIT_VPN_GATEWAY/$CSIT_VPN_REALM";
+                gwcert = "pin-sha256:twN8dS5XzMPTjmCKkZgFK34BdTeBBqcwjJsui7UYmRw=";
+                password-flags = "0";
                 protocol = "fortinet";
                 service-type = "org.freedesktop.NetworkManager.openconnect";
               };
@@ -99,8 +100,9 @@
               };
               proxy = { };
               vpn = {
-                gateway = "$CSIT_VPN_TEST_GATEWAY";
-                password-flags = "1";
+                gateway = "$CSIT_VPN_TEST_GATEWAY/$CSIT_VPN_TEST_REALM";
+                gwcert = "pin-sha256:twN8dS5XzMPTjmCKkZgFK34BdTeBBqcwjJsui7UYmRw=";
+                password-flags = "0";
                 protocol = "fortinet";
                 service-type = "org.freedesktop.NetworkManager.openconnect";
               };
