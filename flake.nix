@@ -179,7 +179,7 @@
     chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable";
 
     vyolune = {
-      url = "git+https://git.dnywe.com/dachxy/vyolune";
+      url = "git+https://git.dnywe.com/dachxy/vyolune?ref=main";
     };
   };
 
