@@ -90,12 +90,12 @@ in
             "npm:pi-hermes-memory"
             "npm:pi-animations"
             "npm:pi-playwright"
-            "npm:pi-ui-design"
             "npm:pi-design-deck"
             "npm:pi-jev-auto-mode"
             "npm:pi-zentui"
             "npm:timestamp-pi"
             "npm:pi-claude-bridge"
+            "npm:@porche/pi-usage"
           ];
         };
       };
