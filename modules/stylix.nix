@@ -9,7 +9,6 @@
         base16Scheme = "${pkgs.base16-schemes}/share/themes/ashes.yaml";
         polarity = "dark";
         enableReleaseChecks = false;
-        targets.plymouth.enable = false;
       };
     };
 
@@ -45,6 +44,8 @@
             popups = 12;
           };
         };
+
+        targets.plymouth.enable = false;
       };
 
       fonts = {
@@ -107,6 +108,7 @@
         helix = {
           transparent = mkForce true;
         };
+        rofi.enable = false;
       };
     };
 }
