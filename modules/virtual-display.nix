@@ -44,12 +44,17 @@
             return bytes(block)
 
         def cvt_rb_timing(h_active, v_active, refresh):
-            RB_H_BLANK, RB_H_SYNC, RB_H_FRONT = 160, 32, 48
+            """CVT-RB v2 timing per VESA CVT 2.0 spec (used by macOS for
+            eDP/internal and many external panels). Horizontal blanking is
+            fixed at 80 and sync/front are constants; vertical blank is
+            calculated from a 540 us vblank time (v2 uses 540 us instead of
+            v1's 460 us)."""
+            RB_H_BLANK, RB_H_SYNC, RB_H_FRONT = 80, 8, 8
             RB_V_SYNC = 8 if v_active < 1200 else (7 if v_active < 2000 else 10)
             RB_V_FRONT = 3
             h_total = h_active + RB_H_BLANK
             v_blank = max(RB_V_FRONT + RB_V_SYNC + 1,
-                          int(460 * refresh * (v_active + RB_V_FRONT + RB_V_SYNC + 1) / 1_000_000) + 1)
+                          int(540 * refresh * (v_active + RB_V_FRONT + RB_V_SYNC + 1) / 1_000_000) + 1)
             pixel_clock = h_total * (v_active + v_blank) * refresh
             pixel_clock_khz = ((pixel_clock + 5000) // 10000) * 10
             return (pixel_clock_khz, RB_H_BLANK, RB_H_FRONT, RB_H_SYNC, v_blank, RB_V_FRONT, RB_V_SYNC)
@@ -77,14 +82,19 @@
             base[24] = 0x0B
             base[25:35] = bytes([0xEE, 0x95, 0xA3, 0x54, 0x4C, 0x99, 0x26, 0x0F, 0x50, 0x54])
             base[35:38] = bytes([0x21, 0x08, 0x00])
+            # Supported resolutions (16:9, 16:10 MacBook, and 4K)
             for i in range(8):
                 base[38 + i * 2] = 0x01
                 base[39 + i * 2] = 0x01
-            # DTD 1 (preferred): 1920x1080@60, standard CEA-861 timing (148.5 MHz)
-            base[54:72] = make_dtd(148500, 1920, 280, 88, 44, 1080, 45, 4, 5)
-            # DTD 2: 2560x1440@60
+            # Descriptor slot 1 must hold the preferred timing, so start at
+            # offset 54 (slots 3 and 4 hold the range-limit + name).
+            pos = 54
             pc, hb, hf, hs, vb, vf, vs = cvt_rb_timing(2560, 1440, 60)
-            base[72:90] = make_dtd(pc, 2560, hb, hf, hs, 1440, vb, vf, vs)
+            base[pos:pos+18] = make_dtd(pc, 2560, hb, hf, hs, 1440, vb, vf, vs)
+            pos += 18
+            pc, hb, hf, hs, vb, vf, vs = cvt_rb_timing(2560, 1600, 60)
+            base[pos:pos+18] = make_dtd(pc, 2560, hb, hf, hs, 1600, vb, vf, vs)
+            pos += 18
             rl = bytearray(18)
             rl[0:4] = b'\x00\x00\x00\xFD'
             rl[5] = 24
@@ -94,9 +104,12 @@
             rl[9] = 70
             rl[10] = 0x00
             rl[11:18] = b'\x0A\x20\x20\x20\x20\x20\x20'
-            base[90:108] = rl
-            base[108:126] = make_desc(0xFC, b'VirtDisplay\n ')
-            base[126] = 1
+            base[pos:pos+18] = rl
+            pos += 18
+            base[pos:pos+18] = make_desc(0xFC, b'VirtDisplay\n ')
+            pos += 18
+            base[126] = 2
+            assert pos == 126, f'base block ends at {pos}, expected 126'
             return fix_checksum(base)
 
         def build_cta():
@@ -114,13 +127,33 @@
             ext[2] = dtd_offset
             ext[3] = 0x30
             ext[4:4 + len(data)] = data
-            # DTD: 2560x1440@120
-            pc, hb, hf, hs, vb, vf, vs = cvt_rb_timing(2560, 1440, 120)
-            ext[dtd_offset:dtd_offset + 18] = make_dtd(pc, 2560, hb, hf, hs, 1440, vb, vf, vs)
+            pos = dtd_offset
+            for h, v, rf in ((2560,1440,120),(2560,1600,120),(3072,1920,60),(3456,2234,60),(3840,2160,60)):
+                pc, hb, hf, hs, vb, vf, vs = cvt_rb_timing(h, v, rf)
+                ext[pos:pos+18] = make_dtd(pc, h, hb, hf, hs, v, vb, vf, vs)
+                pos += 18
+            assert pos <= 126, f'CTA block ends at {pos}'
             return fix_checksum(ext)
 
-        edid = bytes(build_base() + build_cta())
-        assert len(edid) == 256
+        def build_cta30():
+            # Second CTA block: 30 Hz variants so a 30 fps stream can run with
+            # the display actually refreshing at 30 Hz.  No data blocks -- the
+            # DTDs start right after the 4-byte header (6 fit before byte 127).
+            ext = bytearray(128)
+            ext[0] = 0x02
+            ext[1] = 0x03
+            ext[2] = 4
+            ext[3] = 0x00
+            pos = 4
+            for h, v, rf in ((1920,1080,30),(2560,1440,30),(2560,1600,30),(3072,1920,30),(3456,2234,30),(3840,2160,30)):
+                pc, hb, hf, hs, vb, vf, vs = cvt_rb_timing(h, v, rf)
+                ext[pos:pos+18] = make_dtd(pc, h, hb, hf, hs, v, vb, vf, vs)
+                pos += 18
+            assert pos <= 126, f'CTA 30 Hz block ends at {pos}'
+            return fix_checksum(ext)
+
+        edid = bytes(build_base() + build_cta() + build_cta30())
+        assert len(edid) == 384
         open(sys.argv[1], 'wb').write(edid)
       '';
       edid =
