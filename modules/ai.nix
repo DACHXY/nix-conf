@@ -101,10 +101,10 @@ in
           bun
         ];
         settings = {
-          defaultProvider = "deepseek";
-          defaultModel = "deepseek-v4-flash";
+          defaultProvider = "opencode-go";
+          defaultModel = "glm-5.3-flash";
           defaultThinkingLevel = "low";
-          theme = "omarchy";
+          theme = "opencode";
           quietStartup = true;
           packages = [
             "npm:@ooo-razum/pi-open-webui"
