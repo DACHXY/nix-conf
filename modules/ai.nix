@@ -47,6 +47,10 @@ in
           url = "https://mcp.cloudflare.com/mcp";
           auth = "oauth";
         };
+        "codebase-memory" = {
+          command = lib.getExe pkgs.codebase-memory-mcp;
+          args = [ ];
+        };
         # nono-sandboxed server; provided by modules/users/danny/nono.nix
         "opensearch-mcp-server" = {
           command = "nono";
@@ -79,6 +83,11 @@ in
       home.packages = [ pkgs.firefox-devtools-mcp ];
 
       # Global MCP config read by pi (pi-mcp-adapter) and other MCP clients
+      # pi-mcp-adapter reads ~/.pi/agent/mcp-adapter.json (it no longer reads ~/.pi/agent/mcp.json)
+      # and mcp-adapter.json is a superset config, so other MCP clients can keep using .config/mcp/mcp.json
+      home.file.".pi/agent/mcp-adapter.json".source = pkgs.writeText "mcp-adapter.json" (
+        builtins.toJSON { inherit mcpServers; }
+      );
       home.file.".config/mcp/mcp.json".source = pkgs.writeText "mcp.json" (
         builtins.toJSON { inherit mcpServers; }
       );

@@ -10,7 +10,6 @@
       };
 
       casks = [
-        "theboredteam/boring-notch/boring-notch"
         "wallspace"
         "thunderbird"
         "vorssaint"
