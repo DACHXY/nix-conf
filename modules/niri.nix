@@ -50,6 +50,13 @@ in
       rNiri = pkgs.writeShellScriptBin "rNiri" ''
         NIRI_SOCKET="/run/user/1000/$(ls /run/user/1000 | grep niri | head -n 1)" niri $@
       '';
+      # warpd's keyboard grab surface is pinned to whichever output was active
+      # when it started; niri only gives layer-shell keyboard focus to surfaces
+      # on the *active* output, so warpd goes deaf as soon as the cursor crosses
+      # to another monitor. Patch it to move the grab surface along.
+      warpdPatched = pkgs.warpd.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [ ../patches/warpd-follow-output.patch ];
+      });
       wmCfg = config.wm;
       bindCfg = wmCfg.keybinds;
       niriPkgs = inputs.niri-pkgs.packages.${pkgs.stdenv.hostPlatform.system};
@@ -61,7 +68,7 @@ in
       home.packages = with pkgs; [
         nautilus # xdg-desktop-portal-gnome file picker
         rNiri
-        warpd
+        warpdPatched
       ];
 
       xdg.configFile."warpd/config".text = ''
@@ -370,8 +377,10 @@ in
             "${bindCfg.screenshot.edit}".action = sh "wl-paste --type image/png | satty --filename -";
 
             # Mouse mode
-            "${bindCfg.mouse-mode.normal}".action = spawn "warpd" "--normal";
-            "${bindCfg.mouse-mode.hint}".action = spawn "warpd" "--hint";
+            # kill stale instances first: a warpd that lost keyboard focus
+            # keeps running invisibly and would otherwise pile up
+            "${bindCfg.mouse-mode.normal}".action = sh "pkill -x warpd; exec warpd --normal";
+            "${bindCfg.mouse-mode.hint}".action = sh "pkill -x warpd; exec warpd --hint";
           }
           # Map Mod+{1 ~ 9} to workspace{1 ~ 9}
           // (pipe 9 [

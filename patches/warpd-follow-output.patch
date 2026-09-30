@@ -1,0 +1,104 @@
+--- a/src/platform/linux/wayland/surface.c
++++ b/src/platform/linux/wayland/surface.c
+@@ -139,7 +139,7 @@
+ 					   &layer_surface_listener,
+ 					   sfc);
+ 
+-	zwlr_layer_surface_v1_set_size(sfc->wl_layer_surface, 10, 10);
++	zwlr_layer_surface_v1_set_size(sfc->wl_layer_surface, sfc->w, sfc->h);
+ 	zwlr_layer_surface_v1_set_anchor(sfc->wl_layer_surface, ZWLR_LAYER_SURFACE_V1_ANCHOR_TOP|ZWLR_LAYER_SURFACE_V1_ANCHOR_LEFT);
+ 	zwlr_layer_surface_v1_set_margin(sfc->wl_layer_surface, sfc->y, 0, 0, sfc->x);
+ 	zwlr_layer_surface_v1_set_exclusive_zone(sfc->wl_layer_surface, -1);
+--- a/src/platform/linux/wayland/input.c
++++ b/src/platform/linux/wayland/input.c
+@@ -155,12 +155,30 @@
+  * *Note*: Wayland does not allow for global input handlers.
+  * Input events can only be captured by a focused window :(.
+  */
++/*
++ * Move the keyboard grab to `output`.
++ *
++ * A layer surface shown with output=NULL is attached by the compositor to
++ * whatever output happens to be active at that moment, and layer keyboard
++ * focus is only granted to a surface sitting on the active output. Once the
++ * cursor (and thus the active output) moves, the grab must be re-created on
++ * the new output or warpd stays mapped but deaf.
++ */
++void wl_input_move_keyboard_grab(struct wl_output *output)
++{
++	if (!input_pixel.wl_surface)
++		return;
++
++	surface_hide(&input_pixel);
++	surface_show(&input_pixel, output);
++}
++
+ void wl_input_grab_keyboard()
+ {
+ 	if (!input_pixel.buf)
+-		init_surface(&input_pixel, -1, -1, 1, 1, 1);
++		init_surface(&input_pixel, -1, -1, 10, 10, 1);
+ 
+-	surface_show(&input_pixel, NULL);
++	surface_show(&input_pixel, active_screen->wl_output);
+ }
+ 
+ struct input_event *wl_input_next_event(int timeout)
+--- a/src/platform/linux/wayland/wayland.h
++++ b/src/platform/linux/wayland/wayland.h
+@@ -114,6 +114,7 @@
+ 
+ void wl_run(void (*init)(void));
+ void wl_input_grab_keyboard();
++void wl_input_move_keyboard_grab(struct wl_output *output);
+ void wl_input_ungrab_keyboard();
+ struct input_event *wl_input_next_event(int timeout);
+ uint8_t wl_input_lookup_code(const char *name, int *shifted);
+--- a/src/platform/linux/wayland/wayland.c
++++ b/src/platform/linux/wayland/wayland.c
+@@ -110,6 +110,9 @@
+ 						wl_fixed_from_int(maxy-miny));
+ 	zwlr_virtual_pointer_v1_frame(wl.ptr);
+ 
++	if (active_screen != scr)
++		wl_input_move_keyboard_grab(scr->wl_output);
++
+ 	active_screen = scr;
+ 	wl_display_flush(wl.dpy);
+ }
+--- a/src/platform/linux/wayland/screen.c
++++ b/src/platform/linux/wayland/screen.c
+@@ -117,7 +117,31 @@
+ 	surface_destroy(&sfc);
+ 
+ 	surface_show(active_screen->overlay, active_screen->wl_output);
+-	while (active_screen->ptrx == -1)
+-		wl_display_dispatch(wl.dpy);
++
++	/*
++	 * Wait for the pointer to enter the overlay so we can learn where the
++	 * cursor is. Compositors do not necessarily send a pointer enter for a
++	 * freshly mapped surface, and the cursor may even be on another output;
++	 * do not block forever, fall back to the middle of the active screen.
++	 */
++	{
++		struct pollfd pfd = {
++			.fd = wl_display_get_fd(wl.dpy),
++			.events = POLLIN,
++		};
++
++		while (active_screen->ptrx == -1) {
++			if (poll(&pfd, 1, 250) <= 0)
++				break;
++
++			wl_display_dispatch(wl.dpy);
++		}
++	}
++
++	if (active_screen->ptrx == -1) {
++		active_screen->ptrx = active_screen->w / 2;
++		active_screen->ptry = active_screen->h / 2;
++	}
++
+ 	surface_hide(active_screen->overlay);
+ }
