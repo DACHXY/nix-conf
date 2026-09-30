@@ -316,7 +316,7 @@
               "c"
               "D"
             ];
-            run = "shell -- ripdrag -x %h";
+            run = "shell -- ripdrag -x %s";
             desc = "Drag the file";
           }
         ];
