@@ -12,6 +12,7 @@
       generic.dnywe
       nixos.danny-ai
       generic.ai
+      nixos.punktfunk
     ];
   };
 }

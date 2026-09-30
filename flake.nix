@@ -8,6 +8,7 @@
       "https://yazi.cachix.org"
       "https://ghostty.cachix.org"
       "https://cache.numtide.com"
+      "https://nix.unom.io"
     ];
     extra-trusted-public-keys = [
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
@@ -15,6 +16,7 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
       "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+      "punktfunk-cache-1:yhOJmHxzg6tzXpxSFzlYn6Pc6r0jHprsWqt8MZC654o="
     ];
     extra-experimental-features = [
       "pipe-operators"
@@ -181,13 +183,19 @@
     vyolune = {
       url = "git+https://git.dnywe.com/dachxy/vyolune?ref=main";
     };
+
+    punktfunk = {
+      # ref=nix-stable follows releases and the branch only moves to commits the
+      # https://nix.unom.io binary cache holds — a bare URL follows main, which is
+      # almost never published (packaging/nix/README.md).
+      url = "git+https://git.unom.io/unom/punktfunk?ref=nix-stable";
+      # Do NOT follow nixpkgs: the cache is keyed on punktfunk’s own nixpkgs pin;
+      # following makes every store path miss and the first build takes ~1 hour.
+    };
   };
 
   outputs =
-    {
-      self,
-      ...
-    }@inputs:
+    { self, ... }@inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs self; } {
       imports = [
         (inputs.import-tree ./modules)

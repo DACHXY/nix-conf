@@ -6,6 +6,11 @@ in
   flake.modules.nixos.danny-gui =
     { config, ... }:
     {
+      services.keyd = {
+        enable = true;
+        keyboards.default.settings.main.capslock = "esc";
+      };
+
       home-manager.users.${config.my.user.name} =
         { config, ... }:
         {

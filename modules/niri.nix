@@ -64,6 +64,13 @@ in
         warpd
       ];
 
+      xdg.configFile."warpd/config".text = ''
+        buttons: space t apostrophe
+        hint: f
+        scroll_up: r
+        scroll_down: e
+      '';
+
       xdg.portal = {
         extraPortals = with pkgs; [ xdg-desktop-portal-gtk ];
       };
