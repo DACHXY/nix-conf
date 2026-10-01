@@ -55,7 +55,11 @@ in
       # on the *active* output, so warpd goes deaf as soon as the cursor crosses
       # to another monitor. Patch it to move the grab surface along.
       warpdPatched = pkgs.warpd.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [ ../patches/warpd-follow-output.patch ];
+        patches = (old.patches or [ ]) ++ [
+          ../patches/warpd-follow-output.patch
+          ../patches/warpd-scroll-horizontal.patch
+          ../patches/warpd-copy-selection.patch
+        ];
       });
       wmCfg = config.wm;
       bindCfg = wmCfg.keybinds;
@@ -76,6 +80,9 @@ in
         hint: f
         scroll_up: r
         scroll_down: e
+        scroll_left: q
+        scroll_right: w
+        copy_and_exit: y
       '';
 
       xdg.portal = {
