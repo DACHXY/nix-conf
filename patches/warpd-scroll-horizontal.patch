@@ -1,0 +1,65 @@
+--- a/src/platform/linux/wayland/wayland.c
++++ b/src/platform/linux/wayland/wayland.c
+@@ -165,12 +165,12 @@
+ 
+ void wl_scroll(int direction)
+ {
+-	//TODO: add horizontal scroll
+-	direction = direction == SCROLL_DOWN ? 1 : -1;
++	int axis = (direction == SCROLL_LEFT || direction == SCROLL_RIGHT) ? 1 : 0;
++	int sign = (direction == SCROLL_DOWN || direction == SCROLL_RIGHT) ? 1 : -1;
+ 
+-	zwlr_virtual_pointer_v1_axis_discrete(wl.ptr, 0, 0,
+-					      wl_fixed_from_int(15*direction),
+-					      direction);
++	zwlr_virtual_pointer_v1_axis_discrete(wl.ptr, 0, axis,
++					      wl_fixed_from_int(15*sign),
++					      sign);
+ 
+ 	zwlr_virtual_pointer_v1_frame(wl.ptr);
+ 
+--- a/src/normal.c
++++ b/src/normal.c
+@@ -74,6 +74,8 @@
+ 		"right",
+ 		"screen",
+ 		"scroll_down",
++		"scroll_left",
++		"scroll_right",
+ 		"scroll_up",
+ 		"start",
+ 		"top",
+@@ -129,6 +131,22 @@
+ 				scroll_accelerate(SCROLL_UP);
+ 			} else
+ 				scroll_decelerate();
++		} else if (config_input_match(ev, "scroll_left")) {
++			redraw(scr, mx, my, 1);
++
++			if (ev->pressed) {
++				scroll_stop();
++				scroll_accelerate(SCROLL_LEFT);
++			} else
++				scroll_decelerate();
++		} else if (config_input_match(ev, "scroll_right")) {
++			redraw(scr, mx, my, 1);
++
++			if (ev->pressed) {
++				scroll_stop();
++				scroll_accelerate(SCROLL_RIGHT);
++			} else
++				scroll_decelerate();
+ 		} else if (config_input_match(ev, "accelerator")) {
+ 			if (ev->pressed)
+ 				mouse_fast();
+--- a/src/config.c
++++ b/src/config.c
+@@ -54,6 +54,8 @@
+ 
+ 	{ "scroll_down", "e", "Scroll down key.", OPT_KEY },
+ 	{ "scroll_up", "r", "Scroll up key.", OPT_KEY },
++	{ "scroll_left", "q", "Scroll left key.", OPT_KEY },
++	{ "scroll_right", "w", "Scroll right key.", OPT_KEY },
+ 
+ 	{ "cursor_color", "#FF4500", "The color of the pointer in normal mode (rgba hex value).", OPT_STRING },
+ 
