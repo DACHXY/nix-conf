@@ -16,7 +16,6 @@ in
 
       environment.systemPackages = with pkgs; [
         claude-monitor
-        pi-coding-agent
       ];
     };
 
@@ -94,30 +93,29 @@ in
 
       programs.claude-code = {
         enable = true;
-        package = pkgs.claude-code;
+        package = pkgs.llm-agents.claude-code;
       };
 
       programs.opencode = {
         enable = true;
-        package = pkgs.opencode;
+        package = pkgs.llm-agents.opencode;
       };
 
       programs.pi-coding-agent = {
         enable = true;
-        package = pkgs.pi-coding-agent;
+        package = pkgs.llm-agents.pi;
         extraPackages = with pkgs; [
           nodejs
           bun
         ];
         settings = {
           defaultProvider = "opencode-go";
-          defaultModel = "glm-5.3-flash";
+          defaultModel = "deepseek-v4.1-flash";
           defaultThinkingLevel = "low";
           theme = "opencode";
           quietStartup = true;
           packages = [
             "npm:@ooo-razum/pi-open-webui"
-            "npm:pi-mcp-adapter"
             "npm:pi-agent-plugins"
             "npm:pi-web-access"
             "npm:pi-subagents"
@@ -136,7 +134,9 @@ in
             "npm:timestamp-pi"
             "npm:pi-claude-bridge"
             "npm:@porche/pi-usage"
-            "npm:opencode-pi"
+            "npm:@earendil-works/pi-durable"
+            "npm:@earendil-works/pi-ai"
+            "npm:@earendil-works/chord"
           ];
         };
       };
