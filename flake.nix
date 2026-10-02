@@ -185,12 +185,7 @@
     };
 
     punktfunk = {
-      # ref=nix-stable follows releases and the branch only moves to commits the
-      # https://nix.unom.io binary cache holds — a bare URL follows main, which is
-      # almost never published (packaging/nix/README.md).
       url = "git+https://git.unom.io/unom/punktfunk?ref=nix-stable";
-      # Do NOT follow nixpkgs: the cache is keyed on punktfunk’s own nixpkgs pin;
-      # following makes every store path miss and the first build takes ~1 hour.
     };
   };
 
