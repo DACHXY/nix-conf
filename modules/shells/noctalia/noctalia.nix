@@ -43,7 +43,14 @@ in
             action.lookup("program") == "/run/current-system/sw/bin/noctalia-greeter" &&
             subject.isInGroup("wheel")
           ) {
-            return polkit.result.YES;
+            return polkit.Result.YES;
+          }
+          // Allow noctalia greeter appearance sync (pkexec --sync) without a password.
+          if (
+            action.id == "org.noctalia.greeter.sync-appearance" &&
+            subject.isInGroup("wheel")
+          ) {
+            return polkit.Result.YES;
           }
         })
       '';
@@ -582,6 +589,11 @@ in
             "${bindCfg.wallpaper-selector}".action = panelToggle "wallpaper";
             "${bindCfg.windows-switcher}".action = panelToggle "launcher" "/win ";
             "${bindCfg.wallpaper-random}".action = noctalia "wallpaper-random";
+
+            # Screenshot
+            "${bindCfg.screenshot.area}".action = noctalia "screenshot-region";
+            "${bindCfg.screenshot.window}".action = noctalia "screenshot-region";
+            "${bindCfg.screenshot.screen}".action = noctalia "screenshot-fullscreen" "pick";
 
             # Media
             "XF86AudioPlay".action = noctalia "media" "toggle";
