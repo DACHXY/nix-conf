@@ -10,6 +10,7 @@ in
 {
   flake.modules.homeManager.gui =
     {
+      config,
       osConfig,
       pkgs,
       lib,
@@ -22,11 +23,32 @@ in
 
       username = osConfig.my.user.name;
       profileName = "${capitalize username}_Profile";
+
+      # Launch Zen with the WebDriver flags firefox-devtools-mcp needs to attach
+      # to this profile (Marionette + BiDi). BiDi can only be enabled from the
+      # command line, so the normal launcher cannot be used. Opt-in: quit Zen,
+      # run `zen-mcp`, and the agent can drive it. See the firefox-devtools MCP
+      # in modules/ai.nix (--connectExisting).
+      zenMcp = pkgs.writeShellApplication {
+        name = "zen-mcp";
+        runtimeInputs = lib.optionals (!isDarwin) [ pkgs.procps ];
+        text = ''
+          if pgrep -x zen >/dev/null 2>&1 || pgrep -x zen-twilight >/dev/null 2>&1; then
+            echo "zen-mcp: Zen is already running; the debug flags only apply at startup." >&2
+            echo "zen-mcp: quit Zen, then run zen-mcp again." >&2
+            exit 1
+          fi
+          exec ${lib.getExe' config.programs.zen-browser.package "zen-twilight"} \
+            --marionette --remote-debugging-port=9222 "$@"
+        '';
+      };
     in
     {
       imports = [
         inputs.zen-browser.homeModules.twilight
       ];
+
+      home.packages = [ zenMcp ];
 
       programs.zen-browser = {
         enable = true;

@@ -13,6 +13,7 @@
         nixos.secure-boot
         nixos.gaming
         nixos.virtualisation
+        nixos.punktfunk
         # nixos.wallpaper-engine
         generic.dnywe
 

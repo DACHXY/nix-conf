@@ -219,7 +219,7 @@ in
                 top-right = round;
               };
             clip-to-geometry = true;
-            opacity = 0.8;
+            opacity = 1.0;
             draw-border-with-background = false;
           }
           # non transparent

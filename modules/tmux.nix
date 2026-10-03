@@ -96,120 +96,120 @@
         tmuxSessionizer
       ];
 
-      programs.tmux =
-        {
-          enable = true;
-          extraConfig = ''
-            set -g allow-passthrough on
-            set -s set-clipboard on
-            set-option -s set-clipboard on
-            # kitty keyboard protocol; pi works best with csi-u.
-            # extended-keys defaults to *off* and 'on' alone means xterm format, so
-            # it has to be enabled separately from the format (tmux >= 3.4).
-            set -g extended-keys on
-            # Absolute path: on darwin the server is often started with a PATH
-            # that has no nix profile, so a bare `tmux` here resolves to nothing
-            # and the format silently stays xterm.
-            if-shell "${pkgs.tmux}/bin/tmux show -gv extended-keys-format >/dev/null 2>&1" "set -g extended-keys-format csi-u"
+      programs.tmux = {
+        enable = true;
+        extraConfig = ''
+          set -g allow-passthrough on
+          set -s set-clipboard on
+          set-option -s set-clipboard on
+          # extended-keys is deliberately OFF. When it is on (together with an
+          # `xterm-ghostty:extkeys` terminal-feature line) tmux stops folding the
+          # legacy ESC-prefixed meta keys. Ghostty ignores tmux's modifyOtherKeys
+          # enable and still sends `ESC H` for Shift+Alt+h, which tmux then passes
+          # through as a literal Escape + 'h' instead of M-H, so `bind -n M-H`
+          # never fires. Off keeps M-H/M-L working; the csi-u kitty sequences
+          # inside tmux were never actually delivered by ghostty anyway.
+          set -g extended-keys off
 
-            set -g status "on"
-            set -g status-style fg=default,bg=default
-            set -g status-position top
-            set -g status-justify "left"
+          set -g status "on"
+          set -g status-style fg=default,bg=default
+          set -g status-position top
+          set -g status-justify "left"
 
-            set -g status-left "#[fg=#84977f,bg=default,bold] █ session: #S"
-            set -g status-right "  #[fg=#828bb8,bg=default,bold]${config.networking.hostName}    "
+          set -g status-left "#[fg=#84977f,bg=default,bold] █ session: #S"
+          set -g status-right "  #[fg=#828bb8,bg=default,bold]${config.networking.hostName}    "
 
-            setw -g window-status-format "#[fg=#171616,bg=default]  #[fg=#495361,bg=default]#(${getIconScript} #I) #W"
-            setw -g window-status-current-format "#[fg=#7e93a9,bg=default]  #[fg=#7e93a9,bg=default,bold]#(${getIconScript} #I) #W"
+          setw -g window-status-format "#[fg=#171616,bg=default]  #[fg=#495361,bg=default]#(${getIconScript} #I) #W"
+          setw -g window-status-current-format "#[fg=#7e93a9,bg=default]  #[fg=#7e93a9,bg=default,bold]#(${getIconScript} #I) #W"
 
-            set -g default-terminal "tmux-256color"
-            set -ga terminal-overrides ",*256col*:Tc"
-            set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
-            set-environment -g COLORTERM "truecolor"
+          set -g default-terminal "tmux-256color"
+          set -ga terminal-overrides ",*256col*:Tc"
+          set -ga terminal-overrides '*:Ss=\E[%p1%d q:Se=\E[ q'
+          set-environment -g COLORTERM "truecolor"
 
-            unbind C-b
-            set -g prefix ${prefixKey}
-            bind-key ${prefixKey} send-prefix
+          unbind C-b
+          set -g prefix ${prefixKey}
+          bind-key ${prefixKey} send-prefix
 
-            # Set Window start at 1
-            set -g base-index 1
-            set -g pane-base-index 1
-            set-window-option -g pane-base-index 1
-            set-option -g renumber-windows on
+          # Set Window start at 1
+          set -g base-index 1
+          set -g pane-base-index 1
+          set-window-option -g pane-base-index 1
+          set-option -g renumber-windows on
 
-            # Switch Windows (Shift + Alt + h/l)
-            bind -n M-H previous-window
-            bind -n M-L next-window
+          # Switch Windows (Shift + Alt + h/l). Ghostty sends the legacy
+          # ESC-prefixed meta form (`ESC H`), which tmux folds to M-H.
+          bind -n M-H previous-window
+          bind -n M-L next-window
 
-            # Move Windows
-            bind-key -n C-S-h swap-window -t -1\; select-window -t -1
-            bind-key -n C-S-l swap-window -t +1\; select-window -t +1
-            bind -n Ó previous-window # For darwin (Shift + Option + H)
-            bind -n Ò next-window     # For darwin (Shift + Option + L)
+          # Move Windows
+          bind-key -n C-S-h swap-window -t -1\; select-window -t -1
+          bind-key -n C-S-l swap-window -t +1\; select-window -t +1
+          bind -n Ó previous-window # For darwin (Shift + Option + H)
+          bind -n Ò next-window     # For darwin (Shift + Option + L)
 
-            unbind %
-            bind | split-window -h -c "#{pane_current_path}"
+          unbind %
+          bind | split-window -h -c "#{pane_current_path}"
 
-            unbind '"'
-            bind - split-window -v -c "#{pane_current_path}"
+          unbind '"'
+          bind - split-window -v -c "#{pane_current_path}"
 
-            # Reload config
-            unbind R
-            bind R source-file ${tmuxConfigPath}
+          # Reload config
+          unbind R
+          bind R source-file ${tmuxConfigPath}
 
-            # rename
-            unbind r
-            bind r command-prompt -I "#W" "rename-window '%%'"
+          # rename
+          unbind r
+          bind r command-prompt -I "#W" "rename-window '%%'"
 
-            # Move Focus
-            bind -r j select-pane -D
-            bind -r k select-pane -U
-            bind -r l select-pane -R
-            bind -r h select-pane -L
+          # Move Focus
+          bind -r j select-pane -D
+          bind -r k select-pane -U
+          bind -r l select-pane -R
+          bind -r h select-pane -L
 
-            # Resize Panel
-            bind -r Left  resize-pane -L 5
-            bind -r Down  resize-pane -D 5
-            bind -r Up    resize-pane -U 5
-            bind -r Right resize-pane -R 5
+          # Resize Panel
+          bind -r Left  resize-pane -L 5
+          bind -r Down  resize-pane -D 5
+          bind -r Up    resize-pane -U 5
+          bind -r Right resize-pane -R 5
 
-            bind -r m resize-pane -Z
+          bind -r m resize-pane -Z
 
-            set -g mouse on
+          set -g mouse on
 
-            set-window-option -g mode-keys vi
+          set-window-option -g mode-keys vi
 
-            bind-key -T copy-mode-vi 'v' send -X begin-selection
-            bind-key -T copy-mode-vi 'y' send -X copy-selection
+          bind-key -T copy-mode-vi 'v' send -X begin-selection
+          bind-key -T copy-mode-vi 'y' send -X copy-selection
 
-            unbind -T copy-mode-vi MouseDragEnd1Pane
+          unbind -T copy-mode-vi MouseDragEnd1Pane
 
-            unbind f
-            bind-key -r f run-shell "tmux neww tmux-sessionizer"
+          unbind f
+          bind-key -r f run-shell "tmux neww tmux-sessionizer"
 
-            set -g @resurrect-capture-pane-contents 'on'
-            set -g @continuum-restore 'on'
-            set -g @catppuccin-flavour 'macchiato'
-          '';
-        }
-        # nix-darwin's tmux module has no `plugins`/`escapeTime`. Its enableMouse
-        # also drops the xterm smcup/rmcup override and enableVim adds
-        # non-repeatable pane binds, so neither is a duplicate of extraConfig.
-        // optionalAttrs isDarwin {
-          enableMouse = true;
-          enableVim = true;
-        }
-        // optionalAttrs (!isDarwin) {
-          escapeTime = 0;
+          set -g @resurrect-capture-pane-contents 'on'
+          set -g @continuum-restore 'on'
+          set -g @catppuccin-flavour 'macchiato'
+        '';
+      }
+      # nix-darwin's tmux module has no `plugins`/`escapeTime`. Its enableMouse
+      # also drops the xterm smcup/rmcup override and enableVim adds
+      # non-repeatable pane binds, so neither is a duplicate of extraConfig.
+      // optionalAttrs isDarwin {
+        enableMouse = true;
+        enableVim = true;
+      }
+      // optionalAttrs (!isDarwin) {
+        escapeTime = 0;
 
-          plugins = with pkgs; [
-            tmuxPlugins.vim-tmux-navigator
-            tmuxPlugins.resurrect
-            tmuxPlugins.continuum
-            tmuxPlugins.catppuccin
-            tmuxPlugins.yank
-          ];
-        };
+        plugins = with pkgs; [
+          tmuxPlugins.vim-tmux-navigator
+          tmuxPlugins.resurrect
+          tmuxPlugins.continuum
+          tmuxPlugins.catppuccin
+          tmuxPlugins.yank
+        ];
+      };
     };
 }
