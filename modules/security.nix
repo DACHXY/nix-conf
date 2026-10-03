@@ -1,10 +1,11 @@
 {
   flake.modules.nixos.base =
-    { config, ... }:
+    { config, pkgs, ... }:
     {
       programs.gnupg.agent = {
         enable = true;
         enableSSHSupport = true;
+        pinentryPackage = pkgs.pinentry-curses;
       };
 
       security.sudo-rs = {

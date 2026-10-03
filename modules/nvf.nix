@@ -815,12 +815,10 @@
               };
 
               images = {
-                image-nvim = {
-                  enable = true;
-                  setupOpts = {
-                    backend = "kitty";
-                  };
-                };
+                # snacks.image (below) already renders inline images in markdown
+                # buffers and standalone image files. With image-nvim enabled as
+                # well, both draw every "![](…)" -> two stacked pictures.
+                image-nvim.enable = false;
               };
 
               snacks-nvim = {

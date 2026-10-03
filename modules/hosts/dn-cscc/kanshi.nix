@@ -77,9 +77,6 @@
           config.programs.niri.package
         ];
         text = ''
-          exec >>/tmp/sunshine-toggle.debug 2>&1  # ponytail: debug logging, remove once stream toggle is verified
-          trap 'echo "=== pass ending, rc=$? at $(date +%T) ==="' EXIT
-          echo "{on:''${1:-unset}} WAYLAND_DISPLAY=''${WAYLAND_DISPLAY:-unset} NIRI_SOCKET=''${NIRI_SOCKET:-unset} XDG_RUNTIME_DIR=''${XDG_RUNTIME_DIR:-unset} CLW=''${SUNSHINE_CLIENT_WIDTH:-unset}"
           # Sunshine runs as a systemd user service without WAYLAND_DISPLAY
           # set, so niri msg needs it to talk to the compositor IPC.
           export WAYLAND_DISPLAY="''${WAYLAND_DISPLAY:-wayland-1}"

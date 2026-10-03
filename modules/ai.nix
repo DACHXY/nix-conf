@@ -27,18 +27,12 @@ in
       ...
     }:
     let
-      inherit (lib) optionalAttrs;
-      inherit (pkgs.stdenv.hostPlatform) isDarwin;
-
       piThemes = pkgs.fetchFromGitHub {
         owner = "luongnv89";
         repo = "pi-extensions";
         rev = "a035a6b0a53412f61aeb471434bb5bbf96e8bc7c";
         hash = "sha256-7I0UgtAZ7rk0MnXUdt/6MdGVHsy+TZDJPVAxUWyvrR4=";
       };
-
-      # Zen is a Firefox fork, so point the MCP at its binary instead of Firefox.
-      zenPath = "${config.programs.zen-browser.package}/Applications/Zen Browser (Twilight).app/Contents/MacOS/zen";
 
       mcpServers = {
         "cloudflare-api" = {
@@ -61,16 +55,14 @@ in
             "nono-opensearch-mcp"
           ];
         };
-      }
-      // optionalAttrs isDarwin {
+        # Attaches to a Zen started with `zen-mcp` (modules/zen-browser.nix),
+        # which turns on Marionette + BiDi on the real profile.
         "firefox-devtools" = {
           command = "firefox-devtools-mcp";
           args = [
-            "--headless"
-            "--viewport"
-            "1280x720"
-            "--firefox-path"
-            zenPath
+            "--connectExisting"
+            "--marionettePort"
+            "2828"
           ];
         };
       };

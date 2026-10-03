@@ -180,6 +180,10 @@ in
             set -e __NV_PRIME_RENDER_OFFLOAD_PROVIDER
             set -e __GLX_VENDOR_LIBRARY_NAME
             set -e __VK_LAYER_NV_optimus
+
+            # Point GnuPG's pinentry at this terminal (needed for curses pinentry over SSH/tmux)
+            set -gx GPG_TTY (tty)
+            ${pkgs.gnupg}/bin/gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
           '';
           plugins = [
             {
