@@ -13,6 +13,7 @@
       nixos.danny-ai
       generic.ai
       nixos.punktfunk
+      nixos.k3s
     ];
   };
 }

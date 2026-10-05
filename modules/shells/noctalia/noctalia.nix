@@ -25,8 +25,9 @@ in
         imports = [
           config.flake.modules.homeManager.noctalia
         ];
-        home.packages = [
+        home.packages = with pkgs; [
           noctalia-restart
+          mpvpaper
         ];
       };
 
