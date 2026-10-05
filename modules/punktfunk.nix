@@ -10,12 +10,18 @@
         desktopSession = true;
         openFirewall = true;
         users = [ config.my.user.name ];
-        settings.PUNKTFUNK_MGMT_BIND = "0.0.0.0:47991";
+        settings = {
+          PUNKTFUNK_MGMT_BIND = "0.0.0.0:47990";
+          PUNKTFUNK_COMPOSITOR = "gamescope";
+          PUNKTFUNK_GAMESCOPE_WSI_DISABLE = "1";
+        };
       };
 
       # Native punktfunk/1 client + headless `punktfunk` CLI on this box.
       services.punktfunk.client.enable = true;
 
-      networking.firewall.allowedTCPPorts = [ 47991 ];
+      networking.firewall.allowedTCPPorts = [
+        47990
+      ];
     };
 }

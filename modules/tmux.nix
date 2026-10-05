@@ -23,11 +23,27 @@
         if [[ $# -eq 1 ]]; then
             selected=$1
         else
-            selected=$( ( \
+            fzf_out=$( ( \
             find ${concatStringsSep " " findDirs} -mindepth 1 -maxdepth 1 -type d; \
             printf "%s\n" $EXTRA_DIRS \
-            ) | fzf )
+            ) | fzf --print-query --header='select a project, or type a git URL to clone' )
+            # fzf prints the typed query first, then the chosen match if any.
+            # An unmatched query is how a clone URL gets entered.
+            selected=$(printf '%s\n' "$fzf_out" | tail -n +2)
+            [[ -z $selected ]] && selected=$(printf '%s\n' "$fzf_out" | head -n 1)
         fi
+
+        # A git-cloneable address clones into ~/projects first, then flows
+        # through the same session-name/path logic below.
+        case "$selected" in
+            *://* | git@*:* | *.git)
+                dest="''${HOME}/projects/$(basename "$selected" .git | tr . _)"
+                if [[ ! -d $dest ]]; then
+                    git clone "$selected" "$dest" || exit 1
+                fi
+                selected=$dest
+                ;;
+        esac
 
         if [[ -z $selected ]]; then
             exit 0

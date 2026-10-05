@@ -44,9 +44,10 @@
             "${ghosttyShaders}/ripple_cursor.glsl"
           ];
 
-          unfocused-split-opacity = 0.65;
+          unfocused-split-opacity = 0.4;
           desktop-notifications = true;
-          background-opacity = 0.5;
+          background-opacity = 0.4;
+          background = "#000000";
           background-blur = mkDefault false; # For wm
           background-opacity-cells = true;
 
