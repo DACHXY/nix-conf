@@ -29,7 +29,8 @@
 
   inputs = {
     nixpkgs = {
-      url = "github:nixos/nixpkgs/nixpkgs-unstable";
+      # url = "github:nixos/nixpkgs/nixpkgs-unstable";
+      follows = "punktfunk/nixpkgs";
     };
 
     flake-parts = {
@@ -123,11 +124,6 @@
 
     noctalia-greeter = {
       url = "github:noctalia-dev/noctalia-greeter";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    millennium = {
-      url = "github:SteamClientHomebrew/Millennium?dir=packages/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
