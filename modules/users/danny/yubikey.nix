@@ -18,10 +18,8 @@
       services.udev.packages = [ pkgs.yubikey-personalization ];
       programs.yubikey-manager.enable = true;
 
-      # ==== PAM u2f ===== #
-      # $ nix shell nixpkgs#pam_u2f
-      # $ mkdir -p ~/.config/Yubico
-      # $ pamu2fcfg > ~/.config/Yubico/u2f_keys
+      programs.yubikey-touch-detector.enable = true;
+
       security.pam = {
         services.hyprlock = {
           u2fAuth = false;
@@ -32,8 +30,12 @@
         };
         u2f = {
           enable = true;
-          settings.cue = true;
           control = "sufficient";
+          settings = {
+            cue = true;
+            origin = "pam://dn-yubikey";
+            userpresence = 1;
+          };
         };
       };
 

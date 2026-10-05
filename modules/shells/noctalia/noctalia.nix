@@ -268,6 +268,9 @@ in
             auto_locate = true;
           };
 
+          # 空密碼直接送出 Enter 才會觸發 PAM (YubiKey-only 解鎖需要)
+          lockscreen.allow_empty_password = true;
+
           lockscreen_widgets = {
             enabled = true;
             schema_version = 2;

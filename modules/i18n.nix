@@ -47,6 +47,26 @@
               inherit addons;
               waylandFrontend = true;
 
+              # fcitx5 >= 5.1.22 truncates the 0x0 stretch area of a 9-slice
+              # background. The stylix (mellow) theme's panel.svg is 30x30 with
+              # 15px InputPanel margins, leaving a 0x0 middle, so the input panel
+              # background renders fully transparent. Shrink the margins by 1.
+              # https://github.com/nix-community/stylix/issues/2502
+              themes.stylix.theme."InputPanel/Background/Margin" = lib.mkForce {
+                Left = 14;
+                Right = 14;
+                Top = 14;
+                Bottom = 14;
+              };
+              # highlight.svg is also 30x30; its 15px left/right margins leave a
+              # 0-width middle for the same reason.
+              themes.stylix.theme."InputPanel/Highlight/Margin" = lib.mkForce {
+                Left = 14;
+                Right = 14;
+                Top = 10;
+                Bottom = 10;
+              };
+
               settings = {
                 addons.classicui.globalSection =
                   let
