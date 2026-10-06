@@ -94,6 +94,8 @@
     {
       stylix.enableReleaseChecks = false;
 
+      home.sessionVariables.BASE16_SHELL_SET_BACKGROUND = "false";
+
       stylix.targets.neovim.transparentBackground = {
         main = true;
         numberLine = true;
