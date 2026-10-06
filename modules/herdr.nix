@@ -103,9 +103,12 @@
         exec herdr-sessionizer "$@"
       '';
 
-      # `hr <ssh-target>` attaches to a remote herdr server.
+      # `hr <ssh-target>` attaches to a remote herdr server. The flag has to
+      # follow the target, and `server` is the only mode where a custom
+      # [[keys.command]] (prefix+f) exists at all: herdr strips command bindings
+      # from the client's local keybinding profile on purpose.
       hr = pkgs.writeShellScriptBin "hr" ''
-        exec herdr --remote "$@"
+        exec herdr --remote "$@" --remote-keybindings server
       '';
     in
     {
@@ -140,10 +143,18 @@
           keys = {
             prefix = "ctrl+space"; # tmux: C-Space
 
-            # macOS also gets the native Cmd+Shift chord; alt+shift is awkward there.
-            previous_tab =
-              [ "alt+shift+h" ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ "shift+cmd+h" ];
-            next_tab = [ "alt+shift+l" ] ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin [ "shift+cmd+l" ];
+            # The Cmd+Shift chord is the native macOS one (alt+shift is awkward
+            # there). It is bound on every host so that a darwin client
+            # attaching with `--remote-keybindings server` still gets it from
+            # this config; no linux keyboard has a cmd key.
+            previous_tab = [
+              "alt+shift+h"
+              "shift+cmd+h"
+            ];
+            next_tab = [
+              "alt+shift+l"
+              "shift+cmd+l"
+            ];
 
             zoom = "prefix+m"; # tmux: prefix+m
 
