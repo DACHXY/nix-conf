@@ -14,6 +14,7 @@
         nixos.gaming
         nixos.virtualisation
         nixos.punktfunk
+        nixos.audio-rtp
         # nixos.wallpaper-engine
         generic.dnywe
 

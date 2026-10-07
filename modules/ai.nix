@@ -98,6 +98,7 @@ in
         extraPackages = with pkgs; [
           nodejs
           bun
+          libnotify # notify-send, used by @raidou/pi-notify on Linux
         ];
         settings = {
           defaultProvider = "opencode-go";
@@ -128,7 +129,33 @@ in
             "npm:@earendil-works/pi-ai"
             "npm:@earendil-works/chord"
             "npm:@andrewjacop/pi-herdr"
+            "npm:@raidou/pi-notify"
+            "npm:@maheidem/pi-loop"
+            # must be listed alongside its consumers (it registers the roles API
+            # on session_start; an npm-only install would not load it)
+            "npm:@d3ara1n/pi-model-roles"
+            "npm:@d3ara1n/pi-subagent"
           ];
+          # Models for pi's background sub-tasks. A role with `model = null`
+          # (the built-in default for every role) means "keep the current
+          # model"; only these two are pinned.
+          modelRoles.roles = {
+            # Summarisation / session naming: reads the WHOLE conversation,
+            # runs often, output is never read by a human -> big context, free.
+            utility = {
+              model = "opencode-go/deepseek-v4.1-flash";
+              thinking = "off";
+            };
+            # Cross-file refactors, architecture, security review.
+            heavy = {
+              model = "opencode-go/deepseek-v4-pro";
+              thinking = "high";
+            };
+          };
+          piNotify = {
+            finished = true;
+            onlyNotifyWhenUnfocused = true;
+          };
         };
       };
     };
