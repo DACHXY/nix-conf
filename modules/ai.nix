@@ -23,7 +23,6 @@ in
     {
       pkgs,
       lib,
-      config,
       ...
     }:
     let
@@ -110,7 +109,6 @@ in
             "npm:@ooo-razum/pi-open-webui"
             "npm:pi-agent-plugins"
             "npm:pi-web-access"
-            "npm:pi-subagents"
             "npm:context-mode"
             "npm:billion-context"
             "npm:bigpowers"
@@ -129,6 +127,7 @@ in
             "npm:@earendil-works/pi-durable"
             "npm:@earendil-works/pi-ai"
             "npm:@earendil-works/chord"
+            "npm:@andrewjacop/pi-herdr"
           ];
         };
       };

@@ -8,5 +8,6 @@
     ];
 
     my.user.name = "generic";
+    my.user.email = "generic@dnywe.com";
   };
 }

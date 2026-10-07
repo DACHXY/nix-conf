@@ -103,6 +103,10 @@ in
           "_domainkey.${domain}." = "1.1.1.1";
           "_mta-sts.${domain}." = "1.1.1.1";
 
+          # coturn lives on dn-cc and must keep resolving through public DNS
+          # even for netbird peers whose split-DNS sends <domain> here.
+          "coturn.${domain}." = "1.1.1.1";
+
           # ==== Others ==== #
           "tw." = "168.95.1.1";
           "." = "1.1.1.1";

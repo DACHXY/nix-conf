@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.gui = { pkgs, ... }: {
+  flake.modules.nixos.gui = { pkgs, lib, ... }: {
     boot = {
       plymouth = {
         enable = true;
@@ -22,7 +22,7 @@
         "rd.udev.log_level=3"
         "udev.log_priority=3"
       ];
-      loader.timeout = 0;
+      loader.timeout = lib.mkDefault 0;
     };
   };
 }

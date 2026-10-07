@@ -33,9 +33,9 @@ in
         };
       };
 
-      networking.hosts = {
-        "127.0.0.1" = [ oidc.hostname ];
-      };
+      # login.<domain> (and every other name this host serves) is pinned to
+      # loopback in modules/hosts/dn-server/local-dns.nix, so no /etc/hosts
+      # entry is needed here anymore.
 
       # ==== Server ==== #
       services.postgresql = {

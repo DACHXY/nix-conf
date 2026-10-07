@@ -11,7 +11,6 @@ in
     in
     {
       sops.secrets."ntfy" = {
-        owner = config.services.ntfy-sh.user;
         mode = "0600";
       };
 
