@@ -1,4 +1,6 @@
 {
+  config,
+  inputs,
   lib,
   ...
 }:
@@ -7,21 +9,28 @@ let
     concatMapStrings
     concatStrings
     getExe
-    getExe'
     mkIf
     ;
 
+  # ── Sources whose system audio can be streamed to the Mac ───────────────────
+  # ip   = the host's netbird address (stable per peer)
+  # port = UDP port the host sends RTP to. The receiver (ffmpeg's SDP/RTP
+  #        demuxer) also binds RTP+1 for RTCP, so ports must be at least 2
+  #        apart — 46000/46001 would collide (cscc's RTCP == workstation's RTP).
   sources = [
     {
       host = "dn-cscc";
+      ip = "100.104.150.125";
       port = 46000;
     }
     {
       host = "dn-workstation";
-      port = 46001;
+      ip = "100.104.154.131";
+      port = 46010;
     }
   ];
 
+  # dn-notebook — the Mac. Never changes, so it is not in `sources`.
   receiver = "100.104.173.164";
 
   # Sender side: opus / lowdelay / 10 ms frames. The receiver needs a matching
@@ -35,15 +44,18 @@ let
 
   pluginName = "dn-audio.30s.sh";
 
+  # Rendered in pure eval (no derivation) so the text is inspectable and
+  # shellcheck-able without building for aarch64-darwin.
   pluginText =
     pkgs:
     builtins.replaceStrings
-      [ "@ffplay@" "@hosts@" "@vars@" ]
+      [ "@mpv@" "@hosts@" "@vars@" ]
       [
-        (getExe' pkgs.ffmpeg "ffplay")
+        (getExe pkgs.mpv)
         (concatMapStrings (s: " '${s.host}'") sources)
         (concatStrings (
           map (s: ''
+            ${lib.replaceStrings [ "-" ] [ "_" ] s.host}_ip='${s.ip}'
             ${lib.replaceStrings [ "-" ] [ "_" ] s.host}_port='${toString s.port}'
           '') sources
         ))
@@ -51,9 +63,11 @@ let
       (builtins.readFile ./audio-rtp/${pluginName});
 in
 {
+  # ── Sender: a listed host streams its default sink monitor over RTP ────────
   flake.modules.nixos.audio-rtp =
     {
       config,
+      lib,
       pkgs,
       ...
     }:
@@ -76,18 +90,47 @@ in
       };
     };
 
+  # ── Receiver: SwiftBar plugin on the Mac picks which source to listen to ──
   flake.modules.darwin.gui =
     {
       pkgs,
       config,
       ...
     }:
-    {
-      environment.systemPackages = [ pkgs.ffmpeg ];
+    let
+      user = config.my.user.name;
 
-      home-manager.users.${config.my.user.name}.home.file."Documents/swiftbar-plugins/${pluginName}" = {
-        executable = true;
-        text = pluginText pkgs;
+      # Built from the ~/projects/iaudio flake (input `iaudio`) with the
+      # system Swift toolchain — nixpkgs' swift cannot link SwiftUI/AppKit.
+      iaudio = inputs.iaudio.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    in
+    {
+      environment.systemPackages = [ pkgs.mpv ];
+
+      home-manager.users.${user} = {
+        home.file."Documents/swiftbar-plugins/${pluginName}" = {
+          executable = true;
+          text = pluginText pkgs;
+        };
+
+        # IAudio.app reads this.
+        home.file."Library/Application Support/iaudio/hosts.json".text = builtins.toJSON {
+          mpv = getExe pkgs.mpv;
+          hosts = map (s: {
+            name = s.host;
+            inherit (s) ip port;
+          }) sources;
+        };
+
+        launchd.agents.iaudio = {
+          enable = true;
+          config = {
+            ProgramArguments = [
+              "${iaudio}/Applications/IAudio.app/Contents/MacOS/IAudio"
+            ];
+            RunAtLoad = true;
+          };
+        };
       };
     };
 }

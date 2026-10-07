@@ -914,6 +914,26 @@
         "type": "github"
       }
     },
+    "iaudio": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791478719,
+        "narHash": "sha256-HzorOneUwRdz/1jLyZfVLijM5LTcvHH4FpawL4JsWzQ=",
+        "ref": "refs/heads/feat/init",
+        "rev": "ac7a327183758362e4584a057f65682819ae9ba9",
+        "revCount": 2,
+        "type": "git",
+        "url": "https://git.dnywe.com/dachxy/iaudio.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.dnywe.com/dachxy/iaudio.git"
+      }
+    },
     "ihasmail": {
       "inputs": {
         "flake-utils": "flake-utils",
@@ -1896,6 +1916,7 @@
         "ghostty": "ghostty",
         "git-hooks": "git-hooks",
         "home-manager": "home-manager_3",
+        "iaudio": "iaudio",
         "ihasmail": "ihasmail",
         "import-tree": "import-tree",
         "jj-starship": "jj-starship",

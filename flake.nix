@@ -177,6 +177,11 @@
       url = "github:dachxy/ihasmail/nix-packaging";
     };
 
+    iaudio = {
+      url = "git+https://git.dnywe.com/dachxy/iaudio.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nono = {
       url = "github:nolabs-ai/nono";
       inputs.nixpkgs.follows = "nixpkgs";
