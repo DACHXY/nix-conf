@@ -64,6 +64,7 @@
             "ctrl+shift+zero=toggle_tab_overview"
             "ctrl+shift+9=reload_config"
             "ctrl+shift+o=unbind"
+            "ctrl+shift+e=unbind"
           ];
 
           clipboard-read = "allow";

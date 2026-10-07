@@ -11,6 +11,11 @@
         kubectl
         kubelogin
         kubelogin-oidc
+        fluxcd
+        kubernetes-helm
+
+        # monitor
+        flux9s
         k9s
       ];
 

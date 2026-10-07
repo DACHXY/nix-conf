@@ -176,12 +176,11 @@
               };
 
               spawn = mkOption {
-                type = types.attrs;
-                default = {
-                  "${mod}${sep}Return" = "${getExe cfg.app.terminal.package}";
-                  "${mod}${sep}F" = "${getExe cfg.app.browser.package}";
-                  "${mod}${sep}E" = "${cfg.app.terminal.run} ${cfg.app.file-browser.name}";
-                };
+                type = types.attrsOf types.str;
+                # No `default` here: a default is dropped as soon as any module
+                # sets the option, so binds would be replaced instead of merged.
+                # The three defaults are a normal definition at the bottom of
+                # this module instead.
                 apply =
                   binds:
                   let
@@ -520,6 +519,14 @@
 
               focus-workspace-prefix = mkBindOption [ mod ];
             };
+          };
+
+          # A definition, not the option's `default`, so other modules can add
+          # binds and keep these. Overriding one of these keys needs mkForce.
+          config.wm.keybinds.spawn = {
+            "${mod}${sep}Return" = "${getExe cfg.app.terminal.package}";
+            "${mod}${sep}F" = "${getExe cfg.app.browser.package}";
+            "${mod}${sep}E" = "${cfg.app.terminal.run} ${cfg.app.file-browser.name}";
           };
         };
     };

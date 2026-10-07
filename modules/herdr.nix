@@ -42,10 +42,12 @@
           if [[ $# -eq 1 ]]; then
             selected=$1
           else
+            # fzf exits 1 when the query matches nothing — accepting that query
+            # is exactly how a clone URL gets entered, so it must not trip errexit.
             fzf_out=$( (
               find "$HOME/projects" "$HOME/notes" -mindepth 1 -maxdepth 1 -type d 2> /dev/null
               printf '%s\n' "$extra_dir"
-            ) | fzf --print-query --header='select a project, or type a git URL to clone' )
+            ) | fzf --print-query --header='select a project, or type a git URL to clone' ) || true
             # fzf prints the typed query first, then the chosen match if any.
             # An unmatched query is how a clone URL gets entered.
             selected=$(printf '%s\n' "$fzf_out" | tail -n +2)
@@ -154,6 +156,12 @@
             next_tab = [
               "alt+shift+l"
               "shift+cmd+l"
+            ];
+
+            toggle_sidebar = [
+              "prefix+b"
+              "ctrl+shift+e"
+              "ctrl+cmd+e"
             ];
 
             zoom = "prefix+m"; # tmux: prefix+m

@@ -109,17 +109,18 @@ in
             memories
             music
             spreed
+            onlyoffice
             ;
 
           camerarawpreviews = pkgs.fetchNextcloudApp {
-            url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v1.1.1/camerarawpreviews_nextcloud.tar.gz";
-            sha256 = "sha256-PWX7WPJKoMIy4Kn6IH/+6UxPQ4G/nxuDNV1nNaGMp1s=";
+            url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v1.1.4/camerarawpreviews_nextcloud.tar.gz";
+            sha256 = "sha256-Fg+QsjVIxndQMVrMsMcVK7uhv0c5j92qrYjEOhsA7O4=";
             license = "agpl3Plus";
           };
 
           cospend = pkgs.fetchNextcloudApp {
-            url = "https://github.com/julien-nc/cospend-nc/releases/download/v4.0.2/cospend-4.0.2.tar.gz";
-            sha256 = "sha256-3uphQHtKlW8kXeLA5hMDpT14lEf+tnJyy4hfKioBDSw=";
+            url = "https://github.com/julien-nc/cospend-nc/releases/download/v4.1.3/cospend-4.1.3.tar.gz";
+            sha256 = "sha256-anScVCo9brBmlNU1oPbXdJEqM38oyltOmtVRzKR6mt4=";
             license = "agpl3Plus";
           };
         };

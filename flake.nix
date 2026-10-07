@@ -29,8 +29,15 @@
 
   inputs = {
     nixpkgs = {
-      # url = "github:nixos/nixpkgs/nixpkgs-unstable";
-      follows = "punktfunk/nixpkgs";
+      url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    };
+
+    # Pinned nixpkgs whose Mesa is 26.2.0. Mesa >= 26.2.3 dropped
+    # EGL_EXT_device_query from the glvnd client extension string, which niri's
+    # DRM renderer init requires (niri-wm/niri#2687) -> black screen on NVIDIA.
+    # Used only to source `mesa` for hardware.graphics.package (modules/hardware.nix).
+    nixpkgs-mesa = {
+      url = "github:NixOS/nixpkgs/0ae2bc1419c3f345984c2629e72e7a631820fa4d";
     };
 
     flake-parts = {
@@ -182,6 +189,7 @@
 
     punktfunk = {
       url = "git+https://git.unom.io/unom/punktfunk?ref=nix-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 

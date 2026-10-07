@@ -24,11 +24,6 @@ in
       username = osConfig.my.user.name;
       profileName = "${capitalize username}_Profile";
 
-      # Launch Zen with the WebDriver flags firefox-devtools-mcp needs to attach
-      # to this profile (Marionette + BiDi). BiDi can only be enabled from the
-      # command line, so the normal launcher cannot be used. Opt-in: quit Zen,
-      # run `zen-mcp`, and the agent can drive it. See the firefox-devtools MCP
-      # in modules/ai.nix (--connectExisting).
       zenMcp = pkgs.writeShellApplication {
         name = "zen-mcp";
         runtimeInputs = lib.optionals (!isDarwin) [ pkgs.procps ];
@@ -308,7 +303,7 @@ in
                 };
               }
             ];
-            keyboardShortcutsVersion = 20;
+            keyboardShortcutsVersion = 21;
 
             search.default = "google";
             search.force = true;

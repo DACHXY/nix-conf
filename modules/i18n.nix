@@ -39,6 +39,19 @@
     in
     {
       home-manager.users.${username} = {
+        # fcitx5-with-addons ships an XDG autostart entry
+        # (org.fcitx.Fcitx5.desktop) that systemd turns into
+        # app-org.fcitx.Fcitx5@autostart.service. That instance races the
+        # home-manager fcitx5-daemon.service for the org.fcitx.Fcitx5 D-Bus
+        # name; the loser exits 0 with "Unable to request dbus name".
+        # Shadow the entry with Hidden=true so only fcitx5-daemon.service runs.
+        xdg.configFile."autostart/org.fcitx.Fcitx5.desktop".text = ''
+          [Desktop Entry]
+          Type=Application
+          Name=Fcitx 5
+          Hidden=true
+        '';
+
         i18n = {
           inputMethod = {
             enable = true;

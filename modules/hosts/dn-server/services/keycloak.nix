@@ -10,7 +10,7 @@ in
     let
       keycloakTheme = builtins.fetchurl {
         url = "${nextcloud.endpoint}/s/CQeeFf6BiSztTci/download";
-        sha256 = "sha256:01i12k81hvws835gv27c1dhidxljl011ih4rh6cjpn6cayvd2nhy";
+        sha256 = "sha256:18kkr1vg0wxy7k9dzkdi66w8xn1hv313cpzpfrn1mal51x7qpsm6";
         name = "keycloak-theme-kc26.jar";
       };
     in
