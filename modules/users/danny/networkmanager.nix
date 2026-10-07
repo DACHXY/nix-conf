@@ -3,12 +3,18 @@
     { config, ... }:
     {
       # Allowing activate VPN in SSH
+      # `settings.modify.system` is needed too: bringing a VPN up (and
+      # `nmcli connection import/modify`) asks for it, and without the rule
+      # polkit falls back to auth_admin -> the agent prompt, whose
+      # pam_authenticate routinely fails in a TTY-less / non-active session:
+      #   polkitd: FAILED to authenticate ... settings.modify.system [nmcli ...]
       security.polkit.extraConfig = /* js */ ''
         polkit.addRule(function (action, subject) {
           if (
             subject.isInGroup("wheel") &&
             [
               "org.freedesktop.NetworkManager.network-control",
+              "org.freedesktop.NetworkManager.settings.modify.system",
             ].indexOf(action.id) !== -1
           ) {
             return polkit.Result.YES;

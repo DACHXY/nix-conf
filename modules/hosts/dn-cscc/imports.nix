@@ -14,6 +14,7 @@
       generic.ai
       nixos.punktfunk
       nixos.k3s
+      nixos.audio-rtp
     ];
   };
 }
