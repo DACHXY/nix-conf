@@ -72,6 +72,11 @@
       url = "github:sxyazi/yazi";
     };
 
+    vpnctl = {
+      url = "git+https://git.dnywe.com/dachxy/noctalia-vpn";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     lanzaboote = {
       url = "github:nix-community/lanzaboote";
       inputs.nixpkgs.follows = "nixpkgs";
