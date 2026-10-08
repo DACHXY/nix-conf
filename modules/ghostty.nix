@@ -65,6 +65,7 @@
             "ctrl+shift+9=reload_config"
             "ctrl+shift+o=unbind"
             "ctrl+shift+e=unbind"
+            "ctrl+shift+alt+j=unbind"
           ];
 
           clipboard-read = "allow";

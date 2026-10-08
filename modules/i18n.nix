@@ -91,6 +91,27 @@
                     TrayFont = lib.mkForce font;
                   };
 
+                # fcitx5's keyboard engine binds Ctrl+Alt+H / Ctrl+Alt+J to
+                # word-completion ("hint") mode, which eats herdr's pane
+                # chords. Both are KeyListOptions whose KeyConstrain rejects a
+                # key with no modifier, so an empty value is not accepted —
+                # Configuration::load rolls the option back to its compiled
+                # default instead. Point them at a chord no keyboard can send.
+                addons.keyboard = {
+                  sections = {
+                    "Hint Trigger" = {
+                      "0" = "Control+Alt+F35";
+                    };
+                    "One Time Hint Trigger" = {
+                      "0" = "Control+Alt+F35";
+                    };
+                  };
+                };
+
+                # mozc's "Hotkey to expand usage" is a plain Option<Key> with no
+                # constrain, so an empty value really does unset it.
+                addons.mozc.globalSection.ExpandKey = "";
+
                 inputMethod = {
                   GroupOrder."0" = "Default";
                   "Groups/0" = {
