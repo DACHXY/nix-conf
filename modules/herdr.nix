@@ -100,6 +100,106 @@
         '';
       };
 
+      # Same idea as herdr-sessionizer, but for jumping straight to a running
+      # agent: fzf over `herdr agent list`, then focus by pane id.
+      herdrAgentizer = pkgs.writeShellApplication {
+        name = "herdr-agentizer";
+        runtimeInputs = with pkgs; [
+          fzf
+          herdr
+          jq
+        ];
+        text = ''
+          rows=$(herdr agent list \
+            | jq -r '.result.agents[]
+                | [ .pane_id,
+                    ( .agent_status + "  " + .agent + "  "
+                      + .foreground_cwd + "  " + .terminal_title_stripped ) ]
+                | @tsv')
+
+          [[ -z $rows ]] && exit 0
+
+          # The pane id is field 1 and stays out of the display: --with-nth only
+          # hides it from fzf, the selected line is still the whole row.
+          selected=$(printf '%s\n' "$rows" \
+            | fzf --delimiter='\t' --with-nth=2 --prompt='agent> ' \
+                --header='select an agent (status, agent, dir, title)') || true
+
+          [[ -z $selected ]] && exit 0
+
+          herdr agent focus "$(printf '%s' "$selected" | cut -f1)"
+
+          # Outside herdr nothing is attached to receive the focus, so attach a
+          # client — the same fallback herdr-sessionizer uses.
+          if [[ -z ''${HERDR_ENV:-} ]]; then
+            exec herdr
+          fi
+        '';
+      };
+
+      # Pull a pane from any other workspace into the calling tab as a split.
+      # `pane move` takes the destination tab explicitly and `--target-pane`
+      # anchors the new split next to the calling pane, so no empty panel has to
+      # be opened first. If the source tab or workspace is left empty it closes.
+      herdrPaneizer = pkgs.writeShellApplication {
+        name = "herdr-paneizer";
+        runtimeInputs = with pkgs; [ fzf herdr jq ];
+        text = ''
+          # A popup deliberately does not get HERDR_PANE_ID — HERDR_ACTIVE_PANE_ID
+          # is the tiled pane it opened over. Derive the tab from that pane, so the
+          # script behaves the same from a popup and from an ordinary pane.
+          here=''${HERDR_ACTIVE_PANE_ID:-''${HERDR_PANE_ID:-}}
+          if [[ -z $here ]]; then
+            echo "herdr-paneizer must run inside a herdr pane" >&2
+            exit 1
+          fi
+          tab=$(herdr pane get "$here" | jq -r '.result.pane.tab_id')
+
+          # The pane id stays field 1 and out of the display; --with-nth only
+          # hides it from fzf, so cut -f1 recovers it. Workspace labels
+          # ("1:nix-conf") need a second lookup — the pane list carries only ids.
+          rows=$(jq -rn \
+            --slurpfile ws <(herdr workspace list) \
+            --slurpfile pn <(herdr pane list) \
+            --arg tab "$tab" '
+              ($ws[0].result.workspaces
+                | map({ key: .workspace_id, value: (.label // .workspace_id) })
+                | from_entries) as $label
+              | $pn[0].result.panes[]
+              | select(.tab_id != $tab)
+              | [ .pane_id,
+                  ( ($label[.workspace_id] // .workspace_id) + "  " + .cwd
+                    + "  " + (.terminal_title_stripped // "") ) ]
+              | @tsv')
+          [[ -z $rows ]] && exit 0
+
+          selected=$(printf '%s\n' "$rows" \
+            | fzf --delimiter='\t' --with-nth=2 --prompt='pane> ' \
+                --header='pull a pane into this tab (workspace, dir, title)') || true
+          [[ -z $selected ]] && exit 0
+
+          # Hyprland-dwindle spawn: split the target along the axis
+          # PERPENDICULAR to the region it already sits in, so the layout nests
+          # (left | right -> left | right-top/right-bottom) instead of growing
+          # one more full-height column. The ancestor region is the smallest
+          # split rect that contains the pane; a one-pane tab has none, so it
+          # splits right.
+          split_dir=$(herdr pane layout --pane "$here" | jq -r --arg p "$here" '
+            (.result.layout.panes[] | select(.pane_id == $p) | .rect) as $me
+            | [ .result.layout.splits[]
+                | select(.rect.x <= $me.x and .rect.y <= $me.y
+                    and .rect.x + .rect.width  >= $me.x + $me.width
+                    and .rect.y + .rect.height >= $me.y + $me.height) ]
+            | sort_by(.rect.width * .rect.height)
+            | if length == 0 then "right"
+              elif .[0].direction == "right" then "down"
+              else "right" end')
+
+          herdr pane move "$(printf '%s' "$selected" | cut -f1)" \
+            --tab "$tab" --split "$split_dir" --target-pane "$here" --no-focus
+        '';
+      };
+
       # Same role as tmux.nix's `ta`, but for herdr.
       ha = pkgs.writeShellScriptBin "ha" ''
         exec herdr-sessionizer "$@"
@@ -116,6 +216,8 @@
     {
       home.packages = [
         herdrSessionizer
+        herdrAgentizer
+        herdrPaneizer
         ha
         hr
         herdrPaneName
@@ -158,6 +260,38 @@
               "shift+cmd+l"
             ];
 
+            # Move the focused tab toward the front/back of the sidebar. (`swap_pane_*`
+            # is the pane-level equivalent, but every tab here holds a single
+            # full-width pane, so swapping a pane can never find a neighbour.)
+            move_tab_previous = "ctrl+shift+h";
+            move_tab_next = "ctrl+shift+l";
+
+            # Navigate mode (`prefix+g`). Its movement keys are mode-local and
+            # accept plain letters; the defaults are j/k = pane down/up and
+            # up/down = workspace selection. This swaps them, so j/k move the
+            # workspace selection vim-style and the arrows move panes. h/l are
+            # untouched — left/right are permanent aliases for pane movement.
+            # `enter` switches to the selected workspace.
+            navigate_workspace_up = "k";
+            navigate_workspace_down = "j";
+            navigate_pane_up = "up";
+            navigate_pane_down = "down";
+
+            # Pane focus. A list replaces herdr's default instead of adding to
+            # it, so prefix+h/j/k/l is repeated to keep it working.
+            focus_pane_left = [ "ctrl+alt+h" "prefix+h" ];
+            focus_pane_down = [ "ctrl+alt+j" "prefix+j" ];
+            focus_pane_up = [ "ctrl+alt+k" "prefix+k" ];
+            focus_pane_right = [ "ctrl+alt+l" "prefix+l" ];
+
+            # Directional pane move: pushes the focused pane past its
+            # neighbour. herdr 0.9.3 defines the swap_pane_* actions but ships
+            # no default binding for them.
+            swap_pane_left = "ctrl+alt+shift+h";
+            swap_pane_down = "ctrl+alt+shift+j";
+            swap_pane_up = "ctrl+alt+shift+k";
+            swap_pane_right = "ctrl+alt+shift+l";
+
             toggle_sidebar = [
               "prefix+b"
               "ctrl+shift+e"
@@ -171,6 +305,20 @@
                 key = "prefix+f";
                 type = "popup";
                 command = "herdr-sessionizer";
+                width = "80%";
+                height = "80%";
+              }
+              {
+                key = "prefix+a";
+                type = "popup";
+                command = "herdr-agentizer";
+                width = "80%";
+                height = "80%";
+              }
+              {
+                key = "prefix+p";
+                type = "popup";
+                command = "herdr-paneizer";
                 width = "80%";
                 height = "80%";
               }

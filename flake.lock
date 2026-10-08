@@ -1920,6 +1920,7 @@
         "sops-nix": "sops-nix",
         "stylix": "stylix",
         "tether": "tether",
+        "vpnctl": "vpnctl",
         "vyolune": "vyolune",
         "woomer": "woomer",
         "wshowkeys": "wshowkeys",
@@ -2501,6 +2502,26 @@
         "owner": "numtide",
         "repo": "treefmt-nix",
         "type": "github"
+      }
+    },
+    "vpnctl": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791468216,
+        "narHash": "sha256-fg+rDjy2luqE11a1GWEwPml8N6sXVyydyLPDQsu7BcQ=",
+        "ref": "refs/heads/main",
+        "rev": "887b68801519cdfe881d96cdebe698db223e2c39",
+        "revCount": 8,
+        "type": "git",
+        "url": "https://git.dnywe.com/dachxy/noctalia-vpn"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.dnywe.com/dachxy/noctalia-vpn"
       }
     },
     "vyolune": {
