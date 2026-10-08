@@ -15,10 +15,49 @@ in
       noctalia-restart = pkgs.writeShellScriptBin "noctalia-restart" ''
         systemctl --user restart noctalia
       '';
+      vpnCfg = {
+        default = "csit";
+        env_file = "~/.config/vpnctl/env";
+        profiles = {
+          csit = {
+            name = "CSIT VPN";
+            protocol = "fortinet";
+            server = "140.113.235.174:443/prod";
+            user = "\${CSIT_VPN_IDENTITY}";
+            servercert = "pin-sha256:twN8dS5XzMPTjmCKkZgFK34BdTeBBqcwjJsui7UYmRw=";
+            auth.password = {
+              type = "env";
+              name = "CSIT_VPN_PASSWORD";
+            };
+          };
+          csit-test = {
+            name = "CSIT VPN (test)";
+            protocol = "fortinet";
+            server = "\${CSIT_VPN_TEST_GATEWAY}/\${CSIT_VPN_TEST_REALM}";
+            user = "\${CSIT_VPN_TEST_IDENTITY}";
+            servercert = "pin-sha256:twN8dS5XzMPTjmCKkZgFK34BdTeBBqcwjJsui7UYmRw=";
+            auth.password = {
+              type = "env";
+              name = "CSIT_VPN_TEST_PASSWORD";
+            };
+          };
+          nycu = {
+            name = "NYCU VPN";
+            protocol = "fortinet";
+            server = "\${NYCU_VPN_GATEWAY}";
+            user = "\${NYCU_VPN_IDENTITY}";
+            auth.password = {
+              type = "env";
+              name = "NYCU_VPN_PASSWORD";
+            };
+          };
+        };
+      };
     in
     {
       imports = [
         config.flake.modules.nixos.niri
+        inputs.vpnctl.nixosModules.default
       ];
 
       home-manager.users.${name} = {
@@ -55,6 +94,23 @@ in
           }
         })
       '';
+
+      # Root-owned copy of the VPN credentials for the vpnctld daemon.
+      sops.secrets."networkmanager" = {
+        sopsFile = ../../users/danny/secret.yaml;
+        path = "/etc/vpnctl/env";
+      };
+
+      # vpnctld runs as root and drives openconnect, so the CLI needs no
+      # sudo at all. The profiles are defined once here and reused for both
+      # the system (/etc/vpnctl/config.json) and user config.
+      services.vpnctl = {
+        enable = true;
+        users = [ name ];
+        sudo.enable = false;
+        daemon.envFile = "/etc/vpnctl/env";
+        settings = vpnCfg;
+      };
     };
 
   flake.modules.homeManager.noctalia =
@@ -91,6 +147,7 @@ in
           nix run github:erooke/toml2nix <(noctalia config export merged)
         '';
       };
+
     in
     {
       imports = [
@@ -109,7 +166,16 @@ in
         satty
 
         bitwarden-cli
+        inputs.vpnctl.packages.${pkgs.stdenv.hostPlatform.system}.vpnctl
       ];
+
+      # ==== vpnctl ==== #
+      sops.secrets."networkmanager" = {
+        sopsFile = ../../users/danny/secret.yaml;
+        path = "${config.home.homeDirectory}/.config/vpnctl/env";
+      };
+
+      xdg.configFile."vpnctl/config.json".text = builtins.toJSON osConfig.services.vpnctl.settings;
 
       # ==== GTK Theme ==== #
       gtk.theme = {
@@ -440,6 +506,9 @@ in
             "noctalia/screen_recorder" = {
               copy_to_clipboard = true;
             };
+            "dachxy/vpn" = {
+              default_profile = "csit";
+            };
           };
 
           plugins = {
@@ -452,6 +521,7 @@ in
               "avivbintangaringga/nextboot-selector"
               "rxtsel/portctl"
               "andrewdems/vpn-manager"
+              "dachxy/vpn"
             ];
             source = [
               {
@@ -463,6 +533,11 @@ in
                 kind = "git";
                 location = "https://github.com/noctalia-dev/official-plugins";
                 name = "official";
+              }
+              {
+                kind = "git";
+                location = "https://git.dnywe.com/dachxy/noctalia-vpn";
+                name = "vpn";
               }
             ];
           };
