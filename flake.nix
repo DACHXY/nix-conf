@@ -164,10 +164,6 @@
 
     llm-agents.url = "github:numtide/llm-agents.nix";
 
-    openlogi = {
-      url = "github:AprilNEA/OpenLogi";
-    };
-
     tether = {
       url = "github:zackb/tether";
     };
