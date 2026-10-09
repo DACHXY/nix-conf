@@ -38,14 +38,12 @@
 
           HOSTS = [
               "192.168.100.9",
-              "100.104.189.30",
           ]
 
           PORT = 30025
 
           ALLOWED_NETWORKS = [
               ipaddress.ip_network("192.168.100.0/24"),
-              ipaddress.ip_network("100.104.0.0/16"),
           ]
 
           SYSTEMCTL = "/run/current-system/sw/bin/systemctl"
@@ -291,6 +289,9 @@
           };
         };
       };
+
+      # greetd is started on demand (greeter-control POST /greetd/start), not at boot.
+      systemd.services.greetd.wantedBy = lib.mkForce [ ];
 
       networking.hosts = {
         "2.19.181.11" = [ "client-download.steampowered.com" ];

@@ -8,6 +8,7 @@
         nixos.danny
         nixos.danny-acme
         nixos.nvf
+        nixos.punktfunk-server
         generic.dnywe
       ];
 

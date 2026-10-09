@@ -405,6 +405,10 @@ in
           RestartSec = 3;
           EnvironmentFile = config.sops.templates."stalwart-bootstrap.env".path;
           Environment = "STALWART_URL=http://127.0.0.1:${toString managementPort}";
+          # stalwart.service is Type=simple with no systemd readiness
+          # notification, so `after` only orders after the process is spawned.
+          # Wait (bounded) for the management listener before applying.
+          ExecStartPre = "${pkgs.curl}/bin/curl --silent --show-error --output /dev/null --connect-timeout 5 --retry 30 --retry-delay 1 --retry-connrefused http://127.0.0.1:${toString managementPort}/api/schema";
           ExecStart = "${getExe pkgs.stalwart-cli} apply --file ${planFile}";
           ExecStartPost = "${pkgs.systemd}/bin/systemctl restart stalwart.service";
         };
