@@ -17,6 +17,7 @@
         "caskhub"
         "sozercan/repo/kaset"
         "navbytes/tap/vee"
+        "linearmouse"
       ];
     };
   };
