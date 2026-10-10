@@ -27,6 +27,12 @@ in
               ip = ip;
               interface = "wg1";
             };
+            wg0 = {
+              publicKey = "K0PbHEvO8I3rUBseN1Qbb37n94fiS7aKDkOjCuO2UC8=";
+              ip = "10.30.0.1";
+              interface = "wg0";
+              listenPort = 51821;
+            };
           };
         };
         dn-cc = rec {
@@ -39,6 +45,15 @@ in
               externalInterface = "ens192";
               listenPort = 51820;
               range = range;
+            };
+          };
+        };
+        dn-cscc = rec {
+          wg = {
+            wg0 = {
+              publicKey = "ZE2pqwYB9/lO3yGPnPmB5btswDjymb9C6xAHSnbCb2c=";
+              ip = "10.30.0.2";
+              interface = "wg0";
             };
           };
         };

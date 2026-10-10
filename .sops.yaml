@@ -30,6 +30,11 @@ creation_rules:
       - age:
           - *dn_workstation
           - *dn_cscc
+  - path_regex: modules/config/wg-cscc.yaml
+    key_groups:
+      - age:
+          - *dn_server
+          - *dn_cscc
   - path_regex: system/dev/skydrive-lap/sops/secret.yaml
     key_groups:
       - age:
