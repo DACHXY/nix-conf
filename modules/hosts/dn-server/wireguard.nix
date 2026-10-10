@@ -1,3 +1,7 @@
+{ config, ... }:
+let
+  inherit (config.flake.public.config.machines) dn-cscc dn-server;
+in
 {
   configurations.nixos.dn-server.module =
     { config, lib, pkgs, ... }:
@@ -22,5 +26,25 @@
       networking.wg-quick.interfaces.wg2.configFile = config.sops.secrets."wireguard/wg2.conf".path;
       systemd.services."wg-quick-wg1".preStop = lib.mkForce (mkPreStop "wg1");
       systemd.services."wg-quick-wg2".preStop = lib.mkForce (mkPreStop "wg2");
+
+      # Server endpoint for dn-cscc. Native module (not wg-quick) so it is not
+      # affected by the config-file PrivateTmp issue above.
+      sops.secrets."dn-server-key" = {
+        sopsFile = ../../config/wg-cscc.yaml;
+      };
+
+      networking.firewall.allowedUDPPorts = [ dn-server.wg.wg0.listenPort ];
+
+      networking.wireguard.interfaces.wg0 = {
+        ips = [ "${dn-server.wg.wg0.ip}/24" ];
+        listenPort = dn-server.wg.wg0.listenPort;
+        privateKeyFile = config.sops.secrets."dn-server-key".path;
+        peers = [
+          {
+            publicKey = dn-cscc.wg.wg0.publicKey;
+            allowedIPs = [ "${dn-cscc.wg.wg0.ip}/32" ];
+          }
+        ];
+      };
     };
 }
