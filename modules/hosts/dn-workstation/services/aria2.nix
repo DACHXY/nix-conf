@@ -7,7 +7,7 @@ in
   configurations.nixos.dn-workstation.module =
     { pkgs, ... }:
     {
-      environment.systemPackages = with pkgs; [ motrix-next ];
+      environment.systemPackages = with pkgs; [ rayburst ];
 
       services.nginx.virtualHosts."${aria.hostname}" = {
         useACMEHost = domain;
