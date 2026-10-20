@@ -28,9 +28,21 @@
         ln -s ${herdrPaneName}/bin/herdr-pane-name $out/target/release/herdr-pane-name
       '';
 
+      # Upstream's fish hook launches its background jobs without `disown`, so an
+      # interactive `exit` refuses with "There are still jobs active". Disown each
+      # job right after it starts — suppressing the "no suitable jobs" error when
+      # it already finished — so the shell stops tracking it.
+      herdrPaneNameFishHook = pkgs.runCommandLocal "herdr-pane-name-fish-hook" { } ''
+        install -Dm644 ${herdrPaneNameSrc}/hooks/fish.fish $out/fish.fish
+        substituteInPlace $out/fish.fish \
+          --replace-fail '>/dev/null 2>&1 &' '>/dev/null 2>&1 &; disown 2>/dev/null' \
+          --replace-fail '    end &' '    end &; disown 2>/dev/null'
+      '';
+
       herdrSessionizer = pkgs.writeShellApplication {
         name = "herdr-sessionizer";
         runtimeInputs = with pkgs; [
+          coreutils
           fzf
           git
           herdr
@@ -47,7 +59,7 @@
             fzf_out=$( (
               find "$HOME/projects" "$HOME/notes" -mindepth 1 -maxdepth 1 -type d 2> /dev/null
               printf '%s\n' "$extra_dir"
-            ) | fzf --print-query --header='select a project, or type a git URL to clone' ) || true
+            ) | fzf --print-query --header='select a project, or type a git URL to clone [optional folder name]' ) || true
             # fzf prints the typed query first, then the chosen match if any.
             # An unmatched query is how a clone URL gets entered.
             selected=$(printf '%s\n' "$fzf_out" | tail -n +2)
@@ -55,12 +67,20 @@
           fi
 
           # A git-cloneable address clones into ~/projects first, then flows
-          # through the same workspace-name/path logic below.
-          case "$selected" in
+          # through the same workspace-name/path logic below. A second
+          # whitespace-separated word names the destination folder; without one
+          # the URL's basename is used. The URL's own `.git` suffix and dots are
+          # only stripped from that default, never from an explicit name.
+          read -r clone_url clone_name <<< "$selected" || true
+          case "$clone_url" in
             *://* | git@*:* | *.git)
-              dest="$HOME/projects/$(basename "$selected" .git | tr . _)"
+              if [[ -n $clone_name ]]; then
+                dest="$HOME/projects/$clone_name"
+              else
+                dest="$HOME/projects/$(basename "$clone_url" .git | tr . _)"
+              fi
               if [[ ! -d $dest ]]; then
-                git clone "$selected" "$dest" || exit 1
+                git clone "$clone_url" "$dest" || exit 1
               fi
               selected=$dest
               ;;
@@ -68,6 +88,13 @@
 
           if [[ -z $selected ]]; then
             exit 0
+          fi
+
+          # A name typed that matches no existing directory is a new project:
+          # create it under ~/projects, then fall through to the switch logic.
+          if [[ ! -d $selected ]]; then
+            selected="$HOME/projects/$(basename "$selected" | tr . _)"
+            mkdir -p "$selected"
           fi
 
           selected_name=$(basename "$selected" | tr . _)
@@ -225,7 +252,7 @@
 
       # Updates pane/tab names right after a command starts and finishes; without
       # it names only refresh on herdr lifecycle/focus events.
-      xdg.configFile."fish/conf.d/herdr-pane-name.fish".source = herdrPaneNameSrc + "/hooks/fish.fish";
+      xdg.configFile."fish/conf.d/herdr-pane-name.fish".source = herdrPaneNameFishHook + "/fish.fish";
 
       home.activation.herdrPaneName = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         ${lib.getExe pkgs.herdr} plugin list \
