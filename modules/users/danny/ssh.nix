@@ -10,6 +10,9 @@
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII17Qa46NpiXRZfWTgXvGN00wfaQuH1MeHPjvqy4Go4r danny@dn-notebook"
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMT/rhCBp90SBW15dObrI1vl48uIdbjzwK+LQxtd/m8m danny@dn-workstation"
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG9Z/yjOAnEOk4oRRruE0s+15B1W6bhu7TK81jAMgkVA danny@dn-cscc"
+        # FIDO2 security key (touch required). Also used by pam_rssh via
+        # /etc/ssh/fido2_authorized_keys for passwordless remote sudo.
+        "sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBLCh0RGSz3Bp5TAvmaIzt7uQzbYV0cwREdvE/tIoJIUPntsik+B0HB01jQu4HpWs4J8197xNKH+dKb2+m1AOIjIAAAAEc3NoOg== danny@fido"
       ];
     };
   };
