@@ -33,6 +33,30 @@ in
         hash = "sha256-7I0UgtAZ7rk0MnXUdt/6MdGVHsy+TZDJPVAxUWyvrR4=";
       };
 
+      # Upstream themes do not match pi's theme schema: several carry a
+      # top-level `displayName` the schema forbids, and neon-green,
+      # neon-green-light and opencode nest `export` inside `colors` instead of
+      # at the top level. pi rejects the whole file and falls back to the
+      # system theme, so normalise them here.
+      piThemesFixed = pkgs.runCommand "pi-themes" { nativeBuildInputs = [ pkgs.jq ]; } ''
+        mkdir -p $out/themes
+        cp -r ${piThemes}/themes/. $out/themes/
+        chmod -R u+w $out/themes
+        for f in $out/themes/*.json; do
+          jq '
+            del(.displayName)
+            | if (.colors.export? // null) != null
+              then .export = {
+                pageBg: .colors.export,
+                cardBg: .colors.export,
+                infoBg: .colors.export,
+              } | .colors |= del(.export)
+              else . end
+          ' "$f" > "$f.new"
+          mv "$f.new" "$f"
+        done
+      '';
+
       mcpServers = {
         "cloudflare-api" = {
           type = "http";
@@ -67,7 +91,7 @@ in
       };
     in
     {
-      home.file.".pi/agent/themes".source = "${piThemes}/themes";
+      home.file.".pi/agent/themes".source = "${piThemesFixed}/themes";
 
       # Firefox automation MCP
       home.packages = [ pkgs.firefox-devtools-mcp ];
