@@ -189,7 +189,14 @@ in
           KillSignal = "SIGKILL";
           StartLimitIntervalSec = 0;
           StartLimitBurst = 0;
-          Restart = mkForce "no";
+
+          # This unit `Requires=` netbird-management, so every management
+          # restart stops it as well. With `Restart = "no"` it then stayed
+          # dead until someone started it by hand -- that is how a Keycloak
+          # update took the whole overlay down. `always` plus a slow delay
+          # makes it wait for management instead of giving up.
+          Restart = mkForce "always";
+          RestartSec = "30s";
         };
       };
 
@@ -206,6 +213,19 @@ in
           "pdns.service"
           "pdns-recursor.service"
         ];
+
+        # `after = [ "keycloak.service" ]` only orders the start, it does not
+        # wait for readiness: Keycloak's unit is already active while Keycloak
+        # is still bootstrapping, and its OIDC discovery endpoint answers
+        # 503 "Bootstrap in progress" during that window. Management exits 1
+        # on that, and systemd's defaults (RestartSec=100ms, StartLimitBurst=5,
+        # StartLimitIntervalSec=10s) use up the whole retry budget in half a
+        # second -> start-limit-hit -> permanent failure -> nginx answers 502
+        # on netbird.<domain> and no client gets a netmap.
+        # Retry forever, slowly, so it just waits Keycloak out.
+        startLimitIntervalSec = 0;
+        startLimitBurst = 0;
+        serviceConfig.RestartSec = "10s";
       };
 
       services.nginx.virtualHosts."${srv.domain}" = {
