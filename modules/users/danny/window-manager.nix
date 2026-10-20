@@ -52,6 +52,24 @@ in
                 ];
                 open-floating = false;
               }
+              # Steam friend/activity notification toasts are plain X11
+              # toplevels (Steam never sends them to the notification daemon),
+              # so niri centers them; pin them to the bottom-right corner.
+              # See niri wiki: Application Issues -> Steam.
+              {
+                matches = [
+                  {
+                    app-id = "^steam$";
+                    title = "^notificationtoasts_[0-9]+_desktop$";
+                  }
+                ];
+                open-floating = true;
+                default-floating-position = {
+                  x = 20;
+                  y = 20;
+                  relative-to = "bottom-right";
+                };
+              }
               # Steam Dialog float
               {
                 matches = [
