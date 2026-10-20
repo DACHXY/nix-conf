@@ -22,10 +22,10 @@ in
           range = "10.20.0.0/24";
           publicKey = "rMain0t9J0YeJR9AjuLuX6WL0Mh5QkFA2lxq/XV9RH4=";
           wg = {
-            wg1 = {
+            wg2 = {
               publicKey = publicKey;
               ip = ip;
-              interface = "wg1";
+              interface = "wg2";
             };
             wg0 = {
               publicKey = "K0PbHEvO8I3rUBseN1Qbb37n94fiS7aKDkOjCuO2UC8=";
@@ -114,6 +114,22 @@ in
           endpoint = "https://${hostname}";
           # Internal-only JMAP/admin listener, reverse-proxied by nginx.
           managementPort = 30092;
+          # Prometheus scrape endpoint (/metrics/prometheus). Same HTTP listener
+          # code as the management API, but bound on its own port so it can be
+          # firewalled to the WireGuard link only.
+          metricsPort = 30094;
+          # Local OTLP/HTTP receiver of the Alloy agent on dn-cc; Stalwart's
+          # OtelHttp tracer pushes its events here.
+          otlpPort = 30096;
+          # Local receiver of Stalwart's MTA hook (DATA stage). The hook hands
+          # the message headers over HTTP so subjects can be shipped to Loki;
+          # loopback only, see services/stalwart-mta-hook.nix on dn-cc.
+          mtaHookPort = 30097;
+        };
+        loki = {
+          # Push (OTLP) + query API on dn-server. Bound on all interfaces;
+          # the firewall only opens it on the WireGuard link to dn-cc.
+          port = 30095;
         };
         homepage = rec {
           hostname = "${myDomain}";

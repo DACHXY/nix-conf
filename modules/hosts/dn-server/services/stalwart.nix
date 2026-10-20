@@ -189,6 +189,20 @@ in
           };
         }
         {
+          # /metrics/prometheus is served on every `http` listener, and the
+          # management listener below is already bound to 127.0.0.1:30093, so
+          # the local Prometheus can scrape it without a dedicated listener or
+          # an extra firewall opening. No auth: the bind address is the
+          # access control.
+          "@type" = "update";
+          object = "Metrics";
+          value = {
+            prometheus = {
+              "@type" = "Enabled";
+            };
+          };
+        }
+        {
           "@type" = "upsert";
           object = "NetworkListener";
           matchOn = [ "name" ];

@@ -60,9 +60,9 @@ in
           wireguardPeers = [
             {
               # dn-server
-              PublicKey = dn-server.wg.wg1.publicKey;
+              PublicKey = dn-server.wg.wg2.publicKey;
               AllowedIPs = [
-                "${dn-server.wg.wg1.ip}/32"
+                "${dn-server.wg.wg2.ip}/32"
               ];
             }
           ];
