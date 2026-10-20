@@ -146,7 +146,12 @@ in
 
         xwayland-satellite = {
           enable = true;
-          path = getExe niriPkgs.xwayland-satellite-unstable;
+          # NOT niriPkgs.xwayland-satellite-unstable: that input still pins 0.8.2,
+          # which has a regression where every Steam dropdown/context menu
+          # (override-redirect popup) is unmapped ~35ms after it maps, so menus
+          # flash and vanish. Fixed by commit add2795, released in 0.8.3.
+          # https://github.com/Supreeeme/xwayland-satellite/issues/489
+          path = getExe pkgs.xwayland-satellite;
         };
 
         animations = {
