@@ -2,7 +2,7 @@
 let
   inherit (self.lib.ldap) getOlcSuffix;
   inherit (config.flake.public.config) legacy domain;
-  inherit (config.flake.public.config.machines) dn-server;
+  inherit (config.flake.public.config.machines) dn-server dn-cc;
   inherit (config.flake.public.config.services) mailserver stalwart;
 in
 {
@@ -19,6 +19,7 @@ in
       package = pkgs.stalwart_0_16;
       fqdn = mailserver.hostname;
       managementPort = stalwart.managementPort;
+      metricsPort = stalwart.metricsPort;
       legacyDomain = legacy.domain;
       olcDomain = getOlcSuffix legacyDomain;
       certDir = config.security.acme.certs."${domain}".directory;
@@ -266,8 +267,93 @@ in
         }
         {
           "@type" = "update";
+          object = "Metrics";
+          value = {
+            # Exposes GET /metrics/prometheus on every `http` listener.
+            # Only the `metrics` listener below is reachable from dn-server.
+            # No authUsername/authSecret: the WireGuard link plus an
+            # interface-scoped firewall rule are the access control.
+            prometheus = {
+              "@type" = "Enabled";
+            };
+          };
+        }
+        {
+          # Per-message history for the Grafana "Stalwart history" dashboard.
+          # Pushed as OTLP logs to the local Alloy agent (services/alloy.nix),
+          # which copies the OTLP EventName into an attribute (Loki's OTLP
+          # ingest drops EventName) and forwards to Loki on dn-server.
+          "@type" = "upsert";
+          object = "Tracer";
+          matchOn = [ "endpoint" ];
+          value = {
+            tracer-history = {
+              "@type" = "OtelHttp";
+              endpoint = "http://127.0.0.1:${toString stalwart.otlpPort}/v1/logs";
+              enableLogExporter = true;
+              enableSpanExporter = false;
+              # The include list below is the real filter; `trace` just keeps
+              # the level check from dropping any of the listed events.
+              level = "trace";
+              eventsPolicy = "include";
+              events = lib.genAttrs [
+                # Every event of a session also carries the span keys
+                # (remoteIp, remotePort, listenerId, localPort).
+                "smtp.connection-start"
+                "smtp.ehlo"
+                "smtp.mail-from"
+                "smtp.rcpt-to"
+                "smtp.spf-ehlo-pass"
+                "smtp.spf-ehlo-fail"
+                "smtp.spf-from-pass"
+                "smtp.spf-from-fail"
+                "smtp.dkim-pass"
+                "smtp.dkim-fail"
+                "smtp.arc-pass"
+                "smtp.arc-fail"
+                "smtp.dmarc-pass"
+                "smtp.dmarc-fail"
+                "smtp.iprev-pass"
+                "smtp.iprev-fail"
+                "smtp.relay-not-allowed"
+                "smtp.mailbox-does-not-exist"
+                "smtp.mail-from-unauthenticated"
+                "smtp.message-too-large"
+                "smtp.rate-limit-exceeded"
+                "smtp.rcpt-to-greylisted"
+                "smtp.invalid-ehlo"
+                "smtp.did-not-say-ehlo"
+                "spam.classify"
+                "queue.message-queued"
+                "queue.authenticated-message-queued"
+                "delivery.delivered"
+                "delivery.dsn-perm-fail"
+                "security.authentication-ban"
+                "security.abuse-ban"
+                "security.scan-ban"
+                "security.ip-blocked"
+              ] (_: true);
+            };
+          };
+        }
+        {
+          "@type" = "update";
           object = "SpamSettings";
           value.scoreSpam = 8;
+        }
+        {
+          # Stalwart's telemetry never carries the Subject header, so the
+          # message history in Grafana gets it from here: the DATA-stage hook hands
+          # the envelope and headers to the local receiver in
+          # services/stalwart-mta-hook.nix, which forwards them to Loki.
+          # tempFailOnError = false keeps a dead receiver from refusing mail.
+          "@type" = "upsert";
+          object = "MtaHook";
+          matchOn = [ "url" ];
+          value.hook-history = {
+            url = "http://127.0.0.1:${toString stalwart.mtaHookPort}/mta-hook";
+            tempFailOnError = false;
+          };
         }
       ]
       ++ (map
@@ -313,6 +399,14 @@ in
               name = "management";
               protocol = "http";
               bind."127.0.0.1:${toString managementPort}" = true;
+              useTls = false;
+            };
+            metrics = {
+              name = "metrics";
+              protocol = "http";
+              # Bound on all interfaces; the firewall only opens this port on
+              # the WireGuard interface so dn-server can scrape it.
+              bind."0.0.0.0:${toString metricsPort}" = true;
               useTls = false;
             };
           };
@@ -361,6 +455,13 @@ in
         25
         587
         465
+      ];
+
+      # /metrics/prometheus is served on every Stalwart `http` listener, so the
+      # metrics port is reachable from any WireGuard peer of this interface
+      # (only dn-server). Everything else stays default-dropped.
+      networking.firewall.interfaces.${dn-cc.wg.wg0.interface}.allowedTCPPorts = [
+        metricsPort
       ];
 
       systemd.services.stalwart = {

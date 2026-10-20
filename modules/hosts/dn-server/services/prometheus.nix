@@ -1,7 +1,9 @@
 { config, ... }:
 let
   inherit (config.flake.public.config) domain;
+  inherit (config.flake.public.config.machines) dn-cc;
   inherit (config.flake.public.config.services.prometheus) hostname endpoint;
+  inherit (config.flake.public.config.services.stalwart) metricsPort;
 in
 {
   configurations.nixos.dn-server.module =
@@ -98,7 +100,36 @@ in
               replacement = "Netbird - \${1}";
             }
           ];
-        });
+        })
+        ++ [
+          {
+            # One job, two hosts: both run the same Stalwart build, so the
+            # metric names are identical and a panel can either aggregate them
+            # (`sum(...)`) or split them (`sum by (machine) (...)`). The
+            # `machine` label is the switch; `instance` has to differ or the
+            # legends would collide.
+            job_name = "stalwart";
+            metrics_path = "/metrics/prometheus";
+            static_configs = [
+              {
+                targets = [ "${dn-cc.ip}:${toString metricsPort}" ];
+                labels = {
+                  machine = "dn-cc";
+                  instance = "Stalwart (dn-cc) - ${dn-cc.ip}";
+                };
+              }
+              {
+                # dn-server's own Stalwart serves the same endpoint on its
+                # loopback management listener (services/stalwart.nix:21).
+                targets = [ "127.0.0.1:30093" ];
+                labels = {
+                  machine = "dn-server";
+                  instance = "Stalwart (dn-server) - 127.0.0.1";
+                };
+              }
+            ];
+          }
+        ];
       };
 
       services.nginx.virtualHosts."${hostname}" = {

@@ -43,6 +43,15 @@ in
           dontUnpack = true;
         };
       };
+
+      stalwartSpamDashboard = pkgs.writeTextDir "stalwart-spam.json" (
+        builtins.toJSON (
+          import ./_grafana/stalwart-spam.nix {
+            lokiUid = "loki-dn-server";
+            promUid = "prometheus-dn-server";
+          }
+        )
+      );
     in
     {
       sops.secrets = {
@@ -127,6 +136,12 @@ in
             }
           ];
         };
+        # Only the PDNS dashboard stays file-provisioned. The Stalwart spam
+        # dashboard is deliberately NOT provisioned: Grafana.s file provider
+        # re-imports its file every poll, which silently reverted API/UI edits
+        # (the dashboard id even changed and its version reset to 1).
+        # `stalwartSpamDashboard` below still holds the seed JSON, so re-adding
+        # a provider entry here and rebuilding re-seeds a fresh Grafana.
         provision.dashboards.settings.providers = [
           {
             name = "PDNSRecursor";
