@@ -183,7 +183,7 @@
     };
 
     ivpn = {
-      url = "path:/Users/danny/projects/ivpn";
+      url = "git+ssh://forgejo@git.dnywe.com/dachxy/ivpn.git";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
