@@ -183,7 +183,7 @@
     };
 
     ivpn = {
-      url = "git+ssh://forgejo@git.dnywe.com/dachxy/ivpn.git";
+      url = "git+ssh://forgejo@git.dnywe.com/dachxy/ivpn.git?ref=main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
