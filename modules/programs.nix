@@ -9,6 +9,7 @@ let
     t = "tmux";
     podt = "podman-tui";
     ds = "devenv shell";
+    zed = "zeditor";
 
     # Nixos
     fullClean = "sudo nix store gc && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
