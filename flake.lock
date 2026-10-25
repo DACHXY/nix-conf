@@ -984,6 +984,23 @@
         "type": "github"
       }
     },
+    "ivpn": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792826441,
+        "narHash": "sha256-z9tvQbvfPu5LHbeYo/09LA/DmD/n4ITNpxevZvHHd1M=",
+        "path": "/Users/danny/projects/ivpn",
+        "type": "path"
+      },
+      "original": {
+        "path": "/Users/danny/projects/ivpn",
+        "type": "path"
+      }
+    },
     "jj-starship": {
       "inputs": {
         "flake-utils": "flake-utils_2",
@@ -1919,6 +1936,7 @@
         "iaudio": "iaudio",
         "ihasmail": "ihasmail",
         "import-tree": "import-tree",
+        "ivpn": "ivpn",
         "jj-starship": "jj-starship",
         "lanzaboote": "lanzaboote",
         "linux-wallpaper-engine": "linux-wallpaper-engine",
