@@ -991,14 +991,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1792826441,
-        "narHash": "sha256-z9tvQbvfPu5LHbeYo/09LA/DmD/n4ITNpxevZvHHd1M=",
-        "path": "/Users/danny/projects/ivpn",
-        "type": "path"
+        "lastModified": 1792926262,
+        "narHash": "sha256-7PC7NGHul6Fik4CtSXjab/2UpxmoZPx/jKboX6Xs/5c=",
+        "ref": "refs/heads/feat/initial",
+        "rev": "34ce57c0e3a477dd1d4b70ad383c32e08ec9b409",
+        "revCount": 1,
+        "type": "git",
+        "url": "ssh://forgejo@git.dnywe.com/dachxy/ivpn.git"
       },
       "original": {
-        "path": "/Users/danny/projects/ivpn",
-        "type": "path"
+        "type": "git",
+        "url": "ssh://forgejo@git.dnywe.com/dachxy/ivpn.git"
       }
     },
     "jj-starship": {
