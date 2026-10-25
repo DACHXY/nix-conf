@@ -23,6 +23,18 @@ let
         };
       };
 
+      # `security.wrappers` defaults to 0511 (r-x--x--x): executable but NOT
+      # readable. The host spawns the zero-copy import/convert worker by opening
+      # the worker path for exec, so as the unprivileged desktop user it gets
+      # EACCES and silently falls back to importing inside punktfunk-host:
+      #   "zero-copy convert worker did not come up in the encode worker ...
+      #    error=open /run/wrappers/bin/punktfunk-encode-worker for exec:
+      #    Permission denied (os error 13)"
+      # Readability does not touch the capability (it is applied to the copy in
+      # /run/wrappers, not the store path) and the binary is world-readable in
+      # the store anyway.
+      security.wrappers.punktfunk-encode-worker.permissions = "0555";
+
       networking.firewall.allowedTCPPorts = [
         47990
       ];
