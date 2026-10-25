@@ -993,13 +993,14 @@
       "locked": {
         "lastModified": 1792926262,
         "narHash": "sha256-7PC7NGHul6Fik4CtSXjab/2UpxmoZPx/jKboX6Xs/5c=",
-        "ref": "refs/heads/feat/initial",
+        "ref": "main",
         "rev": "34ce57c0e3a477dd1d4b70ad383c32e08ec9b409",
         "revCount": 1,
         "type": "git",
         "url": "ssh://forgejo@git.dnywe.com/dachxy/ivpn.git"
       },
       "original": {
+        "ref": "main",
         "type": "git",
         "url": "ssh://forgejo@git.dnywe.com/dachxy/ivpn.git"
       }
