@@ -33,6 +33,13 @@
         EDITOR = "nvim";
       };
 
+      home.file."Library/Jupyter/runtime/.keep".text = "";
+
+      home.activation.moltenRemotePlugins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        $DRY_RUN_CMD ${config.programs.nvf.finalPackage}/bin/nvim --headless \
+          -c 'packadd molten-nvim' -c 'UpdateRemotePlugins' -c 'qa!' >/dev/null 2>&1 || true
+      '';
+
       imports = [
         inputs.nvf.homeManagerModules.default
       ];
@@ -51,6 +58,15 @@
           vim = {
             enableLuaLoader = true;
             vimAlias = true;
+
+            withPython3 = true;
+            python3Packages = [
+              "jupyter-client"
+              "ipykernel"
+              "nbformat"
+              "numpy"
+              "matplotlib"
+            ];
             luaConfigPre = /* lua */ ''
               -- Yazi
               ${optionalString yaziOpenDir "vim.g.loaded_netrwPlugin = 1"}
@@ -116,6 +132,8 @@
                   ["*"] = paste,
                 },
               }
+
+              vim.env.JUPYTER_RUNTIME_DIR = vim.fn.expand("~/Library/Jupyter/runtime")
             '';
 
             treesitter.grammars = with pkgs.vimPlugins.nvim-treesitter-parsers; [
@@ -124,6 +142,7 @@
               nginx
               vue
               scss
+              latex
             ];
 
             extraPackages = with pkgs; [
@@ -132,6 +151,8 @@
               fd
               imagemagick
               ghostscript
+              tectonic
+              python3Packages.jupytext
             ];
 
             clipboard = {
@@ -143,6 +164,78 @@
             };
 
             lazy.plugins = with pkgs.vimPlugins; {
+              "molten-nvim" = {
+                package = molten-nvim;
+                ft = [ "python" ];
+                after = /* lua */ ''
+                  vim.g.molten_image_provider = "snacks.nvim"
+                  vim.g.molten_output_win_max_height = 20
+                  vim.g.molten_wrap_output = true
+                '';
+                keys = [
+                  {
+                    mode = "n";
+                    key = "<leader>mi";
+                    action = "<cmd>MoltenInit<CR>";
+                    desc = "Molten: init kernel";
+                  }
+                  {
+                    mode = "n";
+                    key = "<leader>ml";
+                    action = "<cmd>MoltenEvaluateLine<CR>";
+                    desc = "Molten: evaluate line";
+                  }
+                  {
+                    mode = "n";
+                    key = "<leader>mr";
+                    action = "<cmd>MoltenReevaluateCell<CR>";
+                    desc = "Molten: re-evaluate cell";
+                  }
+                  {
+                    mode = "v";
+                    key = "<leader>mv";
+                    action = "<cmd>MoltenEvaluateVisual<CR>";
+                    desc = "Molten: evaluate selection";
+                  }
+                  {
+                    mode = "n";
+                    key = "<leader>md";
+                    action = "<cmd>MoltenDelete<CR>";
+                    desc = "Molten: delete output";
+                  }
+                  {
+                    mode = "n";
+                    key = "<leader>mo";
+                    action = "<cmd>MoltenShowOutput<CR>";
+                    desc = "Molten: show output";
+                  }
+                  {
+                    mode = "n";
+                    key = "<leader>mh";
+                    action = "<cmd>MoltenHideOutput<CR>";
+                    desc = "Molten: hide output";
+                  }
+                  {
+                    mode = "n";
+                    key = "<leader>ms";
+                    action = "<cmd>MoltenEnterOutput<CR>";
+                    desc = "Molten: enter output";
+                  }
+                  {
+                    mode = "n";
+                    key = "<leader>me";
+                    action = "<cmd>MoltenExportOutput!<CR>";
+                    desc = "Molten: export output to notebook";
+                  }
+                  {
+                    mode = "n";
+                    key = "<leader>mE";
+                    action = "<cmd>MoltenImportOutput<CR>";
+                    desc = "Molten: import output from notebook";
+                  }
+                ];
+              };
+
               "lazyjj.nvim" = {
                 package = lazyjj-nvim;
                 setupModule = "lazyjj";
@@ -638,6 +731,20 @@
               nvim-lint.linters_by_ft = {
                 dockerfile = [ "hadolint" ];
               };
+              nvim-lint.linters.markdownlint-cli2.args = [
+                "--config"
+                (toString (
+                  pkgs.writeText "markdownlint-cli2.jsonc" ''
+                    {
+                      "config": {
+                        "MD013": false,
+                        "MD012": false
+                      }
+                    }
+                  ''
+                ))
+                "-"
+              ];
               presets.cpplint.enable = lib.mkForce false;
             };
 
@@ -686,7 +793,10 @@
                 enable = true;
                 extensions = {
                   render-markdown-nvim.enable = false;
-                  markview-nvim.enable = true;
+                  markview-nvim = {
+                    enable = true;
+                    setupOpts.latex.enable = false;
+                  };
                 };
               };
               bash.enable = true;
