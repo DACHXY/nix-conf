@@ -182,6 +182,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    ivpn = {
+      url = "path:/Users/danny/projects/ivpn";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nono = {
       url = "github:nolabs-ai/nono";
       inputs.nixpkgs.follows = "nixpkgs";
