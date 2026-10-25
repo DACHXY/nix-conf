@@ -1,5 +1,4 @@
 {
-  config,
   inputs,
   lib,
   ...
@@ -67,7 +66,6 @@ in
   flake.modules.nixos.audio-rtp =
     {
       config,
-      lib,
       pkgs,
       ...
     }:
@@ -108,6 +106,12 @@ in
       environment.systemPackages = [ pkgs.mpv ];
 
       home-manager.users.${user} = {
+        # Puts IAudio.app in ~/Applications/Home Manager Apps through
+        # targets.darwin.copyApps, which is what makes it visible to Spotlight
+        # and Launchpad — the bundle itself lives in the read-only store, which
+        # LaunchServices will not index.
+        home.packages = [ iaudio ];
+
         home.file."Documents/swiftbar-plugins/${pluginName}" = {
           executable = true;
           text = pluginText pkgs;
