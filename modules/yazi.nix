@@ -38,10 +38,53 @@
       pdfCombine = pkgs.writeShellScriptBin "combine-pdf" ''
         ${lib.getExe pkgs.pdftk} "$@" cat output combined_$(date +%Y%m%d_%H%M%S).pdf
       '';
+
+      # `yj` — sessionizer-style jumper for yazi: pick a folder with fzf and open
+      # it in a new yazi tab. yazi's `shell` child has no tty unless it is run
+      # with `--block`, which is how the keymap calls it, so fzf draws straight
+      # in the pane. Anywhere else without a tty falls back to a tmux popup, then
+      # a tmux window, then plain `yazi <path>`.
+      yaziJumper = pkgs.writeShellScriptBin "yj" ''
+        list_cands() {
+            find "$HOME/projects" -mindepth 1 -maxdepth 1 -type d
+            find "$HOME/Pictures" -mindepth 1 -maxdepth 1 -type d
+            printf '%s\n' "$HOME/notes" "$HOME/Downloads"
+        }
+
+        if [[ $# -eq 1 ]]; then
+            selected=$1
+        elif [[ -t 0 ]]; then
+            selected=$(list_cands | sort | fzf --header='yazi jumper')
+        elif [[ -n ''${TMUX:-} ]]; then
+            dir=$(mktemp -d)
+            list_cands | sort >"$dir/cands"
+            : >"$dir/pick"
+            tmux display-popup -w 70% -h 60% \
+                -E "fzf --header='yazi jumper' < '$dir/cands' > '$dir/pick'" || true
+            selected=$(cat "$dir/pick")
+            rm -rf "$dir"
+        else
+            exit 0
+        fi
+
+        [[ -n $selected ]] || exit 0
+
+        # `ya exec` silently no-ops for the calling instance, but `ya emit`
+        # (DDS event) reaches it and `tab_create <url>` opens + focuses the tab.
+        if [[ -n ''${YAZI_ID:-} ]]; then
+            ya emit tab_create "$selected"
+        elif [[ -n ''${TMUX:-} ]]; then
+            # -c sets the window's cwd so it also survives yazi exiting.
+            exec tmux new-window -c "$selected" yazi
+        else
+            exec yazi "$selected"
+        fi
+      '';
     in
     {
       home.packages = with pkgs; [
         pdfNormalize
+        yaziJumper
         rar
         gzip
         mediainfo
@@ -152,6 +195,15 @@
               ];
               run = ''shell -- ya emit cd "$(git rev-parse --show-toplevel)"'';
               desc = "Go to git root";
+            }
+            # Jump to a project note/picture folder in a new tab
+            {
+              on = [
+                "g"
+                "j"
+              ];
+              run = "shell --block -- yj";
+              desc = "Jump to a folder in a new tab (fzf)";
             }
             # Compress
             {
