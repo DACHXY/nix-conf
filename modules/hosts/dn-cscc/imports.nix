@@ -15,6 +15,7 @@
       nixos.punktfunk
       nixos.k3s
       nixos.audio-rtp
+      nixos.matrix-pi-bot
     ];
   };
 }
