@@ -86,6 +86,7 @@ in
                   }
                 ];
                 open-floating = true;
+                open-fullscreen = false;
               }
             ];
           };

@@ -169,8 +169,10 @@ in
           }
         '';
 
+        # worker_processes now comes from services.nginx.workerProcesses
+        # (nixpkgs default "auto"), which is emitted unconditionally; setting it
+        # here too is a duplicate directive and nginx refuses to start.
         prependConfig = ''
-          worker_processes auto;
           worker_rlimit_nofile 65535;
         '';
 
