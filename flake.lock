@@ -1457,6 +1457,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-php": {
+      "locked": {
+        "lastModified": 1792649334,
+        "narHash": "sha256-sIuUjRYD1AOHkbxOK0NCCLpb9u43QY35eEYMumlAB4s=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f27fecd91e88d0a3604d9e0c326670f54cd4683c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "f27fecd91e88d0a3604d9e0c326670f54cd4683c",
+        "type": "github"
+      }
+    },
     "nixpkgs-src": {
       "flake": false,
       "locked": {
@@ -1954,6 +1970,7 @@
         "nix-search-tv": "nix-search-tv",
         "nixpkgs": "nixpkgs_10",
         "nixpkgs-mesa": "nixpkgs-mesa",
+        "nixpkgs-php": "nixpkgs-php",
         "noctalia": "noctalia",
         "noctalia-greeter": "noctalia-greeter",
         "nono": "nono",
