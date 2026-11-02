@@ -31,39 +31,46 @@
           };
           # =============================== #
 
-          mkSyncSystemd = name: target: source: {
-            services."nextcloud-autosync-${name}" = {
-              Unit = {
-                Description = "Auto sync Nextcloud";
-                After = "network-online.target";
+          mkSyncSystemd =
+            name:
+            {
+              target,
+              source,
+              interval ? "60min",
+            }:
+            {
+              services."nextcloud-autosync-${name}" = {
+                Unit = {
+                  Description = "Auto sync Nextcloud";
+                  After = "network-online.target";
+                };
+                Service = {
+                  Type = "simple";
+                  ExecStart = "${getExe' pkgs.nextcloud-client "nextcloudcmd"} -h -n --path ${target} ${source} ${nextcloudURL}";
+                  TimeoutStopSec = "180";
+                  KillMode = "process";
+                  KillSignal = "SIGINT";
+                };
+                Install.WantedBy = [ "multi-user.target" ];
               };
-              Service = {
-                Type = "simple";
-                ExecStart = "${getExe' pkgs.nextcloud-client "nextcloudcmd"} -h -n --path ${target} ${source} ${nextcloudURL}";
-                TimeoutStopSec = "180";
-                KillMode = "process";
-                KillSignal = "SIGINT";
-              };
-              Install.WantedBy = [ "multi-user.target" ];
+
+              timers."nextcloud-autosync-${name}" =
+                let
+                  cfg = hmArgs.config.systemd.user.timers."nextcloud-autosync-${name}";
+                in
+                {
+                  Unit.Description = "Automatic async files with nextcloud when booted up after ${cfg.Timer.OnBootSec} then rerun every ${cfg.Timer.OnUnitActiveSec} ";
+                  Timer.OnBootSec = "5min";
+                  Timer.OnUnitActiveSec = interval;
+                  Install.WantedBy = [
+                    "multi-user.target"
+                    "timers.target"
+                  ];
+                };
+              startServices = true;
+
+              tmpfiles.rules = [ "d ${source} 0750 - - -" ];
             };
-
-            timers."nextcloud-autosync-${name}" =
-              let
-                cfg = hmArgs.config.systemd.user.timers."nextcloud-autosync-${name}";
-              in
-              {
-                Unit.Description = "Automatic async files with nextcloud when booted up after ${cfg.Timer.OnBootSec} then rerun every ${cfg.Timer.OnUnitActiveSec} ";
-                Timer.OnBootSec = "5min";
-                Timer.OnUnitActiveSec = "60min";
-                Install.WantedBy = [
-                  "multi-user.target"
-                  "timers.target"
-                ];
-              };
-            startServices = true;
-
-            tmpfiles.rules = [ "d ${source} 0750 - - -" ];
-          };
         in
         {
           sops.secrets."netrc" = {
@@ -72,9 +79,7 @@
             path = "${homeDirectory}/.netrc";
           };
 
-          systemd.user = mkMerge (
-            mapAttrsToList (name: value: mkSyncSystemd name value.target value.source) pathToSync
-          );
+          systemd.user = mkMerge (mapAttrsToList mkSyncSystemd pathToSync);
         };
     };
 }
