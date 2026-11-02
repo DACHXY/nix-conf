@@ -375,4 +375,64 @@
       };
 
     };
+
+  # AirDrop send from yazi. Scoped to dn-cscc, the only host that runs the
+  # owly radio/receive services (modules/hosts/dn-cscc/owly.nix), so no other
+  # host gets a keymap that shells out to a binary it does not have.
+  flake.modules.nixos.yazi-airdrop =
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
+    let
+      owly = lib.getExe config.services.owly.package;
+      fzf = lib.getExe pkgs.fzf;
+
+      airdrop = pkgs.writeShellScriptBin "yazi-airdrop" ''
+        if [[ $# -eq 0 ]]; then
+            echo "No files selected" >&2
+            exit 1
+        fi
+
+        echo "Looking for nearby AirDrop receivers (takes 10-20 s)…" >&2
+        list=$(mktemp)
+        trap 'rm -f "$list"' EXIT
+        ${owly} browse 2>/dev/null | while read -r id rest; do
+            [[ $id =~ ^[0-9a-f]{12}$ ]] || continue
+            printf '%s\t%s\n' "$id" "''${rest%% (*}"
+        done >"$list"
+
+        if [[ ! -s $list ]]; then
+            echo "No receiver found: make sure the other device is unlocked and its AirDrop is set to \"Everyone\" or \"Contacts Only\"." >&2
+            read -r -p "Press Enter to close" _ || true
+            exit 1
+        fi
+
+        pick=$(${fzf} --delimiter=$'\t' --with-nth=2 --header='AirDrop receiver' <"$list") || exit 0
+        ${owly} send --to "''${pick%%$'\t'*}" -- "$@"
+        read -r -p "Press Enter to close" _ || true
+      '';
+    in
+    {
+      home-manager.users.${config.my.user.name} = {
+        home.packages = [
+          airdrop
+          pkgs.fzf
+        ];
+
+        programs.yazi.keymap.mgr.prepend_keymap = [
+          # AirDrop the selection (or the hovered file) to a nearby device.
+          {
+            on = [
+              "g"
+              "a"
+            ];
+            run = "shell --block -- yazi-airdrop %s";
+            desc = "AirDrop selected files";
+          }
+        ];
+      };
+    };
 }

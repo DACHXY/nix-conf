@@ -213,6 +213,12 @@
       url = "git+https://git.unom.io/unom/punktfunk?ref=nix-stable";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # AirDrop between iPhones and Linux (AWDL on a non-Broadcom card).
+    owly = {
+      url = "github:t4t5/owly";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
