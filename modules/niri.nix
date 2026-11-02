@@ -121,7 +121,7 @@ in
             window-rule {
               background-effect {
                 blur true
-                xray true
+                xray false
               }
 
               popups {
