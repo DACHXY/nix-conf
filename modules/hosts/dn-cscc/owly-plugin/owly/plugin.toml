@@ -1,0 +1,26 @@
+# Bar widget for the two owly units defined in owly.nix. A plugin (rather than
+# the built-in custom_button) because the status has to be polled at runtime.
+id = "dachxy/owly"
+name = "AirDrop"
+version = "1.1.0"
+# 42: height = "content" on the panel (also covers argv runAsync and closures).
+plugin_api = 42
+author = "dachxy"
+license = "MIT"
+tags = ["airdrop", "owly"]
+icon = "broadcast"
+description = "AirDrop icon for the bar: click to send to a nearby device, right-click to turn owly on or off."
+
+[[widget]]
+id = "airdrop"
+entry = "airdrop.luau"
+
+[[panel]]
+id              = "send"
+entry           = "send.luau"
+width           = 320
+height          = "content"
+max_height      = 420
+placement       = "attached"
+position        = "auto"
+open_near_click = true
