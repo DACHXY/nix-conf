@@ -1,0 +1,108 @@
+diff --git a/src/server/headless.rs b/src/server/headless.rs
+index cb2c619..3fa7105 100644
+--- a/src/server/headless.rs
++++ b/src/server/headless.rs
+@@ -212,6 +212,9 @@ pub struct HeadlessServer {
+     tab_geometry_controllers: HashMap<String, u64>,
+     /// Stable tab id whose viewers may see and interact with the one terminal popup.
+     popup_owner_tab_id: Option<String>,
++    /// Shell client that opened the current popup, so focus requests made by
++    /// the popup's command move only that client.
++    popup_owner_client_id: Option<u64>,
+     /// Process-local identity used to reject shell replacements from an earlier server boot.
+     client_shell_boot_id: String,
+     /// Outer window title last pushed, paired with the client that received it.
+@@ -366,6 +369,7 @@ impl HeadlessServer {
+             foreground_client_id: None,
+             tab_geometry_controllers: HashMap::new(),
+             popup_owner_tab_id: None,
++            popup_owner_client_id: None,
+             client_shell_boot_id: format!(
+                 "{}-{}",
+                 std::process::id(),
+diff --git a/src/server/headless/client_views.rs b/src/server/headless/client_views.rs
+index 31b39be..90af696 100644
+--- a/src/server/headless/client_views.rs
++++ b/src/server/headless/client_views.rs
+@@ -128,6 +128,7 @@ impl HeadlessServer {
+     pub(super) fn reconcile_client_shell_locations(&mut self) {
+         if self.app.state.popup_pane.is_none() {
+             self.popup_owner_tab_id = None;
++            self.popup_owner_client_id = None;
+         } else if self
+             .popup_owner_tab_id
+             .as_deref()
+@@ -185,6 +186,33 @@ impl HeadlessServer {
+         self.send_shell_focus_transitions(&lost, &gained);
+     }
+ 
++    /// Like `focus_all_shell_clients_on_default_target`, but only moves the
++    /// given clients (the ones that owned the popup the request came from).
++    pub(super) fn focus_shell_clients_on_default_target(&mut self, client_ids: &HashSet<u64>) {
++        let Some(target) = self.default_shell_target() else {
++            return;
++        };
++        let workspace_id = self.app.public_workspace_id(target.workspace_index);
++        let Some(tab_id) = self.tab_id_for_target(target) else {
++            return;
++        };
++        let focus_before = self.shell_focus_targets();
++        let focused_tabs_before = self.focused_shell_tabs();
++        for (_, client) in self
++            .clients
++            .iter_mut()
++            .filter(|(id, client)| client.is_shell_client() && client_ids.contains(id))
++        {
++            if let Some(location) = client.shell_location.as_mut() {
++                location.focus_tab(workspace_id.clone(), tab_id.clone());
++            }
++        }
++        let (lost, gained) =
++            self.shell_location_focus_transitions(focus_before, &focused_tabs_before);
++        self.app.accept_current_focus_with_api_events();
++        self.send_shell_focus_transitions(&lost, &gained);
++    }
++
+     pub(super) fn focus_shell_client_on_tab(&mut self, client_id: u64, tab_id: &str) -> bool {
+         let Some((workspace_index, _)) = self.app.parse_tab_id(tab_id) else {
+             return false;
+@@ -864,6 +892,19 @@ impl HeadlessServer {
+             (original, proxy_rx)
+         });
+         let reconcile = Self::shell_locations_may_need_reconcile(&msg.request.method);
++        // A focus request made while a popup is open comes from the popup's
++        // command (e.g. a workspace picker). Scope it to the client that
++        // opened the popup instead of moving every attached client, even
++        // ones viewing the same tab.
++        let popup_owner_clients: Option<HashSet<u64>> = popup_before
++            .then_some(self.popup_owner_client_id)
++            .flatten()
++            .filter(|id| {
++                self.clients
++                    .get(id)
++                    .is_some_and(|client| client.is_shell_client())
++            })
++            .map(|id| HashSet::from([id]));
+         let changed = self.handle_api_request_with_shutdown_check_inner(msg, false, false);
+         let proxied_result = forward_proxied_api_response(response_proxy);
+         let proxied_request_succeeded = proxied_result.is_some();
+@@ -893,7 +934,10 @@ impl HeadlessServer {
+             || (create_focus_requested && target_changed)
+             || pane_move_focus_succeeded;
+         if public_focus_succeeded {
+-            self.focus_all_shell_clients_on_default_target();
++            match &popup_owner_clients {
++                Some(ids) => self.focus_shell_clients_on_default_target(ids),
++                None => self.focus_all_shell_clients_on_default_target(),
++            }
+         }
+         if reconcile
+             || target_changed
+@@ -926,6 +970,7 @@ impl HeadlessServer {
+         self.focus_shell_client_on_default_target(client_id);
+         if !popup_before && self.app.state.popup_pane.is_some() {
+             self.popup_owner_tab_id = popup_owner;
++            self.popup_owner_client_id = Some(client_id);
+         }
+         if reconcile || self.app.state.popup_pane.is_some() != popup_before {
+             self.reconcile_client_shell_locations();
