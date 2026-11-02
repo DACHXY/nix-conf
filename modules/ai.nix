@@ -33,11 +33,6 @@ in
         hash = "sha256-7I0UgtAZ7rk0MnXUdt/6MdGVHsy+TZDJPVAxUWyvrR4=";
       };
 
-      # Upstream themes do not match pi's theme schema: several carry a
-      # top-level `displayName` the schema forbids, and neon-green,
-      # neon-green-light and opencode nest `export` inside `colors` instead of
-      # at the top level. pi rejects the whole file and falls back to the
-      # system theme, so normalise them here.
       piThemesFixed = pkgs.runCommand "pi-themes" { nativeBuildInputs = [ pkgs.jq ]; } ''
         mkdir -p $out/themes
         cp -r ${piThemes}/themes/. $out/themes/
@@ -56,6 +51,23 @@ in
           mv "$f.new" "$f"
         done
       '';
+
+      tokenEconomizer = pkgs.fetchFromGitHub {
+        owner = "microsoft";
+        repo = "TokenEconomizer";
+        rev = "1deb887bb6816188e24580f8812e65288af5757c";
+        hash = "sha256-XWUJubvpgnNa3hjvENDIKs+s91AdGu/fUdON/fvxMI8=";
+      };
+
+      tokenEconomizerClaudePlugin =
+        pkgs.runCommand "tokeneconomizer-claude-plugin" { nativeBuildInputs = [ pkgs.jq ]; }
+          ''
+            cp -rL ${tokenEconomizer}/plugin $out
+            chmod -R u+w $out
+            mv $out/slash-commands $out/commands
+            jq 'del(.commands)' $out/.claude-plugin/plugin.json > plugin.json
+            mv plugin.json $out/.claude-plugin/plugin.json
+          '';
 
       mcpServers = {
         "cloudflare-api" = {
@@ -109,6 +121,7 @@ in
       programs.claude-code = {
         enable = true;
         package = pkgs.llm-agents.claude-code;
+        plugins.tokeneconomizer = tokenEconomizerClaudePlugin;
       };
 
       programs.opencode = {
@@ -123,6 +136,7 @@ in
           nodejs
           bun
           libnotify # notify-send, used by @raidou/pi-notify on Linux
+          python3 # TokenEconomizer's hook runner
         ];
         settings = {
           defaultProvider = "opencode-go";
@@ -159,6 +173,7 @@ in
             # on session_start; an npm-only install would not load it)
             "npm:@d3ara1n/pi-model-roles"
             "npm:@d3ara1n/pi-subagent"
+            "${tokenEconomizer}"
           ];
           # Models for pi's background sub-tasks. A role with `model = null`
           # (the built-in default for every role) means "keep the current
