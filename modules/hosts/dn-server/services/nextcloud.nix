@@ -132,7 +132,6 @@ in
 
         database.createLocally = true;
         config = {
-          adminpassFile = secrets."nextcloud/adminPassword".path;
           dbtype = "pgsql";
         };
 
