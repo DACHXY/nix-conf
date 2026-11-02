@@ -141,7 +141,7 @@
     git-hooks.url = "github:cachix/git-hooks.nix";
 
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
+      url = "github:DACHXY/noctalia/feat/desktop-widget-tilt";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
