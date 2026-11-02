@@ -52,6 +52,28 @@ in
           }
         )
       );
+
+      # Both Stalwart dashboards (stable uids: stalwart-spam, stalwart-account)
+      # are seeded from git by the "Stalwart" file provider below.
+      stalwartAccountDashboard = pkgs.writeTextDir "stalwart-account.json" (
+        builtins.toJSON (
+          import ./_grafana/stalwart-account.nix {
+            lokiUid = "loki-dn-server";
+          }
+        )
+      );
+
+      # Flat directory, one JSON per dashboard, so the provider can load both.
+      stalwartDashboards = pkgs.linkFarm "stalwart-dashboards" [
+        {
+          name = "stalwart-spam.json";
+          path = "${stalwartSpamDashboard}/stalwart-spam.json";
+        }
+        {
+          name = "stalwart-account.json";
+          path = "${stalwartAccountDashboard}/stalwart-account.json";
+        }
+      ];
     in
     {
       sops.secrets = {
@@ -148,8 +170,27 @@ in
             type = "file";
             options.path = "${pdnsRecursorDashboard}";
           }
+          {
+            # Seeded from git, but still editable in the UI: allowUiUpdates
+            # makes Grafana keep UI edits in its database and only re-apply a
+            # file when that file's content actually changes (the behaviour
+            # we want, unlike the read-only default that lost earlier edits).
+            name = "Stalwart";
+            type = "file";
+            disableDeletion = false;
+            updateIntervalSeconds = 60;
+            allowUiUpdates = true;
+            options.path = "${stalwartDashboards}";
+          }
         ];
       };
+
+      # Both seeds are built so a broken dashboard expression fails eval/build
+      # instead of sitting unnoticed in git. The same directory is written to
+      # the Grafana file provider above, so a rebuild alone makes them appear;
+      # pull the raw JSON out with
+      #   nix build .#nixosConfigurations.dn-server.config.system.build.stalwartDashboards
+      system.build.stalwartDashboards = stalwartDashboards;
 
       services.nginx.virtualHosts."${hostname}" = {
         forceSSL = true;

@@ -77,6 +77,17 @@ in
           name = "Loki";
           type = "loki";
           url = "http://127.0.0.1:${toString port}";
+          jsonData.derivedFields = [
+            {
+              # OTLP log records keep their trace context as structured
+              # metadata, so a log line can jump to its Tempo trace.
+              name = "TraceID";
+              matcherName = "trace_id";
+              matcherType = "label";
+              datasourceUid = "tempo-dn-server";
+              url = "$${__value.raw}";
+            }
+          ];
         }
       ];
     };
