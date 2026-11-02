@@ -1,4 +1,17 @@
 {
+  # Upstream projects every focus request on the public API socket onto all
+  # attached clients, so a popup like herdr-sessionizer switched every client's
+  # workspace. The patch scopes focus requests made while a popup is open to
+  # the client that opened the popup; with no popup the upstream
+  # session-wide behaviour is unchanged. Re-check it on herdr upgrades.
+  nixpkgs.overlays = [
+    (final: prev: {
+      herdr = prev.herdr.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [ ../patches/herdr-popup-scoped-focus.patch ];
+      });
+    })
+  ];
+
   flake.modules.homeManager.base =
     { pkgs, lib, ... }:
     let
