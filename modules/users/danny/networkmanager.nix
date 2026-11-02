@@ -80,7 +80,7 @@
               proxy = { };
               vpn = {
                 gateway = "$CSIT_VPN_GATEWAY/$CSIT_VPN_REALM";
-                gwcert = "pin-sha256:twN8dS5XzMPTjmCKkZgFK34BdTeBBqcwjJsui7UYmRw=";
+                gwcert = "pin-sha256:fftgkk2RUlvnCYhPhx863SU+7sz5C8uYzLZXZUVv02U=";
                 password-flags = "0";
                 protocol = "fortinet";
                 service-type = "org.freedesktop.NetworkManager.openconnect";
@@ -107,7 +107,7 @@
               proxy = { };
               vpn = {
                 gateway = "$CSIT_VPN_TEST_GATEWAY/$CSIT_VPN_TEST_REALM";
-                gwcert = "pin-sha256:twN8dS5XzMPTjmCKkZgFK34BdTeBBqcwjJsui7UYmRw=";
+                gwcert = "pin-sha256:fftgkk2RUlvnCYhPhx863SU+7sz5C8uYzLZXZUVv02U=";
                 password-flags = "0";
                 protocol = "fortinet";
                 service-type = "org.freedesktop.NetworkManager.openconnect";
