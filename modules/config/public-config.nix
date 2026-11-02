@@ -131,6 +131,14 @@ in
           # the firewall only opens it on the WireGuard link to dn-cc.
           port = 30095;
         };
+        tempo = {
+          # Query API (Grafana reads it over loopback) on dn-server.
+          port = 30098;
+          # OTLP/HTTP trace receiver. Bound on all interfaces; the firewall
+          # only opens it on the WireGuard link, where dn-cc's Alloy pushes
+          # Stalwart's spans.
+          otlpPort = 30099;
+        };
         homepage = rec {
           hostname = "${myDomain}";
           alias = [ "www.${myDomain}" ];

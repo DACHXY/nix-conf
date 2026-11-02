@@ -1,13 +1,14 @@
 { config, ... }:
 let
   inherit (config.flake.public.config.machines) dn-server;
-  inherit (config.flake.public.config.services) stalwart loki;
+  inherit (config.flake.public.config.services) stalwart loki tempo;
 in
 {
   configurations.nixos.dn-cc.module = {
     services.alloy.enable = true;
 
-    # Stalwart (OtelHttp tracer) -> Alloy -> Loki on dn-server over WireGuard.
+    # Stalwart (OtelHttp tracer) -> Alloy -> Loki (logs) + Tempo (spans) on
+    # dn-server over WireGuard.
     environment.etc."alloy/stalwart.alloy".text = ''
       otelcol.receiver.otlp "stalwart" {
         http {
@@ -15,7 +16,8 @@ in
         }
 
         output {
-          logs = [otelcol.processor.transform.stalwart.input]
+          logs   = [otelcol.processor.transform.stalwart.input]
+          traces = [otelcol.processor.batch.stalwart_traces.input]
         }
       }
 
@@ -48,6 +50,19 @@ in
         client {
           // The exporter appends /v1/logs.
           endpoint = "http://${dn-server.ip}:${toString loki.port}/otlp"
+        }
+      }
+
+      otelcol.processor.batch "stalwart_traces" {
+        output {
+          traces = [otelcol.exporter.otlphttp.tempo.input]
+        }
+      }
+
+      otelcol.exporter.otlphttp "tempo" {
+        client {
+          // No path here: the exporter appends /v1/traces itself.
+          endpoint = "http://${dn-server.ip}:${toString tempo.otlpPort}"
         }
       }
     '';
