@@ -24,22 +24,24 @@ in
             protocol = "fortinet";
             server = "140.113.235.174:443/prod";
             user = "\${CSIT_VPN_IDENTITY}";
-            servercert = "pin-sha256:twN8dS5XzMPTjmCKkZgFK34BdTeBBqcwjJsui7UYmRw=";
+            servercert = "pin-sha256:fftgkk2RUlvnCYhPhx863SU+7sz5C8uYzLZXZUVv02U=";
             auth.password = {
               type = "env";
               name = "CSIT_VPN_PASSWORD";
             };
+            args = [ ];
           };
           csit-test = {
             name = "CSIT VPN (test)";
             protocol = "fortinet";
             server = "\${CSIT_VPN_TEST_GATEWAY}/\${CSIT_VPN_TEST_REALM}";
             user = "\${CSIT_VPN_TEST_IDENTITY}";
-            servercert = "pin-sha256:twN8dS5XzMPTjmCKkZgFK34BdTeBBqcwjJsui7UYmRw=";
+            servercert = "pin-sha256:fftgkk2RUlvnCYhPhx863SU+7sz5C8uYzLZXZUVv02U=";
             auth.password = {
               type = "env";
               name = "CSIT_VPN_TEST_PASSWORD";
             };
+            args = [ ];
           };
           nycu = {
             name = "NYCU VPN";
