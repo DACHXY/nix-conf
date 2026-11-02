@@ -16,7 +16,7 @@ in
     let
       inherit (lib) getExe concatMapStringsSep;
 
-      package = pkgs.stalwart_0_16;
+      package = pkgs.stalwart_1_0;
       fqdn = mailserver.hostname;
       managementPort = stalwart.managementPort;
       metricsPort = stalwart.metricsPort;
@@ -29,7 +29,7 @@ in
       configJson = pkgs.writeText "stalwart-config.json" (
         builtins.toJSON {
           "@type" = "RocksDb";
-          path = "/var/lib/stalwart/data";
+          path = "/var/lib/stalwart-v1/data";
         }
       );
 
@@ -39,9 +39,12 @@ in
           object = "Application";
           value = {
             webadmin = {
-              enabled = true;
+              enable = true;
               description = "webadmin";
-              resourceUrl = "file://${package.webui}/webui.zip";
+              # 1.0 only loads a major-version-2 WebUI bundle. It fetches the bundle
+              # over http(s) only (`file://` is silently ignored -> every app path 404s),
+              # so pin the upstream v2 tag here instead of the local zip.
+              resourceUrl = "https://github.com/stalwartlabs/webui/releases/download/v2.0.0/webui.zip";
               urlPrefix."/account" = true;
             };
           };
@@ -134,7 +137,7 @@ in
                 filePath = getCredFile "ldap_replicator_password";
               };
               filterLogin = "(|(uid=?)(mail=?)(mailRoutingAddress=?))";
-              filterMailbox = "(|(mail=?)(mailRoutingAddress=?))";
+              filterRecipient = "(|(mail=?)(mailRoutingAddress=?))";
               attrEmail.mail = true;
               attrSecret.userPassword = true;
             };
@@ -148,7 +151,7 @@ in
             relay-dnserver = {
               name = "relay-dnserver";
               "@type" = "Relay";
-              address = dn-server.ip;
+              host = dn-server.ip;
               port = 25;
               protocol = "smtp";
               implicitTls = false;
@@ -194,10 +197,39 @@ in
         }
         {
           "@type" = "update";
-          object = "SenderAuth";
+          object = "OidcProvider";
+          value = {
+            # OAuth issuer: Stalwart advertises https://mx2.<domain> (fqdn
+            # above) in its discovery document, so third-party clients end up
+            # talking to that host -- see the mx2 vhost in nginx.nix.
+            #
+            # Stalwart rejects OAuth clients whose client_id is an HTTPS
+            # metadata document by default. Such clients are shown
+            # as unverified on the consent screen, which is the upstream
+            # tradeoff for trusting the document.
+            clientMetadataDocuments = "any";
+          };
+        }
+        {
+          "@type" = "update";
+          object = "MtaStageData";
+          # No DATA-stage Sieve script (the schema default is `false`). Pinned
+          # explicitly so a script name applied earlier is cleared instead of
+          # lingering in the store, where `update` would leave it untouched.
+          value.script = {
+            # Expression fields serialize as a condition map plus a default;
+            # a constant is just the default.
+            "else" = "false";
+          };
           value.dkimSignDomain = {
             match."0" = {
-              "if" = "is_local_domain(sender_domain) && !is_empty(authenticated_as)";
+              # Two ways a local-domain message can reach the public listener:
+              # a submission authenticated as the user, or a relay from the
+              # mailbox backend (dn-server) over WireGuard -- that hop is
+              # unauthenticated, and without it this mail left unsigned, which
+              # costs the domain DMARC alignment at the recipient.
+              "if" =
+                "is_local_domain(sender_domain) && (!is_empty(authenticated_as) || remote_ip == '${dn-server.ip}')";
               "then" = "sender_domain";
             };
             "else" = "false";
@@ -285,11 +317,11 @@ in
           # ingest drops EventName) and forwards to Loki on dn-server.
           "@type" = "upsert";
           object = "Tracer";
-          matchOn = [ "endpoint" ];
+          matchOn = [ "url" ];
           value = {
             tracer-history = {
               "@type" = "OtelHttp";
-              endpoint = "http://127.0.0.1:${toString stalwart.otlpPort}/v1/logs";
+              url = "http://127.0.0.1:${toString stalwart.otlpPort}/v1/logs";
               enableLogExporter = true;
               enableSpanExporter = false;
               # The include list below is the real filter; `trace` just keeps
@@ -327,7 +359,26 @@ in
                 "queue.message-queued"
                 "queue.authenticated-message-queued"
                 "delivery.delivered"
+                # Without the failures below a per-account view can say a
+                # message left the queue but never why it died. Each of these
+                # carries `from` (return path) and `to` (recipient), which is
+                # what the account dashboard filters on:
+                #   failed            temporary error, retry scheduled
+                #   dsn-temp/perm-fail the bounce that was (or will be) sent
+                #   rcpt-to-*         remote server refused one recipient
+                #   the rest          attempt died before SMTP even started
+                "delivery.failed"
                 "delivery.dsn-perm-fail"
+                "delivery.dsn-temp-fail"
+                "delivery.rcpt-to-failed"
+                "delivery.rcpt-to-rejected"
+                "delivery.mx-lookup-failed"
+                "delivery.null-mx"
+                "delivery.connect-error"
+                "delivery.greeting-failed"
+                "delivery.ehlo-rejected"
+                "delivery.double-bounce"
+                "queue.quota-exceeded"
                 "security.authentication-ban"
                 "security.abuse-ban"
                 "security.scan-ban"
@@ -337,9 +388,65 @@ in
           };
         }
         {
+          # Spans for the Grafana traces view / Traces Drilldown (Tempo on
+          # dn-server). Spans use the endpoint verbatim (the OTLP exporter
+          # only appends /v1/traces when no path is given), so traces and
+          # logs need separate tracers: this one logs nothing.
+          "@type" = "upsert";
+          object = "Tracer";
+          matchOn = [ "url" ];
+          value = {
+            tracer-spans = {
+              "@type" = "OtelHttp";
+              url = "http://127.0.0.1:${toString stalwart.otlpPort}/v1/traces";
+              enableLogExporter = false;
+              enableSpanExporter = true;
+              # debug: one span per SMTP/JMAP session plus delivery stage.
+              level = "debug";
+              # Do not slow the mail path if the collector is unreachable.
+              lossy = true;
+              eventsPolicy = "exclude";
+              events = { };
+            };
+          };
+        }
+        {
           "@type" = "update";
           object = "SpamSettings";
           value.scoreSpam = 8;
+        }
+        {
+          # dn-server is the mailbox backend and has no internet route of its
+          # own: every outbound message there is routed to this host over
+          # WireGuard. The RCPT stage's default policy only relays for
+          # authenticated sessions (`!is_empty(authenticated_as)`), so those
+          # hand-offs were refused with `smtp.relay-not-allowed` -- external
+          # mail from dn-server never left the queue.
+          #
+          # Trust the tunnel peer addresses rather than switching on
+          # Domain.allowRelaying: that flag is applied unconditionally in
+          # rcpt_resolve (no auth check at all), which would turn this public
+          # gateway into an open relay. Matching remote_ip keeps the trust to
+          # the two WireGuard addresses dn-server can appear as.
+          "@type" = "update";
+          object = "MtaStageRcpt";
+          value.allowRelaying = {
+            match = {
+              "0" = {
+                "if" = "!is_empty(authenticated_as)";
+                "then" = "true";
+              };
+              "1" = {
+                "if" = "remote_ip == '${dn-server.ip}'";
+                "then" = "true";
+              };
+              "2" = {
+                "if" = "remote_ip == '${dn-server.wg.wg0.ip}'";
+                "then" = "true";
+              };
+            };
+            "else" = "false";
+          };
         }
         {
           # Stalwart's telemetry never carries the Subject header, so the
@@ -393,7 +500,7 @@ in
               protocol = "smtp";
               bind."0.0.0.0:465" = true;
               useTls = true;
-              tlsImplicit = true;
+              implicitTls = true;
             };
             management = {
               name = "management";
@@ -478,10 +585,10 @@ in
           Group = "stalwart";
           Restart = "on-failure";
           RestartSec = 5;
-          StateDirectory = "stalwart";
-          CacheDirectory = "stalwart";
+          StateDirectory = "stalwart-v1";
+          CacheDirectory = "stalwart-v1";
           # Default tracer writes here; directory never existed otherwise.
-          LogsDirectory = "stalwart";
+          LogsDirectory = "stalwart-v1";
           EnvironmentFile = config.sops.templates."stalwart-recovery-admin.env".path;
           LoadCredential = [
             "ldap_replicator_password:${config.sops.secrets."openldap/replicatorPassword".path}"
@@ -505,12 +612,28 @@ in
           Restart = "on-failure";
           RestartSec = 3;
           EnvironmentFile = config.sops.templates."stalwart-bootstrap.env".path;
-          Environment = "STALWART_URL=http://127.0.0.1:${toString managementPort}";
           # stalwart.service is Type=simple with no systemd readiness
           # notification, so `after` only orders after the process is spawned.
-          # Wait (bounded) for the management listener before applying.
-          ExecStartPre = "${pkgs.curl}/bin/curl --silent --show-error --output /dev/null --connect-timeout 5 --retry 30 --retry-delay 1 --retry-connrefused http://127.0.0.1:${toString managementPort}/api/schema";
-          ExecStart = "${getExe pkgs.stalwart-cli} apply --file ${planFile}";
+          # Wait (bounded) for the management API: bootstrap/recovery mode
+          # serves it on 8080 only, the configured management listener covers
+          # every run after the plan has been applied once.
+          ExecStartPre = toString (pkgs.writeShellScript "stalwart-wait-api" ''
+            for _ in $(seq 60); do
+              for port in ${toString managementPort} 8080; do
+                if ${pkgs.curl}/bin/curl --silent --output /dev/null --fail "http://127.0.0.1:$port/healthz/live"; then
+                  exit 0
+                fi
+              done
+              sleep 1
+            done
+            echo "stalwart management API did not become reachable" >&2
+            exit 1
+          '');
+          ExecStart = toString (pkgs.writeShellScript "stalwart-apply" ''
+            url=http://127.0.0.1:${toString managementPort}
+            ${pkgs.curl}/bin/curl --silent --output /dev/null --fail "$url/healthz/live" || url=http://127.0.0.1:8080
+            exec ${getExe pkgs.stalwart-cli} --url "$url" apply --file ${planFile}
+          '');
           ExecStartPost = "${pkgs.systemd}/bin/systemctl restart stalwart.service";
         };
       };

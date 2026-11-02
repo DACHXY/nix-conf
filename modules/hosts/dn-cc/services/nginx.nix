@@ -270,6 +270,23 @@ in
               }
             );
 
+          # Stalwart's fqdn is mx2.<domain> (the submission hostname), and 1.0
+          # advertises it as the OAuth issuer in /.well-known/oauth-*
+          # authorization-server, so mail clients follow discovery here. Without
+          # a vhost nginx drops the connection (default-ssl returns 444).
+          # No geo/bot/IP filtering: clients authenticate from anywhere.
+          "mx2.${domain}" =
+            (mkProxyConfig {
+              limitGeo = false;
+              verifyClient = false;
+            })
+            // {
+              locations."/" = {
+                recommendedProxySettings = true;
+                proxyPass = "http://127.0.0.1:${toString stalwart.managementPort}";
+              };
+            };
+
           # RFC 8461 requires this exact hostname; Stalwart (MtaSts object in
           # stalwart.nix) generates and serves the policy body itself.
           "mta-sts.${domain}" =
