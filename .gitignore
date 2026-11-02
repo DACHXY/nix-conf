@@ -1,6 +1,10 @@
 *.DS_Store
 result
 
+# Python bytecode
+__pycache__/
+*.pyc
+
 # Devenv
 .devenv*
 devenv.local.nix
