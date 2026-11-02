@@ -40,6 +40,17 @@
       url = "github:NixOS/nixpkgs/0ae2bc1419c3f345984c2629e72e7a631820fa4d";
     };
 
+    # Pinned nixpkgs that carries PHP 8.4.27, the release fixing the request
+    # lifecycle RCEs CVE-2026-109618 / CVE-2026-109619 ("php2shell", exploited
+    # in the wild from 2026-10-21). The main `nixpkgs` input is still on
+    # 8.4.26; bumping it would rebuild the whole system, so it is used only to
+    # source `php84` via an overlay in
+    # modules/hosts/dn-server/services/nextcloud.nix (Nextcloud is the only PHP
+    # consumer here). Drop the overlay once `nixpkgs` itself is past 8.4.27.
+    nixpkgs-php = {
+      url = "github:NixOS/nixpkgs/f27fecd91e88d0a3604d9e0c326670f54cd4683c";
+    };
+
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";

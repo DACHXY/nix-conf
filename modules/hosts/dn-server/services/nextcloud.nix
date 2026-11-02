@@ -1,9 +1,23 @@
-{ config, ... }:
+{ config, inputs, ... }:
 let
   inherit (config.flake.public.config) domain;
   inherit (config.flake.public.config.services.nextcloud) hostname endpoint;
   inherit (config.flake.public.config.services) coturn mailserver talk;
   inherit (config.flake.public.config.machines) dn-cc gcp;
+  # Nextcloud's PHP comes from `pkgs.php84`, i.e. 8.4.26 in the pinned nixpkgs.
+  # That build is vulnerable to CVE-2026-109618 / CVE-2026-109619 (remote code
+  # execution through PHP's request lifecycle, exploited in the wild since
+  # 2026-10-21, no config-level mitigation). Swap in php84 from the newer
+  # pinned `nixpkgs-php` input instead of bumping the whole flake; extensions
+  # (`pkgs.php84.extensions`) come from the same instance, so the
+  # php-with-extensions env Nextcloud uses stays internally consistent.
+  phpSecurityOverlay = final: prev: {
+    php84 =
+      (import inputs.nixpkgs-php {
+        system = final.stdenv.hostPlatform.system;
+        config = prev.config;
+      }).php84;
+  };
 in
 {
   configurations.nixos.dn-server.module =
@@ -19,6 +33,9 @@ in
       spreedCfg = config.services.nextcloud-spreed-signaling;
     in
     {
+      # Applies to dn-server only: the one host that runs PHP.
+      nixpkgs.overlays = [ phpSecurityOverlay ];
+
       sops.secrets = {
         "nextcloud/smtpPassword" = {
           owner = "nextcloud";
@@ -100,17 +117,42 @@ in
         enableImagemagick = true;
 
         extraApps = {
+          # Bundled with the Nextcloud 34.0.5 package in the pinned nixpkgs.
           inherit (config.services.nextcloud.package.packages.apps)
-            contacts
-            calendar
             tasks
             whiteboard
             user_oidc
-            memories
             music
-            spreed
             onlyoffice
             ;
+
+          # --- Apps nixpkgs pins behind the upstream app store ---------------
+          # nixpkgs' nextcloud34 app set lags the store for these; pin the
+          # current stable release for Nextcloud 34 directly instead. Bump the
+          # url + hash together (`nix store prefetch-file --json <url>`).
+          contacts = pkgs.fetchNextcloudApp {
+            url = "https://github.com/nextcloud-releases/contacts/releases/download/v8.9.2/contacts-v8.9.2.tar.gz";
+            sha256 = "sha256-kvfHnEEScwRe1jRvaYjAWvZzwxcKOtq6kaFQZrjc58U=";
+            license = "agpl3Plus";
+          };
+
+          calendar = pkgs.fetchNextcloudApp {
+            url = "https://github.com/nextcloud-releases/calendar/releases/download/v6.6.3/calendar-v6.6.3.tar.gz";
+            sha256 = "sha256-vajzjGCbIYJTOIf2fqy1Q+30NwZtA1aRKsYyTJR0MIA=";
+            license = "agpl3Plus";
+          };
+
+          spreed = pkgs.fetchNextcloudApp {
+            url = "https://github.com/nextcloud-releases/spreed/releases/download/v24.0.6/spreed-v24.0.6.tar.gz";
+            sha256 = "sha256-So1c9S7UIiPqmTeGD3DC6dyh34v9X3W4ca51adIQYRA=";
+            license = "agpl3Plus";
+          };
+
+          memories = pkgs.fetchNextcloudApp {
+            url = "https://github.com/pulsejet/memories/releases/download/v10.1.0/memories.tar.gz";
+            sha256 = "sha256-tbR2ts19fXoW8hkUF1LIoA4tQO6WQWJvNjG/gnWUlw8=";
+            license = "agpl3Plus";
+          };
 
           camerarawpreviews = pkgs.fetchNextcloudApp {
             url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v1.1.4/camerarawpreviews_nextcloud.tar.gz";
@@ -119,8 +161,8 @@ in
           };
 
           cospend = pkgs.fetchNextcloudApp {
-            url = "https://github.com/julien-nc/cospend-nc/releases/download/v4.1.3/cospend-4.1.3.tar.gz";
-            sha256 = "sha256-anScVCo9brBmlNU1oPbXdJEqM38oyltOmtVRzKR6mt4=";
+            url = "https://github.com/julien-nc/cospend-nc/releases/download/v4.3.0/cospend-4.3.0.tar.gz";
+            sha256 = "sha256-CGGseG4FcSWtkaTl+jgTFeXs6Ae6trMgs53LrZ6rb/0=";
             license = "agpl3Plus";
           };
         };
