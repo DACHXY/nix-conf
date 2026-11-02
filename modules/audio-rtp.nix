@@ -16,16 +16,20 @@ let
   # port = UDP port the host sends RTP to. The receiver (ffmpeg's SDP/RTP
   #        demuxer) also binds RTP+1 for RTCP, so ports must be at least 2
   #        apart — 46000/46001 would collide (cscc's RTCP == workstation's RTP).
+  # metaPort = TCP port for the "now playing" HTTP endpoint (see
+  #        audio-rtp/nowplaying.py). Only that interface's firewall is opened.
   sources = [
     {
       host = "dn-cscc";
       ip = "100.104.150.125";
       port = 46000;
+      metaPort = 46002;
     }
     {
       host = "dn-workstation";
       ip = "100.104.154.131";
       port = 46010;
+      metaPort = 46012;
     }
   ];
 
@@ -82,6 +86,19 @@ in
     let
       mine = builtins.filter (s: s.host == config.networking.hostName) sources;
       s = if mine == [ ] then null else builtins.head mine;
+
+      # ThreadingHTTPServer + playerctl + magick; the script itself is pure
+      # python stdlib (./audio-rtp/nowplaying.py).
+      nowplaying = pkgs.writeShellApplication {
+        name = "dn-audio-nowplaying";
+        runtimeInputs = [
+          pkgs.playerctl
+          pkgs.imagemagick
+        ];
+        text = ''
+          exec ${pkgs.python3}/bin/python3 ${./audio-rtp/nowplaying.py} "$@"
+        '';
+      };
     in
     {
       config = mkIf (s != null) {
@@ -127,6 +144,23 @@ in
             RestartSec = 5;
           };
         };
+
+        # Now Playing metadata for the Mac's IAudio.app: playerctl snapshot,
+        # cover art and remote controls on metaPort. Plain HTTP, reachable only
+        # over netbird (firewall rule below).
+        systemd.user.services.dn-audio-nowplaying = {
+          description = "Serve now-playing metadata for dn-audio-rtp";
+          wantedBy = [ "graphical-session.target" ];
+          partOf = [ "graphical-session.target" ];
+          serviceConfig = {
+            ExecStart = "${nowplaying}/bin/dn-audio-nowplaying --port ${toString s.metaPort}";
+            Restart = "always";
+            RestartSec = 5;
+          };
+        };
+
+        # No auth, no TLS: only the netbird interface may reach metaPort.
+        networking.firewall.interfaces."nb-wt0".allowedTCPPorts = [ s.metaPort ];
       };
     };
 
@@ -164,7 +198,7 @@ in
           mpv = getExe pkgs.mpv;
           hosts = map (s: {
             name = s.host;
-            inherit (s) ip port;
+            inherit (s) ip port metaPort;
           }) sources;
         };
 
