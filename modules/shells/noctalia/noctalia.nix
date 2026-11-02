@@ -169,6 +169,17 @@ in
 
         bitwarden-cli
         inputs.vpnctl.packages.${pkgs.stdenv.hostPlatform.system}.vpnctl
+
+        # noctalia/wallpaper_depth runs a python helper; on NixOS it uses the
+        # system python instead of a venv (onnxruntime breaks in a venv), so the
+        # libs have to be here.
+        (python3.withPackages (
+          ps: with ps; [
+            numpy
+            onnxruntime
+            pillow
+          ]
+        ))
       ];
 
       # ==== vpnctl ==== #
@@ -524,6 +535,7 @@ in
               "rxtsel/portctl"
               "andrewdems/vpn-manager"
               "dachxy/vpn"
+              "noctalia/wallpaper_depth"
             ];
             source = [
               {
