@@ -99,6 +99,28 @@ in
           exec ${pkgs.python3}/bin/python3 ${./audio-rtp/nowplaying.py} "$@"
         '';
       };
+
+      # ffmpeg's RTP muxer dies on the first failed send (ENOKEY / EDESTADDRREQ
+      # while the Mac sleeps or its netbird peer is down), so Restart=always
+      # alone turns an offline Mac into a restart every 5 s. Hold off until the
+      # receiver answers ping — which also wakes netbird's lazy connection.
+      sender = pkgs.writeShellApplication {
+        name = "dn-audio-rtp";
+        runtimeInputs = [
+          pkgs.ffmpeg
+          pkgs.iputils
+        ];
+        text = ''
+          if ! ping -c1 -W2 ${receiver} >/dev/null 2>&1; then
+            echo "${receiver} unreachable, waiting"
+            until ping -c1 -W2 ${receiver} >/dev/null 2>&1; do
+              sleep 10
+            done
+            echo "${receiver} reachable"
+          fi
+          exec ffmpeg -hide_banner -loglevel error -nostdin ${senderArgs s}
+        '';
+      };
     in
     {
       config = mkIf (s != null) {
@@ -139,7 +161,7 @@ in
           after = [ "pipewire-pulse.service" ];
           wants = [ "pipewire-pulse.service" ];
           serviceConfig = {
-            ExecStart = "${getExe pkgs.ffmpeg} -hide_banner -loglevel error -nostdin ${senderArgs s}";
+            ExecStart = getExe sender;
             Restart = "always";
             RestartSec = 5;
           };
