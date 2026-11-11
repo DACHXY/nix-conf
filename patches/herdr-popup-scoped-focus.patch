@@ -21,7 +21,7 @@ index cb2c619..3fa7105 100644
                  "{}-{}",
                  std::process::id(),
 diff --git a/src/server/headless/client_views.rs b/src/server/headless/client_views.rs
-index 31b39be..90af696 100644
+index 31b39be..1a062e0 100644
 --- a/src/server/headless/client_views.rs
 +++ b/src/server/headless/client_views.rs
 @@ -128,6 +128,7 @@ impl HeadlessServer {
@@ -32,12 +32,12 @@ index 31b39be..90af696 100644
          } else if self
              .popup_owner_tab_id
              .as_deref()
-@@ -185,6 +186,33 @@ impl HeadlessServer {
+@@ -185,6 +186,52 @@ impl HeadlessServer {
          self.send_shell_focus_transitions(&lost, &gained);
      }
  
 +    /// Like `focus_all_shell_clients_on_default_target`, but only moves the
-+    /// given clients (the ones that owned the popup the request came from).
++    /// given clients (the popup owner, or the foreground client).
 +    pub(super) fn focus_shell_clients_on_default_target(&mut self, client_ids: &HashSet<u64>) {
 +        let Some(target) = self.default_shell_target() else {
 +            return;
@@ -63,10 +63,29 @@ index 31b39be..90af696 100644
 +        self.send_shell_focus_transitions(&lost, &gained);
 +    }
 +
++    /// Public focus requests made outside a popup — a CLI run from a shell in
++    /// one pane, e.g. `herdr-sessionizer` — move only the client the user is
++    /// working in, the way a keybinding does, instead of every attached
++    /// client. Without a shell client in the foreground the upstream
++    /// session-wide behaviour is kept.
++    pub(super) fn focus_foreground_client_or_all_on_default_target(&mut self) {
++        let foreground = self.foreground_client_id.filter(|id| {
++            self.clients
++                .get(id)
++                .is_some_and(|client| client.is_shell_client())
++        });
++        match foreground {
++            Some(client_id) => {
++                self.focus_shell_clients_on_default_target(&HashSet::from([client_id]))
++            }
++            None => self.focus_all_shell_clients_on_default_target(),
++        }
++    }
++
      pub(super) fn focus_shell_client_on_tab(&mut self, client_id: u64, tab_id: &str) -> bool {
          let Some((workspace_index, _)) = self.app.parse_tab_id(tab_id) else {
              return false;
-@@ -864,6 +892,19 @@ impl HeadlessServer {
+@@ -864,6 +911,19 @@ impl HeadlessServer {
              (original, proxy_rx)
          });
          let reconcile = Self::shell_locations_may_need_reconcile(&msg.request.method);
@@ -86,19 +105,19 @@ index 31b39be..90af696 100644
          let changed = self.handle_api_request_with_shutdown_check_inner(msg, false, false);
          let proxied_result = forward_proxied_api_response(response_proxy);
          let proxied_request_succeeded = proxied_result.is_some();
-@@ -893,7 +934,10 @@ impl HeadlessServer {
+@@ -893,7 +953,10 @@ impl HeadlessServer {
              || (create_focus_requested && target_changed)
              || pane_move_focus_succeeded;
          if public_focus_succeeded {
 -            self.focus_all_shell_clients_on_default_target();
 +            match &popup_owner_clients {
 +                Some(ids) => self.focus_shell_clients_on_default_target(ids),
-+                None => self.focus_all_shell_clients_on_default_target(),
++                None => self.focus_foreground_client_or_all_on_default_target(),
 +            }
          }
          if reconcile
              || target_changed
-@@ -926,6 +970,7 @@ impl HeadlessServer {
+@@ -926,6 +989,7 @@ impl HeadlessServer {
          self.focus_shell_client_on_default_target(client_id);
          if !popup_before && self.app.state.popup_pane.is_some() {
              self.popup_owner_tab_id = popup_owner;
