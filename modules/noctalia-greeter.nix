@@ -1,7 +1,7 @@
 { inputs, ... }:
 {
   flake.modules.nixos.gui =
-    { config, pkgs, ... }:
+    { pkgs, ... }:
     {
       imports = [
         inputs.noctalia-greeter.nixosModules.default
@@ -10,13 +10,9 @@
       services.displayManager.noctalia-greeter = {
         enable = true;
         package = inputs.noctalia-greeter.packages.${pkgs.stdenv.hostPlatform.system}.default;
+        # Preselect Niri; the greeter still offers every installed session,
+        # including the Umbriel one registered by nixos.umbriel.
         greeter-args = "--session Niri";
-      };
-
-      # Autologin directly into the Niri session (skips the greeter).
-      services.greetd.settings.initial_session = {
-        command = "niri-session";
-        user = config.my.user.name;
       };
     };
 }

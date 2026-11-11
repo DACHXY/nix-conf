@@ -1,0 +1,12 @@
+--- a/src/platform/linux/wayland/surface.c
++++ b/src/platform/linux/wayland/surface.c
+@@ -103,8 +103,8 @@
+ void surface_destroy(struct surface *sfc)
+ {
+ 	munmap(sfc->buf, sfc->bufsz);
+-	wl_surface_destroy(sfc->wl_surface);
+ 	zwlr_layer_surface_v1_destroy(sfc->wl_layer_surface);
++	wl_surface_destroy(sfc->wl_surface);
+ 
+ 	wl_buffer_destroy(sfc->wl_buffer);
+ }
