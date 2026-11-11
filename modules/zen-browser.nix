@@ -100,7 +100,7 @@ in
           }
           // (optionalAttrs (!isDarwin) {
             "font.name.sans-serif.ja" = "Noto Sans CJK JP";
-            "font.name.sans-serif.zh-TW" = "Noto Sans CJK TC";
+            "font.name.sans-serif.zh-TW" = "PingFang TC";
             "font.name.serif.ja" = "Noto Serif CJK JP";
             "font.name.serif.zh-TW" = "Noto Serif CJK TC";
             "font.name.monospace.zh-TW" = "Noto Sans Mono CJK TC";

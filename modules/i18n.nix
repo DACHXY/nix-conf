@@ -83,7 +83,7 @@
               settings = {
                 addons.classicui.globalSection =
                   let
-                    font = "Noto Sans CJK TC ${toString config.stylix.fonts.sizes.popups}";
+                    font = "PingFang TC ${toString config.stylix.fonts.sizes.popups}";
                   in
                   {
                     Font = lib.mkForce font;
