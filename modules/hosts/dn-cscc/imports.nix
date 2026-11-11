@@ -9,11 +9,12 @@
       nixos.nvf
       nixos.gaming
       nixos.virtualisation
+      nixos.incus
       generic.dnywe
       nixos.danny-ai
       generic.ai
       nixos.punktfunk
-      nixos.k3s
+      nixos.docker-registry
       nixos.audio-rtp
       nixos.matrix-pi-bot
     ];
