@@ -38,7 +38,16 @@
         package = if isDarwin then pkgs.ghostty-bin else inputs.ghostty.packages.${system}.default;
         clearDefaultKeybinds = false;
         settings = {
-          font-family = "CaskaydiaCove Nerd Font Mono";
+          # CJK comes from 蘋方 (modules/fonts/pingfang.nix). Ghostty resolves
+          # fallback glyphs by charset, not by lang, so the fontconfig zh rules
+          # never fire in the terminal (`ghostty +show-face --string=中文` says
+          # "Noto Sans Mono CJK KR" without this line). mkForce keeps stylix's
+          # monospace+emoji list from being concatenated on top.
+          font-family = lib.mkForce [
+            "CaskaydiaCove Nerd Font Mono"
+            "PingFang TC"
+            "Noto Color Emoji"
+          ];
           custom-shader = [
             "${ghosttyShaders}/cursor_sweep.glsl"
             "${ghosttyShaders}/ripple_cursor.glsl"
