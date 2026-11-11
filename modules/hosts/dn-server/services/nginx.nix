@@ -216,6 +216,7 @@ in
           "element.${domain}" = mkDenyConfig;
           "git.${domain}" = mkDenyConfig;
           "grafana.${domain}" = mkDenyConfig;
+          "incus.${domain}" = mkDenyConfig;
           "${matrixAuthDomain}" = mkDenyConfig;
           "${matrixDomain}" = mkDenyConfig;
           "metrics.${domain}" = mkDenyConfig;

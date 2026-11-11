@@ -30,6 +30,12 @@ creation_rules:
       - age:
           - *dn_workstation
           - *dn_cscc
+  - path_regex: modules/config/incus-proxy.yaml
+    key_groups:
+      - age:
+          - *dn_server
+          - *dn_workstation
+          - *dn_cscc
   - path_regex: modules/config/wg-cscc.yaml
     key_groups:
       - age:
