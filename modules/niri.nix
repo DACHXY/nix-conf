@@ -59,6 +59,10 @@ in
           ../patches/warpd-follow-output.patch
           ../patches/warpd-scroll-horizontal.patch
           ../patches/warpd-copy-selection.patch
+          # Keep the patch list identical to modules/umbriel.nix so both window
+          # managers resolve to the same store path (no name collision in
+          # home.packages while the niri -> umbriel migration is in flight).
+          ../patches/warpd-layer-surface-destroy-order.patch
         ];
       });
       wmCfg = config.wm;

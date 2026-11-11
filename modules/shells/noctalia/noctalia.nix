@@ -9,9 +9,10 @@ let
 in
 {
   flake.modules.nixos.noctalia =
-    { pkgs, ... }@nixosArgs:
+    { pkgs, lib, ... }@nixosArgs:
     let
       inherit (nixosArgs.config.my.user) name;
+      secretsEnabled = nixosArgs.config.my.secrets.enable;
       noctalia-restart = pkgs.writeShellScriptBin "noctalia-restart" ''
         systemctl --user restart noctalia
       '';
@@ -59,6 +60,7 @@ in
     {
       imports = [
         config.flake.modules.nixos.niri
+        config.flake.modules.nixos.umbriel
         inputs.vpnctl.nixosModules.default
       ];
 
@@ -98,10 +100,16 @@ in
       '';
 
       # Root-owned copy of the VPN credentials for the vpnctld daemon.
-      sops.secrets."networkmanager" = {
-        sopsFile = ../../users/danny/secret.yaml;
-        path = "/etc/vpnctl/env";
+      sops.secrets = lib.mkIf secretsEnabled {
+        "networkmanager" = {
+          sopsFile = ../../users/danny/secret.yaml;
+          path = "/etc/vpnctl/env";
+        };
       };
+
+      # Secret-free hosts have no VPN credentials: give vpnctld an empty env
+      # file so the daemon still starts (it just has nothing to log in with).
+      environment.etc."vpnctl/env" = lib.mkIf (!secretsEnabled) { text = ""; };
 
       # vpnctld runs as root and drives openconnect, so the CLI needs no
       # sudo at all. The profiles are defined once here and reused for both
@@ -135,6 +143,9 @@ in
       bindCfg = wmCfg.keybinds;
       mod = wmCfg.keybinds.mod;
       sep = wmCfg.keybinds.separator;
+      # noctalia CLI lives behind `noctalia msg <command>`; these strings are
+      # handed to umbriel / niri `spawn`, so the `msg` subcommand must be there.
+      noctaliaMsg = cmd: ''noctalia msg ${cmd}'';
 
       netbirdAlias = pkgs.writeShellApplication {
         name = "netbird";
@@ -183,10 +194,15 @@ in
       ];
 
       # ==== vpnctl ==== #
-      sops.secrets."networkmanager" = {
-        sopsFile = ../../users/danny/secret.yaml;
-        path = "${config.home.homeDirectory}/.config/vpnctl/env";
+      sops.secrets = lib.mkIf osConfig.my.secrets.enable {
+        "networkmanager" = {
+          sopsFile = ../../users/danny/secret.yaml;
+          path = "${config.home.homeDirectory}/.config/vpnctl/env";
+        };
       };
+
+      # Empty per-user env on secret-free hosts (see the system module above).
+      xdg.configFile."vpnctl/env" = lib.mkIf (!osConfig.my.secrets.enable) { text = ""; };
 
       xdg.configFile."vpnctl/config.json".text = builtins.toJSON osConfig.services.vpnctl.settings;
 
@@ -705,17 +721,17 @@ in
 
       wm.keybinds.spawn-repeat = {
         # ==== Media ==== #
-        "XF86AudioPrev" = ''noctalia "media" "previous"'';
-        "XF86AudioNext" = ''noctalia "media" "next"'';
-        "${mod}${sep}CTRL${sep}COMMA" = ''noctalia "media" "previous"'';
-        "${mod}${sep}CTRL${sep}PERIOD" = ''noctalia "media" "next"'';
-        "XF86AudioPlay" = ''noctalia "media" "toggle"'';
-        "XF86AudioStop" = ''noctalia "media" "stop"'';
-        "XF86AudioMute" = ''noctalia "volume-mute"'';
-        "XF86AudioRaiseVolume" = ''noctalia "volume-up"'';
-        "XF86AudioLowerVolume" = ''noctalia "volume-down"'';
-        "XF86MonBrightnessDown" = ''noctalia "brightness-down"'';
-        "XF86MonBrightnessUp" = ''noctalia "brightness-up"'';
+        "XF86AudioPrev" = noctaliaMsg "media previous";
+        "XF86AudioNext" = noctaliaMsg "media next";
+        "${mod}${sep}CTRL${sep}COMMA" = noctaliaMsg "media previous";
+        "${mod}${sep}CTRL${sep}PERIOD" = noctaliaMsg "media next";
+        "XF86AudioPlay" = noctaliaMsg "media toggle";
+        "XF86AudioStop" = noctaliaMsg "media stop";
+        "XF86AudioMute" = noctaliaMsg "volume-mute";
+        "XF86AudioRaiseVolume" = noctaliaMsg "volume-up";
+        "XF86AudioLowerVolume" = noctaliaMsg "volume-down";
+        "XF86MonBrightnessDown" = noctaliaMsg "brightness-down";
+        "XF86MonBrightnessUp" = noctaliaMsg "brightness-up";
       };
     };
 }
