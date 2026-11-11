@@ -1,9 +1,11 @@
 {
   # Upstream projects every focus request on the public API socket onto all
   # attached clients, so a popup like herdr-sessionizer switched every client's
-  # workspace. The patch scopes focus requests made while a popup is open to
-  # the client that opened the popup; with no popup the upstream
-  # session-wide behaviour is unchanged. Re-check it on herdr upgrades.
+  # workspace. The patch scopes such a request to one client: while a popup is
+  # open, the client that opened the popup wins; otherwise the foreground
+  # client (the one whose pane the `ha`/`herdr workspace focus` command was
+  # typed in) moves alone, falling back to the upstream all-clients behaviour
+  # when no shell client is foreground. Re-check it on herdr upgrades.
   nixpkgs.overlays = [
     (final: prev: {
       herdr = prev.herdr.overrideAttrs (old: {
