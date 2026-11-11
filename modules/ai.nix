@@ -16,6 +16,7 @@ in
 
       environment.systemPackages = with pkgs; [
         claude-monitor
+        pkgs.llm-agents.openresearch
       ];
     };
 
@@ -26,6 +27,17 @@ in
       ...
     }:
     let
+      # Pi-Bolt: the same Pi coding agent compiled AOT to one native binary;
+      # it reads ~/.pi/agent and its `packages` list unchanged. Its wrapper
+      # only ships bin/pi-bolt, so expose it under the `pi` name the
+      # home-manager module wraps (`wrapProgram $out/bin/pi`).
+      piBolt = inputs.llm-agents-pi-bolt.packages.${pkgs.stdenv.hostPlatform.system}.pi-bolt;
+      piBoltAsPi = pkgs.symlinkJoin {
+        name = "pi-${piBolt.version}";
+        paths = [ piBolt ];
+        postBuild = "ln -s ${piBolt}/bin/pi-bolt $out/bin/pi";
+      };
+
       piThemes = pkgs.fetchFromGitHub {
         owner = "luongnv89";
         repo = "pi-extensions";
@@ -131,7 +143,7 @@ in
 
       programs.pi-coding-agent = {
         enable = true;
-        package = pkgs.llm-agents.pi;
+        package = piBoltAsPi;
         extraPackages = with pkgs; [
           nodejs
           bun
@@ -162,7 +174,6 @@ in
             "npm:pi-zentui"
             "npm:timestamp-pi"
             "npm:pi-claude-bridge"
-            "npm:@porche/pi-usage"
             "npm:@earendil-works/pi-durable"
             "npm:@earendil-works/pi-ai"
             "npm:@earendil-works/chord"
