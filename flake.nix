@@ -180,6 +180,11 @@
 
     llm-agents.url = "github:numtide/llm-agents.nix";
 
+    llm-agents-pi-bolt = {
+      url = "github:DACHXY/llm-agents.nix/pi-bolt-init";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     tether = {
       url = "github:zackb/tether";
     };
