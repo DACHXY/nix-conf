@@ -23,16 +23,23 @@
       ];
     };
 
-  flake.modules.nixos.base = {
-    imports = [ inputs.sops-nix.nixosModules.sops ];
+  flake.modules.nixos.base =
+    { lib, ... }:
+    {
+      imports = [ inputs.sops-nix.nixosModules.sops ];
 
-    # The host key decrypts every secret of this machine: root only. It is used
-    # solely by sops-nix at activation; people edit with the PicoKey admin key.
-    systemd.tmpfiles.rules = [
-      "z /var/lib/sops-nix 0700 root root -"
-      "z /var/lib/sops-nix/key.txt 0600 root root -"
-    ];
-  };
+      # NixOS hosts decrypt with their SSH host key (sops-nix's default
+      # sshKeyPaths, /etc/ssh/ssh_host_ed25519_key, root-only); .sops.yaml
+      # lists its ssh-to-age recipient. People edit with the PicoKey admin key.
+      sops.age.keyFile = lib.mkForce null;
+
+      # The old age key (/var/lib/sops-nix/key.txt) was readable by danny and
+      # was rotated out of every secret file; remove it.
+      systemd.tmpfiles.rules = [
+        "z /var/lib/sops-nix 0700 root root -"
+        "r /var/lib/sops-nix/key.txt"
+      ];
+    };
 
   flake.modules.darwin.base = {
     imports = [ inputs.sops-nix.darwinModules.sops ];
