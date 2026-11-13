@@ -3,7 +3,7 @@ keys:
   - &dn_workstation age19kjzmjqmexy5q49af2trk5dzuufpzfhmhacnf044skjzqatwxafqhxy9fx  # ssh host key (ssh-to-age)
   - &dn_cc age1qsq8fyfncwmpyka4h3upegl4xzryfzg6vpwxv2adajde5zlw7fpq0jwrlk  # ssh host key (ssh-to-age)
   - &dn_cscc age1gevc52s2huaz0p7gwj6hq2q534sk5uwvtltmapws20y5aeuqvctssnzugv  # ssh host key (ssh-to-age)
-  - &dn_notebook age15x658r8ueamt3svjtzya8307vt94lmr90emxng389r9xtjswu35s72gaye
+  - &dn_notebook age1496c5cyumwvx58y9w46ewhmma9aavnxed5dzvfwfuy49cg9fde2s8znsxf  # ssh host key (ssh-to-age)
   - &admin_picokey age1uc7rnxprh7372xrsmvg9qjgztd4tgrznymnw85ndkkvqtfmm24cqrme4er
   - &admin_backup age1zjr036sqst5spej96gvc279ql4cjmx78e3mk8cwgz9mylw60pdtq04c2h0
 

@@ -41,13 +41,15 @@
       ];
     };
 
-  flake.modules.darwin.base = {
-    imports = [ inputs.sops-nix.darwinModules.sops ];
+  flake.modules.darwin.base =
+    { lib, ... }:
+    {
+      imports = [ inputs.sops-nix.darwinModules.sops ];
 
-    # nix-darwin hosts still edit and decrypt home-manager secrets with the
-    # host key.
-    environment.variables.SOPS_AGE_KEY_FILE = "/var/lib/sops-nix/key.txt";
-  };
+      # Same as NixOS: decrypt with the root-only SSH host key
+      # (/etc/ssh/ssh_host_ed25519_key, sops-nix's default sshKeyPaths).
+      sops.age.keyFile = lib.mkForce null;
+    };
 
   flake.modules.homeManager.base =
     args:

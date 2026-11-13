@@ -1,7 +1,7 @@
 {
-  # On NixOS the kubeconfig is decrypted by the system sops-nix (root-only
-  # host key) and owned by the user; nix-darwin keeps the home-manager secret.
-  flake.modules.nixos.danny =
+  # Decrypted by the system sops-nix (root-only host key) and owned by the
+  # user; shared by NixOS and nix-darwin through generic.danny.
+  flake.modules.generic.danny =
     { config, ... }:
     {
       sops.secrets."kubeconfig" = {
@@ -19,50 +19,33 @@
       osConfig,
       ...
     }:
-    let
-      seedFile =
-        if pkgs.stdenv.isLinux then
-          osConfig.sops.secrets."kubeconfig".path
-        else
-          "${config.home.homeDirectory}/.kube/config.sops";
-    in
-    lib.mkMerge [
-      {
-        home.packages = with pkgs; [
-          kubectl
-          kubelogin
-          kubelogin-oidc
-          fluxcd
-          kubernetes-helm
+    {
+      home.packages = with pkgs; [
+        kubectl
+        kubelogin
+        kubelogin-oidc
+        fluxcd
+        kubernetes-helm
 
-          # monitor
-          flux9s
-          k9s
-        ];
+        # monitor
+        flux9s
+        k9s
+      ];
 
-        home.activation.kubeconfig = lib.hm.dag.entryAfter [ "writeBoundary" ] /* bash */ ''
-          kubeDir="${config.home.homeDirectory}/.kube"
-          kubeConfig="$kubeDir/config"
-          seed="${seedFile}"
-          $DRY_RUN_CMD mkdir -p "$kubeDir"
-          # Seed once: only when the live config is missing or is still the old
-          # sops symlink. Once kubectl owns a real file we never touch it, so
-          # `kubectl config use-context` survives rebuilds.
-          if [ -L "$kubeConfig" ] || [ ! -e "$kubeConfig" ]; then
-            if [ -e "$seed" ]; then
-              $DRY_RUN_CMD rm -f "$kubeConfig"
-              $DRY_RUN_CMD install -m600 "$seed" "$kubeConfig"
-            fi
+      home.activation.kubeconfig = lib.hm.dag.entryAfter [ "writeBoundary" ] /* bash */ ''
+        kubeDir="${config.home.homeDirectory}/.kube"
+        kubeConfig="$kubeDir/config"
+        seed="${osConfig.sops.secrets."kubeconfig".path}"
+        $DRY_RUN_CMD mkdir -p "$kubeDir"
+        # Seed once: only when the live config is missing or is still the old
+        # sops symlink. Once kubectl owns a real file we never touch it, so
+        # `kubectl config use-context` survives rebuilds.
+        if [ -L "$kubeConfig" ] || [ ! -e "$kubeConfig" ]; then
+          if [ -e "$seed" ]; then
+            $DRY_RUN_CMD rm -f "$kubeConfig"
+            $DRY_RUN_CMD install -m600 "$seed" "$kubeConfig"
           fi
-        '';
-      }
-
-      (lib.mkIf pkgs.stdenv.isDarwin {
-        sops.secrets."kubeconfig" = {
-          sopsFile = ./secret.yaml;
-          path = "${config.home.homeDirectory}/.kube/config.sops";
-          mode = "0400";
-        };
-      })
-    ];
+        fi
+      '';
+    };
 }
