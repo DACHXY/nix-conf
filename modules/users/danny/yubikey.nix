@@ -22,13 +22,28 @@
 
       programs.yubikey-touch-detector.enable = true;
 
+      # In the u2f services the password is asked BEFORE pam_u2f: nh (and any
+      # `sudo -S`) pipes the account password on stdin, and with pam_u2f first
+      # and pinverification on, that password was read as the FIDO PIN and
+      # burned PIN retries (8 wrong PINs lock the key). Interactively, press
+      # Enter at the password prompt to fall through to PIN + touch.
       security.pam = {
-        services.hyprlock = {
-          u2fAuth = false;
-        };
+        # pam_u2f only where it replaces the password for privilege: sudo and
+        # polkit. With u2f.enable on globally, NixOS put it (as "sufficient")
+        # in every PAM service -- passwd/chsh, run0, login, screen lockers --
+        # so a touch alone could change the password or log in.
         services = {
+          sudo-i = {
+            u2f.enable = true;
+            rules.auth.u2f.order = config.security.pam.services."sudo-i".rules.auth.unix.order + 50;
+          };
+          polkit-1 = {
+            u2f.enable = true;
+            rules.auth.u2f.order = config.security.pam.services."polkit-1".rules.auth.unix.order + 50;
+          };
           sudo = {
-            u2fAuth = true;
+            u2f.enable = true;
+            rules.auth.u2f.order = config.security.pam.services.sudo.rules.auth.unix.order + 50;
             # A signature made by the *client's* ssh-agent satisfies sudo, so
             # `nh os switch --target-host` / `nixos-rebuild --use-remote-sudo`
             # needs a touch on the FIDO key instead of a password.
@@ -36,15 +51,18 @@
             # sk-ecdsa-sha2-nistp256@openssh.com key type.
             rssh = true;
           };
-          login.u2fAuth = true;
         };
         u2f = {
-          enable = true;
+          # Global default for every service; the three above opt in.
+          enable = false;
           control = "sufficient";
           settings = {
             cue = true;
             origin = "pam://dn-yubikey";
             userpresence = 1;
+            # Touch AND the FIDO PIN: a process running as danny can trigger
+            # a sudo prompt, so a reflexive touch must not be enough for root.
+            pinverification = 1;
           };
         };
         rssh = {
