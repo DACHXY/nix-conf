@@ -6,42 +6,49 @@ keys:
   - &dn_notebook age1496c5cyumwvx58y9w46ewhmma9aavnxed5dzvfwfuy49cg9fde2s8znsxf  # ssh host key (ssh-to-age)
   - &admin_picokey age1uc7rnxprh7372xrsmvg9qjgztd4tgrznymnw85ndkkvqtfmm24cqrme4er
   - &admin_backup age1zjr036sqst5spej96gvc279ql4cjmx78e3mk8cwgz9mylw60pdtq04c2h0
+  - &admin_fido_backup age1re6fndpj0hntw3hp04wv48s0947lgxw5w2y9jmxazx763ux8qggs045u2n  # RP2350 #2 (fido2-hmac)
 
 creation_rules:
   - path_regex: modules/hosts/dn-server/secret.yaml
     key_groups:
       - age:
           - *admin_picokey
+          - *admin_fido_backup
           - *dn_server
           - *admin_backup
   - path_regex: modules/hosts/dn-cc/secret.yaml
     key_groups:
       - age:
           - *admin_picokey
+          - *admin_fido_backup
           - *dn_cc
           - *admin_backup
   - path_regex: modules/hosts/dn-workstation/secret.yaml
     key_groups:
       - age:
           - *admin_picokey
+          - *admin_fido_backup
           - *dn_workstation
           - *admin_backup
   - path_regex: modules/hosts/dn-cscc/secret.yaml
     key_groups:
       - age:
           - *admin_picokey
+          - *admin_fido_backup
           - *dn_cscc
           - *admin_backup
   - path_regex: modules/config/incus-proxy.yaml
     key_groups:
       - age:
           - *admin_picokey
+          - *admin_fido_backup
           - *dn_server
           - *admin_backup
   - path_regex: modules/config/wg-cscc.yaml
     key_groups:
       - age:
           - *admin_picokey
+          - *admin_fido_backup
           - *dn_server
           - *dn_cscc
           - *admin_backup
@@ -50,6 +57,7 @@ creation_rules:
     key_groups:
       - age:
           - *admin_picokey
+          - *admin_fido_backup
           - *dn_workstation
           - *dn_cscc
           - *dn_notebook
@@ -59,6 +67,7 @@ creation_rules:
     key_groups:
       - age:
           - *admin_picokey
+          - *admin_fido_backup
           - *dn_server
           - *dn_cc
           - *dn_workstation

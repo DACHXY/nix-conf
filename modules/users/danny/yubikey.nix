@@ -78,7 +78,9 @@
       # Root-owned and not user-writable: pam_rssh trusts this file to grant
       # root, so it must not be editable by the unprivileged user.
       environment.etc."ssh/fido2_authorized_keys".text = ''
-        sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBLCh0RGSz3Bp5TAvmaIzt7uQzbYV0cwREdvE/tIoJIUPntsik+B0HB01jQu4HpWs4J8197xNKH+dKb2+m1AOIjIAAAAEc3NoOg== danny@fido
+        sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBEU4+o6X7HT/i1hJuB8kOZ2BBxEuM0RTZrrDo8gsYZUkVFleYl1dvR09+nQLqRLbcmPfe9ebGxhfjEJCkxkQgg4AAAAEc3NoOg== danny@fido-rp2350a
+        sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBJ3AkhPMtjvOoDCV0+of0MNYPyzw5bshx3WVrkB5VEG0+WDy5BCAn13nHAZqbj4c0CYtKPRySACbhtD7ydMw2OAAAAAEc3NoOg== danny@fido-rp2040
+        sk-ecdsa-sha2-nistp256@openssh.com AAAAInNrLWVjZHNhLXNoYTItbmlzdHAyNTZAb3BlbnNzaC5jb20AAAAIbmlzdHAyNTYAAABBBJ2hYWaqYbYwzDqmNXhWXA/iabMUXiRNRvZwsIU9YcB2YVw7L2BfyhZfJux7PWFPYyrM5HCPzHGUAjevOIsVpH0AAAAEc3NoOg== danny@fido-rp2350b
       '';
 
       systemd.tmpfiles.rules = [
