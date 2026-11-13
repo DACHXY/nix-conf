@@ -13,10 +13,50 @@
   # ~/.ssh; if the primary is lost: `SSH_AUTH_SOCK=$XDG_RUNTIME_DIR/ssh-agent-fido.sock
   # ssh-add ~/.ssh/id_ecdsa_sk_rp2040` (or _rp2350b).
   flake.modules.nixos.danny-gui =
-    { config, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       key = "%h/.ssh/id_ecdsa_sk_rp2350a";
-      askpass = "${pkgs.lxqt.lxqt-openssh-askpass}/bin/lxqt-openssh-askpass";
+
+      # SSH_ASKPASS for the agent: the PIN goes through pinentry-gnome3 (a
+      # masked GTK prompt that follows the system theme); the "touch your key"
+      # notices OpenSSH sends with SSH_ASKPASS_PROMPT=none become desktop
+      # notifications (shown by noctalia).
+      askpass = lib.getExe (
+        pkgs.writeShellApplication {
+          name = "ssh-askpass-fido";
+          runtimeInputs = [
+            pkgs.pinentry-gnome3
+            pkgs.libnotify
+            pkgs.gnused
+            pkgs.gnugrep
+          ];
+          text = ''
+            prompt="''${1:-}"
+            # Assuan escaping for SETDESC: %, CR and LF.
+            desc=$(printf '%s' "$prompt" | sed -e 's/%/%25/g' -e ':a;N;$!ba;s/\n/%0A/g' -e 's/\r/%0D/g')
+
+            case "''${SSH_ASKPASS_PROMPT:-}" in
+              none)
+                exec notify-send -a SSH -i security-high -t 15000 "SSH" "$prompt"
+                ;;
+              confirm)
+                out=$(printf 'SETTITLE SSH\nSETDESC %s\nCONFIRM\nBYE\n' "$desc" | pinentry-gnome3)
+                if printf '%s\n' "$out" | grep -q '^ERR'; then exit 1; fi
+                ;;
+              *)
+                out=$(printf 'SETTITLE SSH\nSETDESC %s\nSETPROMPT PIN\nGETPIN\nBYE\n' "$desc" | pinentry-gnome3)
+                if printf '%s\n' "$out" | grep -q '^ERR'; then exit 1; fi
+                printf '%s\n' "$out" | sed -n 's/^D //p' | sed -e 's/%0A/\n/g' -e 's/%0D/\r/g' -e 's/%25/%/g'
+                ;;
+            esac
+          '';
+        }
+      );
     in
     {
       home-manager.users.${config.my.user.name} = {
