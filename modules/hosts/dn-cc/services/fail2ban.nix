@@ -35,7 +35,7 @@ in
     in
     {
       sops.secrets."ntfy" = {
-        sopsFile = ../../../users/danny/secret.yaml;
+        sopsFile = ../secret.yaml;
         mode = "0600";
       };
 

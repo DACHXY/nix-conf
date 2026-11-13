@@ -5,8 +5,10 @@
       username = config.my.user.name;
     in
     {
+      # FIDO key handles for pam_u2f; every host needs them, so they live in
+      # common.yaml, which (unlike secret.yaml) dn-server and dn-cc can read.
       sops.secrets."u2f_keys" = {
-        sopsFile = ./secret.yaml;
+        sopsFile = ./common.yaml;
         owner = username;
       };
 
