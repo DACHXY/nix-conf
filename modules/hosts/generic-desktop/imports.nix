@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, ... }:
 let
   # ─────────────────────────────────────────────────────────────────────────
   #  The only thing you have to change.
@@ -45,9 +45,8 @@ in
     };
 
     # Umbriel is the desktop here (nixos.umbriel is pulled in by noctalia and
-    # provides the keybinds/session); the greeter just defaults to it instead
-    # of niri. Niri stays selectable in the session list.
-    services.displayManager.noctalia-greeter.greeter-args = lib.mkForce "--session Umbriel";
+    # provides the keybinds/session), which is also the greeter's global default.
+    # Niri stays selectable in the session list.
 
     # Log in on the greeter (or console) with this, then run `passwd`.
     users.users.${username}.initialPassword = "nixos";

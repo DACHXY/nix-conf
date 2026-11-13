@@ -81,6 +81,34 @@ in
             mv plugin.json $out/.claude-plugin/plugin.json
           '';
 
+      # Upstream ships a single release (0.1.0) whose extension is written for the
+      # `@oh-my-pi/*` fork of the agent packages. pi-bolt maps `@earendil-works/*`
+      # (plus the legacy `@mariozechner/*` names) and nothing else, so the package
+      # fails to load with
+      #   Cannot find module '@oh-my-pi/pi-tui'
+      # and takes the whole session down with it. Repackage the tarball with the
+      # two import specifiers rewritten and load that copy (a local path in
+      # `packages`) instead of the npm entry. Drop this once upstream targets
+      # @earendil-works.
+      piPrettyCodeblocks = pkgs.stdenvNoCC.mkDerivation {
+        pname = "pi-pretty-codeblocks";
+        version = "0.1.0";
+        src = pkgs.fetchurl {
+          url = "https://registry.npmjs.org/pi-pretty-codeblocks/-/pi-pretty-codeblocks-0.1.0.tgz";
+          hash = "sha256-n60+xYNbjyrQj6rqtRovjLptnZNXqAuivYM/a4GS6WQ=";
+        };
+        dontBuild = true;
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out
+          cp -r ./* $out/
+          substituteInPlace $out/extensions/pretty-codeblocks.ts \
+            --replace-fail '@oh-my-pi/pi-tui' '@earendil-works/pi-tui' \
+            --replace-fail '@oh-my-pi/pi-coding-agent' '@earendil-works/pi-coding-agent'
+          runHook postInstall
+        '';
+      };
+
       mcpServers = {
         "cloudflare-api" = {
           type = "http";
@@ -184,6 +212,8 @@ in
             # on session_start; an npm-only install would not load it)
             "npm:@d3ara1n/pi-model-roles"
             "npm:@d3ara1n/pi-subagent"
+            # patched copy, not "npm:pi-pretty-codeblocks" (see piPrettyCodeblocks)
+            "${piPrettyCodeblocks}"
             "${tokenEconomizer}"
           ];
           # Models for pi's background sub-tasks. A role with `model = null`

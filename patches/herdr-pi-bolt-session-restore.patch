@@ -1,0 +1,144 @@
+diff --git a/src/app/api/panes.rs b/src/app/api/panes.rs
+index b5f3baf..e31b5ad 100644
+--- a/src/app/api/panes.rs
++++ b/src/app/api/panes.rs
+@@ -24,7 +24,8 @@ use crate::layout::{find_in_direction, NavDirection, PaneId};
+ 
+ use super::super::api_helpers::{
+     detect_state_from_api, encode_api_keys, normalize_metadata_source, normalize_metadata_tokens,
+-    normalize_metadata_ttl, normalize_reported_agent_label, MAX_METADATA_TOKEN_KEYS_PER_RESOURCE,
++    normalize_metadata_ttl, normalize_reported_agent_label, normalize_reported_agent_source,
++    MAX_METADATA_TOKEN_KEYS_PER_RESOURCE,
+ };
+ #[cfg(test)]
+ use super::super::api_helpers::{METADATA_SOURCE_MAX_CHARS, METADATA_TTL_MAX_MS};
+@@ -1565,11 +1566,12 @@ impl App {
+         if let Err(message) = validate_optional_resume_argv(params.resume_argv.as_deref()) {
+             return encode_error(id, "invalid_resume_argv", message);
+         }
++        let source = normalize_reported_agent_source(&params.source);
+         let report_is_newer = self
+             .pane_terminal(ws_idx, pane_id)
+-            .is_some_and(|terminal| terminal.hook_report_is_newer(&params.source, params.seq));
++            .is_some_and(|terminal| terminal.hook_report_is_newer(&source, params.seq));
+         let session_ref = crate::agent_resume::session_ref_from_report(
+-            &params.source,
++            &source,
+             &agent_label,
+             params.agent_session_id,
+             params.agent_session_path,
+@@ -1577,7 +1579,7 @@ impl App {
+         self.handle_internal_event(crate::events::AppEvent::HookStateReported {
+             pane_id,
+             session_ref: session_ref.clone(),
+-            source: params.source.clone(),
++            source: source.clone(),
+             agent_label: agent_label.clone(),
+             state: detect_state_from_api(params.state),
+             message: params.message,
+@@ -1589,7 +1591,7 @@ impl App {
+             id,
+             ws_idx,
+             pane_id,
+-            params.source,
++            source,
+             agent_label,
+             params.seq.filter(|_| applied),
+             applied.then_some(params.resume_argv).flatten(),
+@@ -1610,11 +1612,12 @@ impl App {
+         if let Err(message) = validate_optional_resume_argv(params.resume_argv.as_deref()) {
+             return encode_error(id, "invalid_resume_argv", message);
+         }
++        let source = normalize_reported_agent_source(&params.source);
+         let report_is_newer = self
+             .pane_terminal(ws_idx, pane_id)
+-            .is_some_and(|terminal| terminal.hook_report_is_newer(&params.source, params.seq));
++            .is_some_and(|terminal| terminal.hook_report_is_newer(&source, params.seq));
+         let session_ref = crate::agent_resume::session_ref_from_report(
+-            &params.source,
++            &source,
+             &agent_label,
+             params.agent_session_id,
+             params.agent_session_path,
+@@ -1622,7 +1625,7 @@ impl App {
+         self.handle_internal_event(crate::events::AppEvent::AgentSessionReported {
+             pane_id,
+             session_ref: session_ref.clone(),
+-            source: params.source.clone(),
++            source: source.clone(),
+             agent_label: agent_label.clone(),
+             seq: params.seq,
+             session_start_source: crate::agent_resume::normalize_session_start_source(
+@@ -1635,7 +1638,7 @@ impl App {
+             id,
+             ws_idx,
+             pane_id,
+-            params.source,
++            source,
+             agent_label,
+             params.seq.filter(|_| applied),
+             applied.then_some(params.resume_argv).flatten(),
+@@ -1900,7 +1903,7 @@ impl App {
+         };
+         self.handle_internal_event(crate::events::AppEvent::HookAgentReleased {
+             pane_id,
+-            source: params.source,
++            source: normalize_reported_agent_source(&params.source),
+             known_agent: crate::detect::parse_agent_label(&agent_label),
+             agent_label,
+             seq: params.seq,
+diff --git a/src/app/api_helpers.rs b/src/app/api_helpers.rs
+index a224938..f62f13c 100644
+--- a/src/app/api_helpers.rs
++++ b/src/app/api_helpers.rs
+@@ -188,6 +188,19 @@ mod read_snapshot_tests {
+     }
+ }
+ 
++/// Pi-Bolt (the harness this machine runs) ships its own herdr integration that
++/// identifies itself as `pi-bolt` / `herdr:pi-bolt`. It speaks exactly the `pi`
++/// integration protocol, so alias its source onto `herdr:pi`; the label is
++/// already canonicalised to `pi` by `normalize_reported_agent_label`.
++pub(super) fn normalize_reported_agent_source(source: &str) -> String {
++    let trimmed = source.trim();
++    if trimmed.eq_ignore_ascii_case("pi-bolt") || trimmed.eq_ignore_ascii_case("herdr:pi-bolt") {
++        "herdr:pi".to_string()
++    } else {
++        trimmed.to_string()
++    }
++}
++
+ pub(super) fn normalize_reported_agent_label(agent: &str) -> Option<String> {
+     let trimmed = agent.trim();
+     if trimmed.is_empty() {
+diff --git a/src/detect/mod.rs b/src/detect/mod.rs
+index 380a41f..528022a 100644
+--- a/src/detect/mod.rs
++++ b/src/detect/mod.rs
+@@ -199,6 +199,9 @@ fn lookup_agent(name: &str) -> Option<Agent> {
+     let name = path_basename(name);
+     match name {
+         "pi" => Some(Agent::Pi),
++        // Pi-Bolt is a build of the Pi harness: same sessions, same
++        // `pi --session <file>` resume command.
++        "pi-bolt" => Some(Agent::Pi),
+         "claude" | "claude-code" => Some(Agent::Claude),
+         "codex" => Some(Agent::Codex),
+         "gemini" => Some(Agent::Gemini),
+diff --git a/src/terminal/state.rs b/src/terminal/state.rs
+index 11d540b..e77879c 100644
+--- a/src/terminal/state.rs
++++ b/src/terminal/state.rs
+@@ -994,6 +994,12 @@ impl TerminalState {
+             }
+         }
+ 
++        // A pane whose agent has just started has no anchored session yet, so
++        // the agent's first report is the only chance to learn how to resume
++        // it. Upstream parks that report until a second one arrives to confirm
++        // the process, which for Pi never happens (it reports on state changes
++        // only), so every Pi pane was restored as a plain shell.
++        let session_anchored = session_anchored || anchored_session_ref.is_none();
+         if process_present
+             && session_anchored
+             && !self

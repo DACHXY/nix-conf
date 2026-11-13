@@ -1,20 +1,18 @@
 {
-  flake.modules.homeManager.danny = { ... }: {
-    programs.git = {
-      settings = {
-        user.name = "dachxy";
+  flake.modules.homeManager.danny =
+    { lib, ... }:
+    let
+      remoteIdentities = import ./_remote-identities.nix;
+    in
+    {
+      programs.git = {
+        settings = {
+          user.name = "dachxy";
+        };
+        includes = lib.mapAttrsToList (host: identity: {
+          condition = "hasconfig:remote.*.url:**/*${host}*/**";
+          contents.user = identity;
+        }) remoteIdentities;
       };
-      includes = [
-        {
-          condition = "hasconfig:remote.*.url:**/*gitlab.it.cs.nycu.edu.tw*/**";
-          contents = {
-            user = {
-              name = "Chen-Wei Chang";
-              email = "cchenwei@cs.nctu.edu.tw";
-            };
-          };
-        }
-      ];
     };
-  };
 }
