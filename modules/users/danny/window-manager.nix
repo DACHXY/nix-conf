@@ -6,6 +6,15 @@ in
   flake.modules.nixos.danny-gui =
     { config, ... }:
     {
+      # ==== Noctalia Secrets === #
+      # Decrypted by the system sops-nix (root-only host key), owned by the user.
+      sops.secrets."noctalia" = {
+        sopsFile = ./secret.yaml;
+        owner = config.my.user.name;
+        mode = "0400";
+        path = "${config.users.users.${config.my.user.name}.home}/.local/state/noctalia/state.toml";
+      };
+
       services.keyd = {
         enable = true;
         keyboards.default.settings.main.capslock = "esc";
@@ -89,12 +98,6 @@ in
                 open-fullscreen = false;
               }
             ];
-          };
-
-          # ==== Noctalia Secrets === #
-          sops.secrets."noctalia" = {
-            sopsFile = ./secret.yaml;
-            path = "${config.home.homeDirectory}/.local/state/noctalia/state.toml";
           };
 
           programs.noctalia.settings = {

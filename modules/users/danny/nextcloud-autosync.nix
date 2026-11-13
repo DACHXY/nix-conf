@@ -3,6 +3,14 @@
   flake.modules.nixos.danny =
     { ... }@nixosArgs:
     {
+      # Decrypted by the system sops-nix (root-only host key), owned by the user.
+      sops.secrets."netrc" = {
+        sopsFile = ./secret.yaml;
+        owner = nixosArgs.config.my.user.name;
+        mode = "0400";
+        path = "${nixosArgs.config.users.users.${nixosArgs.config.my.user.name}.home}/.netrc";
+      };
+
       home-manager.users.${nixosArgs.config.my.user.name} =
         { lib, pkgs, ... }@hmArgs:
         let
@@ -73,12 +81,6 @@
             };
         in
         {
-          sops.secrets."netrc" = {
-            mode = "0700";
-            sopsFile = ./secret.yaml;
-            path = "${homeDirectory}/.netrc";
-          };
-
           systemd.user = mkMerge (mapAttrsToList mkSyncSystemd pathToSync);
         };
     };

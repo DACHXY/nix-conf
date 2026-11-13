@@ -7,22 +7,28 @@ in
 
   flake.modules.nixos.danny-gui =
     { config, ... }:
+    let
+      osConfig = config;
+    in
     {
+      # Decrypted by the system sops-nix (root-only host key), owned by the user.
+      sops.secrets."vyolune/nextcloud-password" = {
+        sopsFile = ./secret.yaml;
+        owner = config.my.user.name;
+        mode = "0400";
+      };
+
       home-manager.users.${config.my.user.name} = { config, ... }: {
         imports = [
           inputs.vyolune.homeManagerModules.default
         ];
-
-        sops.secrets."vyolune/nextcloud-password" = {
-          sopsFile = ./secret.yaml;
-        };
 
         services.vyolune = {
           enable = true;
           settings = {
             url = "${nextcloud.endpoint}/remote.php/dav";
             username = "dachxy";
-            password_command = /* bash */ "cat ${config.sops.secrets."vyolune/nextcloud-password".path}";
+            password_command = /* bash */ "cat ${osConfig.sops.secrets."vyolune/nextcloud-password".path}";
 
             view = {
               done_linger_secs = 3;

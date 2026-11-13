@@ -11,7 +11,8 @@ in
     {
       sops.secrets."cc/mcp-endpoint" = {
         sopsFile = ./secret.yaml;
-        mode = "0444";
+        owner = config.my.user.name;
+        mode = "0400";
       };
 
       environment.systemPackages = [
