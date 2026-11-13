@@ -1,6 +1,7 @@
 { config, ... }:
 {
-  flake.modules.nixos.danny =
+  # Personal Nextcloud sync, desktops only (not dn-server / dn-cc).
+  flake.modules.nixos.danny-gui =
     { ... }@nixosArgs:
     {
       # Decrypted by the system sops-nix (root-only host key), owned by the user.

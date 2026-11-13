@@ -1,5 +1,6 @@
 {
-  flake.modules.nixos.danny =
+  # School Wi-Fi / VPN profiles (danny's credentials), desktops only.
+  flake.modules.nixos.danny-gui =
     { config, ... }:
     {
       # Allowing activate VPN in SSH

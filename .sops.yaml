@@ -45,7 +45,17 @@ creation_rules:
           - *dn_server
           - *dn_cscc
           - *admin_backup
+  # danny's personal credentials: only the machines he works at.
   - path_regex: modules/users/danny/secret.yaml
+    key_groups:
+      - age:
+          - *admin_picokey
+          - *dn_workstation
+          - *dn_cscc
+          - *dn_notebook
+          - *admin_backup
+  # The little every host needs (pam_u2f key handles).
+  - path_regex: modules/users/danny/common.yaml
     key_groups:
       - age:
           - *admin_picokey
@@ -53,5 +63,4 @@ creation_rules:
           - *dn_cc
           - *dn_workstation
           - *dn_cscc
-          - *dn_notebook
           - *admin_backup
