@@ -7,49 +7,66 @@ keys:
   - &dn_lap age17rjcght2y5p4ryr76ysnxpy2wff62sml7pyc5udcts48985j05vqpwdfq2
   - &dn_notebook age15x658r8ueamt3svjtzya8307vt94lmr90emxng389r9xtjswu35s72gaye
   - &skydrive_lap age1ar5h06qv72pduau043r04kschwcq0x0lm33wqvxzdh9grmp3cq3sy0ngnz
+  - &admin_picokey age1uc7rnxprh7372xrsmvg9qjgztd4tgrznymnw85ndkkvqtfmm24cqrme4er
+  - &admin_backup age1zjr036sqst5spej96gvc279ql4cjmx78e3mk8cwgz9mylw60pdtq04c2h0
 
 creation_rules:
   - path_regex: modules/hosts/dn-server/secret.yaml
     key_groups:
       - age:
+          - *admin_picokey
           - *dn_server
           - *dn_workstation
+          - *admin_backup
   - path_regex: modules/hosts/dn-cc/secret.yaml
     key_groups:
       - age:
+          - *admin_picokey
           - *dn_pre7780
           - *dn_cc
           - *dn_workstation
+          - *admin_backup
   - path_regex: modules/hosts/dn-workstation/secret.yaml
     key_groups:
       - age:
+          - *admin_picokey
           - *dn_workstation
           - *dn_pre7780
+          - *admin_backup
   - path_regex: modules/hosts/dn-cscc/secret.yaml
     key_groups:
       - age:
+          - *admin_picokey
           - *dn_workstation
           - *dn_cscc
+          - *admin_backup
   - path_regex: modules/config/incus-proxy.yaml
     key_groups:
       - age:
+          - *admin_picokey
           - *dn_server
           - *dn_workstation
           - *dn_cscc
+          - *admin_backup
   - path_regex: modules/config/wg-cscc.yaml
     key_groups:
       - age:
+          - *admin_picokey
           - *dn_server
           - *dn_cscc
+          - *admin_backup
   - path_regex: system/dev/skydrive-lap/sops/secret.yaml
     key_groups:
       - age:
+          - *admin_picokey
           - *skydrive_lap
           - *dn_pre7780
           - *dn_workstation
+          - *admin_backup
   - path_regex: modules/users/danny/secret.yaml
     key_groups:
       - age:
+          - *admin_picokey
           - *dn_pre7780
           - *dn_server
           - *dn_lap
@@ -57,9 +74,11 @@ creation_rules:
           - *dn_workstation
           - *dn_cscc
           - *dn_notebook
+          - *admin_backup
   - path_regex: system/dev/public/sops/secret.yaml
     key_groups:
       - age:
+          - *admin_picokey
           - *dn_pre7780
           - *dn_server
           - *skydrive_lap
@@ -67,3 +86,4 @@ creation_rules:
           - *dn_workstation
           - *dn_cscc
           - *dn_notebook
+          - *admin_backup

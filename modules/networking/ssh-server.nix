@@ -12,6 +12,9 @@
         ports = [ 22 ];
         settings = {
           PasswordAuthentication = lib.mkDefault false;
+          # PAM keyboard-interactive still prompts for the account password
+          # even with PasswordAuthentication off; keys only.
+          KbdInteractiveAuthentication = lib.mkDefault false;
           AllowUsers = [ username ];
           UseDns = lib.mkDefault false;
           PermitRootLogin = lib.mkDefault "no";

@@ -105,6 +105,15 @@ in
           sopsFile = ../../users/danny/secret.yaml;
           path = "/etc/vpnctl/env";
         };
+        # Per-user copy for the vpnctl CLI, decrypted by the system sops-nix
+        # (root-only host key) instead of a home-manager sops service.
+        "networkmanager-user" = {
+          sopsFile = ../../users/danny/secret.yaml;
+          key = "networkmanager";
+          owner = name;
+          mode = "0400";
+          path = "${nixosArgs.config.users.users.${name}.home}/.config/vpnctl/env";
+        };
       };
 
       # Secret-free hosts have no VPN credentials: give vpnctld an empty env
@@ -194,12 +203,8 @@ in
       ];
 
       # ==== vpnctl ==== #
-      sops.secrets = lib.mkIf osConfig.my.secrets.enable {
-        "networkmanager" = {
-          sopsFile = ../../users/danny/secret.yaml;
-          path = "${config.home.homeDirectory}/.config/vpnctl/env";
-        };
-      };
+      # The per-user copy (~/.config/vpnctl/env) is declared by the system
+      # module above as "networkmanager-user".
 
       # Empty per-user env on secret-free hosts (see the system module above).
       xdg.configFile."vpnctl/env" = lib.mkIf (!osConfig.my.secrets.enable) { text = ""; };
