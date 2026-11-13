@@ -6,10 +6,24 @@
   # client (the one whose pane the `ha`/`herdr workspace focus` command was
   # typed in) moves alone, falling back to the upstream all-clients behaviour
   # when no shell client is foreground. Re-check it on herdr upgrades.
+  # Pi panes came back as plain shells after a server restart, for two reasons.
+  # Pi-Bolt ships its own herdr integration that reports source `pi-bolt` with
+  # the session file, which is not in herdr's is_official_agent_source
+  # whitelist, and `pi-bolt` is not a known agent label. Behind that, herdr
+  # parks the first session report of a fresh pane until a second report
+  # arrives, and Pi only reports on state changes, so no ref was ever anchored
+  # (this broke plain `pi` panes too). The patch aliases the `pi-bolt` source to
+  # `herdr:pi`, maps the label onto the `pi` agent (restore command is
+  # `pi --session <file>`), and anchors the first report when the agent process
+  # is present. Verified end-to-end against a throwaway session: the pane comes
+  # back on the same session file. Re-check it on herdr upgrades.
   nixpkgs.overlays = [
     (final: prev: {
       herdr = prev.herdr.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [ ../patches/herdr-popup-scoped-focus.patch ];
+        patches = (old.patches or [ ]) ++ [
+          ../patches/herdr-popup-scoped-focus.patch
+          ../patches/herdr-pi-bolt-session-restore.patch
+        ];
       });
     })
   ];
@@ -242,6 +256,267 @@
         '';
       };
 
+      # nvim-style jumplist for workspaces: `back` / `forward` walk the order in
+      # which workspaces were actually visited, the way ctrl+o / ctrl+i walk
+      # nvim's changelist. herdr only offers `previous_workspace`, which cycles
+      # through sidebar order (actions.rs: previous_workspace -> next_workspace,
+      # an index +/-1 modulo the workspace list) and has no memory of recency, so
+      # the visit history lives here.
+      #
+      # `daemon` subscribes to workspace.focused over the API socket (the same
+      # newline-delimited JSON protocol the CLI uses) and maintains
+      # entries/index in a state file. Jumps write the target into `pending`
+      # before focusing, so the focus event they cause is not recorded as a new
+      # visit — otherwise every jump would truncate the forward history.
+      herdrWorkspaceHistoryPy = pkgs.writeText "herdr-workspace-history.py" ''
+        import contextlib
+        import fcntl
+        import json
+        import os
+        import socket
+        import sys
+        import time
+        from pathlib import Path
+
+        SOCKET_PATH = os.environ.get("HERDR_SOCKET_PATH") or os.path.expanduser(
+            "~/.config/herdr/herdr.sock"
+        )
+        STATE_HOME = os.environ.get("XDG_STATE_HOME") or os.path.expanduser("~/.local/state")
+        STATE_DIR = Path(
+            os.environ.get("HERDR_WORKSPACE_HISTORY_DIR")
+            or Path(STATE_HOME) / "herdr-workspace-history"
+        )
+        STATE_FILE = STATE_DIR / "state.json"
+        LOCK_FILE = STATE_DIR / "lock"
+        MAX_ENTRIES = 100
+        PENDING_TTL = 10.0
+
+
+        def call(method, params, timeout=10.0):
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
+                sock.settimeout(timeout)
+                sock.connect(SOCKET_PATH)
+                sock.sendall(
+                    (json.dumps({"id": "1", "method": method, "params": params}) + "\n").encode()
+                )
+                buf = b""
+                while b"\n" not in buf:
+                    chunk = sock.recv(65536)
+                    if not chunk:
+                        break
+                    buf += chunk
+            line = buf.split(b"\n", 1)[0]
+            if not line:
+                raise RuntimeError(method + ": empty reply")
+            message = json.loads(line)
+            if "error" in message:
+                raise RuntimeError(method + ": " + json.dumps(message["error"]))
+            return message["result"]
+
+
+        def list_workspaces():
+            return call("workspace.list", {}).get("workspaces", [])
+
+
+        def focused_id(workspaces):
+            for workspace in workspaces:
+                if workspace.get("focused"):
+                    return workspace["workspace_id"]
+            return None
+
+
+        def load_state():
+            try:
+                state = json.loads(STATE_FILE.read_text())
+                if isinstance(state, dict) and isinstance(state.get("entries"), list):
+                    state.setdefault("index", -1)
+                    state.setdefault("pending", {})
+                    return state
+            except (OSError, ValueError):
+                pass
+            return {"entries": [], "index": -1, "pending": {}}
+
+
+        def save_state(state):
+            STATE_DIR.mkdir(parents=True, exist_ok=True)
+            tmp = STATE_FILE.with_name(STATE_FILE.name + ".tmp")
+            tmp.write_text(json.dumps(state))
+            tmp.replace(STATE_FILE)
+
+
+        @contextlib.contextmanager
+        def state_lock():
+            STATE_DIR.mkdir(parents=True, exist_ok=True)
+            with open(LOCK_FILE, "w") as handle:
+                fcntl.flock(handle, fcntl.LOCK_EX)
+                try:
+                    yield
+                finally:
+                    fcntl.flock(handle, fcntl.LOCK_UN)
+
+
+        def prune_pending(pending, now):
+            return {ws: stamp for ws, stamp in pending.items() if now - stamp <= PENDING_TTL}
+
+
+        def record_visit(workspace_id):
+            now = time.time()
+            with state_lock():
+                state = load_state()
+                pending = prune_pending(state.get("pending") or {}, now)
+                state["pending"] = pending
+                if workspace_id in pending:
+                    # Focus we asked for ourselves: the index already points here.
+                    del pending[workspace_id]
+                    save_state(state)
+                    return
+                entries = state["entries"]
+                index = state["index"]
+                if entries and 0 <= index < len(entries) and entries[index] == workspace_id:
+                    save_state(state)
+                    return
+                # A new visit drops everything the forward direction could reach,
+                # exactly like nvim's jumplist.
+                entries = entries[: index + 1] if index >= 0 else []
+                entries.append(workspace_id)
+                state["entries"] = entries[-MAX_ENTRIES:]
+                state["index"] = len(state["entries"]) - 1
+                save_state(state)
+
+
+        def forget_visit(workspace_id):
+            with state_lock():
+                state = load_state()
+                entries = state["entries"]
+                index = state["index"]
+                if workspace_id not in entries:
+                    return
+                position = entries.index(workspace_id)
+                del entries[position]
+                if position <= index:
+                    index -= 1
+                state["index"] = index
+                save_state(state)
+
+
+        def jump(direction):
+            workspaces = list_workspaces()
+            live = {ws["workspace_id"] for ws in workspaces}
+            current = focused_id(workspaces)
+            if current is None:
+                return 0
+            with state_lock():
+                state = load_state()
+                entries = [ws for ws in state["entries"] if ws in live]
+                index = state["index"]
+                if current in entries:
+                    index = entries.index(current)
+                else:
+                    # Closed workspaces were pruned above; make sure the focused
+                    # one is the position we navigate from.
+                    index = index + 1 if 0 <= index <= len(entries) else len(entries)
+                    entries = entries[:index]
+                    entries.append(current)
+                    index = len(entries) - 1
+                target_index = index + direction
+                if not 0 <= target_index < len(entries):
+                    state.update(entries=entries, index=index)
+                    save_state(state)
+                    return 0
+                target = entries[target_index]
+                pending = prune_pending(state.get("pending") or {}, time.time())
+                pending[target] = time.time()
+                state.update(entries=entries, index=target_index, pending=pending)
+                save_state(state)
+            call("workspace.focus", {"workspace_id": target})
+            return 0
+
+
+        def handle_event(line):
+            if not line:
+                return
+            try:
+                message = json.loads(line)
+            except ValueError:
+                return
+            event = message.get("event")
+            data = message.get("data") or {}
+            workspace_id = data.get("workspace_id")
+            if not workspace_id:
+                return
+            if event == "workspace_focused":
+                record_visit(workspace_id)
+            elif event == "workspace_closed":
+                forget_visit(workspace_id)
+
+
+        def daemon():
+            subscriptions = {
+                "subscriptions": [
+                    {"type": "workspace.focused"},
+                    {"type": "workspace.closed"},
+                ]
+            }
+            delay = 0.5
+            while True:
+                try:
+                    with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
+                        sock.connect(SOCKET_PATH)
+                        sock.sendall(
+                            (
+                                json.dumps(
+                                    {
+                                        "id": "subscribe",
+                                        "method": "events.subscribe",
+                                        "params": subscriptions,
+                                    }
+                                )
+                                + "\n"
+                            ).encode()
+                        )
+                        delay = 0.5
+                        # herdr does not replay the current focus on subscribe, and
+                        # it may start after this service, so seed the entry for
+                        # whatever is focused now and reconnect in a loop instead
+                        # of exiting. record_visit is a no-op when the state
+                        # already points at that workspace, so a healthy restart
+                        # keeps the history intact.
+                        current = focused_id(list_workspaces())
+                        if current:
+                            record_visit(current)
+                        with sock.makefile("r", encoding="utf-8") as reader:
+                            for line in reader:
+                                handle_event(line.strip())
+                except (OSError, RuntimeError):
+                    pass
+                time.sleep(delay)
+                delay = min(delay * 2, 5.0)
+
+
+        def main(argv):
+            command = argv[1] if len(argv) > 1 else ""
+            if command == "daemon":
+                daemon()
+                return 0
+            if command in ("back", "forward"):
+                try:
+                    return jump(-1 if command == "back" else 1)
+                except (OSError, RuntimeError):
+                    return 1
+            print("usage: herdr-workspace-history {daemon|back|forward}", file=sys.stderr)
+            return 2
+
+
+        if __name__ == "__main__":
+            sys.exit(main(sys.argv))
+      '';
+
+      herdrWorkspaceHistory = pkgs.writeShellApplication {
+        name = "herdr-workspace-history";
+        runtimeInputs = [ pkgs.python3 ];
+        text = "exec python3 ${herdrWorkspaceHistoryPy} \"$@\"";
+      };
+
       # Same role as tmux.nix's `ta`, but for herdr.
       ha = pkgs.writeShellScriptBin "ha" ''
         exec herdr-sessionizer "$@"
@@ -254,6 +529,18 @@
       hr = pkgs.writeShellScriptBin "hr" ''
         exec herdr --remote "$@" --remote-keybindings server
       '';
+
+      # Claude Code's integration is a `SessionStart` hook rather than an
+      # in-process extension: the script reports the session id + transcript
+      # path so herdr can run `claude --resume <id>` after a server restart.
+      # `herdr integration install claude` would write this very file, but the
+      # store copy is mode 444, so nix installs an executable copy instead.
+      # The matching hook entry lives in ~/.claude/settings.json, which is not
+      # nix-managed: re-check it on upgrade (`herdr integration status` must not
+      # report claude as missing its hook).
+      herdrClaudeHook = pkgs.runCommandLocal "herdr-claude-hook" { } ''
+        install -Dm555 ${pkgs.herdr}/share/herdr/integrations/claude/herdr-agent-state.sh $out
+      '';
     in
     {
       home.packages = [
@@ -263,17 +550,45 @@
         ha
         hr
         herdrPaneName
+        herdrWorkspaceHistory
       ];
 
       # Updates pane/tab names right after a command starts and finishes; without
       # it names only refresh on herdr lifecycle/focus events.
       xdg.configFile."fish/conf.d/herdr-pane-name.fish".source = herdrPaneNameFishHook + "/fish.fish";
 
+      # Keeps the workspace visit history up to date for ctrl+shift+o / ctrl+shift+i.
+      systemd.user.services.herdr-workspace-history = {
+        Install.WantedBy = [ "graphical-session.target" ];
+        Unit = {
+          Description = "Track herdr workspace focus history for the ctrl+shift+o/i jumplist";
+          After = [ "graphical-session.target" ];
+          PartOf = [ "graphical-session.target" ];
+        };
+        Service = {
+          ExecStart = "${herdrWorkspaceHistory}/bin/herdr-workspace-history daemon";
+          Restart = "always";
+          RestartSec = 2;
+        };
+      };
+
       home.activation.herdrPaneName = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         ${lib.getExe pkgs.herdr} plugin list \
           | grep -q 'herdr.pane-name.*${herdrPaneNamePlugin}' \
           || ${lib.getExe pkgs.herdr} plugin link ${herdrPaneNamePlugin} > /dev/null
       '';
+
+      # herdr resumes agent conversations after a server restart (snapshot
+      # restore brings the layout back, but panes without a native session
+      # reference come back as plain shells). This is herdr's own pi
+      # integration, which reports `agent_session_path`/`agent_session_id`
+      # over the socket so herdr can run `pi --session <path>` on restore.
+      # Shipped inside the herdr package; `herdr integration install pi` would
+      # write the very same file, so nix owns it instead. Re-check on herdr
+      # upgrades (integration version must stay >= 2).
+      home.file.".pi/agent/extensions/herdr-agent-state.ts".source =
+        "${pkgs.herdr}/share/herdr/integrations/pi/herdr-agent-state.ts";
+      home.file.".claude/hooks/herdr-agent-state.sh".source = herdrClaudeHook;
 
       programs.herdr = {
         enable = true;
@@ -285,6 +600,12 @@
 
           terminal.new_cwd = "follow";
           ui.mouse_capture = true; # tmux: `set -g mouse on`
+
+          # Replay recent pane output after a server restart. Off upstream by
+          # default because pane output can contain secrets/tokens; the herdr
+          # session dir is private already, and it is what makes a restored
+          # agent pane readable before the agent finishes resuming.
+          experimental.pane_history = true;
 
           keys = {
             prefix = "ctrl+space"; # tmux: C-Space
@@ -356,6 +677,35 @@
                 command = "herdr-agentizer";
                 width = "80%";
                 height = "80%";
+              }
+              # nvim's ctrl+o / ctrl+i, but for workspaces (see herdrWorkspaceHistory).
+              # prefix+o / prefix+i are the reliable chords; ctrl+shift+o / ctrl+shift+i
+              # are kept as well, but they need the kitty keyboard protocol and never
+              # fire on a terminal without it. Note prefix+o overrides herdr's default
+              # keys.open_notification_target.
+              {
+                key = "prefix+o";
+                type = "shell";
+                command = "${herdrWorkspaceHistory}/bin/herdr-workspace-history back";
+                description = "Go to the previously visited workspace";
+              }
+              {
+                key = "prefix+i";
+                type = "shell";
+                command = "${herdrWorkspaceHistory}/bin/herdr-workspace-history forward";
+                description = "Go forward in the workspace visit history";
+              }
+              {
+                key = "ctrl+shift+o";
+                type = "shell";
+                command = "${herdrWorkspaceHistory}/bin/herdr-workspace-history back";
+                description = "Go to the previously visited workspace";
+              }
+              {
+                key = "ctrl+shift+i";
+                type = "shell";
+                command = "${herdrWorkspaceHistory}/bin/herdr-workspace-history forward";
+                description = "Go forward in the workspace visit history";
               }
               {
                 key = "prefix+p";

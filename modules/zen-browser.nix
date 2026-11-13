@@ -303,8 +303,6 @@ in
                 };
               }
             ];
-            keyboardShortcutsVersion = 21;
-
             search.default = "google";
             search.force = true;
             search.privateDefault = "ddg";

@@ -72,7 +72,12 @@
           keybind = [
             "ctrl+shift+zero=toggle_tab_overview"
             "ctrl+shift+9=reload_config"
+            # herdr owns the workspace jumplist (ctrl+shift+o / ctrl+shift+i, see
+            # herdr.nix); these defaults would eat those keys first. The
+            # inspector keeps a chord, just not one herdr wants.
             "ctrl+shift+o=unbind"
+            "ctrl+shift+i=unbind"
+            "ctrl+shift+alt+i=inspector:toggle"
             "ctrl+shift+e=unbind"
             "ctrl+shift+alt+j=unbind"
           ];
