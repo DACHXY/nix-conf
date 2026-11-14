@@ -7,6 +7,26 @@
         # Steam: games fullscreen, client + games on workspace 9 (the old niri
         # "game" workspace), toasts bottom-right, dialogs floating.
         wm.umbriel.window-rules = [
+          # Zen promotes extension panels (the Bitwarden toolbar popup) to a
+          # real xdg_toplevel, so Umbriel tiles it into a 480px column. Float
+          # and center it instead; with default_position set it stays put, and
+          # the explicit size keeps the panel from inheriting a tiled extent.
+          {
+            match = {
+              app_id = "^zen-twilight$";
+              title = "^Extension: \\(Bitwarden";
+            };
+            default_floating = true;
+            default_floating_size_px = {
+              width = 420;
+              height = 700;
+            };
+            default_position = {
+              x = 0;
+              y = 0;
+              anchor = "center";
+            };
+          }
           # Steam Game Fullscreen
           {
             match = {
