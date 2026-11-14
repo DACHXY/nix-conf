@@ -1,5 +1,5 @@
 {
-  description = "DACHXY's NixOS with hyprland";
+  description = "DACHXY's NixOS dotfiles (Umbriel / Wayland desktop)";
 
   nixConfig = {
     extra-substituters = [
