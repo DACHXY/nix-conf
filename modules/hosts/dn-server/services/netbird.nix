@@ -116,6 +116,18 @@ in
                   }
                 ];
               };
+              # NOTE: Keycloak >= 26.8.2 enforces an audience check on the
+              # Admin REST API: a token only works there if its `scope` claim
+              # contains `kc-admin-api` (and `aud` contains the admin URL).
+              # The upgrade adds that client scope to admin-cli /
+              # security-admin-console only, NOT to our own clients. The
+              # `netbird-backend` client in realm master therefore needs
+              # `kc-admin-api` as a **default** client scope, otherwise the
+              # IdP manager gets 401 from /admin/realms/master/users/count and
+              # every dashboard request fails with `token invalid`.
+              # Clients live in the Keycloak DB (not declarative here), so this
+              # is set once by hand: Clients -> netbird-backend -> Client scopes
+              # -> Add client scope -> kc-admin-api -> Default.
               IdpManagerConfig = {
                 ManagerType = "keycloak";
                 ClientConfig = {

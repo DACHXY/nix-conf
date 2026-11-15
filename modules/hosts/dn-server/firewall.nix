@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  inherit (config.flake.public.config.machines) dn-cc;
+  inherit (config.flake.public.config.machines) dn-cc gcp;
 in
 {
   configurations.nixos.dn-server.module =
@@ -50,6 +50,18 @@ in
 
               limit rate 10/minute log prefix "SMTP-DROP: "
               drop
+            }
+
+            # dn-gcp dials in as a wg0 client and may only reach the hub
+            # (10.30.0.x/32 on both ends). Keep it away from every other peer
+            # and from the LAN behind this box. This chain has to live here:
+            # `networking.firewall.extraForwardRules` is ignored unless
+            # `networking.firewall.filterForward` is enabled.
+            chain forward {
+              type filter hook forward priority -10; policy accept;
+
+              iifname "wg0" ip saddr ${gcp.wg.wg0.ip} drop
+              oifname "wg0" ip daddr ${gcp.wg.wg0.ip} drop
             }
           '';
         };

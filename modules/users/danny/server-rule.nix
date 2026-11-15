@@ -1,6 +1,9 @@
 { config, ... }:
 {
-  flake.modules.nixos.danny =
+  # Was part of `nixos.danny`; split out so headless hosts can take the
+  # server-rules option tree (and the external nix-server-security module)
+  # without dragging in the desktop profile.
+  flake.modules.nixos.server-rules =
     { lib, ... }@nixosArgs:
     let
       inherit (lib)

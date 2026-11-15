@@ -34,7 +34,7 @@
           #     ~2 minute order window), for the zone's SOA minimum of 1800s.
           #   * authoritative check -> the campus line drops outbound UDP/53 to
           #     part of Cloudflare's anycast range: "read udp
-          #     192.0.2.11:49423->173.245.58.78:53: i/o timeout".
+          #     <campus-ip>:49423-><cloudflare-ip>:53: i/o timeout".
           # Both are local-network problems, not DNS-record problems: during a
           # run the TXT record is verifiably live on brit/jim.ns.cloudflare.com
           # within a second. So skip the checks and wait long enough for

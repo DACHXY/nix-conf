@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  inherit (config.flake.public.config.machines) dn-cscc dn-server;
+  inherit (config.flake.public.config.machines) dn-cscc dn-server gcp;
 in
 {
   configurations.nixos.dn-server.module =
@@ -44,7 +44,19 @@ in
             publicKey = dn-cscc.wg.wg0.publicKey;
             allowedIPs = [ "${dn-cscc.wg.wg0.ip}/32" ];
           }
+          # dn-gcp dials in from GCE. allowedIPs is a /32 so it can only ever
+          # source that one address on the tunnel.
+          {
+            publicKey = gcp.wg.wg0.publicKey;
+            allowedIPs = [ "${gcp.wg.wg0.ip}/32" ];
+          }
         ];
       };
+
+      # dn-gcp is a cloud box; it gets to talk to dn-server and to nothing else
+      # on the wg network. Both ends pin allowedIPs to a /32. The dropped
+      # forwarding lives in firewall.nix: `extraForwardRules` is a no-op here
+      # because the nftables firewall only renders the `forward` chain when
+      # `networking.firewall.filterForward` is on (default: off).
     };
 }

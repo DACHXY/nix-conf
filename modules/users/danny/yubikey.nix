@@ -17,6 +17,15 @@
         enableSSHSupport = true;
       };
 
+      # `picokey-led [brightness N]`: show the PicoKey's PHY config or dim its
+      # LED (0..15). Over ssh it needs sudo: pcscd only admits the desktop session.
+      environment.systemPackages = [
+        (pkgs.writers.writePython3Bin "picokey-led" {
+          libraries = [ pkgs.python3Packages.pyscard ];
+          flakeIgnore = [ "E501" ];
+        } (builtins.readFile ./picokey-led.py))
+      ];
+
       services.udev.packages = [ pkgs.yubikey-personalization ];
       programs.yubikey-manager.enable = true;
 

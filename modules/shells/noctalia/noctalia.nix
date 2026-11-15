@@ -23,7 +23,11 @@ in
           csit = {
             name = "CSIT VPN";
             protocol = "fortinet";
-            server = "192.0.2.10:443/prod";
+            # Gateway lives in ~/.config/vpnctl/env, not here: this repo is
+            # public (codeberg) and a campus gateway address does not belong in
+            # it. Same variable names as the NetworkManager profile in
+            # modules/users/danny/networkmanager.nix.
+            server = "\${CSIT_VPN_GATEWAY}/\${CSIT_VPN_REALM}";
             user = "\${CSIT_VPN_IDENTITY}";
             servercert = "pin-sha256:fftgkk2RUlvnCYhPhx863SU+7sz5C8uYzLZXZUVv02U=";
             auth.password = {

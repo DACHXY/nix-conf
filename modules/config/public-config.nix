@@ -57,9 +57,21 @@ in
             };
           };
         };
-        gcp = {
-          ip = "10.10.0.1";
-          range = "10.10.0.0/24";
+        gcp = rec {
+          # dn-gcp dials into dn-server's wg0 hub (10.30.0.0/24). Its peer
+          # allowedIPs on both ends are /32, so the tunnel only ever carries
+          # traffic between dn-gcp and dn-server itself — notably `range` stays
+          # a single host, so the DNS update/transfer ACLs it feeds do not
+          # widen to dn-cscc.
+          ip = "10.30.0.3";
+          range = "${ip}/32";
+          wg = {
+            wg0 = {
+              publicKey = "C3OEthvzOZelJQCvqmFDhaMhzc8tUKqp1mBvEBPMlG4=";
+              ip = ip;
+              interface = "wg0";
+            };
+          };
         };
       };
       services = {

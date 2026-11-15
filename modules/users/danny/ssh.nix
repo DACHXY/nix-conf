@@ -1,6 +1,8 @@
 { ... }:
 {
-  flake.modules.generic.danny = nixosArgs: {
+  # Shared by every profile that gives danny a login: the full desktop
+  # (`generic.danny`) and the headless one (`generic.danny-minimal`).
+  flake.modules.generic.danny-keys = nixosArgs: {
     users.users.${nixosArgs.config.my.user.name} = {
       openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILSHkPa6vmr5WBPXAazY16+Ph1Mqv9E24uLIf32oC2oH danny@phone.dn"
