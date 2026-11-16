@@ -70,7 +70,7 @@ in
         webui_2 = mkWebui final "2.0.6" "sha256-M62Pr7qKn1Zsdl9AM5wd3UEa/joxyakIBz37LBeOt/M=";
       in
       {
-      stalwart_1_1 = mkStalwart final "1.1.0" "sha256-Yub9r2j23ftFqg3BwoV4p+BfHl6aDJX8z+Hq5wnU7Lw=";
+      stalwart_1_1 = mkStalwart final "1.1.1" "sha256-4VrHn7yagIKLxlY70VdiRfzvZkl+1WNtRmp/DHmRKhk=";
 
       stalwart-webui = webui_2;
 
