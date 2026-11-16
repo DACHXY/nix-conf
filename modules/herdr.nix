@@ -525,6 +525,102 @@
         text = "exec python3 ${herdrWorkspaceHistoryPy} \"$@\"";
       };
 
+      # `prefix+shift+m`: rename a workspace's project directory and its label in
+      # one step, so a project keeps one name everywhere instead of drifting
+      # between `~/projects/<dir>` and `N:<label>`. (prefix+r is herdr's
+      # resize_mode, and the built-in rename_workspace on prefix+shift+w only
+      # renames the label.) The label carries a `<number>:` prefix added by
+      # herdr-pane-name, so only the name part is replaced. Renaming the
+      # directory is a rename(2): shells already sitting in it keep working (the
+      # inode survives), but their $PWD string goes stale until they cd again.
+      herdrWorkspaceRename = pkgs.writeShellApplication {
+        name = "herdr-workspace-rename";
+        runtimeInputs = with pkgs; [
+          coreutils
+          fzf
+          herdr
+          jq
+        ];
+        text = ''
+          project_root="$HOME/projects"
+
+          ws=$(herdr workspace list \
+            | jq -r '.result.workspaces[] | select(.focused) | .workspace_id' \
+            | head -n 1)
+          if [[ -z $ws ]]; then
+            echo "herdr-workspace-rename: no focused workspace" >&2
+            exit 1
+          fi
+
+          label=$(herdr workspace list \
+            | jq -r --arg w "$ws" '.result.workspaces[] | select(.workspace_id == $w) | .label')
+          prefix=""
+          name="$label"
+          if [[ $label =~ ^([0-9]+:)(.+)$ ]]; then
+            prefix="''${BASH_REMATCH[1]}"
+            name="''${BASH_REMATCH[2]}"
+          fi
+
+          # Take the project directory from the focused pane, and only its first
+          # component below ~/projects: a shell that cd'ed into a subdirectory
+          # must still rename the project itself.
+          dir=$(herdr pane list | jq -r --arg w "$ws" '
+            [ .result.panes[] | select(.workspace_id == $w) ]
+            | (map(select(.focused)) + .)[0]
+            | (.foreground_cwd // .cwd // empty)')
+          old=""
+          case "$dir" in
+            "$project_root"/*)
+              rest="''${dir#"$project_root"/}"
+              candidate="''${rest%%/*}"
+              # A pane can sit in a path that no longer exists under that name (a
+              # previous run moved it and the shell's PWD went stale), so only a
+              # directory that still exists counts.
+              if [[ -d $project_root/$candidate ]]; then
+                old="$candidate"
+              fi
+              ;;
+          esac
+          # A workspace whose panes sit outside ~/projects (e.g. /etc/nixos) only
+          # gets its label renamed, unless a project of that name exists.
+          if [[ -z $old && -d $project_root/$name ]]; then
+            old="$name"
+          fi
+
+          current="''${old:-$name}"
+          # fzf prints the typed query first, so Enter on the prefill is a no-op
+          # and clearing the line cancels.
+          fzf_out=$(printf '%s\n' "$current" \
+            | fzf --print-query --query "$current" --no-info \
+                --header "rename $project_root/$current and the workspace label") || true
+          new=$(printf '%s\n' "$fzf_out" | head -n 1)
+          new="''${new// /-}"
+          new="''${new//./_}"
+          if [[ -z $new || $new == "$current" ]]; then
+            exit 0
+          fi
+          case "$new" in
+            . | .. | */*)
+              echo "herdr-workspace-rename: invalid name: $new" >&2
+              exit 1
+              ;;
+          esac
+
+          if [[ -n $old && $old != "$new" ]]; then
+            if [[ -e $project_root/$new ]]; then
+              echo "herdr-workspace-rename: $project_root/$new already exists" >&2
+              exit 1
+            fi
+            mv -- "$project_root/$old" "$project_root/$new"
+            echo "moved $project_root/$old -> $project_root/$new"
+            echo "open panes keep the old path; reopen tabs for a live cwd"
+          fi
+
+          herdr workspace rename "$ws" "$prefix$new"
+          echo "workspace renamed to $prefix$new"
+        '';
+      };
+
       # Same role as tmux.nix's `ta`, but for herdr.
       ha = pkgs.writeShellScriptBin "ha" ''
         exec herdr-sessionizer "$@"
@@ -562,6 +658,7 @@
           hr
           herdrPaneName
           herdrWorkspaceHistory
+          herdrWorkspaceRename
         ];
 
       # Updates pane/tab names right after a command starts and finishes; without
@@ -724,6 +821,14 @@
                 command = "herdr-paneizer";
                 width = "80%";
                 height = "80%";
+              }
+              # Rename `~/projects/<name>` and the workspace label together.
+              {
+                key = "prefix+shift+m";
+                type = "popup";
+                command = "herdr-workspace-rename";
+                width = "60%";
+                height = "30%";
               }
             ];
           };
