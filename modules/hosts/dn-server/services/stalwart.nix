@@ -61,6 +61,21 @@ in
       plan = [
         {
           "@type" = "upsert";
+          object = "Application";
+          value = {
+            webadmin = {
+              enable = true;
+              description = "webadmin";
+              # Fetched over http(s) only (`file://` is silently ignored -> every
+              # app path 404s), so nginx on this host serves the hash-pinned
+              # pkgs.stalwart-webui zip on loopback.
+              resourceUrl = "http://127.0.0.1:${toString stalwart.webuiPort}/webui.zip";
+              urlPrefix."/account" = true;
+            };
+          };
+        }
+        {
+          "@type" = "upsert";
           object = "Certificate";
           matchOn = [ "subjectAlternativeNames" ];
           value = {
@@ -462,8 +477,14 @@ in
           "network-online.target"
           "postgresql.service"
           "openldap.service"
+          # Serves the WebUI bundle from 127.0.0.1:webuiPort; the server fetches
+          # Application.resourceUrl on every start.
+          "nginx.service"
         ];
-        wants = [ "network-online.target" ];
+        wants = [
+          "network-online.target"
+          "nginx.service"
+        ];
         serviceConfig = {
           Type = "simple";
           User = "stalwart";
@@ -485,7 +506,10 @@ in
 
       systemd.services.stalwart-bootstrap = {
         description = "Stalwart configuration bootstrap";
-        after = [ "stalwart.service" ];
+        after = [
+          "stalwart.service"
+          "nginx.service"
+        ];
         wantedBy = [ "multi-user.target" ];
         startLimitIntervalSec = 120;
         startLimitBurst = 30;
@@ -525,6 +549,19 @@ in
         forceSSL = true;
         useACMEHost = domain;
         locations."/" = jmapProxy;
+      };
+
+      # Loopback-only static host for the hash-pinned Stalwart WebUI bundle
+      # (`Application.resourceUrl` accepts http(s) only, never `file://`), so
+      # the bundle never comes from GitHub at runtime.
+      services.nginx.virtualHosts."stalwart-webui" = {
+        listen = [
+          {
+            addr = "127.0.0.1";
+            port = stalwart.webuiPort;
+          }
+        ];
+        locations."= /webui.zip".alias = "${pkgs.stalwart-webui}/webui.zip";
       };
 
       services.nginx.virtualHosts."${fqdn}" = {
