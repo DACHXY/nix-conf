@@ -41,9 +41,7 @@ in
             webadmin = {
               enable = true;
               description = "webadmin";
-              # The server fetches this bundle over http(s) only (`file://` is
-              # silently ignored -> every app path 404s), so nginx serves the
-              # hash-pinned pkgs.stalwart-webui zip on loopback (nginx.nix).
+              # Bundle comes from the loopback endpoint in nginx.nix.
               resourceUrl = "http://127.0.0.1:${toString stalwart.webuiPort}/webui.zip";
               urlPrefix."/account" = true;
             };
@@ -577,8 +575,6 @@ in
         after = [
           "network-online.target"
           "openldap.service"
-          # Serves the WebUI bundle from 127.0.0.1:webuiPort; the server fetches
-          # Application.resourceUrl on every start.
           "nginx.service"
         ];
         wants = [

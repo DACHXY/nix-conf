@@ -209,11 +209,7 @@ in
             };
           };
 
-          # Loopback-only static host for the hash-pinned Stalwart WebUI bundle.
-          # `Application.resourceUrl` accepts http(s) only (`file://` is
-          # silently ignored), so Stalwart on this host fetches the zip from
-          # here instead of reaching out to GitHub -- a re-uploaded upstream
-          # tag can no longer change what the WebUI runs.
+          # Serves the pinned WebUI bundle on loopback for Application.resourceUrl.
           "stalwart-webui" = {
             listen = [
               {

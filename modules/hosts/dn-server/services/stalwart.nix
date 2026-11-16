@@ -66,9 +66,7 @@ in
             webadmin = {
               enable = true;
               description = "webadmin";
-              # Fetched over http(s) only (`file://` is silently ignored -> every
-              # app path 404s), so nginx on this host serves the hash-pinned
-              # pkgs.stalwart-webui zip on loopback.
+              # Bundle comes from the loopback endpoint in nginx.nix.
               resourceUrl = "http://127.0.0.1:${toString stalwart.webuiPort}/webui.zip";
               urlPrefix."/account" = true;
             };
@@ -477,8 +475,6 @@ in
           "network-online.target"
           "postgresql.service"
           "openldap.service"
-          # Serves the WebUI bundle from 127.0.0.1:webuiPort; the server fetches
-          # Application.resourceUrl on every start.
           "nginx.service"
         ];
         wants = [
@@ -551,9 +547,7 @@ in
         locations."/" = jmapProxy;
       };
 
-      # Loopback-only static host for the hash-pinned Stalwart WebUI bundle
-      # (`Application.resourceUrl` accepts http(s) only, never `file://`), so
-      # the bundle never comes from GitHub at runtime.
+      # Serves the pinned WebUI bundle on loopback for Application.resourceUrl.
       services.nginx.virtualHosts."stalwart-webui" = {
         listen = [
           {

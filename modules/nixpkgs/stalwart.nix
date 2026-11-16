@@ -43,8 +43,7 @@ let
       };
     };
 
-  # WebAdmin is a separate bundle served from Application.resourceUrl; the
-  # server only loads the bundle for its own major version (2.x for 1.x).
+  # WebAdmin bundle; the server only loads a bundle matching its own major (2.x for 1.x).
   mkWebui =
     final: version: hash:
     final.runCommand "stalwart-webui-${version}"
