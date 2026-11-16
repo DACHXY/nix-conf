@@ -120,7 +120,15 @@ in
           # to X-Forwarded-For; the header has to arrive with the device
           # address only, so the proxy headers are spelled out here.
           recommendedProxySettings = false;
-          extraConfig = proxyHeaders;
+          # EAS Ping is a long poll: the device asks for a heartbeat of up to
+          # 59 minutes and expects the server to hold the request. nginx's 60s
+          # default returned 504 instead, which made iOS drop back to its
+          # 30-minute fetch schedule and stop showing notifications.
+          extraConfig = ''
+            ${proxyHeaders}
+            proxy_read_timeout 3600s;
+            proxy_send_timeout 3600s;
+          '';
         };
         "~* ^/autodiscover/" = {
           proxyPass = "http://127.0.0.1:${toString tolkPort}";
