@@ -16,7 +16,7 @@ in
     let
       inherit (lib) getExe concatMapStringsSep;
 
-      package = pkgs.stalwart_1_0;
+      package = pkgs.stalwart_1_1;
       fqdn = mailserver.hostname;
       managementPort = stalwart.managementPort;
       metricsPort = stalwart.metricsPort;
@@ -44,7 +44,7 @@ in
               # 1.0 only loads a major-version-2 WebUI bundle. It fetches the bundle
               # over http(s) only (`file://` is silently ignored -> every app path 404s),
               # so pin the upstream v2 tag here instead of the local zip.
-              resourceUrl = "https://github.com/stalwartlabs/webui/releases/download/v2.0.0/webui.zip";
+              resourceUrl = "https://github.com/stalwartlabs/webui/releases/download/v2.0.6/webui.zip";
               urlPrefix."/account" = true;
             };
           };

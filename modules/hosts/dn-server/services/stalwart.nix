@@ -16,12 +16,29 @@ in
     let
       inherit (lib) getExe concatMapStringsSep;
 
-      package = pkgs.stalwart_1_0;
+      package = pkgs.stalwart_1_1;
       # Postgres role; the store itself lives in `storeDatabase`, owned by it.
       dbName = "stalwart";
       storeDatabase = "stalwart_v1";
       fqdn = "jmap.${domain}";
       managementPort = 30093;
+
+      # Every HTTP request to the loopback listener comes from our own nginx
+      # (there is no other listener), so the client address has to be taken
+      # from the forwarding header: `peer` would make rate limiting and
+      # auto-ban see 127.0.0.1 for every request. Nothing here appends to the
+      # header, so the right-most hop is the client (see jmapProxy).
+      jmapProxy = {
+        proxyPass = "http://127.0.0.1:${toString managementPort}";
+        recommendedProxySettings = false;
+        extraConfig = ''
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $http_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Forwarded-Host $host;
+        '';
+      };
       # Stalwart's OtelHttp tracer posts here; Alloy on this host receives it
       # and forwards logs to the local Loki and spans to the local Tempo. Same
       # number as dn-cc's receiver: the two hosts never share a loopback.
@@ -164,7 +181,13 @@ in
           # Bulwark may make cross-origin JMAP calls to this host directly.
           "@type" = "update";
           object = "Http";
-          value.usePermissiveCors = true;
+          value = {
+            usePermissiveCors = true;
+            # Take the client address from X-Forwarded-For; only nginx and
+            # Tolk can reach the loopback listener, and both pass the device
+            # address on. `forwardedHops` stays at its default of 1.
+            clientIpSource = "xForwardedFor";
+          };
         }
         {
           # Auto-ban rules, off by default.
@@ -501,18 +524,22 @@ in
       services.nginx.virtualHosts."mail-admin.${domain}" = {
         forceSSL = true;
         useACMEHost = domain;
-        locations."/".proxyPass = "http://127.0.0.1:${toString managementPort}";
+        locations."/" = jmapProxy;
       };
 
       services.nginx.virtualHosts."${fqdn}" = {
         forceSSL = true;
         useACMEHost = domain;
-        locations."/".proxyPass = "http://127.0.0.1:${toString managementPort}";
+        locations."/" = jmapProxy;
       };
 
       services.nginx.virtualHosts."${domain}".locations = {
-        "/.well-known/jmap".proxyPass = "http://127.0.0.1:${toString managementPort}/.well-known/jmap";
-        "/jmap/".proxyPass = "http://127.0.0.1:${toString managementPort}/jmap/";
+        "/.well-known/jmap" = jmapProxy // {
+          proxyPass = "http://127.0.0.1:${toString managementPort}/.well-known/jmap";
+        };
+        "/jmap/" = jmapProxy // {
+          proxyPass = "http://127.0.0.1:${toString managementPort}/jmap/";
+        };
       };
     };
 }

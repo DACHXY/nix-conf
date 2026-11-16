@@ -2,10 +2,10 @@
   lib,
   ...
 }:
-# Stalwart 1.0 is not in the pinned nixpkgs yet (it still ships 0.16.26), and
+# Stalwart 1.1 is not in the pinned nixpkgs yet (it still ships 0.16.26), and
 # bumping the flake for it would rebuild the whole system. These are the
 # upstream release binaries instead: no build, no cargoHash, easy to delete
-# once nixpkgs carries `stalwart_1_0`.
+# once nixpkgs carries `stalwart_1_1`.
 let
   # Only the two mail hosts (x86_64-linux) use these.
   target = "x86_64-unknown-linux-gnu";
@@ -43,8 +43,8 @@ let
       };
     };
 
-  # WebAdmin is a separate bundle served from Application.resourceUrl; 1.0 only
-  # loads a major-version-2 bundle.
+  # WebAdmin is a separate bundle served from Application.resourceUrl; the
+  # server only loads the bundle for its own major version (2.x for 1.x).
   mkWebui =
     final: version: hash:
     final.runCommand "stalwart-webui-${version}"
@@ -69,12 +69,13 @@ in
         webui_1 = mkWebui final "2" "sha256-Us+fjCPbVnazy0heUivGm0bQzjbxyTpiiqdFi7wq2OQ=";
       in
       {
-      stalwart_1_0 = mkStalwart final "1.0.0" "sha256-QzoA/GfoXm7aRymVQ1Kme/xjnAJQLeQhppNk6GuYmpQ=";
+      stalwart_1_1 = mkStalwart final "1.1.0" "sha256-Yub9r2j23ftFqg3BwoV4p+BfHl6aDJX8z+Hq5wnU7Lw=";
 
       stalwart-webui = webui_1;
 
-      # nixpkgs' stalwart-cli (1.0.13) is one release behind the 1.0.0 server and
-      # cannot parse its /api/schema, so the declarative bootstrap needs this one.
+      # nixpkgs' stalwart-cli (1.0.13) is one release behind the 1.0.14 used
+      # here, which cannot parse its /api/schema, so the declarative bootstrap
+      # needs this one.
       stalwart-cli =
         final.stdenv.mkDerivation
           {
