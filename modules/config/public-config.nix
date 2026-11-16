@@ -137,6 +137,11 @@ in
           # the message headers over HTTP so subjects can be shipped to Loki;
           # loopback only, see services/stalwart-mta-hook.nix on dn-cc.
           mtaHookPort = 30097;
+          # Loopback-only static endpoint serving the hash-pinned WebUI bundle
+          # (pkgs.stalwart-webui). Stalwart fetches Application.resourceUrl over
+          # http(s) only -- `file://` is silently ignored -- so each mail host
+          # serves its own copy instead of reaching out to GitHub at runtime.
+          webuiPort = 30101;
         };
         loki = {
           # Push (OTLP) + query API on dn-server. Bound on all interfaces;

@@ -66,12 +66,14 @@ in
     (
       final: _prev:
       let
-        webui_1 = mkWebui final "2" "sha256-Us+fjCPbVnazy0heUivGm0bQzjbxyTpiiqdFi7wq2OQ=";
+        # Fixed release, hash-pinned: the server only loads the bundle whose
+        # major matches its own (2.x for Stalwart 1.x).
+        webui_2 = mkWebui final "2.0.6" "sha256-M62Pr7qKn1Zsdl9AM5wd3UEa/joxyakIBz37LBeOt/M=";
       in
       {
       stalwart_1_1 = mkStalwart final "1.1.0" "sha256-Yub9r2j23ftFqg3BwoV4p+BfHl6aDJX8z+Hq5wnU7Lw=";
 
-      stalwart-webui = webui_1;
+      stalwart-webui = webui_2;
 
       # nixpkgs' stalwart-cli (1.0.13) is one release behind the 1.0.14 used
       # here, which cannot parse its /api/schema, so the declarative bootstrap

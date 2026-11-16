@@ -41,10 +41,10 @@ in
             webadmin = {
               enable = true;
               description = "webadmin";
-              # 1.0 only loads a major-version-2 WebUI bundle. It fetches the bundle
-              # over http(s) only (`file://` is silently ignored -> every app path 404s),
-              # so pin the upstream v2 tag here instead of the local zip.
-              resourceUrl = "https://github.com/stalwartlabs/webui/releases/download/v2.0.6/webui.zip";
+              # The server fetches this bundle over http(s) only (`file://` is
+              # silently ignored -> every app path 404s), so nginx serves the
+              # hash-pinned pkgs.stalwart-webui zip on loopback (nginx.nix).
+              resourceUrl = "http://127.0.0.1:${toString stalwart.webuiPort}/webui.zip";
               urlPrefix."/account" = true;
             };
           };
@@ -577,8 +577,14 @@ in
         after = [
           "network-online.target"
           "openldap.service"
+          # Serves the WebUI bundle from 127.0.0.1:webuiPort; the server fetches
+          # Application.resourceUrl on every start.
+          "nginx.service"
         ];
-        wants = [ "network-online.target" ];
+        wants = [
+          "network-online.target"
+          "nginx.service"
+        ];
         serviceConfig = {
           Type = "simple";
           User = "stalwart";
@@ -602,7 +608,10 @@ in
 
       systemd.services.stalwart-bootstrap = {
         description = "Stalwart configuration bootstrap";
-        after = [ "stalwart.service" ];
+        after = [
+          "stalwart.service"
+          "nginx.service"
+        ];
         wantedBy = [ "multi-user.target" ];
         startLimitIntervalSec = 120;
         startLimitBurst = 30;

@@ -209,6 +209,24 @@ in
             };
           };
 
+          # Loopback-only static host for the hash-pinned Stalwart WebUI bundle.
+          # `Application.resourceUrl` accepts http(s) only (`file://` is
+          # silently ignored), so Stalwart on this host fetches the zip from
+          # here instead of reaching out to GitHub -- a re-uploaded upstream
+          # tag can no longer change what the WebUI runs.
+          "stalwart-webui" = {
+            listen = [
+              {
+                addr = "127.0.0.1";
+                port = stalwart.webuiPort;
+              }
+            ];
+
+            locations."= /webui.zip" = {
+              alias = "${pkgs.stalwart-webui}/webui.zip";
+            };
+          };
+
           "nextcloud.${domain}" = (mkProxyConfig { }) // {
             locations."/" = locationProxyPass;
             locations."^~ /s/geodb" = locationProxyPass // {
