@@ -29,8 +29,16 @@
   ];
 
   flake.modules.homeManager.base =
-    { pkgs, lib, ... }:
+    { pkgs, lib, osConfig, ... }:
     let
+      # herdr-core (`hc`) is the runtime the Herdr mobile app talks to over SSH;
+      # the TUI runs a separate server, so the phone cannot see its panes.
+      # Only the desktops run it, and it starts its own per-user daemon on
+      # demand, so it sits next to the TUI on the same machine.
+      herdrCoreHosts = [
+        "dn-cscc"
+        "dn-workstation"
+      ];
       # herdr has no declarative plugin registry: plugins are registered with the
       # imperative `herdr plugin link`. So nix builds the plugin and the module
       # links it at activation (see below).
@@ -543,15 +551,18 @@
       '';
     in
     {
-      home.packages = [
-        herdrSessionizer
-        herdrAgentizer
-        herdrPaneizer
-        ha
-        hr
-        herdrPaneName
-        herdrWorkspaceHistory
-      ];
+      # `hc` for the Herdr mobile app: desktops only, see herdrCoreHosts above.
+      home.packages =
+        lib.optionals (builtins.elem osConfig.networking.hostName herdrCoreHosts) [ pkgs.herdr-core ]
+        ++ [
+          herdrSessionizer
+          herdrAgentizer
+          herdrPaneizer
+          ha
+          hr
+          herdrPaneName
+          herdrWorkspaceHistory
+        ];
 
       # Updates pane/tab names right after a command starts and finishes; without
       # it names only refresh on herdr lifecycle/focus events.
