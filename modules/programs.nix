@@ -218,6 +218,12 @@ in
           settings = {
             git_branch.disabled = true;
             git_status.disabled = true;
+            # Shows `on ☁️  <account>` on every prompt. The module reads
+            # ~/.config/gcloud/configurations directly (it needs no gcloud
+            # binary to be installed), so it fires even on hosts that never run
+            # the CLI. Keep it off; a `$project`-only format is the middle
+            # ground if a gcloud project is ever worth displaying.
+            gcloud.disabled = true;
             custom.jj = {
               when = "jj-starship detect";
               shell = [ "jj-starship" ];
