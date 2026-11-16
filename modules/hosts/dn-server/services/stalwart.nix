@@ -37,6 +37,10 @@ in
           proxy_set_header X-Forwarded-For $http_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
           proxy_set_header X-Forwarded-Host $host;
+          # /jmap/eventsource/ is a held open stream; nginx's 60s default cut
+          # it, which tolk saw as "unexpected EOF during chunk size line".
+          proxy_read_timeout 3600s;
+          proxy_send_timeout 3600s;
         '';
       };
       # Stalwart's OtelHttp tracer posts here; Alloy on this host receives it
