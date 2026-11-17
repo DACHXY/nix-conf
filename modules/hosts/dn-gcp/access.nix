@@ -13,6 +13,9 @@
       # ssh-server.nix 的 `AllowUsers = [ username ]` 會連帶擋掉 root，只設
       # PermitRootLogin 沒有用（sshd 會記錄 "not allowed because not listed in
       # AllowUsers"）。救援通道要兩個一起開。
-      services.openssh.settings.AllowUsers = lib.mkForce [ "danny" "root" ];
+      # "backup" is dn-server's offsite receiver (services/backup-receiver.nix);
+      # it must ride this mkForce list because a plain AllowUsers elsewhere would
+      # be wiped by the force.
+      services.openssh.settings.AllowUsers = lib.mkForce [ "danny" "root" "backup" ];
     };
 }

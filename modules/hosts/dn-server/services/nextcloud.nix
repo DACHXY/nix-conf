@@ -1,22 +1,26 @@
-{ config, inputs, ... }:
+{ config, ... }:
 let
   inherit (config.flake.public.config) domain;
   inherit (config.flake.public.config.services.nextcloud) hostname endpoint;
   inherit (config.flake.public.config.services) coturn mailserver talk;
   inherit (config.flake.public.config.machines) dn-cc gcp;
-  # Nextcloud's PHP comes from `pkgs.php84`, i.e. 8.4.26 in the pinned nixpkgs.
-  # That build is vulnerable to CVE-2026-109618 / CVE-2026-109619 (remote code
-  # execution through PHP's request lifecycle, exploited in the wild since
-  # 2026-10-21, no config-level mitigation). Swap in php84 from the newer
-  # pinned `nixpkgs-php` input instead of bumping the whole flake; extensions
-  # (`pkgs.php84.extensions`) come from the same instance, so the
-  # php-with-extensions env Nextcloud uses stays internally consistent.
-  phpSecurityOverlay = final: prev: {
-    php84 =
-      (import inputs.nixpkgs-php {
-        system = final.stdenv.hostPlatform.system;
-        config = prev.config;
-      }).php84;
+  # nixpkgs pins the signaling backend at 2.1.1. Talk 25 (the app that ships
+  # with Nextcloud 35) authenticates its backend room requests in a way 2.1.1
+  # rejects: every call to /api/v1/room/<token> comes back 403 and the server
+  # logs "Failed attempt on BackendRoomAuth", so participants cannot be
+  # authorised for calls. 2.2.0 is the release from the Nextcloud 35 era; drop
+  # this overlay once `nixpkgs` is past 2.1.1.
+  signalingOverlay = final: prev: {
+    nextcloud-spreed-signaling = prev.nextcloud-spreed-signaling.overrideAttrs (old: {
+      version = "2.2.0";
+      src = final.fetchFromGitHub {
+        owner = "strukturag";
+        repo = "nextcloud-spreed-signaling";
+        tag = "v2.2.0";
+        hash = "sha256-xQrfvy96tSe3hm2cYKSMSN23o+VQJ59V9Ighd1FqM30=";
+      };
+      vendorHash = "sha256-U3V7RkyoKfdFlgIgkUi7nA1P9N1vXBgwHwCnC13RszQ=";
+    });
   };
 in
 {
@@ -33,8 +37,8 @@ in
       spreedCfg = config.services.nextcloud-spreed-signaling;
     in
     {
-      # Applies to dn-server only: the one host that runs PHP.
-      nixpkgs.overlays = [ phpSecurityOverlay ];
+      # Applies to dn-server only: the one host that runs the signaling backend.
+      nixpkgs.overlays = [ signalingOverlay ];
 
       sops.secrets = {
         "nextcloud/smtpPassword" = {
@@ -110,53 +114,77 @@ in
 
       services.nextcloud = {
         enable = true;
-        package = pkgs.nextcloud34;
+        # 34 is deprecated in NixOS 26.11; a major upgrade must go one step at a
+        # time (34 -> 35). The pinned nixpkgs carries 35.0.2; 35.0.3 is the
+        # current patch release. Drop the override once nixpkgs has >= 35.0.3.
+        package = pkgs.nextcloud35.overrideAttrs (old: {
+          version = "35.0.3";
+          src = pkgs.fetchurl {
+            url = "https://download.nextcloud.com/server/releases/nextcloud-35.0.3.tar.bz2";
+            hash = "sha256-WEAUQM6Bt/jURajCqAJ1crYW74NZL5axIf0V7Ioa7TU=";
+          };
+        });
         configureRedis = true;
         hostName = hostname;
         https = true;
         enableImagemagick = true;
 
         extraApps = {
-          # Bundled with the Nextcloud 34.0.5 package in the pinned nixpkgs.
+          # Already at the newest Nextcloud 35 release in the pinned nixpkgs.
           inherit (config.services.nextcloud.package.packages.apps)
             tasks
-            whiteboard
-            user_oidc
-            music
             onlyoffice
             ;
 
           # --- Apps nixpkgs pins behind the upstream app store ---------------
-          # nixpkgs' nextcloud34 app set lags the store for these; pin the
-          # current stable release for Nextcloud 34 directly instead. Bump the
+          # Newest stable release the app store lists for Nextcloud 35.0.3
+          # (https://apps.nextcloud.com/api/v1/platform/35.0.3/apps.json). Bump
           # url + hash together (`nix store prefetch-file --json <url>`).
           contacts = pkgs.fetchNextcloudApp {
-            url = "https://github.com/nextcloud-releases/contacts/releases/download/v8.9.2/contacts-v8.9.2.tar.gz";
-            sha256 = "sha256-kvfHnEEScwRe1jRvaYjAWvZzwxcKOtq6kaFQZrjc58U=";
+            url = "https://github.com/nextcloud-releases/contacts/releases/download/v8.10.0/contacts-v8.10.0.tar.gz";
+            sha256 = "sha256-A12UMRXxKdIPuroZshJKDS9lpZw1yr4UJJW7auZQ1Uk=";
             license = "agpl3Plus";
           };
 
           calendar = pkgs.fetchNextcloudApp {
-            url = "https://github.com/nextcloud-releases/calendar/releases/download/v6.6.3/calendar-v6.6.3.tar.gz";
-            sha256 = "sha256-vajzjGCbIYJTOIf2fqy1Q+30NwZtA1aRKsYyTJR0MIA=";
+            url = "https://github.com/nextcloud-releases/calendar/releases/download/v6.6.5/calendar-v6.6.5.tar.gz";
+            sha256 = "sha256-46+8KhDbh5IPU0cnlCNCJBEBBVCoCbKQLA6M8vJJIQc=";
             license = "agpl3Plus";
           };
 
           spreed = pkgs.fetchNextcloudApp {
-            url = "https://github.com/nextcloud-releases/spreed/releases/download/v24.0.6/spreed-v24.0.6.tar.gz";
-            sha256 = "sha256-So1c9S7UIiPqmTeGD3DC6dyh34v9X3W4ca51adIQYRA=";
+            url = "https://github.com/nextcloud-releases/spreed/releases/download/v25.0.8/spreed-v25.0.8.tar.gz";
+            sha256 = "sha256-5TbxSCa1iSwzJgjQcALdHjvcMuq8Wvg2g9RVmad/1I4=";
+            license = "agpl3Plus";
+          };
+
+          whiteboard = pkgs.fetchNextcloudApp {
+            url = "https://github.com/nextcloud-releases/whiteboard/releases/download/v2.1.2/whiteboard-v2.1.2.tar.gz";
+            sha256 = "sha256-uj29Wz8aDTSvNoMFrHf9oGMwdFe4vRQ5Vcw1k9DO7r0=";
+            license = "agpl3Plus";
+          };
+
+          user_oidc = pkgs.fetchNextcloudApp {
+            url = "https://github.com/nextcloud-releases/user_oidc/releases/download/v8.13.0/user_oidc-v8.13.0.tar.gz";
+            sha256 = "sha256-bxP6BHcUSmgS2GSGJsZM7pGAfR0LYMpBQkVDCGueJ3U=";
+            license = "agpl3Plus";
+          };
+
+          music = pkgs.fetchNextcloudApp {
+            url = "https://github.com/nc-music/music/releases/download/v3.3.1/nc-music-3.3.1.tar.gz";
+            sha256 = "sha256-2NGl4SvetGMMggcchjur47rsBBaY7bt1tEW1Pj73Veo=";
             license = "agpl3Plus";
           };
 
           memories = pkgs.fetchNextcloudApp {
-            url = "https://github.com/pulsejet/memories/releases/download/v10.1.0/memories.tar.gz";
-            sha256 = "sha256-tbR2ts19fXoW8hkUF1LIoA4tQO6WQWJvNjG/gnWUlw8=";
+            url = "https://github.com/pulsejet/memories/releases/download/v11.1.4/memories.tar.gz";
+            sha256 = "sha256-ObXsa/F1M0Qy6MQJoEhNqGb/+QPGNJQsyzxBgJ+QY1M=";
             license = "agpl3Plus";
           };
 
           camerarawpreviews = pkgs.fetchNextcloudApp {
-            url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v1.1.4/camerarawpreviews_nextcloud.tar.gz";
-            sha256 = "sha256-Fg+QsjVIxndQMVrMsMcVK7uhv0c5j92qrYjEOhsA7O4=";
+            url = "https://github.com/ariselseng/camerarawpreviews/releases/download/v1.3.0/camerarawpreviews_nextcloud.tar.gz";
+            sha256 = "sha256-SQ7bu80hoZimfxMjx/7h6fgSIF9NpZ9I0GdzqrXtZCU=";
             license = "agpl3Plus";
           };
 
@@ -225,6 +253,17 @@ in
           secrets."nextcloud/whiteboard".path
         ];
       };
+
+      # cron.php runs with a minimal PATH. `occ maintenance:repair` and the
+      # memories indexer shell out to `which`, `ps` and `exiftool`; without them
+      # the repair step dies ("proc_open failed: which ps") and memories logs
+      # "Indexing exception: binary path is empty".
+      systemd.services.nextcloud-cron.path = with pkgs; [
+        coreutils
+        procps
+        which
+        exiftool
+      ];
 
       environment.systemPackages = with pkgs; [
         exiftool

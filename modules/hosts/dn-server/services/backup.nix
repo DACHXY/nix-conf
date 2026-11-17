@@ -47,7 +47,13 @@ in
         "age1re6fndpj0hntw3hp04wv48s0947lgxw5w2y9jmxazx763ux8qggs045u2n"
         "age1zjr036sqst5spej96gvc279ql4cjmx78e3mk8cwgz9mylw60pdtq04c2h0"
       ];
-      offsiteIp = globalConfig.flake.public.config.machines.dn-cc.ip;
+      # Offsite receivers. dn-cc (over wg2) and dn-gcp (over wg0) both run
+      # rrsync and only ever see ciphertext — the same keypair authorizes both,
+      # and neither holds a decryption key.
+      offsiteTargets = [
+        globalConfig.flake.public.config.machines.dn-cc.ip
+        globalConfig.flake.public.config.machines.gcp.ip
+      ];
       encryptedDir = "/var/backup/encrypted";
       offsiteDir = "/var/lib/backup-offsite";
 
@@ -133,9 +139,12 @@ in
             | xargs -r rm -f
 
           # Offsite last: a failure here fails the unit, after the local copies
-          # above are in place. dn-cc runs rrsync, so this can only write.
-          rsync -e "ssh -i $offsiteDir/id_ed25519 -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$offsiteDir/known_hosts" \
-            -- "$outDir/$name" "backup@${offsiteIp}:"
+          # above are in place. Both receivers run rrsync (write-only), so a
+          # compromised dn-server can only drop archives, never read or delete.
+          for offsite in ${toString offsiteTargets}; do
+            rsync -e "ssh -i $offsiteDir/id_ed25519 -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$offsiteDir/known_hosts" \
+              -- "$outDir/$name" "backup@$offsite:"
+          done
         '';
       };
     in
