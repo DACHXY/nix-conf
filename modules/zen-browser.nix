@@ -336,13 +336,39 @@ in
     {
       home-manager.users.${config.my.user.name} =
         {
+          config,
           osConfig,
+          pkgs,
+          lib,
           ...
         }:
         let
           inherit (self.lib) capitalize;
           username = osConfig.my.user.name;
           profileName = "${capitalize username}_Profile";
+
+          # Official Zen icons from github:zen-browser/branding-archive.
+          # Swap `zenIconName` for another key to change the icon.
+          zenIcons = {
+            "Zen-Dark-LightAcc" = "sha256-MG4iVfXU3EPr9UNFQy3mEB0LiOeOzv5Hk7sPo4kBrks=";
+            "Zen-Dark-Coral" = "sha256-HkLqprQk2SSQRy2O4wtPvsMATjzJX3zh4w699WsYD/o=";
+            "Zen-Color-Twilight" = "sha256-8dH0w8uxj9ACxVjkKRMDIkzFe4JsqqLchSKC9Yz/94s=";
+            "Zen-Light-DarkAcc" = "sha256-XHwxwzZcb6EYi2qZ7hlLL9TTPmgrC4DOAzmdk86J7g8=";
+            "Zen-3D-Dark" = "sha256-ndFdIc9A5fUzV5RyNus5RzazhprM/NkaaxPi7USGAis=";
+          };
+          zenIconName = "Zen-3D-Dark";
+          zenIcon = pkgs.fetchurl {
+            name = "${zenIconName}.icns";
+            url = "https://raw.githubusercontent.com/zen-browser/branding-archive/main/Official/ICNS/${zenIconName}.icns";
+            hash = zenIcons.${zenIconName};
+          };
+
+          # Home Manager copies the .app into ~/Applications on every switch, so
+          # the replacement has to run after that copy. Swapping a resource
+          # invalidates the signature, and a shallow re-sign leaves the nested
+          # helpers on Firefox's Developer ID, so macOS refuses to open the app:
+          # the whole bundle has to be sealed again as ad-hoc (`--deep`).
+          zenApp = "${config.home.homeDirectory}/Applications/Home Manager Apps/Zen Browser (Twilight).app";
         in
         {
           programs.zen-browser.profiles.${profileName} = {
@@ -412,6 +438,18 @@ in
               }
             ];
           };
+
+          home.activation.zenIcon = lib.hm.dag.entryAfter [ "linkGeneration" "copyApps" ] /* bash */ ''
+            app="${zenApp}"
+            if [ -d "$app" ]; then
+              install -m 0644 ${zenIcon} "$app/Contents/Resources/firefox.icns"
+              # home-manager activation replaces PATH with nix tools only, so
+              # `codesign` has to be addressed absolutely or it silently no-ops.
+              $DRY_RUN_CMD /usr/bin/codesign --force --deep --sign - --timestamp=none "$app" \
+                >/dev/null 2>&1 || true
+              touch "$app"
+            fi
+          '';
         };
     };
 
@@ -422,14 +460,26 @@ in
         {
           osConfig,
           config,
+          pkgs,
+          lib,
           ...
         }:
         let
           inherit (self.lib) capitalize;
           username = osConfig.my.user.name;
           profileName = "${capitalize username}_Profile";
+
+          # Same official icon as the darwin module, but as a PNG: the desktop
+          # entry is `zen-twilight.desktop` with Icon=zen-twilight, so a file
+          # in the user hicolor tree shadows the packaged icon by name.
+          zenIcon = pkgs.fetchurl {
+            name = "Zen-3D-Dark.png";
+            url = "https://raw.githubusercontent.com/zen-browser/branding-archive/main/Official/PNG/Zen-3D-Dark.png";
+            hash = "sha256-gUn0jJ6BcnDZwHmEgSeVw5an7m8WARwxgyXTf+uWPY8=";
+          };
         in
         {
+          xdg.dataFile."icons/hicolor/512x512/apps/zen-twilight.png".source = zenIcon;
           programs.zen-browser.profiles.${profileName} = {
             keyboardShortcuts = [
               {
