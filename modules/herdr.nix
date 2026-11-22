@@ -778,4 +778,34 @@
         };
       };
     };
+
+  # The headless server must live in the GUI login session: one spawned by
+  # an SSH attach (remote-client-bridge) inherits the ssh audit session, and
+  # pam_tid.so then refuses Touch ID for sudo in every pane. A launchd agent
+  # owns the server so remote bridges can only attach, never spawn it.
+  flake.modules.darwin.gui =
+    { config, pkgs, ... }:
+    let
+      herdrGuiServer = pkgs.writeShellApplication {
+        name = "herdr-gui-server";
+        runtimeInputs = [ pkgs.herdr ];
+        text = ''
+          # Take over a server spawned elsewhere (e.g. by a remote attach),
+          # then run in this agent's GUI-session context. `stop` fails when
+          # no server runs, hence `|| true`.
+          herdr server stop || true
+          sleep 1
+          exec herdr server
+        '';
+      };
+    in
+    {
+      launchd.user.agents.herdr = {
+        command = "${herdrGuiServer}/bin/herdr-gui-server";
+        serviceConfig = {
+          RunAtLoad = true;
+          KeepAlive = true;
+        };
+      };
+    };
 }
